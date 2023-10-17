@@ -1,0 +1,241 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Code.Class
+
+@{
+    Layout = "MasterNoIndex.cshtml";
+
+    var currentDate = DateTime.Now.Year;
+
+    IMember currentMember = null;
+    string errorMessage = string.Empty;
+    string username = "";
+    string email = "";
+    string password = "";
+    string mobilenumber = "";
+    string promocode = "";
+    UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+
+    if (IsPost)
+    {
+        if (!string.IsNullOrEmpty(Request.Form["email"]))
+        {
+            if (!string.IsNullOrEmpty(Request.Form["promocode"]))
+            {
+                promocode = Request.Form["promocode"];
+                var isValidPromocode = System.Threading.Tasks.Task.Run(() => upodiWrapperService.ValidateDiscountCode(promocode)).GetAwaiter().GetResult();
+                if (!isValidPromocode) //
+                {
+                    errorMessage = "Promokoden er forkert eller ikke længere tilgængelig";
+                }
+            }
+
+            email = Request.Form["email"];
+            StartupCentral.Code.Model.ValidationResponse response = StartupCentral.Code.Class.Emailing.ValidateEmail(email);
+
+            if (!response.IsValid)
+            {
+                errorMessage = response.Message;
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["username"]))
+            {
+                username = Request.Form["username"];
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["password"]))
+            {
+                password = Request.Form["password"];
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["mobilenumber"]))
+            {
+                mobilenumber = Request.Form["mobilenumber"];
+            }
+
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                IMember member = ApplicationContext.Current.Services.MemberService.CreateMemberWithIdentity(email, email, username,"student");
+
+                if (member != null)
+                {
+                    member.SetValue("wwmobile", mobilenumber);
+                    member.SetValue("wwMobilePayAbonnementsDato", null);
+
+                    member.SetValue("wwname", username);
+                    member.SetValue("wwemail", email);
+                    member.IsApproved = false;
+
+                    ApplicationContext.Current.Services.MemberService.Save(member);
+                    ApplicationContext.Current.Services.MemberService.AssignRole(email, "student");
+                    ApplicationContext.Current.Services.MemberService.SavePassword(member, password);
+
+                    //Emailing.SendApprovvalEmail(member,password,true);
+                    //Emailing.SendCreationEmail(member, password);
+
+                    currentMember = member;
+
+                    Response.Redirect(string.Concat("/betaling/?memberkey=", member.Key, "&promokode=", promocode), true);
+                    return;
+                }
+            }
+        }
+    }
+}
+
+
+    <div class="content-header">
+        <div class="row-container centered">
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered">
+                        <h2 class="headline-1">
+                            IVÆKST x STARTUP CENTRAL
+                        </h2>
+                        <p>
+                            Et samarbejde som gør iværksætteri nemmere og billigere.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img class="content-header__image" src="/media/2375/header400px.svg" alt="">
+    </div>
+
+    <main id="sc-entrepreneur">
+        <section>
+            <div class="row-container">
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column centered">
+                            <h2 class="headline-2">Få de første 2 måneders medlemskab til en måneds pris nu </h2>
+                            <p>
+                                Fordi du så medlemskabet gennem Ivækst får du helt eksklusivt de første 2 måneders
+                                medlemskab til en måneds pris.
+                                Herefter vil medlemskabet kun koste 149,- pr. måned.
+                                Det kan blive endnu billigere jo flere måneder du tilmelder dig.
+                                <br><br>
+                                Medlemskabet er fuldt fradragsberettiget under konsulentfradraget.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row-container">
+                <div class="row">
+                    <div class="column-container centered column-6">
+                        <div class="column centered">
+                    
+                            <form method="post" id="registrationForm">
+                                <input hidden name="formaction" value="registration" />
+                                <h2 class="headline-2">Tilmeld dig herunder</h2>
+
+                                @if (!string.IsNullOrEmpty(errorMessage))
+                                {
+                                <p class="text-center">
+                                    <font color="red">@errorMessage</font>
+                                </p>
+                                <br />
+                                }
+
+                                <div class="form-container">
+                                    <label for="firstname">Navn / Virksomhedsnavn</label>
+                                    <input type="text" name="username" autocomplete="on" required>
+                                </div>
+                                <div class="form-container">
+                                    <label for="email">Email</label>
+                                    <input type="email" name="email" autocomplete="on" required>
+                                </div>
+                                <div class="form-container">
+                                    <label for="pasword">Kodeord</label>
+                                    <input type="password" id="pass" name="password" minlength="6" required>
+                                </div>
+
+                                <div class="form-container">
+                                    <label for="telephone">Telefonnummer</label>
+                                    <div class="input-container">
+                                        <span>+45</span>
+                                        <input type="tel" id="telephone" name="mobilenumber" minlength="8"
+                                            autocomplete="on" maxlength="8" required>
+                                    </div>
+                                </div>
+                                <div class="form-container" style="display:none;">
+                                    <label for="promocode">Promokode</label>
+                                    <input type="text" name="promocode" value="Ivækst-2mdr" required>
+                                </div>
+
+                                <div class="form-container">
+                                    <label class="checkbox">
+                                        <span>
+                                            Ved tilmelding accepterer jeg hermed Startup Centrals <a
+                                                href="/brugerbetingelser-for-startup-centrals-portal/"
+                                                target="_blank">brugerbetingelser</a>
+                                            og bekræfter jeg muligvis vil blive kontaktet af virksomheden og deres
+                                            ansatte;
+                                            elektronisk pr. mail og telefon.
+                                        </span>
+                                        <input type="checkbox" id="eng" name="eng" class="checkbox">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <button class="button button--full-width button--lg" type="submit">Tilmeld og
+                                    fortsæt</button>
+                                <p>Har du allerede en bruger? <a href="/login/">Klik her</a> </p>
+                            </form>
+                    
+                        </div>
+                    </div>
+
+                    <div class="column-container">
+                        <div class="column">
+                            <h2 class="headline-2">Startup Central tilbyder</h2>
+
+                            <p>
+                                <strong>Erhvervskonto fra 1000 kr.</strong>
+                                <br>
+                                så tøv ikke med at kontakt os. Samtalen er uforpligtende og helt gratis.
+                            </p>
+                            <p>
+                                <strong>Benzinkort</strong>
+                                <br>
+                                Mindst kr. 1,60 rabat på benzin og diesel fra Q8, Shell og Cirkel K.
+                            </p>
+
+                            <p>
+                                <strong>Regnskabsprogram & bogføring</strong>
+                                <br>
+                                Få det nødvendige overblik af din virksomheds økonomi.
+                            </p>
+
+                            <p>
+                                <strong>Forsikring</strong>
+                                <br>
+                                Bliv godt dækket ind – både din virksomhed og dine medarbejdere. Få op til 30% rabat.
+                            </p>
+
+                            <p>
+                                <strong>Coaching</strong>
+                                <br>
+                                Ubegrænset 1:1 sparring med mere end 70 erfarne erhvervscoaches.
+                            </p>
+
+                            <p>
+                                <strong>Hjemmesideudvikling</strong>
+                                <br>
+                                Få en lækker hjemmeside til en super pris.
+                            </p>
+
+                            <a href="/kontakt/" style="margin-top: auto;    margin-bottom: 20px;" class="button button--lg button--full-width">Kontakt os</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    
+    <style>
+        #sc-navbar-logged, #sc-navbar-main, #sc-newsletter, #main-footer {
+            display: none;
+        }
+    </style>

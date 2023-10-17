@@ -1,0 +1,247 @@
+section.bpoverview {
+    .bpo-container {
+        .bpo-navigation-container {
+            background-color: $sc-primary;
+            @include flex(column);
+            border-radius: 1rem;
+
+            .dropButton {
+                margin-top: 0;
+                color: $sc-white;
+                font-weight: 600;
+                border-radius: 1rem;
+                padding: 1rem;
+            }
+
+            .open~ul {
+                margin: 0 1.5rem;
+            }
+
+            .business-nav {
+                max-height: 0;
+                overflow: hidden;
+                @include transition(0.2s);
+            }
+
+            .pdf-download-link {
+                background-color: $sc-secondary;
+                color: $sc-white;
+                text-align: center;
+                margin-top: 0rem;
+                border-bottom-left-radius: 1rem;
+                border-bottom-right-radius: 1rem;
+
+                // i {
+                //     font-size: 2.5rem;
+                // }
+            }
+
+            ul {
+                li {
+                    list-style-type: none;
+                    margin-left: 0;
+
+                    &::before {
+                        display: none;
+                    }
+
+                    a {
+                        color: $sc-white;
+
+                        &:hover {
+                            color: $sc-accent;
+                            text-decoration: underline;
+                        }
+
+
+                        &.active {
+                            font-size: 1.8rem;
+                            font-weight: 600;
+                            color: $sc-accent;
+                        }
+                    }
+                }
+            }
+        }
+
+        .bpoverview-form-container {
+            .bpo-header {
+                @include flex(row);
+                border-bottom: 1px solid $sc-border;
+
+                .header-user {
+                    flex: 0 0 60%;
+                    padding-top: 1rem;
+                    padding-bottom: 1rem;
+
+                    img {
+                        width: 5rem;
+                        border-radius: 50%;
+                        margin-right: 1rem;
+                    }
+
+                    @include flex(row);
+                    align-items: center;
+                    justify-items: center;
+
+                    h3 {
+                        width: fit-content;
+                    }
+                }
+
+                .header-project {
+                    flex: 0 0 40%;
+                    padding-top: 1rem;
+                    padding-bottom: 1rem;
+                    color: $sc-gray;
+                    text-align: center;
+
+                    h3 {
+                        margin: 0;
+                    }
+                }
+            }
+
+            .bpo-form {
+                padding-top: 2.5rem;
+
+                .headline-2 {
+                    @include sc-title-text-side;
+                }
+
+                .category {
+                    border: 1px solid $sc-border;
+                    @include boxshadow-soft;
+                    margin: 2rem 0;
+                    border-radius: 2.5rem;
+                    padding: .25rem 1.5rem;
+                    font-size: 1.4rem;
+                    font-weight: bold;
+                    width: fit-content;
+                }
+
+                .english {
+                    margin: 2rem 0;
+                    font-size: 1.8rem;
+                }
+
+                .questionbox {
+                    margin-top: 2.5rem;
+
+                    &:first-of-type {
+                        margin-top: 0;
+                    }
+                }
+            }
+
+            .bpo-footer {
+                margin-top: 1rem;
+                @include flex(row);
+                justify-content: space-between;
+            }
+        }
+    }
+}
+
+@include media-md {
+    section.bpoverview {
+        .bpo-container {
+            .bpoverview-form-container {
+                .bpo-header {
+                    .header-user {
+                        padding-top: 1.5rem;
+                        padding-bottom: 1.5rem;
+
+                        img {
+                            width: 7.5rem;
+                        }
+                    }
+
+                    .header-project {
+                        padding-top: 1.5rem;
+                        padding-bottom: 1.5rem;
+                    }
+                }
+
+                .bpo-form {
+                    .category {
+                        font-size: 1.6rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-lg {
+    section.bpoverview {
+        .bpo-container {
+            margin-top: 2.5rem;
+            @include flex(row);
+            border: 1px solid $sc-border;
+            @include boxshadow;
+            border-radius: 1rem;
+
+            .bpo-navigation-container {
+                flex: 0 0 20%;
+                padding: 2.5rem;
+                border-top-left-radius: 1rem;
+                border-bottom-left-radius: 1rem;
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+
+                .button {
+                    display: none;
+                }
+
+                .pdf-download-link {
+                    @include btn-white;
+                    margin-top: 5rem;
+
+                    i {
+                        font-size: 2.5rem;
+                    }
+                }
+
+                .business-nav {
+                    max-height: fit-content;
+                }
+
+
+                ul {
+                    visibility: visible;
+                    padding: 0 1.5rem;
+
+                    li {
+                        margin-top: 0;
+                    }
+                }
+            }
+
+            .bpoverview-form-container {
+                padding: 2.5rem;
+                @include flex(column);
+                width: 100%;
+
+                .bpo-header {
+                    .header-user {
+                        padding-top: 0;
+                        padding-bottom: 1.5rem;
+                    }
+
+                    .header-project {
+                        padding: 0;
+                    }
+                }
+
+                .bpo-form {
+                    padding-top: 2.5rem;
+
+                    .category {
+                        font-size: 1.6rem;
+                    }
+                }
+            }
+        }
+    }
+}

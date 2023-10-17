@@ -1,0 +1,137 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+
+@{
+    var currentUser = Members.GetCurrentMember();
+
+    <div class="modal fade opretbrugerview" id="opretbrugerview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><img src="/images/close.gif"></button>
+                <div class="modal-header text-center">
+                    <img src="/media/1148/raket_dialogbox.svg" class="img-responsive center-block mb25 mt40" />
+                    <h4 class="modal-title f25 mb25  uppercase fw700 lh26" id="myModalLabel">Hvad ønsker du at oprette?</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <form action="" method="post" name="createuser" id="createuser" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="radio fleft w100 mb30">
+                                <div class="col-md-6 text-left">
+                                    <label class="mb8">
+                                        <input type="radio" name="user" id="student" checked value="student">En elev<span></span>
+                                    </label>
+                                    @if (Umbraco.Member(currentUser.Id).DocumentTypeAlias == "admin")
+                                    {
+                                        <label class="mb8">
+                                            <input type="radio" name="user" id="coach" value="coach1">En coach<span></span>
+                                        </label>
+                                    }
+                                </div>
+                                @if (Umbraco.Member(currentUser.Id).DocumentTypeAlias == "admin")
+                                {
+                                    <div class="col-md-6 text-left">
+                                        <label class="mb8">
+                                            <input type="radio" name="user" id="teacher" value="teacher">En underviser<span></span>
+                                        </label>
+                                        <label class="mb8">
+                                            <input type="radio" name="user" id="investor" value="investor">En Business Angel<span></span>
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-sm-12">
+                                <input type="text" id="name" name="name" placeholder="Navn" />
+                            </div>
+                            <div class="col-xs-12 col-md-12  col-sm-12">
+                                <input type="email" id="username" name="username" placeholder="E-mail" />
+                            </div>
+                            @* if Coach or Investor is picked *@
+                            <div id="extracoachinvestor" style="display:none;">
+                                <div class="col-xs-12 col-md-12 col-sm-12 mb20">
+                                <span class="fleft w100 text-left mb10">Upload billede</span>
+                                    <input type="file" id="avatar" name="avatar" />
+                                </div>
+                                <div class="col-xs-12 col-md-12 col-sm-12 mb20">
+                                <span class="fleft w100 text-left mb10">Upload NDA</span>
+                                    <input type="file" id="nda" name="nda" />
+                                </div>
+                                <div class="col-xs-12 col-md-12 col-sm-12 mb20">
+                                <span class="fleft w100 text-left mb10">Upload CV</span>
+                                    <input type="file" id="cv" name="cv" />
+                                </div>
+                                <div class="col-sm-12 ">
+                                    <textarea class="form-control" name="shorttxt"  rows="20" placeholder="Indtast kort beskrivelse. Bruges i oversigten"></textarea>
+                                </div>
+                                <div class="col-sm-12 ">
+                                    <textarea class="form-control" name="desc" rows="40" placeholder="Indtast profil beskrivelse"></textarea>
+                                </div>
+                                <div class="col-sm-12 mb20">
+                                <label for="kategori" class="mb10 fleft w100 text-left fw700">Tilknyt områder, som passer på vedkommende</label>
+                                    <div class="checkbox mb30">
+                                        @{
+                                            foreach (var opt in Umbraco.Content(1651).Children())
+                                            {
+                                                <div class="fleft mr15 mb10 mt10">
+                                                    <label for="@opt.Id"><input type="checkbox" value="@opt.Id" name="tags" id="@opt.Id">@opt.Name<span></span></label>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div> 
+                                <div class="col-sm-12 mb20">
+                               <div class="checkbox w100 mb10">
+                                        @{
+                                            bool wwunavailable = (bool)Umbraco.Member(currentUser.Id).wwunavailable;
+                                        }
+
+                                        <label for="unavailable" class="fleft w100 text-left fw700"><input type="checkbox" value="1" name="unavailable" id="unavailable" @Umbraco.If(wwunavailable, "checked") />Vedkommende er ikke tilgængelig<span></span></label>
+                                    </div>
+                                    <div class="daterange" style="display:@(wwunavailable ? "block" : "none");">
+                                        <div class="fleft w100 mt10 mb20 text-left">Hvis det er i en periode kan du vælge det her</div>
+                                        <div class="form-group">
+                                            <label class="fleft w100 text-left">Fra den:</label>
+                                                <input type="date" name="datefrom" class="inputfield whitebg" id="datefrom"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label  class="fleft w100 text-left">Til den:</label>
+                                                <input type="date" class="inputfield whitebg" name="dateto" id="dateto" />
+                                        </div>
+                                    </div>
+                                 </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 text-right">
+                                <input type="button" id="submit" name="submit" class="btn dark" value="Opret" data-invoke="createuser"/>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="successtxt f18 lh26" style="display:none;">
+                        Brugeren blev oprettet.<br /><br />
+                        Der er sendt en mail til brugeren til den angivne mailadresse med brugernavn og password.
+                    </div>
+                    <div class="errortxt f18 lh26" style="display:none;">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    
+    $('input[type="radio"]').click(function() {
+        $("#extracoachinvestor").hide(); 
+        if ($(this).attr('id') == "coach" || $(this).attr('id') == "investor") {
+            $("#extracoachinvestor").show(); 
+        }
+    });
+    </script>
+    
+    <script src="~/scripts/startupcentral.admin.js?v=3"></script>
+}

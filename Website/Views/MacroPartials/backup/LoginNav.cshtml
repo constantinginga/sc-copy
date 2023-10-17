@@ -1,0 +1,156 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+
+@{
+    var currentUser = Members.GetCurrentMember();
+   
+   <span class="hidden-xs">
+   @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "student"){
+      <a href="@Umbraco.Content(1832).Url" class="btn fleft fw600 light btnlightblue normalbtn mr30 create-plan">
+            Opret din forretningsidé
+        </a> 
+        <a href="/login/minside"><li><div class="dark fw600  mt10 fleft mr20">Min side</div></li></a>
+   <a href="javascript:void(0);">
+            <li>
+                <div class="dark fw600 mt10 fleft mr20" id="tools">Fordele</div>
+                    <ul class="submenu" style="display:none;">
+                        <a href="/login/gode-raad/" class="fw600 lh32 mb10"><li>Gode råd</li></a>
+                        <a href="/login/modtag-sparring/" class="fw600 lh32 mb10"><li>Få sparring</li></a>
+                        <a href="/login/samarbejdspartnere/" class="fw600 lh32 mb10"><li>Samarbejdspartnere</li></a>
+                        <!--<a href="" class="fw600 lh32 mb10"><li>Få investering</li></a>-->
+                    </ul>
+            </li>
+            </a>
+        <!--<a href=""><li><div class="dark fw600  mt10 fleft mr20">Sådan fungerer det</div></li></a>-->
+        <a href="/login/besked-til-student/">
+        <li>
+        <div class="dark fw600  mt10 fleft mr20">Beskeder @Umbraco.RenderMacro("IndicatorMessages")</div>
+        </li>
+        </a>
+        <a href="/login/upload-forretningsidé"><li><div class="dark fw600  mt10 fleft mr20">Min profil/projekter</div></li></a>
+   
+   }
+   
+   @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "investor"){
+    <a href="/login/minside"><li><div class="dark fw600  mt10 fleft mr20">Min side</div></li></a>
+        <a href="@Umbraco.Content(1926).Url"><li><div class="dark fw600  mt10 fleft mr20">Min næste investering</div></li></a>
+        <a href="@Umbraco.Content(1902).Url"><li><div class="dark fw600  mt10 fleft mr20">Min profil</div></li></a>
+   }
+   
+   @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "coach1"){
+        <a href=" /login/beskeder-til-coach/"><li><div class="dark fw600  mt10 fleft mr20">Beskeder @Umbraco.RenderMacro("IndicatorMessages")</div></li></a>
+        <a href="/login/min-profil"><li><div class="dark fw600  mt10 fleft mr20">Min profil</div></li></a>
+        
+   }
+   
+   @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "teacher"){
+        <a href="javascript:void(0);" id="opretbruger" class="btn fleft fw600 light btnlightblue normalbtn mr30" data-toggle="modal" data-target="#opretbrugerview">
+            Opret ny bruger
+        </a>
+   }
+   
+   @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "admin"){
+        <a href="javascript:void(0);" id="opretbruger" class="btn fleft fw600 light btnlightblue normalbtn mr30" data-toggle="modal" data-target="#opretbrugerview">
+            Opret ny bruger
+        </a> 
+        <a href="/login/min-side"><li><div class="dark fw600  mt10 fleft mr20">Administrer brugere</div></li></a>
+        <a href="/login/samarbejdspartnere">
+        <li>
+            <div class="dark fw600  mt10 fleft mr20" id="samarbejds">Samarbejdspartnere</div>
+        </li>
+        </a>
+       <a href="/login/gode-raad">
+        <li>
+            <div class="dark fw600  mt10 fleft mr20" id="samarbejds">Gode råd</div>
+        </li>
+        </a>  
+         <a href="@Umbraco.Content(1651).Url">
+        <li>
+            <div class="dark fw600  mt10 fleft mr20" id="samarbejds">Fagområder</div>
+        </li>
+        </a>  
+        
+   }
+  </span>
+  
+
+   <span class="visible-xs col-xs-12">
+  @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "student") {
+        <li>
+            <a href="@Umbraco.Content(1832).Url" class="btn fleft fw600 light btnlightblue normalbtn mr30 mobbtn">
+                Opret din forretningsidé
+            </a>
+        </li>
+        
+        @*-- "Upload forretningsidé" has been deactivated due to pointless action --*@
+        @*<li>
+            <a href="@Umbraco.Content(1670).Url" class="btn fleft fw600 light btnlightblue normalbtn mr30 mobbtn">
+                Upload forretningsidé
+            </a>
+        </li>*@
+        
+    <a href="/login/minside"><li><div class="white fw600  mt10 fleft mr20">Min side</div></li></a>    
+        <li class="fleft w100">
+            <a href="javascript:void(0);" class="white w100 fw600 mt10 fleft mr20" >
+               <span class="white">Fordele</span>
+                 <img src="/images/secmenulevel.gif" class="fright seclevel mt12 ">
+            </a>
+                 <ul class="dropdown-menu fleft w100" style="display:none;">
+                    <a href="/login/gode-raad/" class="fw600 lh32 white mb10"><li class="white">Gode råd</li></a>
+                    <a href="/login/modtag-sparring/" class="fw600 white  lh32 mb10"><li class="white">Få sparring</li></a>
+                    <a href="/login/samarbejdspartnere/" class="fw600 white  lh32 mb10"><li class="white">Samarbejdspartnere</li></a>
+                </ul>
+        </li>
+    <a href="/login/upload-forretningsidé"><li><div class="white fw600  mt10 fleft mr20">Min profil/projekter</div></li></a>
+   
+   }
+   
+   @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "investor"){
+        <a href="@Umbraco.Content(1926).Url"><li><div class="white fw600  mt10 fleft mr20">Min næste investering</div></li></a>
+        <a href="@Umbraco.Content(1902).Url"><li><div class="white fw600  mt10 fleft mr20">Min profil</div></li></a>
+   }
+   
+   @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "coach1"){
+        <a href="/login/min-profil"><li><div class="white fw600  mt10 fleft mr20">Min profil</div></li></a>
+        
+   }
+   
+   @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "teacher"){
+        <a href="javascript:void(0);" id="opretbruger" class="btn fleft fw600 light btnlightblue normalbtn mr30" data-toggle="modal" data-target="#opretbrugerview">
+            Opret ny bruger
+        </a>
+   }
+   
+   @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "admin"){
+        <a href="/login/min-side" class="">
+            <li class="fleft w100 mb15"><div class="white fw600  mt10 fleft mr20">Administrer brugere</div>
+        </li>
+        </a>
+        <a href="/login/samarbejdspartnere" class="">
+        <li class="fleft w100 mb15">
+            <div class="white fw600  mt10 fleft mr20" id="samarbejds">Samarbejdspartnere</div>
+        </li>
+        </a>
+        <a href="/login/gode-raad" class="">
+        <li class="fleft w100 mb15">
+            <div class="white fw600  mt10 fleft mr20" id="samarbejds">Gode råd</div>
+        </li>
+        </a> 
+         
+        <a href="@Umbraco.Content(1651).Url" class="">
+        <li class="fleft w100 mb15">
+            <div class="white fw600  mt10 fleft mr20" id="fagomraader">Fagområder</div>
+        </li>
+        </a>
+   }
+   </span>
+  
+ 
+}
+
+
+@Umbraco.RenderMacro("AdminCreateUser")

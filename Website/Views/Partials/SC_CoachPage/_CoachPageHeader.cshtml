@@ -1,0 +1,29 @@
+﻿@inherits  UmbracoTemplatePage
+<header id="sc-header" class="sc-cover sc-cover-sm" role="banner">
+    <div class="overlay">
+        <div class="sc-container">
+            <div class="row">
+                <div class="col-6  animate-box" data-animate-effect="fadeInUp">
+                    <div class=" display-t">
+                        <div class="display-tc">
+                            <a href="javascript:history.back()">
+                                <h4>
+                                    <i class="fas fa-arrow-circle-left"></i>&nbsp;&nbsp;
+                                    Tag mig tilbage til den forrige side
+                                </h4>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 animate-box" data-animate-effect="fadeInUp">
+                    <div class=" display-t">
+                        <div class="display-tc">
+                            <h1>@Umbraco.AssignedContentItem.Value("title")</h1>
+                            <h5>@Umbraco.AssignedContentItem.Value("subTitle")</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

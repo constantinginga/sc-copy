@@ -1,0 +1,153 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@using Umbraco.Core.Services;
+@using System.Web
+@using System.Web.Security
+@using Umbraco.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Code.Controllers
+@using StartupCentral.Code.Model
+@{
+    Layout = "Master.cshtml";
+
+    MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+    IMember currentMember = null;
+    if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+    {
+        currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+    }
+
+    if (currentMember != null)
+    {
+        ForretningsplanController fc = new ForretningsplanController();
+
+        <section>
+            <div class="container whitecontainer">
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="bigheadline uppercase f80 f50mob mb40 fw700 dark">
+                            @Page.wwoverskrift
+                        </div>
+                        <div class="txt dark f18 fw600 lh24 mb60">
+                            @Page.bodyText
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+                    @{
+                        List<StartupCentral.Code.Model.Forretningsplan> myForretningsplaner = fc.GetMyFinalizedForretningsplaner();
+
+
+
+                        <div class="col-md-12 mb50">
+                            <a href="javascript:void(0);" class="fw700 f30 mr40 tabactive beskeder"><span>Beskeder @Umbraco.If(fc.AnyMessages(currentMember), "<span class=\"beskedbullet\"></span>")</span></a>
+                            <a href="javascript:void(0);" class="fw700 f30 mr20 notif"><span>Notifikationer<span class="notifbullet"></span></span></a>
+                        </div>
+                        <div class="col-md-12" id="beskeder">
+
+                            @{
+
+                                if (myForretningsplaner != null)
+                                {
+
+                                    foreach (var forretningsplan in myForretningsplaner)
+                                    {
+                                        // Forespørger efter data/visninger/downloads om forretningsplanen.
+                                        var status = fc.GetNotifications(forretningsplan.Content.Id);
+                                        if (status != null)
+                                        {
+                                            foreach (var state in status)
+                                            {
+                                                <div class="messagewrapper shadowlight whitebg fleft mb15">
+                                                    <div class="messagewrappercontent">
+                                                        <div class="beskedbullet"></div>
+                                                        <div class="f18 fw400 ml20">
+                                                            <div class="f12 fleft w100 messagedate mb10 visible-xs">@state.UpdateDate.ToString("dd. MMMM yyyy")</div>
+                                                            @if (state.Seen == true && state.Downloaded == false)
+                                                            {
+                                                                @Html.Raw(string.Concat("Hej ", currentMember.Name.Split(' ').First(), ". ", UserController.GetMemberFullname(state.MemberId), " har netop set din business plan"))
+                                                            }
+                                                            else if (state.Seen == true && state.Downloaded == true)
+                                                            {
+                                                                @Html.Raw(string.Concat("Hej ", currentMember.Name.Split(' ').First(), ". ", UserController.GetMemberFullname(state.MemberId), " har netop downloadet din business plan"))
+                                                            }
+
+                                                        </div>
+                                                        <div class="f12 messagedate  hidden-xs">13. marts 2017</div>
+                                                        <a href="javascript:void(0);" data-dismiss="alert" aria-label="Close" class="poolbullets"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+
+                                    }
+
+
+
+
+
+                                }
+
+                            }
+
+                        </div>
+                    }
+                </div>
+
+                <div class="fleft w100" id="notif" style="display:none;">
+                    <div class="messagewrapper shadowlight whitebg fleft mb15">
+                        <div class="messagewrappercontent">
+                            <div class="notifbullet mr18"></div>
+                            <div class="f18 fw400 ml20">
+                                <div class="f12 fleft w100 messagedate mb10 visible-xs">13. marts 2017</div>
+                                Hej Anders. Thomas Finn Aldi har netop downloadet din business plan
+                            </div>
+                            <div class="f12 messagedate hidden-xs">13. marts 2017</div>
+                            <a href="javascript:void(0);" class="poolbullets"><i class="fa fa-times" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="messagewrapper shadowlight whitebg fleft mb15">
+                        <div class="messagewrappercontent">
+                            <div class="notifbullet mr18"></div>
+                            <div class="f18 fw400 ml20">
+                                <div class="f12 fleft w100 messagedate mb10 visible-xs">13. marts 2017</div>
+                                Hej Anders. Thomas Finn Aldi har netop downloadet din business plan
+                            </div>
+                            <div class="f12 messagedate hidden-xs">13. marts 2017</div>
+                            <a href="javascript:void(0);" class="poolbullets"><i class="fa fa-times" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+    }
+}
+@*<section id="upload" class="pt0">
+    <img src="@Page.wwbgimg.Url" id="cloudbg" />
+</section>*@
+
+<script>
+    $(".beskeder").click(function () {
+        $("#beskeder").show();
+        $("#notif").hide();
+        $(".beskeder").addClass("tabactive");
+        $(".notif").removeClass("tabactive");
+    });
+    $(".notif").click(function () {
+        $("#notif").show();
+        $("#beskeder").hide();
+        $(".beskeder").removeClass("tabactive");
+        $(".notif").addClass("tabactive");
+    });
+
+    $(".poolbullets").click(function () {
+        $(this).closest(".messagewrapper").hide();
+    });
+</script>

@@ -1,0 +1,187 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Services;
+@using System.Web
+@using Umbraco.Web.Security
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Extensions
+
+@{
+    Layout = "Master.cshtml";
+    MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+
+    IMember currentMember = null;
+    if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+    {
+        currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+    }
+
+    if (currentMember != null)
+    {
+
+        StartupCentral.Code.Model.ApiResponse formValidation = null;
+
+        if (IsPost)
+        {
+            formValidation = ValidateAndForm();
+            if (formValidation.Success)
+            {
+                Umbraco.Core.Models.IContent samarbejdsPartnerRootFolder = ApplicationContext.Current.Services.ContentService.GetById(Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["StartupCentral.Samarbejdspartnere.RootFolder.Id"]));
+                if (samarbejdsPartnerRootFolder != null)
+                {
+                    string kategori = Request.Form["kategori"];
+                    string firmanavn = Request.Form["firmanavn"];
+                    string weburl = Request.Form["weburl"];
+                    string indledning = Request.Form["indledning"];
+                    string uddybtxt = Request.Form["uddybtxt"];
+
+                    Umbraco.Core.Models.IContent samarbejdsPartner = ApplicationContext.Current.Services.ContentService.CreateContentWithIdentity(firmanavn, samarbejdsPartnerRootFolder, "samarbejdspartner");
+                    samarbejdsPartner.SetValue("wwkategori", kategori);
+                    samarbejdsPartner.SetValue("wwfirmanavn", firmanavn);
+                    samarbejdsPartner.SetValue("wwweburl", weburl);
+                    samarbejdsPartner.SetValue("wwindledning", indledning);
+                    samarbejdsPartner.SetValue("wwuddyb", uddybtxt);
+
+
+                    if (HttpContext.Current.Request.Files != null && HttpContext.Current.Request.Files.Count > 0)
+                    {
+
+                        IMedia folder = ApplicationContext.Current.Services.MediaService.GetById(Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["StartupCentral.Samarbejdspartnere.Media.RootFolder.Id"]));
+                        if (folder != null)
+                        {
+                            for (var i = 0; i < HttpContext.Current.Request.Files.Count; i++)
+                            {
+                                if (HttpContext.Current.Request.Files[i].ContentLength > 0)
+                                {
+                                    IMedia mediaFile = ApplicationContext.Current.Services.MediaService.CreateMedia(
+                                        HttpContext.Current.Request.Files[i].FileName, folder, "Image");
+                                    System.IO.Stream s = HttpContext.Current.Request.Files[i].InputStream;
+                                    mediaFile.SetValue("umbracoFile", HttpContext.Current.Request.Files[i].FileName, s);
+                                    s.Close();
+                                    ApplicationContext.Current.Services.MediaService.Save(mediaFile);
+
+                                    var udi = Udi.Create(Constants.UdiEntityType.Media, mediaFile.Key);
+                                    samarbejdsPartner.SetValue("wwlogo", udi.ToString());
+                                }
+                            }
+                        }
+                    }
+
+                    // Samarbejdspartnere er default aktiveret. Hvis dette ikke ønskes, så benyt denne linie i stedet for:
+                    //   ApplicationContext.Current.Services.ContentService.Save(samarbejdsPartner);
+                    ApplicationContext.Current.Services.ContentService.SaveAndPublishWithStatus(samarbejdsPartner);
+
+                }
+            }
+        }
+
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="bigheadline uppercase f80 f50mob mb40 fw700 dark">
+                            @Page.wwoverskrift
+                        </div>
+                        <div class="txt dark f18 fw600 lh24 mb60">
+                            @Page.bodyText
+                        </div>
+                    </div>
+                </div>
+                    <div class="shadowbox shadowlight pt49 pb49 pr39 pl39">
+                        <form action="" method="post" class="fleft w100" enctype="multipart/form-data">
+                            <div class="col-md-12">
+                                <div class="form-group w100">
+                                    <label for="Logo">Logo</label>
+                                    <input type="file" class="mb30 ml5" name="logofile" id="logofile">
+                                </div>
+                                <div class="form-group w100">
+                                    <label for="kategori">Kategori</label>
+                                    <select name="kategori" id="kategori" class="form-control inputfield">
+                                        <option>Vælg</option>
+                                        @foreach (var opt in Umbraco.Content(1651).Children())
+                                        {
+                                            <option value="@opt.Name">@opt.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group w100">
+                                    <label for="firmanavn">Firmanavn</label>
+                                    <input type="text" name="firmanavn" id="firmanavn" class=" inputfield">
+                                </div>
+                                <div class="form-group w100">
+                                    <label for="weburl">Hjemmesideadresse</label>
+                                    <input type="text" name="weburl" placeholder="http://" id="weburl" class="inputfield">
+                                </div>
+                                <div class="form-group w100">
+                                    <label for="indledning">Indledning (max <span id="charNum1" class="fw700 f15"></span> tegn)</label>
+                                    <textarea name="indledning" id="indledning" rows="6" maxlength="200" class="form-control inputfield"></textarea>
+                                </div>
+                                <div class="form-group w100">
+                                    <label for="uddybtxt">Uddybende tekst</label>
+                                    <textarea name="uddybtxt" id="uddybtxt" rows="6" class="form-control inputfield"></textarea>
+                                </div>
+
+                                @{
+                                    if (formValidation != null && !formValidation.Success)
+                                    {
+                                        <div><h5>@formValidation.Message</h5></div>
+                                    }
+                                }
+
+
+                                <div class="f14 lh26 fleft pull-left mt5"><a href="/login/samarbejdspartnere">Annuller</a></div>
+                                <input class="btnlightbg white pull-right" style="margin-top:0px;" value="Opret" type="submit">
+
+                            </div>
+                        </form>
+                    </div>
+            </div>
+        </section>
+
+        <section id="upload" class="pt0">
+            <img src="@Page.wwbgimg.Url" id="cloudbg" />
+        </section>
+    }
+}
+@functions {
+
+    public StartupCentral.Code.Model.ApiResponse ValidateAndForm()
+    {
+
+        MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+        IMember currentMember = null;
+        if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+        {
+            currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+        }
+
+        if (currentMember != null)
+        {
+            string kategori = Request.Form["kategori"];
+            string firmanavn = Request.Form["firmanavn"];
+            string weburl = Request.Form["weburl"];
+            string indledning = Request.Form["indledning"];
+            string uddybtxt = Request.Form["uddybtxt"];
+
+            if (string.IsNullOrEmpty(kategori))
+            {
+                return new StartupCentral.Code.Model.ApiResponse(false, "Kategori skal vælges.");
+            }
+
+            if (string.IsNullOrEmpty(firmanavn))
+            {
+                return new StartupCentral.Code.Model.ApiResponse(false, "Firmanavn skal udfyldes.");
+            }
+
+            return new StartupCentral.Code.Model.ApiResponse(true, "Ændringer er hermed gemt.");
+        }
+
+        return new StartupCentral.Code.Model.ApiResponse(false, "Brugeren kunne ikke findes?!");
+
+    }
+
+
+}

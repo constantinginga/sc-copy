@@ -1,0 +1,111 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+<section class="bmtp-reviews-section">
+    <div class="bmtp-reviews-title"><img src="@Umbraco.Media(40154).Url"><p style="font-family: 'Open Sans', sans-serif;"><b>| 195</b> anmeldelser</p></div> @*Local host img id: 40154 ; production img id: 40385 *@
+    <div class="bmtp-reviews-section-container">
+        <div class="swiper swiper1" style="height:270px">
+            <div class="swiper-wrapper">
+
+                @for (var i = 0; i < 8; i++)
+                {
+                    <div class="bmtp-review-card-container swiper-slide">
+                        <a href="@Umbraco.AssignedContentItem.Value($"bmtpReviewLink{i + 1}")">                           
+                        <div class="bmtp-review-card">
+                            <div class="bmtp-review-card-content">
+                                <div class="bmtp-review-card-top">
+                                    <div class="bmtp-review-star-container">
+                                        <img src="@Umbraco.Media(40153).Url">@*Local host img id: 40153 ; production img id: 40366 *@
+                                        @*<img src="@Umbraco.Media(38338).Url">
+                                            <img src="@Umbraco.Media(38338).Url">
+                                            <img src="@Umbraco.Media(38338).Url">
+                                            <img src="@Umbraco.Media(38338).Url">*@
+                                    </div>
+                                    <p><i>@Umbraco.AssignedContentItem.Value($"bmtpReviewDate{i + 1}")</i></p>
+                                    <!--<p class="bmtp-review-initials">@Umbraco.AssignedContentItem.Value($"bmtpReviewInitial{i + 1}")</p>--> @*@Umbraco.AssignedContentItem.Value($"bmtpReviewInitial{i + 1}")*@
+                                </div>
+                                <div class="bmtp-review-text-container">
+                                    <div class="bmtp-review-title">@Umbraco.AssignedContentItem.Value($"bmtpReviewTitle{i + 1}")</div>
+                                    <div class="bmtp-review-text">@Umbraco.AssignedContentItem.Value($"bmtpReviewText{i + 1}")</div>
+                                    <div class="bmtp-review-name">
+                                        <p>@Umbraco.AssignedContentItem.Value($"bmtpReviewName{i + 1}")</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="bmtp-arrow-prev1 swiper-button-prev" id="bmtp-arrow-left"></div>
+        <div class="bmtp-arrow-next1 swiper-button-next" id="bmtp-arrow-right"></div>
+        <div class="swiper-pagination" id="bmtp-pagination"></div>
+    </div>
+</section>
+
+
+@*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>*@
+
+<script>
+    const swiper1 = new Swiper('.swiper1', {
+        // Optional parameters
+        direction: 'horizontal',
+        slidesPerView: 4,
+        loop: true,
+        autoplay: true,
+        navigation: {
+            nextEl: '.bmtp-arrow-next1',
+            prevEl: '.bmtp-arrow-prev1',
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+
+        breakpoints: {
+            300: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+            },
+            750: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+                //navigation: {
+                //    nextEl: '',
+                //    prevEl: '',
+                //},
+            },
+            1000: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+            },
+            1200: {
+                slidesPerView: 3,
+                spaceBetween: 30,
+            },
+
+            1400: {
+                slidesPerView: 4,
+                spaceBetween: 30,
+            },
+        }
+    });
+</script>
+
+<script>
+    var elem1 = document.getElementById("bmtp-arrow-left");
+    var elem2 = document.getElementById("bmtp-arrow-right");
+    let pagi = document.querySelector(".swiper-pagination")
+    if (window.innerWidth < 1350) {
+
+        elem1.parentNode.removeChild(elem1);
+        elem2.parentNode.removeChild(elem2);
+
+    }
+    if (window.innerWidth >= 1350) {
+
+        pagi.parentNode.removeChild(pagi);
+    }
+</script>

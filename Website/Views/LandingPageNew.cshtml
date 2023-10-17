@@ -1,0 +1,306 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "Master.cshtml";
+    //var node = @Umbraco.Content(32211);
+    // set this to promocode from Upodi
+    var landingPromo = Model.Value("promocodeProperty");
+}
+
+<div class="landing-wrapper">
+    @*<div class="landing-topbar landing-section">
+            <img src="@Umbraco.Media(1658).Url" alt="Startup Central Logo" />
+        </div>*@
+    <section class="landing-above-container">
+        <div class="landing-above">
+            <div class="landing-above__hl">
+                <h1>@Umbraco.AssignedContentItem.Value("abovePfHeadline")</h1>
+                
+                @Umbraco.AssignedContentItem.Value("abovePfDescription")
+                @{
+                    var isMainBtnEnabled = Umbraco.AssignedContentItem.Value<bool>("toggleMainButton");
+                    var isSecondaryBtnEnabled = Umbraco.AssignedContentItem.Value<bool>("toggleSecondaryButton");
+                    if (isMainBtnEnabled || isSecondaryBtnEnabled)
+                    {
+                        <div class="landing-above__btns">
+                            @if (isMainBtnEnabled)
+                            {
+                                <a href="@Umbraco.AssignedContentItem.Value("mainButtonURL")" class="button full-btn main-btn">@Umbraco.AssignedContentItem.Value("abovePfMainButton")</a>
+                            }
+                            @if (isSecondaryBtnEnabled)
+                            {
+                                <a href="@Umbraco.AssignedContentItem.Value("secondaryButtonURL")" class="button outlined-btn secondary-btn">@Umbraco.AssignedContentItem.Value("abovePfSecondaryButton")</a>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+            <div class="landing-above__img">
+                <img src="@(((IPublishedContent) Umbraco.AssignedContentItem.Value("abovePfHeroImage")).Url)" alt="Landing page image" />
+            </div>
+        </div>
+        <div class="bg-squares">
+            <img src="@Umbraco.Media(30045).Url" alt="Dots" class="bg-squares__square">
+            <img src="@Umbraco.Media(30045).Url" alt="Dots" class="bg-squares__square">
+        </div>
+    </section>
+
+    @if (Umbraco.AssignedContentItem.Value<bool>("toggleBenefitsSection"))
+    {
+        <section class="landing-benefits-sec landing-section">
+
+            <h2 class="landing-benefits-sec__title">@Umbraco.AssignedContentItem.Value("benefitsSecTitle")</h2>
+
+            <div class="wavy-separator">
+                <div class="custom-shape-divider-top-1642517375">
+                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"
+                         preserveAspectRatio="none">
+                        <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                              class="shape-fill"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="benefits-container">
+                @{
+                    var imgIds = new int[] { 30054, 30055, 30049 };
+                }
+                @for (int i = 1; i <= 3; i++)
+                {
+                    if (Umbraco.AssignedContentItem.Value<bool>($"benefit{i}Toggle"))
+                    {
+                        <div data-aos="zoom-in" data-aos-delay="@(i * 150)" class="benefit-container">
+                            <!-- main Atropos container (required), add your custom class here -->
+                            <div class="atropos my-atropos" id="@($"my-atropos-{i}")">
+                                <!-- scale container (required) -->
+                                <div class="atropos-scale">
+                                    <!-- rotate container (required) -->
+                                    <div class="atropos-rotate">
+                                        <!-- inner container (required) -->
+                                        <div class="atropos-inner">
+                                            <!-- put your custom content here -->
+                                            <div class="benefit-img">
+                                                <img src="@Umbraco.Media(imgIds[i - 1]).Url" alt="Benefit Image">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="benefit-title">
+                                @Umbraco.AssignedContentItem.Value($"benefit{i}Title")
+                            </div>
+                            <div class="benefit-desc">
+                                @Umbraco.AssignedContentItem.Value($"benefit{i}Description")
+                            </div>
+                            <div class="benefit-btn">
+                                <a href="@Umbraco.AssignedContentItem.Value($"benefit{i}URL")" class="button full-btn">@Umbraco.AssignedContentItem.Value($"benefit{i}Button")</a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </section>
+    }
+
+    @if (Umbraco.AssignedContentItem.Value<bool>("toggleFormSection"))
+    {
+        <section class="landing-form-sec landing-section">
+            <div class="landing-form-container">
+                <div data-aos="fade-right" class="landing-form">
+                    <div class="form-header">
+                        <h3 class="form-header__title">@Umbraco.AssignedContentItem.Value("formHeader")</h3>
+                        @Umbraco.AssignedContentItem.Value("formSubheader")
+                    </div>
+                    <form action="#">
+                        @if (Umbraco.AssignedContentItem.Value<bool>("nameFormToggle"))
+                        {
+                            <div class="landing-form-elem">
+                                <label for="firstName">First name</label>
+                                <input type="text" id="firstName" name="firstName" />
+                            </div>
+                            <div class="landing-form-elem">
+                                <label for="lastName">Last name</label>
+                                <input type="text" id="lastName" name="lastName" />
+                            </div>
+                        }
+                        @if (Umbraco.AssignedContentItem.Value<bool>("emailFormToggle"))
+                        {
+                            <div class="landing-form-elem">
+                                <label for="email">Email address</label>
+                                <input type="email" id="email" name="email" />
+                            </div>
+                        }
+                        <div class="landing-form-pp">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="privacy-policy" name="privacy-policy" required />
+                                <span class="custom-checkbox__checkmark"></span>
+                            </label>
+                            <label for="privacy-policy">I have read the <a href="https://www.startupcentral.dk/privatlivspolitik/" target="_blank">Privacy policy</a></label>
+                        </div>
+                        <button type="submit" class="button button--lg full-btn submit-btn">@Umbraco.AssignedContentItem.Value("formButtonText")</button>
+                    </form>
+                </div>
+                <div data-aos="fade-left" class="form-info">
+                    <h2 class="form-info__title">@Umbraco.AssignedContentItem.Value("formTitle")</h2>
+                    @Umbraco.AssignedContentItem.Value("formDescription")
+                </div>
+            </div>
+        </section>
+    }
+
+    @if (Umbraco.AssignedContentItem.Value<bool>("toggleQuoteSection"))
+    {
+        <section class="landing-quote-sec landing-section">
+            <h2 class="landing-quote-sec__title">@Umbraco.AssignedContentItem.Value("quoteSectionTitle")</h2>
+            <div class="wavy-separator">
+                <div class="custom-shape-divider-top-1656078580">
+                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                        <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path>
+                        <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path>
+                        <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
+                    </svg>
+                </div>
+            </div>
+            @{
+                var random = new Random();
+                var reviews = Umbraco.Content(25745).Children().Where(x => x.IsVisible()).OrderBy(order => random.Next()).ToList();
+                var numOfReviews = Umbraco.AssignedContentItem.Value<int>("numberOfReviews");
+                reviews = reviews.Skip(reviews.Count() - numOfReviews).ToList();
+                <div class="splide" aria-label="Reviews">
+                    <div class="splide__track">
+                        <div class="splide__list">
+                            @foreach (var r in reviews)
+                            {
+                                var text = r.Value<string>
+                                    ("membersQuote");
+                                var img = r.Value<IPublishedContent>
+                                    ("membersPicture");
+                                var name = r.Value<string>
+                                    ("membersName");
+
+                                if (img != null)
+                                {
+                                    <div class="quote splide__slide">
+                                        <div class="quote__img">
+                                            <img src="@("https://www.startupcentral.dk" + img.Url + "?width=400")" alt="Quote author" />
+                                        </div>
+                                        <div class="quote__text-container">
+                                            <p>@text</p>
+                                            <div class="quote__author-container">
+                                                <p class="quote__author">@("-" + name)</p>
+                                                <div class="quote__rating">
+                                                    <img src="/media/lf5ks40f/stars.svg" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </section>
+    }
+</div>
+
+<style>
+    #main-footer > .row-container > .sc-footer {
+        display: none;
+    }
+
+    #sc-newsletter {
+        background: rgb(218,239,240);
+        padding-bottom: 0;
+    }
+</style>
+
+@if (!Umbraco.AssignedContentItem.Value<bool>("toggleNewsletterSection"))
+{
+    <style>
+        #sc-newsletter {
+            display: none;
+        }
+    </style>
+}
+
+@*form error checking*@
+<script>
+
+    const DEFAULT_COLOR = '#79797A';
+    const ERROR_COLOR = 'red';
+    const fn = $('#firstName');
+    const fnLabel = $('label[for="firstName"]');
+    const ln = $('#lastName');
+    const lnLabel = $('label[for="lastName"]');
+    const email = $('#email');
+    const emailLabel = $('label[for="email"]');
+    const cb = $('#privacy-policy');
+    const cbLabel = $('label[for="privacy-policy"]');
+
+    fn.on('input', () => checkInput(fn, fnLabel));
+    ln.on('input', () => checkInput(ln, lnLabel));
+    email.on('input', () => checkInput(email, emailLabel));
+    cb.change(function () {
+        cbLabel.css('color', !cb.is(':checked') ? ERROR_COLOR : '#182848');
+    });
+
+    $('.submit-btn').click(() => {
+        checkInput(fn, fnLabel);
+        checkInput(ln, lnLabel);
+        checkInput(email, emailLabel);
+        cbLabel.css('color', !cb.is(':checked') ? ERROR_COLOR : DEFAULT_COLOR);
+    });
+
+    $('.landing-form').submit(function (e) {
+        e.preventDefault();
+        if (fn.val() && ln.val() && email.val() && cb.is(':checked')) {
+            window.location.replace(`https://www.startupcentral.dk/bliv-medlem?landingpromo=${'@landingPromo'}`);
+        }
+    });
+
+    function checkInput(inp, inLabel) {
+        if (!inp.val()) {
+            inp.css('border-color', ERROR_COLOR);
+            inLabel.css('color', ERROR_COLOR);
+        } else {
+            inp.css('border-color', DEFAULT_COLOR);
+            inLabel.css('color', DEFAULT_COLOR);
+        }
+    }
+</script>
+
+<script src="~/scripts/splide-3.6.9/dist/js/splide.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var splide = new Splide('.splide', {
+            type: 'loop',
+            perPage: 1,
+            autoplay: true,
+            arrows: false,
+            pagination: false
+        });
+        splide.mount();
+    });
+</script>
+<script src="~/scripts/atropos/atropos.min.js"></script>
+<script>
+    const myAtroposOne = Atropos({
+        el: '#my-atropos-1',
+        shadow: false
+    });
+
+    const myAtroposTwo = Atropos({
+        el: '#my-atropos-2',
+        shadow: false
+    });
+
+    const myAtroposThree = Atropos({
+        el: '#my-atropos-3',
+        shadow: false
+    });
+</script>
+
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+    AOS.init();
+</script>
+                        

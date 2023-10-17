@@ -1,0 +1,46 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+
+<section class="sc-home-offers">
+    <div class="container card">
+        <div class="title-box">
+            <h2 class="headline-2">@Umbraco.AssignedContentItem.Value("offersSectionTitle")</h2>
+            <h2>@Umbraco.AssignedContentItem.Value("offersSectionSubTitle")</h2>
+            <p class="lead">@Umbraco.AssignedContentItem.Value("offersSectionText")</p>
+        </div>
+
+        <div class="offers-container">
+            <div class="column-container">
+                <div class="offer centered">
+                    <div class="icon-container">
+                        <span class="icon">@Umbraco.AssignedContentItem.Value("leftOfferIcon")</span>
+                    </div>
+                    <h3>@Umbraco.AssignedContentItem.Value("leftOfferTitle")</h3>
+                    <p>@Umbraco.AssignedContentItem.Value("leftOfferDescription")</p>
+                </div>
+            </div>
+            <div class="column-container">
+                <div class="offer centered">
+                    <div class="icon-container">
+                        <span class="icon">@Umbraco.AssignedContentItem.Value("centerOfferIcon")</span>
+                    </div>
+                    <h3>@Umbraco.AssignedContentItem.Value("centerOfferTitle")</h3>
+                    <p>@Umbraco.AssignedContentItem.Value("centerOfferDescription")</p>
+                </div>
+            </div>
+            <div class="column-container">
+                <div class="offer centered">
+                    <div class="icon-container">
+                        <span class="icon">@Umbraco.AssignedContentItem.Value("rightOfferIcon")</span>
+                    </div>
+                    <h3>@Umbraco.AssignedContentItem.Value("rightOfferTitle")</h3>
+                    <p>@Umbraco.AssignedContentItem.Value("rightOfferDescription")</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="read-more-box">
+            <a href="@Umbraco.Content(29767).Url" class="read-more">Start i dag</a>
+        </div>
+    </div>
+</section>

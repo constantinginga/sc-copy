@@ -1,0 +1,151 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+
+@using Umbraco.Web.PublishedContentModels
+@using Umbraco.Web.Models
+@using Umbraco.Web.Security
+@using umbraco.cms.businesslogic.member
+@using System.Web
+@using System.Web.Security
+
+@Umbraco.RenderMacro("deviceIcons")
+
+@{
+    MembershipHelper membershipHelper = new MembershipHelper(UmbracoContext.Current);
+    IMember currentMember = null;
+    if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+    {
+        currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+    }
+
+    <script>
+    var userToken = ''
+    @if (currentMember != null)
+    {
+        @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(currentMember), "';"))
+    }
+    </script>
+}
+
+
+@{
+	var currentUser = Members.GetCurrentMember();
+	var loginStatusModel = Members.GetCurrentLoginStatus();
+
+	var navbar = Umbraco.TypedContent(24230);	
+	var navbarItems = navbar.Children("navigationItems").Where(x => x.IsVisible());	
+    
+    var image = navbar.GetPropertyValue<Image>("languageImage");
+}
+
+	<nav class="navbar navbar-expand-lg fixed-top py-3 navBarReset">
+        <div class="container-fluid"><a href="https://www.startupcentral.dk/" class="navbar-brand text-uppercase font-weight-bold"><img src="/media/1649/suc-white-logo.svg" alt="StartupCentral Logo" height="40"></a>
+            <button type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler navbar-toggler-right"><i class="fa fa-bars"></i></button>
+            
+            <div id="navbarSupportedContent" class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                     @{	
+				        if (User.Identity.IsAuthenticated && Umbraco.Member(currentUser.Id).DocumentTypeAlias == "student")
+				    	{
+				    		<li class="nav-item">
+						    <a href="/login/lav-din-foretningsplan/introduktion/" class="nav-link" id="foretningsplan-nav">Opret din forretningside</a>
+				        	</li>
+				    	}
+					   }
+                     @foreach(var item in navbarItems)
+					    {  
+    					    var navValue = item.GetPropertyValue("navName");
+    					    @*dropdowns logic*@
+                            if(item.GetPropertyValue<bool>("hasDropDown"))
+                            {
+                                var dropdowns = navbarItems.Where(x => x.IsVisible()).Where(x => x.Name == ""+@navValue).Select(x => x.Id).FirstOrDefault();
+        					    var childDropDown = Umbraco.TypedContent(dropdowns).Children().Where(x => x.IsVisible());
+                                 @*check if navigation link name is our offers, then check if it is student and then add our offers...*@
+                                if(navValue.ToString().Contains("Vi Tilbyder") || navValue.ToString().Contains("Our Offers"))
+                                {
+    					            if (User.Identity.IsAuthenticated && Umbraco.Member(currentUser.Id).DocumentTypeAlias == "student")
+                                    {
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link  dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@navValue</a>
+                                            <div class="dropdown-menu text-left" aria-labelledby="navbarDropdown">
+                                                @foreach(var element in childDropDown)
+            								    {
+            								        <a class="dropdown-item"  href="@element.GetPropertyValue("dropDownLink")">@element.GetPropertyValue("dropDownName")</a>
+            									}
+                                            <div>
+                                        </li>
+                                    }
+                                    else if (!(User.Identity.IsAuthenticated))
+                                    {
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link  dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@navValue</a>
+                                            <div class="dropdown-menu text-center" aria-labelledby="navbarDropdown">
+                                                @foreach(var element in childDropDown)
+            								    {
+            								        <a class="dropdown-item"  href="@element.GetPropertyValue("dropDownLink")">@element.GetPropertyValue("dropDownName")</a>
+            									}
+                                            <div>
+                                        </li>
+                                    }
+                                    
+                                }      
+                                else
+                                {
+                                    <li class="nav-item dropdown">
+                                            <a class="nav-link  dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@navValue</a>
+                                            <div class="dropdown-menu text-center" aria-labelledby="navbarDropdown">
+                                                @foreach(var element in childDropDown)
+            								    {
+            								        <a class="dropdown-item"  href="@element.GetPropertyValue("dropDownLink")">@element.GetPropertyValue("dropDownName")</a>
+            									}
+                                            <div>
+                                        </li>
+                                }
+                            }
+                            @*dropdowns logic finished*@
+                            @*check if it is messages tab and add extra icon*@
+                            else if(navValue.ToString().Contains("Beskeder") || navValue.ToString().Contains("Messages"))
+                            {
+                            <li class="nav-item active"><a href="@item.GetPropertyValue("link")" class="nav-link">@navValue @Umbraco.RenderMacro("IndicatorMessages")</a></li>
+                            }
+                            @*classic navigation link*@
+                            else
+                            {
+                            <li class="nav-item active"><a href="@item.GetPropertyValue("link")" class="nav-link">@navValue</a></li>
+                		    }
+                		} @*end of the for loop for generating navigation links*@
+                		
+                		@*adding extra nav links for student or coach, checking if there is language icon and add translation anv link*@
+                		@{
+                            if (User.Identity.IsAuthenticated && Umbraco.Member(currentUser.Id).DocumentTypeAlias == "student")
+					        {
+					        <li class="nav-item active"><a href="@navbar.GetPropertyValue("tab1UrlStudent")" class="nav-link">@navbar.GetPropertyValue("tab1Student")</a></li>
+					        }
+					        else if(User.Identity.IsAuthenticated && Umbraco.Member(currentUser.Id).DocumentTypeAlias == "coach1")
+					        {
+					          <li class="nav-item active"><a href="@navbar.GetPropertyValue("minSideUrlCoach")" class="nav-link">@navbar.GetPropertyValue("tab1Coahces")</a></li>
+					        } 
+                            if (image != null)
+                            {
+                             <li class="nav-item active"><a href="@navbar.GetPropertyValue("langUrl")" class="nav-link"><img src="@image.GetCropUrl("languageImage")"
+                                                        class="rounded-circle" alt="language"></a></li>
+                            }
+                    	}
+                    	 
+                    	@*log out button*@
+                    	@{	
+    				        if (User.Identity.IsAuthenticated)
+    					    {
+    							<li class="nav-item">
+    							<form action="/login/besked-til-student/" enctype="multipart/form-data" method="post">        
+                                <button id="logoutbutton" class="btn btn-link" style="text-decoration:none; color:white;">Log Out <i class="fas fa-sign-out-alt"></i></button>
+                                <input id="logoutModel_RedirectUrl" name="logoutModel.RedirectUrl" type="hidden" value="https://www.startupcentral.dk" />
+                                <input name='ufprt' type='hidden' value='BAB0D20D4E418E193114B8C1857001AFD77C1E324AAB2DB1AF15B2BB35A401EE4EC81757A56AC10C8BEA0C38B0A092F4BD2D676E36871F0CD4C91918A79B732B03A107B0B676B65D6390B9E9B85020C27E628B6218FF27196C9509CB76197CBF2629BFDA45AF09CE0888DF5E441D8FD51E0CD9BEC6D17E51EC249E732AD2C2192B8ED99A56DACEA1A586B876F7C233B350CDB8FE26B692B3EC08A00E029AEEB0' /></form>
+                                </li>
+    					    }
+					    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+

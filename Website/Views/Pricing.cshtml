@@ -1,0 +1,80 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "Master.cshtml";
+
+    //var currentNode = UmbracoContext.Current.PublishedContentRequest.PublishedContent;
+    //var currentNode = Current.UmbracoContext.PublishedRequest.PublishedContent
+    var currentNode = Umbraco.AssignedContentItem;
+    var cNodeC = currentNode.Children.Where(x=>x.IsVisible());
+    var landingPromoCode = Request.QueryString["landingpromo"];
+}
+@{
+    var currentUser = Members.GetCurrentMember();
+}
+<div class="content-header">
+    <div class="row-container centered">
+        <div class="row">
+            <div class="column-container">
+                <div class="column centered">
+                    <h1 class="headline-1">
+                        @Model.Value("title")
+                    </h1>
+                    <p class="lead">
+                        @Model.Value("subtitle")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+<img class="content-header__image" alt="StartupCentralHeader"> 
+</div>
+
+
+<main class="sc-pricing-page">
+    <div class="row-container" style="width: 1375px">
+                    @Html.Partial("~/Views/New_PriceCards.cshtml")
+        <div class="row">
+            <div class="column-container">
+                <div class="column centered">
+                    <p>@Model.Value("pricingTextAboveCards")</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column-container">
+                <div class="column centered">
+                    <p>@Model.Value("pricingTextBellowCards")</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="column-container">
+                <div class="column centered content-column">
+                    <h3 class="headline-3">@Model.Value("pricingSectionTitle")</h3>
+                    <p>@Model.Value("pricingSectionDescription")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@*<script>
+
+    // set payment plan amount and type in session state
+    function savePlan(amount, type, promocode) {
+
+        $.ajax({
+            url: '/umbraco/Surface/RegisterUserDetails/SavePaymentSession',
+            type: 'POST',
+            data: {
+                amount: amount,
+                type: type
+            },
+            success: function (data) {
+                console.log(promocode);
+                window.location.href = (promocode) ? `${'https://www.startupcentral.dk/bliv-medlem/'}?plan=${type}&landingpromo=${promocode}` : `${'https://www.startupcentral.dk/bliv-medlem/'}?plan=${type}`;
+            }
+        });
+    }
+</script>*@

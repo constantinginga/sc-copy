@@ -1,0 +1,896 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedContentModels;
+@using umbraco.cms.businesslogic.member
+@using Umbraco.Core.Services;
+@using System.Web
+@using Umbraco.Web.Security
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Extensions
+
+@{
+    Layout = "Master.cshtml";
+
+    var currentUser = Members.GetCurrentMember();
+    var _memberService = ApplicationContext.Current.Services.MemberService;
+    var member = _memberService.GetById(currentUser.Id);
+
+    var php = string.Empty;
+    var logoUrl = string.Empty;
+
+    try
+    {
+        php = currentUser.Value<IPublishedContent>("wwavatar").Url();
+        logoUrl = currentUser.Value<IPublishedContent>("companyLogo").Url();
+    }
+    catch
+    {
+    }
+
+}
+<main id="sc-logged-profilepage" class="sc-logged sc-bgb10">
+    <div class="profile-grid">
+        <div class="user-profile">
+            <div class="user-profile__cover">
+                <img src="/media/2327/profil-cover-standard2_tegnebraet-1-kopi-2.png" alt="coverImage">
+            </div>
+            <div class="user-profile__profile">
+                <img src="@(!string.IsNullOrEmpty(php) ? php : "/media/1195/startup-central-bruger.jpg")" alt=""
+                     class="user-profile__image entity-image entity-image-circle entity-image-104">
+                <h3 class="user-profile__name">@currentUser.Name</h3>
+                <p class="user-profile__description">
+                    @currentUser.Value("wwquote")
+                </p>
+            </div>
+            <div class="user-profile__info">
+                <ul class="user-profile__infobox">
+                    <li class="user-profile__infobox-item">
+                        <svg id="Edit" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                             viewBox="0 0 24 24">
+                            <path id="Path_155" data-name="Path 155" d="M0,0H24V24H0Z" fill="none"></path>
+                            <path id="Path_156" data-name="Path 156"
+                                  d="M3,17.46V20.5a.5.5,0,0,0,.5.5H6.54a.469.469,0,0,0,.35-.15L17.81,9.94,14.06,6.19,3.15,17.1a.491.491,0,0,0-.15.36ZM20.71,7.04a1,1,0,0,0,0-1.41L18.37,3.29a1,1,0,0,0-1.41,0L15.13,5.12l3.75,3.75,1.83-1.83Z"
+                                  fill="#cecece"></path>
+                        </svg>
+                        <span>Started - @currentUser.Value("cVRStartDate")</span>
+                    </li>
+                    <li class="user-profile__infobox-item">
+                        <svg class="material" id="Location" xmlns="http://www.w3.org/2000/svg" width="24"
+                             height="24" viewBox="0 0 24 24">
+                            <g id="Group_23" data-name="Group 23">
+                                <rect id="Rectangle_10" data-name="Rectangle 10" width="24" height="24"
+                                      fill="none" />
+                            </g>
+                            <g id="Group_24" data-name="Group 24" transform="translate(4 2)">
+                                <path id="Path_69" data-name="Path 69"
+                                      d="M12,2a7.955,7.955,0,0,0-8,8.2q0,4.77,7.34,11.23a1.017,1.017,0,0,0,1.33,0Q19.99,14.965,20,10.2A7.955,7.955,0,0,0,12,2Zm0,10a2,2,0,1,1,2-2A2.006,2.006,0,0,1,12,12Z"
+                                      transform="translate(-4 -2)" fill="#cecece" />
+                            </g>
+                        </svg>
+                        <span>Location - @currentUser.Value("cvrZipCode"), @currentUser.Value("cvrCity")</span>
+                    </li>
+                    <li class="user-profile__infobox-item">
+                        <svg class="material" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24"
+                             width="24px" fill="#cecece">
+                            <path d="M0 0h24v24H0V0z" fill="none" />
+                            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V18c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05.02.01.03.03.04.04 1.14.83 1.93 1.94 1.93 3.41V18c0 .35-.07.69-.18 1H22c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5z" />
+                        </svg>
+                        <span>Employees - @currentUser.Value("cVREmployees")</span>
+                    </li>
+                    <li class="user-profile__infobox-item">
+                        <svg class="material" id="Business" xmlns="http://www.w3.org/2000/svg" width="24"
+                             height="24" viewBox="0 0 32 32">
+                            <path id="Path_63" data-name="Path 63" d="M0,0H32V32H0Z" fill="none" />
+                            <path id="Path_64" data-name="Path 64"
+                                  d="M16,8.778V5.889A2.854,2.854,0,0,0,13.2,3H4.8A2.854,2.854,0,0,0,2,5.889V26.111A2.854,2.854,0,0,0,4.8,29H27.2A2.854,2.854,0,0,0,30,26.111V11.667a2.854,2.854,0,0,0-2.8-2.889ZM7.6,26.111H4.8V23.222H7.6Zm0-5.778H4.8V17.444H7.6Zm0-5.778H4.8V11.667H7.6Zm0-5.778H4.8V5.889H7.6Zm5.6,17.333H10.4V23.222h2.8Zm0-5.778H10.4V17.444h2.8Zm0-5.778H10.4V11.667h2.8Zm0-5.778H10.4V5.889h2.8ZM25.8,26.111H16V23.222h2.8V20.333H16V17.444h2.8V14.556H16V11.667h9.8a1.427,1.427,0,0,1,1.4,1.444V24.667A1.427,1.427,0,0,1,25.8,26.111ZM24.4,14.556H21.6v2.889h2.8Zm0,5.778H21.6v2.889h2.8Z"
+                                  transform="translate(0 0)" fill="#cecece" />
+                        </svg>
+                        <span>CVR - @currentUser.Value("cvr")</span>
+                    </li>
+                </ul>
+
+                <div class="user-profile__info-edit">
+                    <button class="button--svg" onclick="location.href='/login/indstillinger/'" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                             viewBox="0 0 24 24">
+                            <path id="Path_155" data-name="Path 155" d="M0,0H24V24H0Z" fill="none"></path>
+                            <path id="Path_156" data-name="Path 156"
+                                  d="M3,17.46V20.5a.5.5,0,0,0,.5.5H6.54a.469.469,0,0,0,.35-.15L17.81,9.94,14.06,6.19,3.15,17.1a.491.491,0,0,0-.15.36ZM20.71,7.04a1,1,0,0,0,0-1.41L18.37,3.29a1,1,0,0,0-1.41,0L15.13,5.12l3.75,3.75,1.83-1.83Z"
+                                  fill="#18284850"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="user-profile__info-buttons">
+                    <button id="mycompany" class="button button--text is-active">
+                        Min virksomhed
+                    </button>
+                    <button id="aboutme" class="button button--text">
+                        Om mig
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-grid rail-grid--2-column">
+        <aside>
+            @*Left side container company view*@
+            <div class="entity-profile-container" id="profilecontainercompany">
+                <div class="settings-heading">
+                    <h3>Om din virksomhed</h3>
+                    <button class="button--svg" id="companyShortDescriptionbtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path id="Path_155" data-name="Path 155" d="M0,0H24V24H0Z" fill="none"></path>
+                            <path id="Path_156" data-name="Path 156"
+                                  d="M3,17.46V20.5a.5.5,0,0,0,.5.5H6.54a.469.469,0,0,0,.35-.15L17.81,9.94,14.06,6.19,3.15,17.1a.491.491,0,0,0-.15.36ZM20.71,7.04a1,1,0,0,0,0-1.41L18.37,3.29a1,1,0,0,0-1.41,0L15.13,5.12l3.75,3.75,1.83-1.83Z"
+                                  fill="#18284850"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="entity-profile">
+                    @if (!string.IsNullOrEmpty(logoUrl))
+                    {
+                        <img id="companylogophparea" src="@logoUrl" alt="Company Logo" class="entity-image entity-image-56">
+                    }
+                    <div class="entity-profile__headline" id="insertbeforephp">
+                        <h3 class="entity-profile__profile-name" id="companyWebSiteLinkH3">
+                            <a id="companyWebSiteLinkarea" target="_blank" href="@currentUser.Value("companyWebSiteLink")" style="@(!string.IsNullOrEmpty(currentUser.Value<string>("companyWebSiteLink")) ? "" : "display:none;")">
+                                Dette er min virksomhed
+                                <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 24 24" width="16px"
+                                     fill="#182848">
+                                    <path d="M0 0h24v24H0V0z" fill="none" />
+                                    <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
+                                </svg>
+                            </a>
+                            @* } *@
+                        </h3>
+                    </div>
+                </div>
+                <div id="companyShortDescriptionarea">
+                    @Html.Raw(member.GetValue<string>("companyShortDescription"))
+                </div>
+            </div>
+
+            @*SoMe Company*@
+            <div class="entity-profile-container" id="profilecontainercompanysome">
+                <div class="settings-heading">
+                    <h3>Sociale medier</h3>
+                    <button class="button--svg" id="companySocial">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                             viewBox="0 0 24 24">
+                            <path id="Path_155" data-name="Path 155" d="M0,0H24V24H0Z" fill="none"></path>
+                            <path id="Path_156" data-name="Path 156"
+                                  d="M3,17.46V20.5a.5.5,0,0,0,.5.5H6.54a.469.469,0,0,0,.35-.15L17.81,9.94,14.06,6.19,3.15,17.1a.491.491,0,0,0-.15.36ZM20.71,7.04a1,1,0,0,0,0-1.41L18.37,3.29a1,1,0,0,0-1.41,0L15.13,5.12l3.75,3.75,1.83-1.83Z"
+                                  fill="#18284850"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="some-links" id="socialiconscompany">
+                    
+                    <a class="some-link" href="@member.GetValue("companySocialFacebook")" id="companySocialFacebookarea" target="_blank" style="@(!string.IsNullOrEmpty(currentUser.Value<string>("companySocialFacebook")) ? "" : "display:none;")">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 32 32">
+                            <g id="Group_62" data-name="Group 62" transform="translate(0 -1087.6)">
+                                <g id="Budget_22_" transform="translate(0 1087.6)">
+                                    <path id="Path_1_22_" d="M-301,467.6h32v32h-32Z"
+                                            transform="translate(301 -467.6)" fill="none"></path>
+                                </g>
+                                <path id="Path_148" data-name="Path 148"
+                                        d="M23.3,1094.3H8.7a2.006,2.006,0,0,0-2,2v14.6a2.006,2.006,0,0,0,2,2h5.7v-6.3H11.8v-3h2.6v-2.3c0-2.6,1.5-4,3.9-4a16.308,16.308,0,0,1,2.3.2v2.5H19.3a1.5,1.5,0,0,0-1.7,1.6v1.9h2.8l-.5,3H17.5v6.3h5.7a2.006,2.006,0,0,0,2-2v-14.6A1.837,1.837,0,0,0,23.3,1094.3Z"
+                                        fill="#182848"></path>
+                            </g>
+                        </svg>
+                    </a>
+                            
+                    <a class="some-link" href="@member.GetValue("companySociaLinkedIn")" id="companySociaLinkedInarea" target="_blank" style="@(!string.IsNullOrEmpty(currentUser.Value<string>("companySociaLinkedIn")) ? "" : "display:none;")">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 32 32">
+                            <g id="Group_64" data-name="Group 64" transform="translate(0 -1135.6)">
+                                <g id="Budget_20_" transform="translate(0 1135.6)">
+                                    <path id="Path_1_20_" d="M-301,515.6h32v32h-32Z"
+                                            transform="translate(301 -515.6)" fill="none"></path>
+                                </g>
+                                <path id="Path_150" data-name="Path 150"
+                                        d="M23.9,1142.3H8a1.324,1.324,0,0,0-1.3,1.3v15.9a1.324,1.324,0,0,0,1.3,1.3H23.9a1.324,1.324,0,0,0,1.3-1.3v-15.9A1.206,1.206,0,0,0,23.9,1142.3Zm-11.6,15.9H9.6v-8.8h2.8l-.1,8.8Zm-1.3-10a1.6,1.6,0,1,1,1.6-1.6A1.645,1.645,0,0,1,11,1148.2Zm11.6,10H19.9v-4.3c0-1,0-2.3-1.4-2.3s-1.7,1.1-1.7,2.3v4.4H14.1v-8.8h2.6v1.2h0a2.949,2.949,0,0,1,2.6-1.4c2.8,0,3.3,1.8,3.3,4.2v4.7Z"
+                                        fill="#182848"></path>
+                            </g>
+                        </svg>
+                    </a>
+                         
+                    <a class="some-link" href="@member.GetValue("companySocialInstagram")" id="companySocialInstagramarea" target="_blank" style="@(!string.IsNullOrEmpty(currentUser.Value<string>("companySocialInstagram")) ? "" : "display:none;")">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 32 32">
+                            <g id="Instagram" transform="translate(0 -1183.6)">
+                                <g id="Budget_14_" transform="translate(0 1183.6)">
+                                    <path id="Path_1_14_" d="M-301,563.6h32v32h-32Z"
+                                            transform="translate(301 -563.6)" fill="none"></path>
+                                </g>
+                                <g id="Group_57" data-name="Group 57" transform="translate(6.725 1190.325)">
+                                    <path id="Path_142" data-name="Path 142"
+                                            d="M16,1194.8a4.8,4.8,0,0,0-4.8,4.8,4.739,4.739,0,0,0,4.8,4.8h0a4.8,4.8,0,0,0,0-9.6Zm0,7.9a3.1,3.1,0,1,1,3.1-3.1A3.116,3.116,0,0,1,16,1202.7Z"
+                                            transform="translate(-6.725 -1190.325)" fill="#182848"></path>
+                                    <path id="Path_143" data-name="Path 143"
+                                            d="M22.1,1194.6h0a1.11,1.11,0,0,1-1.1,1.1h0a1.1,1.1,0,1,1,1.1-1.1Z"
+                                            transform="translate(-6.725 -1190.325)" fill="#182848"></path>
+                                    <path id="Path_144" data-name="Path 144"
+                                            d="M25.2,1195.8a5.606,5.606,0,0,0-1.5-3.9,5.606,5.606,0,0,0-3.9-1.5c-1.5-.1-6.1-.1-7.6,0a5.606,5.606,0,0,0-3.9,1.5,5.606,5.606,0,0,0-1.5,3.9c-.1,1.5-.1,6.1,0,7.6a5.606,5.606,0,0,0,1.5,3.9,5.605,5.605,0,0,0,3.9,1.5c1.5.1,6.1.1,7.6,0a5.605,5.605,0,0,0,3.9-1.5,5.606,5.606,0,0,0,1.5-3.9C25.3,1201.9,25.3,1197.3,25.2,1195.8Zm-2,9.3a3.512,3.512,0,0,1-1.8,1.8c-1.2.5-4.1.4-5.5.4-1.3,0-4.2.1-5.5-.4a3.512,3.512,0,0,1-1.8-1.8c-.5-1.2-.4-4.1-.4-5.5s-.1-4.2.4-5.5a3.512,3.512,0,0,1,1.8-1.8c1.2-.5,4.1-.4,5.5-.4s4.2-.1,5.5.4a3.512,3.512,0,0,1,1.8,1.8h0c.5,1.2.4,4.1.4,5.5S23.7,1203.8,23.2,1205.1Z"
+                                            transform="translate(-6.725 -1190.325)" fill="#182848"></path>
+                                </g>
+                            </g>
+                        </svg>
+                    </a>
+                    
+                </div>
+            </div>
+
+            @*SoMe Personal*@
+            <div class="entity-profile-container" id="profilecontainerpersonalsome" style="display:none;">
+                <div class="settings-heading">
+                    <h3>Sociale medier</h3>
+                    <button class="button--svg" id="personalSocial">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                             viewBox="0 0 24 24">
+                            <path id="Path_155" data-name="Path 155" d="M0,0H24V24H0Z" fill="none"></path>
+                            <path id="Path_156" data-name="Path 156"
+                                  d="M3,17.46V20.5a.5.5,0,0,0,.5.5H6.54a.469.469,0,0,0,.35-.15L17.81,9.94,14.06,6.19,3.15,17.1a.491.491,0,0,0-.15.36ZM20.71,7.04a1,1,0,0,0,0-1.41L18.37,3.29a1,1,0,0,0-1.41,0L15.13,5.12l3.75,3.75,1.83-1.83Z"
+                                  fill="#18284850"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="some-links" id="socialiconsprivate">
+
+                    <a class="some-link" href="@member.GetValue("wwsocialfb")" id="wwsocialfbarea" target="_blank" style="@(!string.IsNullOrEmpty(currentUser.Value<string>("wwsocialfb")) ? "" : "display:none;")" >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 32 32">
+                            <g id="Group_62" data-name="Group 62" transform="translate(0 -1087.6)">
+                                <g id="Budget_22_" transform="translate(0 1087.6)">
+                                    <path id="Path_1_22_" d="M-301,467.6h32v32h-32Z"
+                                            transform="translate(301 -467.6)" fill="none"></path>
+                                </g>
+                                <path id="Path_148" data-name="Path 148"
+                                        d="M23.3,1094.3H8.7a2.006,2.006,0,0,0-2,2v14.6a2.006,2.006,0,0,0,2,2h5.7v-6.3H11.8v-3h2.6v-2.3c0-2.6,1.5-4,3.9-4a16.308,16.308,0,0,1,2.3.2v2.5H19.3a1.5,1.5,0,0,0-1.7,1.6v1.9h2.8l-.5,3H17.5v6.3h5.7a2.006,2.006,0,0,0,2-2v-14.6A1.837,1.837,0,0,0,23.3,1094.3Z"
+                                        fill="#182848"></path>
+                            </g>
+                        </svg>
+                    </a>
+                                     
+                    <a class="some-link" href="@member.GetValue("wwsociallinkedin")" id="wwsociallinkedinarea" target="_blank" style="@(!string.IsNullOrEmpty(currentUser.Value<string>("wwsociallinkedin")) ? "" : "display:none;")">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 32 32">
+                            <g id="Group_64" data-name="Group 64" transform="translate(0 -1135.6)">
+                                <g id="Budget_20_" transform="translate(0 1135.6)">
+                                    <path id="Path_1_20_" d="M-301,515.6h32v32h-32Z"
+                                            transform="translate(301 -515.6)" fill="none"></path>
+                                </g>
+                                <path id="Path_150" data-name="Path 150"
+                                        d="M23.9,1142.3H8a1.324,1.324,0,0,0-1.3,1.3v15.9a1.324,1.324,0,0,0,1.3,1.3H23.9a1.324,1.324,0,0,0,1.3-1.3v-15.9A1.206,1.206,0,0,0,23.9,1142.3Zm-11.6,15.9H9.6v-8.8h2.8l-.1,8.8Zm-1.3-10a1.6,1.6,0,1,1,1.6-1.6A1.645,1.645,0,0,1,11,1148.2Zm11.6,10H19.9v-4.3c0-1,0-2.3-1.4-2.3s-1.7,1.1-1.7,2.3v4.4H14.1v-8.8h2.6v1.2h0a2.949,2.949,0,0,1,2.6-1.4c2.8,0,3.3,1.8,3.3,4.2v4.7Z"
+                                        fill="#182848"></path>
+                            </g>
+                        </svg>
+                    </a>
+                    
+                    <a class="some-link" href="@member.GetValue("wwsocialinstagram")" id="wwsocialinstagramarea" target="_blank" style="@(!string.IsNullOrEmpty(currentUser.Value<string>("wwsocialinstagram")) ? "" : "display:none;")">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 32 32">
+                            <g id="Instagram" transform="translate(0 -1183.6)">
+                                <g id="Budget_14_" transform="translate(0 1183.6)">
+                                    <path id="Path_1_14_" d="M-301,563.6h32v32h-32Z"
+                                            transform="translate(301 -563.6)" fill="none"></path>
+                                </g>
+                                <g id="Group_57" data-name="Group 57" transform="translate(6.725 1190.325)">
+                                    <path id="Path_142" data-name="Path 142"
+                                            d="M16,1194.8a4.8,4.8,0,0,0-4.8,4.8,4.739,4.739,0,0,0,4.8,4.8h0a4.8,4.8,0,0,0,0-9.6Zm0,7.9a3.1,3.1,0,1,1,3.1-3.1A3.116,3.116,0,0,1,16,1202.7Z"
+                                            transform="translate(-6.725 -1190.325)" fill="#182848"></path>
+                                    <path id="Path_143" data-name="Path 143"
+                                            d="M22.1,1194.6h0a1.11,1.11,0,0,1-1.1,1.1h0a1.1,1.1,0,1,1,1.1-1.1Z"
+                                            transform="translate(-6.725 -1190.325)" fill="#182848"></path>
+                                    <path id="Path_144" data-name="Path 144"
+                                            d="M25.2,1195.8a5.606,5.606,0,0,0-1.5-3.9,5.606,5.606,0,0,0-3.9-1.5c-1.5-.1-6.1-.1-7.6,0a5.606,5.606,0,0,0-3.9,1.5,5.606,5.606,0,0,0-1.5,3.9c-.1,1.5-.1,6.1,0,7.6a5.606,5.606,0,0,0,1.5,3.9,5.605,5.605,0,0,0,3.9,1.5c1.5.1,6.1.1,7.6,0a5.605,5.605,0,0,0,3.9-1.5,5.606,5.606,0,0,0,1.5-3.9C25.3,1201.9,25.3,1197.3,25.2,1195.8Zm-2,9.3a3.512,3.512,0,0,1-1.8,1.8c-1.2.5-4.1.4-5.5.4-1.3,0-4.2.1-5.5-.4a3.512,3.512,0,0,1-1.8-1.8c-.5-1.2-.4-4.1-.4-5.5s-.1-4.2.4-5.5a3.512,3.512,0,0,1,1.8-1.8c1.2-.5,4.1-.4,5.5-.4s4.2-.1,5.5.4a3.512,3.512,0,0,1,1.8,1.8h0c.5,1.2.4,4.1.4,5.5S23.7,1203.8,23.2,1205.1Z"
+                                            transform="translate(-6.725 -1190.325)" fill="#182848"></path>
+                                </g>
+                            </g>
+                        </svg>
+                    </a>
+                    
+                </div>
+            </div>
+
+        </aside>
+
+        @*Right side container*@
+        <div class="feed-rail">
+
+            @*Company*@
+            <div class="feed-rail-container" id="feedrailcompany">
+                <div class="settings-heading">
+                    <h3>Yderligere informationer om din virksomhed</h3>
+                    <button class="button--svg" id="companyLongDescriptionbtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                             viewBox="0 0 24 24">
+                            <path id="Path_155" data-name="Path 155" d="M0,0H24V24H0Z" fill="none"></path>
+                            <path id="Path_156" data-name="Path 156"
+                                  d="M3,17.46V20.5a.5.5,0,0,0,.5.5H6.54a.469.469,0,0,0,.35-.15L17.81,9.94,14.06,6.19,3.15,17.1a.491.491,0,0,0-.15.36ZM20.71,7.04a1,1,0,0,0,0-1.41L18.37,3.29a1,1,0,0,0-1.41,0L15.13,5.12l3.75,3.75,1.83-1.83Z"
+                                  fill="#18284850"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="companyLongDescriptionarea">
+                    @Html.Raw(member.GetValue<string>("companyLongDescription"))
+                </div>
+            </div>
+
+            @*Personal*@
+            <div class="feed-rail-container" id="feedrailpersonal" style="display:none;">
+                <div class="settings-heading">
+                    <h3>
+                        Beskriv dig selv
+                    </h3>
+                    <button class="button--svg" id="wwshorttxtbtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                             viewBox="0 0 24 24">
+                            <path id="Path_155" data-name="Path 155" d="M0,0H24V24H0Z" fill="none"></path>
+                            <path id="Path_156" data-name="Path 156"
+                                  d="M3,17.46V20.5a.5.5,0,0,0,.5.5H6.54a.469.469,0,0,0,.35-.15L17.81,9.94,14.06,6.19,3.15,17.1a.491.491,0,0,0-.15.36ZM20.71,7.04a1,1,0,0,0,0-1.41L18.37,3.29a1,1,0,0,0-1.41,0L15.13,5.12l3.75,3.75,1.83-1.83Z"
+                                  fill="#18284850"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="wwshorttxtarea">
+                    @Html.Raw(member.GetValue<string>("wwshorttxt"))
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+@*Socials Company*@
+<div class="modal" id="socialscompanymodal">
+    <div id="some-settings" class="modal-popup modal-popup--settings">
+        <div class="modal-popup__header">
+            <h3>
+                Sociale medier
+                <button id="modal-close" class="modal-popup__close closemodal">
+                    <svg id="Close" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <path id="Path_49" data-name="Path 49" d="M0,0H32V32H0Z" fill="none" />
+                        <path id="Path_50" data-name="Path 50"
+                              d="M22.6,5.811a1.328,1.328,0,0,0-1.88,0L14.2,12.318,7.678,5.8A1.329,1.329,0,1,0,5.8,7.677l6.52,6.52L5.8,20.718a1.329,1.329,0,0,0,1.88,1.88l6.52-6.52,6.52,6.52a1.329,1.329,0,0,0,1.88-1.88l-6.52-6.52,6.52-6.52A1.336,1.336,0,0,0,22.6,5.811Z"
+                              transform="translate(1.802 1.802)" fill="#182848" />
+                    </svg>
+                </button>
+            </h3>
+
+            <p>
+                Her kan du tilføje links til dine sociale medieprofiler for din virksomhed. Tilføj alle de profiler du har, på den måde kan folk følge med i hvad der sker i din virksomhed.
+            </p>
+        </div>
+        <div class="modal-popup__body" id="socialmodule">
+            <div class="form-container" style="margin-top: 0;">
+                <label for="facebook">
+                    Facebook
+                    <input class="socialcompany" type="text" name="facebook" id="companySocialFacebook" placeholder="https://www.facebook.com/StartupCentral.dk" value="@member.GetValue("companySocialFacebook")">
+                </label>
+                <button class="button" id="acompanySocialFacebooksubmit" onclick="sumbitChange('companySocialFacebook')">Opdater</button>
+            </div>
+
+            <div class="form-container" style="margin-top: 0;">
+                <label for="linkedin">
+                    LinkedIn
+                    <input class="socialcompany" type="text" name="linkedin" id="companySociaLinkedIn" placeholder="https://www.linkedin.com/company/startupcentral-dk/?originalSubdomain=dk" value="@member.GetValue("companySociaLinkedIn")">
+                </label>
+
+                <button class="button" id="acompanySociaLinkedInsubmit" onclick="sumbitChange('companySociaLinkedIn')">Opdater</button>
+            </div>
+
+            <div class="form-container" style="margin-top: 0;">
+                <label for="instagram">
+                    Instagram
+                    <input class="socialcompany" type="text" name="instagram" id="companySocialInstagram" placeholder="https://www.instagram.com/startupcentral.dk/" value="@member.GetValue("companySocialInstagram")">
+                </label>
+
+                <button class="button" id="acompanySocialInstagramsubmit" onclick="sumbitChange('companySocialInstagram')">Opdater</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*Socials Personal*@
+<div class="modal" id="socialspersonalmodal">
+    <div id="some-settings" class="modal-popup modal-popup--settings">
+        <div class="modal-popup__header">
+            <h3>
+                Sociale medier
+                <button id="modal-close" class="modal-popup__close closemodal">
+                    <svg id="Close" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <path id="Path_49" data-name="Path 49" d="M0,0H32V32H0Z" fill="none" />
+                        <path id="Path_50" data-name="Path 50"
+                              d="M22.6,5.811a1.328,1.328,0,0,0-1.88,0L14.2,12.318,7.678,5.8A1.329,1.329,0,1,0,5.8,7.677l6.52,6.52L5.8,20.718a1.329,1.329,0,0,0,1.88,1.88l6.52-6.52,6.52,6.52a1.329,1.329,0,0,0,1.88-1.88l-6.52-6.52,6.52-6.52A1.336,1.336,0,0,0,22.6,5.811Z"
+                              transform="translate(1.802 1.802)" fill="#182848" />
+                    </svg>
+                </button>
+            </h3>
+
+            <p>
+                Her kan du tilføje links til dine sociale medieprofiler for din personlige profil. Tilføj alle de profiler du har, på den måde kan folk følge med i din udvikling af kompetencer.
+            </p>
+        </div>
+        <div class="modal-popup__body" id="socialmodule">
+            <div class="form-container" style="margin-top: 0;">
+                <label for="facebook">
+                    Facebook
+                </label>
+                    <input class="socialpersonal" type="text" name="facebook" id="wwsocialfb" placeholder="https://www.facebook.com/StartupCentral.dk" value="@member.GetValue("wwsocialfb")">
+                <button class="button" id="awwsocialfbsubmit" onclick="sumbitChange('wwsocialfb')">Opdater</button>
+            </div>
+
+            <div class="form-container mt-0" style="margin-top: 0;">
+                <label for="linkedin">
+                    LinkedIn
+                    <input class="socialpersonal" type="text" name="linkedin" id="wwsociallinkedin" placeholder="https://www.linkedin.com/company/startupcentral-dk/?originalSubdomain=dk" value="@member.GetValue("wwsociallinkedin")">
+                </label>
+                <button class="button" id="awwsociallinkedinsubmit" onclick="sumbitChange('wwsociallinkedin')">Opdater</button>
+            </div>
+
+            <div class="form-container mt-0" style="margin-top: 0;">
+                <label for="instagram">
+                    Instagram
+                </label>
+                    <input class="socialpersonal" type="text" name="instagram" id="wwsocialinstagram" placeholder="https://www.instagram.com/startupcentral.dk/" value="@member.GetValue("wwsocialinstagram")">
+                <button class="button" id="awwsocialinstagramsubmit" onclick="sumbitChange('wwsocialinstagram')">Opdater</button>
+            </div>
+
+            @*<div class="inline-elements">
+                <button class="button" onclick="updateSocial('socialspersonalmodal', 'socialpersonal')">Opdater</button>
+            </div>*@
+        </div>
+    </div>
+</div>
+
+@*companyLogo, companyWebSite, companyShortDescription, companyLongDescription*@
+<div class="modal" id="profilecontainercompanymodal">
+    <div class="modal-popup modal-popup--settings">
+        <div class="modal-popup__header">
+            <h3>
+                Om din virksomhed
+                <button id="modal-close" class="modal-popup__close closemodal">
+                    <svg id="Close" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <path id="Path_49" data-name="Path 49" d="M0,0H32V32H0Z" fill="none" />
+                        <path id="Path_50" data-name="Path 50"
+                              d="M22.6,5.811a1.328,1.328,0,0,0-1.88,0L14.2,12.318,7.678,5.8A1.329,1.329,0,1,0,5.8,7.677l6.52,6.52L5.8,20.718a1.329,1.329,0,0,0,1.88,1.88l6.52-6.52,6.52,6.52a1.329,1.329,0,0,0,1.88-1.88l-6.52-6.52,6.52-6.52A1.336,1.336,0,0,0,22.6,5.811Z"
+                              transform="translate(1.802 1.802)" fill="#182848" />
+                    </svg>
+                </button>
+            </h3>
+
+        </div>
+        <div class="modal-popup__body">
+            <div class="form-container">
+                <label for="profilepic">
+                    Virksomheds logo
+                </label>
+                <div class="input-container">
+                    <img class="entity-image-104 entity-image-circle" id="imagePreview" src="@(!string.IsNullOrEmpty(logoUrl) ? logoUrl : "/media/1195/startup-central-bruger.jpg")" alt="">
+                    <input style="margin-left: 1rem;" id="companylogophp" type="file" name="companylogophp">
+                </div>
+                <button class="button" onclick="submitLogo('companylogophp')" id="acompanylogophpsubmit">Opdater</button>
+            </div>
+            <div class="form-container">
+                <label for="companyWebSiteLink">Link til din virksomheds hjemmeside</label>
+                <input type="text" id="companyWebSiteLink" name="companyWebSiteLink" autocomplete="on" placeholder="https://www.startupcentral.dk/" value="@currentUser.Value("companyWebSiteLink")" required>
+                <button class="button" id="acompanyWebSiteLinksubmit" onclick="sumbitChange('companyWebSiteLink')">Opdater</button>
+            </div>
+            <div class="form-container">
+                <label for="companydesc">Kort beskrivelse af din virksomhed</label>
+
+                <p>
+                    Her kan du skrive en kort beskrivelse af din virksomhed.
+                    <br />
+                    F.eks. Startup Central er stedet som skaber fremtidens succesfulde iværksættere.
+                    Vi hjælper iværksættere og selvstændige med at udleve deres iværksætterdrøm
+                </p>
+
+                <div class="editor" id="companyShortDescription" name="companydesc">
+                    @Html.Raw(@member.GetValue("companyShortDescription"))
+                </div>
+
+                <span class="form-container__counter">
+                  
+                </span>
+
+                <script>
+                    let companyShortDescription;
+
+                    ClassicEditor
+                        .create(document.querySelector('#companyShortDescription'), {
+                            toolbar: ['bold', 'italic', '|', 'bulletedList', 'numberedList', '|', 'blockQuote', 'link']
+                        })
+                        .then(editor => {
+                            companyShortDescription = editor;
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                </script>
+
+                <button class="button" id="acompanyShortDescriptionsubmit" onclick="sumbitRichText('profilecontainercompanymodal', companyShortDescription, 'companyShortDescription')">Opdater</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@*companyLongDescription*@
+<div class="modal" id="feedrailcompanyeditmodal">
+    <div class="modal-popup modal-popup--settings">
+        <div class="modal-popup__header">
+            <h3>
+                Yderligere informationer om din virksomhed
+                <button class="modal-popup__close closemodal">
+                    <svg id="Close" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <path id="Path_49" data-name="Path 49" d="M0,0H32V32H0Z" fill="none" />
+                        <path id="Path_50" data-name="Path 50"
+                              d="M22.6,5.811a1.328,1.328,0,0,0-1.88,0L14.2,12.318,7.678,5.8A1.329,1.329,0,1,0,5.8,7.677l6.52,6.52L5.8,20.718a1.329,1.329,0,0,0,1.88,1.88l6.52-6.52,6.52,6.52a1.329,1.329,0,0,0,1.88-1.88l-6.52-6.52,6.52-6.52A1.336,1.336,0,0,0,22.6,5.811Z"
+                              transform="translate(1.802 1.802)" fill="#182848" />
+                    </svg>
+                </button>
+            </h3>
+
+        </div>
+        <div class="modal-popup__body">
+            <div class="form-container">
+                <label for="feedrailcompanyrichtext">
+                    Et eksempel på hvad du kan skrive af yderligere informationer
+                </label>
+                <p>
+                    Her kan du skrive om historien bag din virksomhed. F.eks.
+                    Historien bag Startup Central startede egentlig med at jeg (Anders Fogh)
+                    og en kammerart sad hjemme hos mig og fik en øl. Her lugtede vi til den
+                    forfærdelige lugt der kommer fra at få ordnet negle - min kone havde
+                    nemlig på daværende tidspunkt denne hobby hjemme. Vi besluttede os for
+                    at ville lave et bord, som kunne minimere denne lugt.
+                    <br />
+                    I research fasen kunne jeg ikke finde hjælp til min idé og dermed fandt jeg
+                    et behov i markedet, som endnu ikke var dækket, dette blev til Startup Central.
+                </p>
+
+                <div class="editor" id="companyLongDescription" name="feedrailcompanyrichtext">
+                    @Html.Raw(member.GetValue<string>("companyLongDescription"))
+                </div>
+
+                <span class="form-container__counter">
+                    
+                </span>
+
+                <script>
+                    let companyLongDescription;
+
+                    ClassicEditor
+                        .create(document.querySelector('#companyLongDescription'), {
+                            toolbar: ['bold', 'italic', '|', 'bulletedList', 'numberedList', '|', 'blockQuote', 'link']
+                        })
+                        .then(editor => {
+                            companyLongDescription = editor;
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                </script>
+
+                <button class="button" id="acompanyLongDescriptionsubmit" onclick="sumbitRichText('feedrailcompanyeditmodal', companyLongDescription, 'companyLongDescription')">Opdater</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@*wwshorttxt*@
+<div class="modal" id="feedrailpersonaleditmodal">
+    <div class="modal-popup modal-popup--settings">
+        <div class="modal-popup__header">
+            <h3>
+                Om mig
+                <button class="modal-popup__close closemodal">
+                    <svg id="Close" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <path id="Path_49" data-name="Path 49" d="M0,0H32V32H0Z" fill="none" />
+                        <path id="Path_50" data-name="Path 50"
+                              d="M22.6,5.811a1.328,1.328,0,0,0-1.88,0L14.2,12.318,7.678,5.8A1.329,1.329,0,1,0,5.8,7.677l6.52,6.52L5.8,20.718a1.329,1.329,0,0,0,1.88,1.88l6.52-6.52,6.52,6.52a1.329,1.329,0,0,0,1.88-1.88l-6.52-6.52,6.52-6.52A1.336,1.336,0,0,0,22.6,5.811Z"
+                              transform="translate(1.802 1.802)" fill="#182848" />
+                    </svg>
+                </button>
+            </h3>
+
+        </div>
+        <div class="modal-popup__body">
+            <div class="form-container">
+                <label for="feedrailpersonalrichtext">Et eksempel på hvad du kan skrive om dig selv</label>
+                Her kan du skrive om dig selv, dine kompetencer, dit privatliv, din iværksætterrejse eller lignende.
+                <p>
+                    F.eks. Mit navn er Anders Fogh jeg er 28 år og har stiftet Startup Central.
+                    Privat er jeg bosat i Brædstrup i Horsens sammen med min kone og 4 børn.
+                    Jeg har altid været lidt af en gambler og vidst, at hvis jeg skulle have succes,
+                    så skulle det være ved at skabe mit eget. Hurtigt erfarede jeg at grundstenene
+                    for en god virksomhed er at gøre sit forarbejde, skabe overblik over sin virksomhed
+                    og have styr på det juridiske. Denne del har ikke været det sjoveste, men nu hvor
+                    jeg har startet mit eget og det hele bare kører fortryder jeg intet og elsker hver
+                    dag at stå op og lave det jeg brænder mest for.
+                </p>
+
+                <div class="editor" id="feedrailpersonalrichtext" name="feedrailpersonalrichtext">
+                    @Html.Raw(member.GetValue<string>("wwshorttxt"))
+                </div>
+
+                <span class="form-container__counter">
+                   
+                </span>
+
+                <script>
+                    let feedrailpersonalRichText;
+
+                    ClassicEditor
+                        .create(document.querySelector('#feedrailpersonalrichtext'), {
+                            toolbar: ['bold', 'italic', '|', 'bulletedList', 'numberedList', '|', 'blockQuote', 'link']
+                        })
+                        .then(editor => {
+                            feedrailpersonalRichText = editor;
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                </script>
+
+                <button class="button" id="awwshorttxtsubmit" onclick="sumbitRichText('feedrailpersonaleditmodal', feedrailpersonalRichText, 'wwshorttxt')">Opdater</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<script src="~/scripts/Notification.js"></script>
+<script>
+    //tabs
+    $("#aboutme").click(function () {
+        $("#mycompany").removeClass("is-active");
+        $("#aboutme").addClass("is-active");
+
+        $("#profilecontainercompany").hide();
+        $("#profilecontainercompanysome").hide();
+        $("#profilecontainerpersonalsome").show();
+
+        $("#feedrailcompany").hide();
+        $("#feedrailpersonal").show();
+    });
+
+    $("#mycompany").click(function () {
+        $("#aboutme").removeClass("is-active");
+        $("#mycompany").addClass("is-active");
+
+        $("#profilecontainerpersonalsome").hide();
+        $("#profilecontainercompany").show();
+        $("#profilecontainercompanysome").show();
+
+        $("#feedrailpersonal").hide();
+        $("#feedrailcompany").show();
+    });
+
+    //edit buttons
+    // -company
+    $("#companyShortDescriptionbtn").click(function () {
+        $("#profilecontainercompanymodal").addClass("is-displayed");
+        $('body').addClass('scroll-lock');
+    });
+
+    $("#companyLongDescriptionbtn").click(function () {
+        $("#feedrailcompanyeditmodal").addClass("is-displayed");
+        $('body').addClass('scroll-lock');
+    });
+
+    $("#companySocial").click(function () {
+        $("#socialscompanymodal").addClass("is-displayed");
+        $('body').addClass('scroll-lock');
+    });
+
+    // -personal
+    $("#personalSocial").click(function () {
+        $("#socialspersonalmodal").addClass("is-displayed");
+        $('body').addClass('scroll-lock');
+    });
+
+    $("#wwshorttxtbtn").click(function () {
+        $("#feedrailpersonaleditmodal").addClass("is-displayed");
+        $('body').addClass('scroll-lock');
+    });
+
+
+    //c modals
+    $(".closemodal").click(function () {
+        var parent = $(this).closest('.modal');
+        parent.removeClass("is-displayed");
+        $('body').removeClass('scroll-lock');
+    });
+
+    //update company logo
+    $("#companylogophp").change(function () {
+        readURL(this);
+    });
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#imagePreview').attr('src', e.target.result);
+                $('#imagePreview').hide();
+                $('#imagePreview').fadeIn(650);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    //Logo
+    function submitLogo(id) {
+        $("[id=a" + id + "submit]").hide();
+
+        var formData = new FormData();
+        formData.append('file', $('#companylogophp')[0].files[0]);
+
+        $.ajax({
+            url: '/umbraco/api/UserApi/UploadCompanyLogo',
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (result, status) {
+                if (result.Success) {
+                    setTimeout(() => {
+                        $("[id=a" + id + "submit]").show();
+
+                        var src = $('#imagePreview').attr('src');
+
+                        if ($('#companylogophparea').length) {
+                            $("#companylogophparea").attr("src", src);
+                        } else {
+                            $("<img id='companylogophparea' src='" + src + "' alt='Company Logo' class='entity-image entity-image-56'>").insertBefore("#insertbeforephp");
+                        }
+                        const success = addNotification(NOTIFICATION_TYPES.SUCCESS, 'Dit profilbillede er opdateret.'); //Profile picture has been updated.
+                        console.log(result.Message);
+                        setTimeout(() => {
+                            removeNotification(success);
+                        }, 5000);
+                    }, 1000);
+                } else {
+                    setTimeout(() => {
+                        $("[id=a" + id + "submit]").show();
+
+                        const fail = addNotification(NOTIFICATION_TYPES.DANGER, 'Der opstod en fejl, prøv igen. Kontakt os hvis problemet varer ved.'); //Problem was raised/faced, please contact us.
+                        console.log(result.Message);
+                        setTimeout(() => {
+                            removeNotification(fail);
+                        }, 5000);
+                    }, 1000);
+                }
+            },
+            beforeSend: function (xhr, settings) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + userToken);
+            }
+        });
+    }
+
+    // -left side editing
+    function sumbitChange(id) {
+        $("[id=a" + id + "submit]").hide();
+
+        var inner = $('#' + id + '').val();
+        var contrl = id;
+
+        $.ajax({
+            url: "/umbraco/api/UserApi/UpdateProperty",
+            type: "POST",
+            data:
+            {
+                contentOfController: inner,
+                propertyName: contrl
+            },
+            success: function (result) {
+                if (result.Success) {
+                    setTimeout(() => {
+                        $("[id=a" + id + "submit]").show();
+
+                        if (id == "companyWebSiteLink") {         
+                            $("#companyWebSiteLinkarea").attr("href", inner);
+                            $("[id=companyWebSiteLinkarea]").show();                     
+                        }
+
+                        if (id == "companyShortDescription") {
+                            document.getElementById("companyShortDescriptionarea").innerHTML = inner;                   
+                        }
+
+                        if (id.toUpperCase().search('SOCIAL') > -1) {                       
+                            $("#" + id + "area").attr("href", inner);
+                            $("[id=" + id + "area]").show();
+                        }
+
+                        const success = addNotification(NOTIFICATION_TYPES.SUCCESS, 'Dine informationer er opdateret.'); //Information has been updated.
+                        console.log(result.Message);
+                        setTimeout(() => {
+                            removeNotification(success);
+                        }, 5000);
+                    }, 1000);
+                } else {
+                    setTimeout(() => {
+                        $("[id=a" + id + "submit]").show();
+
+                        const fail = addNotification(NOTIFICATION_TYPES.DANGER, 'Der opstod en fejl, prøv igen. Kontakt os hvis problemet varer ved.'); //Problem was raised/faced, please contact us.
+                        console.log(result.Message);
+                        setTimeout(() => {
+                            removeNotification(fail);
+                        }, 5000);
+                    }, 1000);
+                }
+            },
+            beforeSend: function (xhr, settings) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + userToken);
+            }
+        });
+
+    }
+
+    // -right side editing (modalid, richtexteditor, id)
+    function sumbitRichText(mid, elem, id) {
+        $("[id=a" + id + "submit]").hide();
+
+        var inner;
+        var contrl = id;
+
+        var mod = document.getElementById("" + mid + "");
+        var cont = document.getElementById("" + id + "area");
+
+        if (elem != null) {
+            inner = elem.getData();
+        }
+        else {
+            inner = $('#' + id + '').val();
+        }
+
+        $.ajax({
+            url: "/umbraco/api/UserApi/UpdateProperty",
+            type: "POST",
+            data:
+            {
+                contentOfController: inner,
+                propertyName: contrl
+            },
+            success: function (result) {
+                if (result.Success) {
+                    setTimeout(() => {
+                        $("[id=a" + id + "submit]").show();
+                        mod.classList.remove("is-displayed");
+                        $('body').removeClass('scroll-lock');
+
+                        cont.innerHTML = inner;
+
+                        const success = addNotification(NOTIFICATION_TYPES.SUCCESS, 'Dine informationer er opdateret.'); //Information has been updated.
+                        console.log(result.Message);
+                        setTimeout(() => {
+                            removeNotification(success);
+                        }, 5000);
+                    }, 1000);
+                } else {
+                    setTimeout(() => {
+                        $("[id=a" + id + "submit]").show();
+
+                        const fail = addNotification(NOTIFICATION_TYPES.DANGER, 'Der opstod en fejl, prøv igen. Kontakt os hvis problemet varer ved.'); //Problem was raised/faced, please contact us.
+                        console.log(result.Message);
+                        setTimeout(() => {
+                            removeNotification(fail);
+                        }, 5000);
+                    }, 1000);
+                }
+            },
+            beforeSend: function (xhr, settings) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + userToken);
+            }
+        });
+
+    }
+</script>

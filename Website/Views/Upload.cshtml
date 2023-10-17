@@ -1,0 +1,463 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Services;
+@using System.Web
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Extensions;
+@using StartupCentral.Code.Class
+@{
+    Layout = "Master.cshtml";
+    var currentUser = Members.GetCurrentMember();
+
+    var _memberService = ApplicationContext.Current.Services.MemberService;
+
+    var member = _memberService.GetById(currentUser.Id);
+    var memberKey = member.Key;
+}
+
+
+<main id="sc-logged-tools" class="sc-logged sc-bgb10">
+    <div class="rail-grid rail-grid--3-column">
+
+        @Html.Partial("MemberInfo", member)
+
+        <div id="tools-feed" class="feed-rail">
+            <div class="feed-rail-container">
+                <div class="feed-section">
+                    <h2 class="feed-section__title">
+                        Her finder du værktøjer som strukturerer din virksomhed
+                    </h2>
+                    <div class="feed-section__bp-description">
+                        <p>
+                            Gør brug af alle dine værktøjer, for at gøre det nemmere og mere overskueligt for dig at opnå succes med din virksomhed.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Business Plan Setup -->
+                <div class="feed-section">
+                    <div class="feed-section__bp-container">
+                        <div class="feed-section__bp-title">
+                            <h3>Forretningsplan</h3>
+                            <div class="inline-elements">
+                                <a href="/login/min-forretningsplan/" class="button button--cta">Ny forretningsplan</a>
+                            </div>
+                        </div>
+                        <div class="feed-section__bp-description">
+                            <p>
+                                Husk at trykke ”markere som afsluttet” for at kunne downloade og sende din forretningsplan til coaches.
+                                Forretningsplanen beskriver alle aspekter af din virksomhed. Det er den fyldestgørende plan du lægger for at opnå succes i din virksomhed.
+                                Den giver dig overblikket over hvor du er på vej hen. På den måde danner den grundlaget for din virksomhed.
+                                <a href="/forretningsplan/" class="link">Læs mere</a>
+                            </p>
+                        </div>
+
+                        <div class="feed-section__bp-buttons-container">
+                            <div class="feed-section__bp-buttons feed-section_bp-buttons--open">
+                                <h4>Åbne forretningsplaner</h4>
+                                <ul class="business-plan-list" id="listDraftedDisplay">
+
+                                    <script id="listDraftedTemplate" type="text/html">
+                                    <li class="business-plan">
+                                        <div class="business-plan__body">
+                                            <a href="/login/min-forretningsplan/?id=${Id}" class="business-plan__title">
+                                                ${ProjektNavn}
+                                            </a>
+                                            <div class="business-plan__buttons">
+                                                <a class="business-plan__button business-plan__button--delete deletebuinessplan" data-id="${Id}" data-name="${ProjektNavn}" onclick="deleteModal('${Id}', '${ProjektNavn}', '#confirmdeletebs', '#confirmDeleteBusinessPlan', '.businessplanname');">
+                                                    <svg id="Delete-2" xmlns="http://www.w3.org/2000/svg" width="24"
+                                                         height="24" viewBox="0 0 24 24">
+                                                        <path id="Path_97" d="M0,0H24V24H0Z" fill="none" />
+                                                        <path id="Path_98"
+                                                              d="M6,19a2.006,2.006,0,0,0,2,2h8a2.006,2.006,0,0,0,2-2V9a2.006,2.006,0,0,0-2-2H8A2.006,2.006,0,0,0,6,9ZM18,4H15.5l-.7-.7a.908.908,0,0,0-.7-.3H9.9a.908.908,0,0,0-.7.3L8.5,4H6A.945.945,0,0,0,5,5,.945.945,0,0,0,6,6H18a.945.945,0,0,0,1-1A.945.945,0,0,0,18,4Z"
+                                                              fill="red" />
+                                                        <g id="Group_35" data-name="Group 35">
+                                                            <path id="Path_104" data-name="Path 104"
+                                                                  d="M9.1,9.3h0a.684.684,0,0,0-.7.7v8.4a.684.684,0,0,0,.7.7h0a.684.684,0,0,0,.7-.7V9.9A.858.858,0,0,0,9.1,9.3Z"
+                                                                  fill="#fff" />
+                                                            <path id="Path_105" data-name="Path 105"
+                                                                  d="M12,9.3h0a.684.684,0,0,0-.7.7v8.4a.684.684,0,0,0,.7.7h0a.684.684,0,0,0,.7-.7V9.9A.669.669,0,0,0,12,9.3Z"
+                                                                  fill="#fff" />
+                                                            <path id="Path_106" data-name="Path 106"
+                                                                  d="M14.9,9.3h0a.684.684,0,0,0-.7.7v8.4a.684.684,0,0,0,.7.7h0a.684.684,0,0,0,.7-.7V9.9A.669.669,0,0,0,14.9,9.3Z"
+                                                                  fill="#fff" />
+                                                        </g>
+                                                    </svg>
+                                                </a>
+
+                                            </div>
+                                        </div>
+                                    </li>
+                                    </script>
+
+                                </ul>
+                            </div>
+
+                            <div class="feed-section__bp-buttons">
+                                <h4>Afsluttede forretningsplaner</h4>
+                                <ul class="business-plan-list is-completed" id="listCompletedDisplay">
+
+                                    <script id="listCompletedTemplate" type="text/html">
+                                    <li class="business-plan">
+                                        <div class="business-plan__body">
+                                            <a href="/login/forretningsplan-oversigt/?id=${Id}" class="business-plan__title">
+                                                ${ProjektNavn}
+                                            </a>
+                                            <div class="business-plan__buttons">
+                                                <a class="business-plan__button business-plan__button--delete deletebuinessplan" data-id="${Id}" data-name="${ProjektNavn}" onclick="deleteModal('${Id}', '${ProjektNavn}', '#confirmdeletebs', '#confirmDeleteBusinessPlan', '.businessplanname');">
+                                                    <svg id="Delete-2" xmlns="http://www.w3.org/2000/svg" width="24"
+                                                         height="24" viewBox="0 0 24 24">
+                                                        <path id="Path_97" d="M0,0H24V24H0Z" fill="none" />
+                                                        <path id="Path_98"
+                                                              d="M6,19a2.006,2.006,0,0,0,2,2h8a2.006,2.006,0,0,0,2-2V9a2.006,2.006,0,0,0-2-2H8A2.006,2.006,0,0,0,6,9ZM18,4H15.5l-.7-.7a.908.908,0,0,0-.7-.3H9.9a.908.908,0,0,0-.7.3L8.5,4H6A.945.945,0,0,0,5,5,.945.945,0,0,0,6,6H18a.945.945,0,0,0,1-1A.945.945,0,0,0,18,4Z"
+                                                              fill="red" />
+                                                        <g id="Group_35" data-name="Group 35">
+                                                            <path id="Path_104" data-name="Path 104"
+                                                                  d="M9.1,9.3h0a.684.684,0,0,0-.7.7v8.4a.684.684,0,0,0,.7.7h0a.684.684,0,0,0,.7-.7V9.9A.858.858,0,0,0,9.1,9.3Z"
+                                                                  fill="#fff" />
+                                                            <path id="Path_105" data-name="Path 105"
+                                                                  d="M12,9.3h0a.684.684,0,0,0-.7.7v8.4a.684.684,0,0,0,.7.7h0a.684.684,0,0,0,.7-.7V9.9A.669.669,0,0,0,12,9.3Z"
+                                                                  fill="#fff" />
+                                                            <path id="Path_106" data-name="Path 106"
+                                                                  d="M14.9,9.3h0a.684.684,0,0,0-.7.7v8.4a.684.684,0,0,0,.7.7h0a.684.684,0,0,0,.7-.7V9.9A.669.669,0,0,0,14.9,9.3Z"
+                                                                  fill="#fff" />
+                                                        </g>
+                                                    </svg>
+                                                </a>
+                                                <a href="/login/min-forretningsplan/?id=${Id}" class="business-plan__button">
+                                                    <svg id="Edit" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                                        <path id="Path_155" data-name="Path 155" d="M0,0H24V24H0Z" fill="none" />
+                                                        <path id="Path_156" data-name="Path 156" d="M3,17.46V20.5a.5.5,0,0,0,.5.5H6.54a.469.469,0,0,0,.35-.15L17.81,9.94,14.06,6.19,3.15,17.1a.491.491,0,0,0-.15.36ZM20.71,7.04a1,1,0,0,0,0-1.41L18.37,3.29a1,1,0,0,0-1.41,0L15.13,5.12l3.75,3.75,1.83-1.83Z" fill="#182848" />
+                                                    </svg>
+
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    </script>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <hr />
+                <br />
+                <!-- Pitch Deck Setup -->
+                <div class="feed-section">
+                    <div class="feed-section__bp-container">
+                        <div class="feed-section__bp-title">
+                            <h3>Pitch Deck</h3>
+                            <div class="inline-elements">
+                                <a href="/login/min-pitch-deck/" class="button button--cta">Ny pitch</a>
+                            </div>
+                        </div>
+                        <div class="feed-section__bp-description">
+                            <p>
+                                Husk at trykke ”markere som afsluttet” for at kunne downloade og sende dit pitch deck til coaches.
+                                Den perfekte pitchskabelon findes ikke. Det gør den ikke, da det handler om din specifikke virksomhed og hvad den tilbyder.
+                                Ikke alt er lige relevant for alle at pitche om, det afhænger af hvem det skal pitches til.
+                                <a href="/pitch-deck/" class="link">Læs mere</a>
+                            </p>
+                        </div>
+
+                        <div class="feed-section__bp-buttons-container">
+                            <div class="feed-section__bp-buttons feed-section_bp-buttons--open">
+                                <h4>Åbne pitcher</h4>
+                                <ul class="business-plan-list" id="pitchDraftedDisplay">
+
+                                    <script id="pitchDraftedTemplate" type="text/html">
+                                    <li class="business-plan">
+                                        <div class="business-plan__body">
+                                            <a href="/login/min-pitch-deck/?id=${Id}" class="business-plan__title">
+                                                ${PitchName}
+                                            </a>
+                                            <div class="business-plan__buttons">
+                                                <a class="business-plan__button business-plan__button--delete deletebuinessplan" data-id="${Id}" data-name="${PitchName}" data-file="${Picture}" onclick="deleteModalPitch('${Id}' ,'${PitchName}', '${Picture}','#confirmdeletePid', '#confirmDeletePitch', '.PitchName');">
+                                                    <svg id="Delete-2" xmlns="http://www.w3.org/2000/svg" width="24"
+                                                         height="24" viewBox="0 0 24 24">
+                                                        <path id="Path_97" d="M0,0H24V24H0Z" fill="none" />
+                                                        <path id="Path_98"
+                                                              d="M6,19a2.006,2.006,0,0,0,2,2h8a2.006,2.006,0,0,0,2-2V9a2.006,2.006,0,0,0-2-2H8A2.006,2.006,0,0,0,6,9ZM18,4H15.5l-.7-.7a.908.908,0,0,0-.7-.3H9.9a.908.908,0,0,0-.7.3L8.5,4H6A.945.945,0,0,0,5,5,.945.945,0,0,0,6,6H18a.945.945,0,0,0,1-1A.945.945,0,0,0,18,4Z"
+                                                              fill="red" />
+                                                        <g id="Group_35" data-name="Group 35">
+                                                            <path id="Path_104" data-name="Path 104"
+                                                                  d="M9.1,9.3h0a.684.684,0,0,0-.7.7v8.4a.684.684,0,0,0,.7.7h0a.684.684,0,0,0,.7-.7V9.9A.858.858,0,0,0,9.1,9.3Z"
+                                                                  fill="#fff" />
+                                                            <path id="Path_105" data-name="Path 105"
+                                                                  d="M12,9.3h0a.684.684,0,0,0-.7.7v8.4a.684.684,0,0,0,.7.7h0a.684.684,0,0,0,.7-.7V9.9A.669.669,0,0,0,12,9.3Z"
+                                                                  fill="#fff" />
+                                                            <path id="Path_106" data-name="Path 106"
+                                                                  d="M14.9,9.3h0a.684.684,0,0,0-.7.7v8.4a.684.684,0,0,0,.7.7h0a.684.684,0,0,0,.7-.7V9.9A.669.669,0,0,0,14.9,9.3Z"
+                                                                  fill="#fff" />
+                                                        </g>
+                                                    </svg>
+                                                </a>
+
+                                            </div>
+                                        </div>
+                                    </li>
+                                    </script>
+
+                                </ul>
+                            </div>
+
+                            <div class="feed-section__bp-buttons">
+                                <h4>Afsluttede pitcher</h4>
+                                <ul class="business-plan-list is-completed" id="pitchCompletedDisplay">
+
+                                    <script id="pitchCompletedTemplate" type="text/html">
+                                    <li class="business-plan">
+                                        <div class="business-plan__body">
+                                            <a href="/login/pitch-deck-oversigt//?id=${Id}" class="business-plan__title">
+                                                ${PitchName}
+                                            </a>
+                                            <div class="business-plan__buttons">
+                                                <a class="business-plan__button business-plan__button--delete deletebuinessplan" data-id="${Id}" data-name="${PitchName}" data-file="${Picture}" onclick="deleteModalPitch('${Id}','${PitchName}', '${Picture}','#confirmdeletePid', '#confirmDeletePitch', '.PitchName');">
+                                                    <svg id="Delete-2" xmlns="http://www.w3.org/2000/svg" width="24"
+                                                         height="24" viewBox="0 0 24 24">
+                                                        <path id="Path_97" d="M0,0H24V24H0Z" fill="none" />
+                                                        <path id="Path_98"
+                                                              d="M6,19a2.006,2.006,0,0,0,2,2h8a2.006,2.006,0,0,0,2-2V9a2.006,2.006,0,0,0-2-2H8A2.006,2.006,0,0,0,6,9ZM18,4H15.5l-.7-.7a.908.908,0,0,0-.7-.3H9.9a.908.908,0,0,0-.7.3L8.5,4H6A.945.945,0,0,0,5,5,.945.945,0,0,0,6,6H18a.945.945,0,0,0,1-1A.945.945,0,0,0,18,4Z"
+                                                              fill="red" />
+                                                        <g id="Group_35" data-name="Group 35">
+                                                            <path id="Path_104" data-name="Path 104"
+                                                                  d="M9.1,9.3h0a.684.684,0,0,0-.7.7v8.4a.684.684,0,0,0,.7.7h0a.684.684,0,0,0,.7-.7V9.9A.858.858,0,0,0,9.1,9.3Z"
+                                                                  fill="#fff" />
+                                                            <path id="Path_105" data-name="Path 105"
+                                                                  d="M12,9.3h0a.684.684,0,0,0-.7.7v8.4a.684.684,0,0,0,.7.7h0a.684.684,0,0,0,.7-.7V9.9A.669.669,0,0,0,12,9.3Z"
+                                                                  fill="#fff" />
+                                                            <path id="Path_106" data-name="Path 106"
+                                                                  d="M14.9,9.3h0a.684.684,0,0,0-.7.7v8.4a.684.684,0,0,0,.7.7h0a.684.684,0,0,0,.7-.7V9.9A.669.669,0,0,0,14.9,9.3Z"
+                                                                  fill="#fff" />
+                                                        </g>
+                                                    </svg>
+                                                </a>
+                                                <a href="/login/min-pitch-deck/?id=${Id}" class="business-plan__button">
+                                                    <svg id="Edit" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                                        <path id="Path_155" data-name="Path 155" d="M0,0H24V24H0Z" fill="none" />
+                                                        <path id="Path_156" data-name="Path 156" d="M3,17.46V20.5a.5.5,0,0,0,.5.5H6.54a.469.469,0,0,0,.35-.15L17.81,9.94,14.06,6.19,3.15,17.1a.491.491,0,0,0-.15.36ZM20.71,7.04a1,1,0,0,0,0-1.41L18.37,3.29a1,1,0,0,0-1.41,0L15.13,5.12l3.75,3.75,1.83-1.83Z" fill="#182848" />
+                                                    </svg>
+
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    </script>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+            <!-- Budgets -->
+            <div class="feed-rail-container">
+                <div class="feed-section">
+                    <h2>Hent dine skabeloner her</h2>
+                    <p>
+                        Her finder du en oversigt af skabeloner vi har sammensat til at skabe overblik over bl.a. dine budgetter, kørsel, 2022 erhvervskalender og meget mere. <a href="/budgetskabeloner/">Læs mere</a>
+                    </p>
+
+                    <ul class="feed-section__downloadable-container">
+                        @foreach (var budgetFile in Umbraco.Content(26320).Children().Where(x => x.IsVisible()))
+                        {
+                            var title = budgetFile.Value<string>("budgetFileTitle");
+                            var desc = budgetFile.Value<string>("budgetFileDescription");
+                            var fileLink = budgetFile.Value<IPublishedContent>("budgetFileLink");
+
+                            <li class="downloadable-content">
+                                <div class="downloadable-content__body">
+                                    <h3 class="downloadable-content__title">@title</h3>
+                                    <p class="downloadable-content__description">
+                                        @desc
+                                    </p>
+                                </div>
+                                <a href="@fileLink.Url" class="downloadable-content__button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                        <g id="Group_61" data-name="Group 61" transform="translate(0 -1327.6)">
+                                            <g id="Budget_16_" transform="translate(301 620)">
+                                                <path id="Path_1_16_" d="M-301,707.6h32v32h-32Z" fill="none" />
+                                            </g>
+                                            <g id="Group_60" data-name="Group 60" transform="translate(-1.897 -1.907)">
+                                                <path id="Path_146" data-name="Path 146"
+                                                      d="M24.6,1344.187l-6.724,6.724a.8.8,0,0,1-1.2,0l-6.724-6.724a.915.915,0,0,1,.6-1.561h3.843v-7.445a1.076,1.076,0,0,1,1.081-1.081h3.6a1.076,1.076,0,0,1,1.081,1.081v7.445h3.843A.89.89,0,0,1,24.6,1344.187Z"
+                                                      transform="translate(0.637 0)" fill="#47b2b2" />
+                                                <path id="Path_147" data-name="Path 147"
+                                                      d="M7.581,1347.2h6.484l2.161,2.161a2.4,2.4,0,0,0,3.242,0l2.161-2.161h6.484a1.076,1.076,0,0,1,1.081,1.081v4.923a1.076,1.076,0,0,1-1.081,1.081H7.581A1.076,1.076,0,0,1,6.5,1353.2v-4.923A1.076,1.076,0,0,1,7.581,1347.2Zm5.4,5.764a.841.841,0,1,0-.841-.84C12.024,1352.6,12.5,1352.964,12.984,1352.964Zm-2.882,0a.841.841,0,1,0-.841-.84A.821.821,0,0,0,10.1,1352.964Z"
+                                                      transform="translate(0 2.63)" fill="#47b2b2" />
+                                            </g>
+                                        </g>
+                                    </svg>
+
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        @Html.Partial("ExtraOffers", member)
+
+    </div>
+</main>
+
+
+<div class="modal" id="confirmdeletebs">
+    <div class="modal-popup">
+        <div class="modal-popup__header modal-popup__header--danger">
+            <div class="modal-popup__image">
+                <img src="/media/1148/raket_dialogbox.svg" alt="">
+            </div>
+            <h2 class="modal-popup__header-text">
+                Bekræft sletning af din forretningsplan <span class="businessplanname"></span>.
+            </h2>
+        </div>
+        <div class="modal-popup__body">
+            <p>
+                Du gøres opmærksom på at din forretningsplan ikke kan gendannes efter den er slettet.
+            </p>
+            <div class="inline-elements">
+                <button class="button button--success" id="confirmDeleteBusinessPlan" data-id="" onclick="confirmDelete('/umbraco/api/forretningsplanApi/delete?id=', '#confirmDeleteBusinessPlan')">Slet</button>
+                <button class="button button--danger" id="getRidOf" onclick="closeModal('#confirmdeletebs')">Annuller</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="confirmdeletePid">
+    <div class="modal-popup">
+        <div class="modal-popup__header modal-popup__header--danger">
+            <div class="modal-popup__image">
+                <img src="/media/1148/raket_dialogbox.svg" alt="">
+            </div>
+            <h2 class="modal-popup__header-text">
+                Bekræft sletning af din pitch <span class="PitchName"></span>.
+            </h2>
+        </div>
+        <div class="modal-popup__body">
+            <p>
+                Du gøres opmærksom på at din pitch ikke kan gendannes efter den er slettet.
+            </p>
+            <div class="inline-elements">
+                <button class="button button--success" id="confirmDeletePitch" data-id="" data-file="${Picture}" onclick="confirmDeletePitch('','#confirmDeletePitch', '&filePath=', '#confirmDeletePitch')">Slet</button>
+                <button class="button button--danger" id="getRidOf" onclick="closeModal('#confirmdeletePid')">Annuller</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/scripts/startupcental.js?v=3"></script>
+<script src="~/scripts/startupcentral.student.js?v=3"></script>
+
+<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+<script type="text/javascript">
+    $(document).ready(GetDrafts('/umbraco/api/forretningsplanApi/getDrafts', "#listDraftedTemplate", "#listDraftedDisplay", '/umbraco/api/ForretningsplanApi/getCompleted', "#listCompletedTemplate", "#listCompletedDisplay"));
+    $(document).ready(GetDrafts('/umbraco/api/PitchApi/getDrafts', "#pitchDraftedTemplate", "#pitchDraftedDisplay", '/umbraco/api/PitchApi/getCompleted', "#pitchCompletedTemplate", "#pitchCompletedDisplay"));
+
+    function GetDrafts(url, template, display, completedUrl, completedTemplate, completedDisplay) {
+        startupCentral.requestData(url,
+            function (response) {
+                var data = response.Data;
+                $(template).tmpl(data).appendTo(display);
+
+                GetCompleted(completedUrl, completedTemplate, completedDisplay);
+                
+            });
+    }
+
+    function GetCompleted(url, template, display) {
+        startupCentral.requestData(url,
+            function (response) {
+                var data = response.Data;
+                $(template).tmpl(data).appendTo(display);
+            });
+    }
+
+    function deleteModal(id, name, modelId, findId, findClass) {
+        var modal = $(modelId);
+
+        modal.find(findId).attr('data-id', id);
+        modal.find(findClass).html(name);
+
+        modal.addClass('is-displayed');
+        $('body').addClass('scroll-lock');
+    }
+
+
+    function closeModal(id) {
+        var modal = $(id);
+
+        modal.removeClass('is-displayed');
+    }
+
+    function confirmDelete(url, id) {
+        var id = $(id).attr('data-id');
+        Delete(url, id);
+    }
+
+    function Delete(url, obj) {
+        $.ajax({
+            url: url + obj,
+            type: 'DELETE',
+            success: function (response, status) {
+                if (response) {
+                    if (response.Success) {
+                        location.reload();
+                    }
+                }
+            },
+            beforeSend: function (xhr, settings) { xhr.setRequestHeader('Authorization', 'Bearer ' + userToken).setRequestHeader('Content-Type', 'application/json'); }
+        });
+    }
+
+    //Test delete pitch with file
+
+    function confirmDeletePitch(url1, id, url2, filePath) {
+        var id = $(id).attr('data-id');
+        var filePath = $(filePath).attr('data-file');
+        if (!!filePath) {
+            url1 = '/umbraco/api/PitchApi/deleteWithFile?id=';
+        } else {
+            url1 = '/umbraco/api/PitchApi/delete?id=';
+            url2 = '';
+        }
+        DeletePitch(url1, id, url2, filePath);
+    }
+    function DeletePitch(url1, id, url2, filePath) {
+        $.ajax({
+            url: url1 + id + url2 + filePath,
+            type: 'DELETE',
+            success: function (response, status) {
+                if (response) {
+                    if (response.Success) {
+                        location.reload();
+                    }
+                }
+            },
+            beforeSend: function (xhr, settings) { xhr.setRequestHeader('Authorization', 'Bearer ' + userToken).setRequestHeader('Content-Type', 'application/json'); }
+        });
+    }
+    function deleteModalPitch(id,  name, pic,modelId, findId, findClass) {
+        var modal = $(modelId);
+
+        modal.find(findId).attr('data-id', id);
+        modal.find(findId).attr('data-file', pic);
+        modal.find(findClass).html(name);
+
+        modal.addClass('is-displayed');
+        $('body').addClass('scroll-lock');
+    }
+
+</script>

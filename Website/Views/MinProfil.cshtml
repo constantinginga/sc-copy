@@ -1,0 +1,436 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Services;
+@using System.Web
+@using Umbraco.Web.Security
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Extensions
+
+@{
+    Layout = "Master.cshtml";
+    var currentUser = Members.GetCurrentMember();
+
+    MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+    IMember currentMember = null;
+    if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+    {
+        currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+    }
+
+    StartupCentral.Code.Model.ApiResponse formValidation = null;
+
+    if (IsPost)
+    {
+        if (currentMember != null)
+        {
+            string username = Request.Form["usernameprofil"];
+            string address = Request.Form["address"];
+            string postalcode = Request.Form["postalcode"];
+            string city = Request.Form["city"];
+            string mobile = Request.Form["mobile"];
+            string shortintrotxt = Request.Form["shortintrotxt"];
+            string deeptxt = Request.Form["deeptxt"];
+            string tags = Request.Form["tags"];
+            string changepasswordone = Request.Form["changepasswordone"];
+            string changepasswordrepeat = Request.Form["changepasswordrepeat"];
+            string unavailable = Request.Form["unavailable"];
+            string datefrom = Request.Form["datefrom"];
+            string dateto = Request.Form["dateto"];
+
+
+            formValidation = ValidateAndForm();
+            if (formValidation.Success)
+            {
+
+                currentMember.SetValue("wwemail", username);
+                if (currentMember.HasProperty("wwaddress")) { currentMember.SetValue("wwaddress", address); }
+                if (currentMember.HasProperty("wwpostnummer")) { currentMember.SetValue("wwpostnummer", postalcode); }
+                if (currentMember.HasProperty("wwcity")) { currentMember.SetValue("wwcity", city); }
+                if (currentMember.HasProperty("wwmobile")) { currentMember.SetValue("wwmobile", mobile); }
+                if (currentMember.HasProperty("wwshorttxt")) { currentMember.SetValue("wwshorttxt", shortintrotxt); }
+                if (currentMember.HasProperty("bodyText")) { currentMember.SetValue("bodyText", deeptxt); }
+                if (currentMember.HasProperty("wwtags"))
+                {
+
+                    string[] tagIdList = tags.Split(',');
+                    if (tagIdList != null && tagIdList.Count() > 0)
+                    {
+
+                        List<Udi> udiList = new List<Udi>();
+
+                        foreach (string id in tagIdList)
+                        {
+                            udiList.Add(ApplicationContext.Current.Services.ContentService.GetById(Convert.ToInt32(id)).GetUdi());
+                        }
+
+                        currentMember.SetValue("wwtags", string.Join(",", udiList));
+                    }
+
+                }
+
+                if (HttpContext.Current.Request.Files != null && HttpContext.Current.Request.Files.Count > 0)
+                {
+
+                    IMedia folder = StartupCentral.Code.Controllers.UserController.GetProfileImageFolder(currentMember);
+                    if (folder != null)
+                    {
+
+                        for (var i = 0; i < HttpContext.Current.Request.Files.Count; i++)
+                        {
+
+                            if (HttpContext.Current.Request.Files[i].ContentLength > 0)
+                            {
+                                IMedia mediaFile = ApplicationContext.Current.Services.MediaService.CreateMedia(
+                                    HttpContext.Current.Request.Files[i].FileName, folder, "Image");
+                                System.IO.Stream s = HttpContext.Current.Request.Files[i].InputStream;
+                                mediaFile.SetValue("umbracoFile", HttpContext.Current.Request.Files[i].FileName, s);
+                                s.Close();
+                                ApplicationContext.Current.Services.MediaService.Save(mediaFile);
+
+                                currentMember.SetValue("wwavatar", mediaFile.Id);
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                // Ikke tilgænglig - Investor
+                if (currentMember.HasProperty("wwunavailable")) { currentMember.SetValue("wwunavailable", unavailable.ParseBoolean()); }
+
+                // Ikke tilgænglig fra dato
+                try
+                {
+                    DateTime fromDate = DateTime.Parse(datefrom);
+                    if (currentMember.HasProperty("wwbooketfra")) { currentMember.SetValue("wwbooketfra", fromDate); }
+
+                }
+                catch (System.Exception)
+                {
+                    if (currentMember.HasProperty("wwbooketfra")) { currentMember.SetValue("wwbooketfra", null); }
+                }
+
+                // Ikke tilgænglig til dato
+                try
+                {
+                    DateTime toDate = DateTime.Parse(dateto);
+                    if (currentMember.HasProperty("wwbookettil")) { currentMember.SetValue("wwbookettil", toDate); }
+
+                }
+                catch (System.Exception)
+                {
+                    if (currentMember.HasProperty("wwbookettil")) { currentMember.SetValue("wwbookettil", null); }
+                }
+
+
+
+
+                if (currentMember.IsDirty())
+                {
+                    ApplicationContext.Current.Services.MemberService.Save(currentMember);
+                }
+
+                if (!string.IsNullOrEmpty(changepasswordone))
+                {
+                    ApplicationContext.Current.Services.MemberService.SavePassword(currentMember, changepasswordone);
+                }
+
+
+
+
+
+
+            }
+        }
+    }
+
+    bool showProfile = false;
+    if (IsPost)
+    {
+        if (formValidation != null)
+        {
+            if (formValidation.Success == false)
+            {
+                showProfile = true;
+            }
+        }
+    }
+}
+
+<section class="startupcentralbackground">
+    <div class="container">
+        <div class="col-md-7">
+            <div class="bigheadline uppercase f80 f50mob mb40 fw700 white">
+                @Page.wwoverskrift
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="txt white f18 fw600 lh24 mb20">
+                @Page.bodyText
+            </div>
+        </div>
+        <div class="col-md-12 mb100 mb50mob">
+            <a href="javascript:void(0);" class="fw700 f30 mr20 tabactive profil overridewhite">Rediger profil</a>
+        </div>
+
+        @if (currentMember != null)
+        {
+
+            <div class="fleft w100" id="profil" style="display:@(!showProfile ? "none" : "block");">
+                @if (Members.IsLoggedIn() && Members != null)
+                {
+
+                    string wwavatarImageUrl = "";
+                    if (currentMember.GetValue("wwavatar") != null)
+                    {
+                        string wwavatar = "";
+                        wwavatar = currentMember.GetValue<string>("wwavatar");
+                        if (!string.IsNullOrEmpty(wwavatar))
+                        {
+                            int imageId = 0;
+                            if (wwavatar.IsNumeric())
+                            {
+                                imageId = Convert.ToInt32(wwavatar);
+                            }
+                            else if (wwavatar.Contains("umb://"))
+                            {
+                                imageId = wwavatar.GetIdByUdi();
+                            }
+
+                            if (imageId > 0)
+                            {
+                                wwavatarImageUrl = Umbraco.Media(imageId).GetCropUrl("profileimage");
+                            }
+                        }
+
+                    }
+
+
+                    <div class="col-md-4 text-center">
+                        <div class="avatar">
+                            <img src="@(!string.IsNullOrEmpty(wwavatarImageUrl) ? wwavatarImageUrl : "/media/1148/raket_dialogbox.svg" )" class="img-responsive center-block avartarround">
+                        </div>
+                    </div>
+
+                    <div class="col-md-1"></div>
+                    <div class="col-md-7">
+                        <div class="fleft w100 mb10"><h1 class="fw700 f50mob f70"> @currentMember.GetValue("wwname")</h1></div>
+                        <div class="fleft w100 mb40 dustedblue">E: @currentMember.GetValue("wwemail")</div>
+
+                        <form action="" method="post" enctype="multipart/form-data">
+                            <input id="usernameprofil" name="usernameprofil" placeholder="E-mail" value="@currentMember.GetValue("wwemail")" class="whitebg" type="email">
+
+
+                            @if (Umbraco.Member(currentUser.Id).IsDocumentType("student"))
+                            {
+                                <input id="address" name="address" placeholder="Adresse" class="fleft whitebg inputfield" type="text" value="@currentMember.GetValue("wwaddress")">
+                                <input id="postalcode" name="postalcode" placeholder="Postnummer" class="fleft whitebg inputfield" type="text" value="@currentMember.GetValue("wwpostnummer")">
+                                <input id="city" name="city" placeholder="By" class="fleft whitebg inputfield" type="text" value="@currentMember.GetValue("wwcity")">
+                                <input id="mobile" name="mobile" placeholder="Mobil nummer" class="fleft whitebg inputfield" type="text" value="@currentMember.GetValue("wwmobile")">
+                            }
+
+                            @if (Umbraco.Member(currentUser.Id).DocumentTypeAlias == "investor" || Umbraco.Member(currentUser.Id).DocumentTypeAlias == "coach1")
+                            {
+                                <div class="form-group">
+                                    <label for="shortintrotxt">Kort introtekst</label>
+                                    <textarea name="shortintrotxt" class="form-control" id="shortintrotxt" placeholder="Skriv..." rows="6">@currentMember.GetValue("wwshorttxt")</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="deeptxt">Uddybende beskrivelse</label>
+                                    <textarea name="deeptxt" class="form-control" id="deeptxt" placeholder="Skriv..." rows="8">@currentMember.GetValue("bodyText")</textarea>
+                                </div>
+                                <div class="fleft form-group mb30">
+                                    <label for="kategori" class="mb10">Tilknyt områder, som passer på dig</label>
+                                    <div class="checkbox mb30">
+
+                                        @{
+
+                                            var wwtags = currentMember.GetValue("wwtags");
+                                            List<int> wwtagIds = null;
+
+                                            if (wwtags != null)
+                                            {
+                                                wwtagIds = wwtags.ToString().UdiCSVToIntList();
+                                            }
+
+                                            foreach (var opt in Umbraco.Content(1651).Children())
+                                            {
+
+
+                                                <div class="fleft mr15 mb10 mt10">
+                                                <div class="checkbox">
+                                                    <label for="fag_@opt.Id"><input type="checkbox" @Umbraco.If(wwtagIds != null && wwtagIds.Contains(opt.Id), "checked") value="@opt.Id" name="tags" id="fag_@opt.Id">@opt.Name<span></span></label>
+                                                </div>
+                                                </div>
+                                            }
+
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+
+                            @if (Umbraco.Member(currentUser.Id).DocumentTypeAlias == "investor")
+                            {
+                                <div class="fleft w100 mr15 mt10 mb10">
+                                    <div class="checkbox w100 mb10">
+
+                                        @{
+                                            bool wwunavailable = (bool)Umbraco.Member(currentUser.Id).wwunavailable;
+                                        }
+                                        <label for="unavailable_1"><input type="checkbox" value="1" name="unavailable" id="unavailable_1" @Umbraco.If(wwunavailable, "checked") />Jeg er ikke tilgængelig<span></span></label>
+                                    </div>
+                                    <div class="daterange" style="display:@(wwunavailable ? "block" : "none");">
+                                        <div class="fleft w100 mt10 mb20">Hvis det er i en periode kan du vælge det her</div>
+                                        <div class="form-group">
+                                            <label>Fra den:</label>
+                                            @{
+                                                DateTime? wwbooketfra = null;
+                                                if (currentMember.HasProperty("wwbooketfra"))
+                                                {
+                                                    try
+                                                    {
+                                                        wwbooketfra = (DateTime)Umbraco.Member(currentUser.Id).wwbooketfra;
+                                                    }
+                                                    catch (System.Exception)
+                                                    {
+                                                        wwbooketfra = null;
+                                                    }
+                                                }
+
+                                                <input type="date" name="datefrom" class="inputfield whitebg" id="datefrom" @Umbraco.If(wwbooketfra != null, string.Concat("value=\"" + wwbooketfra.Value.ToString("yyyy-MM-dd") + "\"")) />
+                                            }
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Til den:</label>
+
+                                            @{
+                                                DateTime? wwbookettil = null;
+                                                if (currentMember.HasProperty("wwbookettil")) {
+                                                    try
+                                                    {
+                                                        wwbookettil = (DateTime)Umbraco.Member(currentUser.Id).wwbookettil;
+                                                    }
+                                                    catch (System.Exception)
+                                                    {
+                                                        wwbookettil = null;
+                                                    }
+                                                }
+                                                
+                                                <input type="date" class="inputfield whitebg" name="dateto" id="dateto" @Umbraco.If(wwbookettil != null, string.Concat("value=\"" + wwbookettil.Value.ToString("yyyy-MM-dd") + "\""))  />
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+
+                            <label for="avatarfile" class="ml5 mt30  w100">Skift billede</label>
+                            <input type="file" class="mb20 ml5" name="avatarfile" id="avatarfile">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <a href="javascript:void(0)" class="fleft w100 mt20 changepassword dark f18 ml5">Skift adgangskode <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i></a>
+                                </div>
+
+                                <div id="changepassword" style="display:none;">
+                                    <div class="col-md-12 mt20">
+                                        <input id="changepasswordone" name="changepasswordone" placeholder="Ny adgangskode" class="whitebg inputfield" type="password"><i class="fa fa-eye seepassword" onclick="if (changepasswordone.type == 'text') changepasswordone.type = 'password';else changepasswordone.type = 'text';" aria-hidden="true"></i>
+                                        <input id="changepasswordrepeat" name="changepasswordrepeat" placeholder="Gentag den nye adgangskode" class="whitebg inputfield" type="password"><i class="fa fa-eye seepassword" onclick="if (changepasswordrepeat.type == 'text') changepasswordrepeat.type = 'password';else changepasswordrepeat.type = 'text';" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 pull-right">
+
+                                    @{
+                                        if (formValidation != null && !formValidation.Success)
+                                        {
+                                            <div><h5>@formValidation.Message</h5></div>
+                                        }
+                                    }
+
+                                    <input id="submit" name="submit" class="btn dark" value="Opdater" type="submit">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                }
+            </div>
+
+        }
+</section>
+
+@*<section id="upload" class="pt0">
+    <img src="@Page.wwbgimg.Url" id="cloudbg" />
+</section>*@
+
+<script>
+    $(document).ready(function () {
+        $(".profil").click(function () {
+            $("#profil").toggle();
+            $("#projekter").hide();
+            $(".projekter").removeClass("tabactive");
+            $(".profil").addClass("tabactive");
+        });
+    });
+
+</script>
+
+@functions {
+
+    public StartupCentral.Code.Model.ApiResponse ValidateAndForm()
+    {
+
+        MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+        IMember currentMember = null;
+        if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+        {
+            currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+        }
+
+        if (currentMember != null)
+        {
+            string username = Request.Form["usernameprofil"];
+            string address = Request.Form["address"];
+            string postalcode = Request.Form["postalcode"];
+            string city = Request.Form["city"];
+            string shortintrotxt = Request.Form["shortintrotxt"];
+            string deeptxt = Request.Form["deeptxt"];
+            string tags = Request.Form["tags"];
+            string changepasswordone = Request.Form["changepasswordone"];
+            string changepasswordrepeat = Request.Form["changepasswordrepeat"];
+
+            if (string.IsNullOrEmpty(username))
+            {
+                return new StartupCentral.Code.Model.ApiResponse(false, "Brugernavn skal udfyldes.");
+            }
+
+            if (username.Length <= 4)
+            {
+                return new StartupCentral.Code.Model.ApiResponse(false, "Brugernavnet er for kort. Minumum fire karakterer.");
+            }
+
+            if (!string.IsNullOrEmpty(changepasswordone))
+            {
+
+                StartupCentral.Code.Controllers.PasswordController passwordController =
+                        new StartupCentral.Code.Controllers.PasswordController();
+
+                var passwordValidation = passwordController.ValidatePasswords(changepasswordone, changepasswordrepeat);
+                if (!passwordValidation.Success)
+                {
+                    return passwordValidation;
+                }
+            }
+
+            return new StartupCentral.Code.Model.ApiResponse(true, "Ændringer er hermed gemt.");
+        }
+
+        return new StartupCentral.Code.Model.ApiResponse(false, "Brugeren kunne ikke findes?!");
+
+    }
+
+
+}

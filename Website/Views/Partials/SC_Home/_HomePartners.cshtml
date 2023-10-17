@@ -1,0 +1,35 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Security
+@using StartupCentral.Extensions
+
+@{
+    int mediaItemId = 0;
+    IEnumerable<IMember> pList = ApplicationContext.Current.Services.MemberService.GetMembersByMemberType("partner");
+}
+
+    <section class="sc-home-partners-all">
+        <div class="container-big">
+            @if (pList.Count() > 0)
+            {
+                foreach (var partner in pList.Where(itm => itm.GetValue<bool>("wwunavailable") == false).OrderBy(itm => itm.Name).OrderBy(itm => itm.Name))
+                {
+                    if (partner.GetValue<string>("wwpartnerAvatar").IsNumeric())
+                    {
+                        mediaItemId = Convert.ToInt32(partner.GetValue<string>("wwpartnerAvatar"));
+                    }
+                    else if (!string.IsNullOrEmpty(partner.GetValue<string>("wwpartnerAvatar")))
+                    {
+                        mediaItemId = partner.GetValue<string>("wwpartnerAvatar").GetIdByUdi();
+                    }
+
+                    var urlprofile = partner.GetValue<string>("urlProfile");
+
+                    <a href="/partnere/@urlprofile/" class="partner-logo"> 
+                        <img src=@Umbraco.Media(mediaItemId).Url() alt=@partner.Name.ToString()>
+                    </a>
+
+                }
+            }
+        </div>
+    </section>

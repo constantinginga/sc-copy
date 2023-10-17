@@ -1,0 +1,16 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+
+@{
+     var i = 1;
+     <ul id="leftmenu">
+        @foreach(var menuitem in Umbraco.Content(1832).Children()){
+            if(i == 1){
+                <li class="current f22 mb10 white lh32 tab-link tab-@i" data-tab="tab-@i">@menuitem.Name</li> 
+            }else{
+                <li class=" f22 mb10 white lh32 tab-link  tab-@i" data-tab="tab-@i">@menuitem.Name </li>
+                }
+            i++;
+            }
+    </ul>
+}

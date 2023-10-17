@@ -1,0 +1,10 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@{
+    var pLink = Model.MacroParameters["pLink"].ToString();
+    var pCaption = Model.MacroParameters["pCaption"].ToString();
+    var pNewWindow = Model.MacroParameters["pNewWindow"].ToString() == "1" ? "_blank" : null;
+    var pCTAColour = Model.MacroParameters["pCTAColour"].ToString() == "1" ? "button--cta" : null;
+}
+
+
+<a href="@pLink" target="@pNewWindow" class="button button--lg @pCTAColour" style="margin: auto;">@pCaption</a>

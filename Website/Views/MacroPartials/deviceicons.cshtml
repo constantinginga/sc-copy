@@ -1,0 +1,21 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+	
+	@{
+		  var siteroot = CurrentPage.Site();
+		if(siteroot.HasValue("wwfavicon")){
+			
+	<link rel="shortcut icon" href="@siteroot.wwfavicon.Url"/>
+		}
+		if(siteroot.HasValue("wwgenereltIkon"))
+		{
+	<link rel="apple-touch-icon" href="@siteroot.wwgenereltIkon.Url"/>
+		}
+		if(siteroot.HasValue("wwikonTilIphone"))
+		{
+	<link rel="apple-touch-icon" sizes="72x72" href="@siteroot.wwikonTilIphone.Url"/>
+		}
+		if(siteroot.HasValue("wwikonTilIpad"))
+		{
+	<link rel="apple-touch-icon" sizes="114x114" href="@siteroot.wwikonTilIpad.Url"/>
+		}
+	}

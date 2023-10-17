@@ -1,0 +1,94 @@
+﻿@using StartupCentral.Extensions
+@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+@{
+    IEnumerable<IMember> coachesList = ApplicationContext.Current.Services.MemberService.GetMembersByMemberType("coach1");
+}
+
+
+<section class="pt0 pb0">
+    <div class="row">
+        @foreach (var busa in coachesList.Where(itm => itm.GetValue<bool>("wwunavailable") == false))
+        {
+            int mediaItemId = busa.GetValue<string>("wwavatar").GetIdByUdi();
+            List<int> tagsId = busa.GetValue<string>("wwtags").UdiCSVToIntList();
+
+            <div class="col-md-6 pad0 flex mb15 hidden-xs">
+                <div class="col-md-5 pr0 eqcol" style="background-color: rgba(24, 52, 66, 1);margin-left:-3px;">
+                    <div class="businessangelscontent white">
+                        <div class="fw600 f12 mb30">Coach</div>
+                        <div class="fw600 f25 mb20">@busa.GetValue("wwname")</div>
+                        <div class="f16 mb40 fleft lh24">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            @Html.Raw(busa.GetValue<string>("wwshorttxt").Replace("\n", "<br />"))
+                                        </div>
+                                    </div>
+                                    @*<a href="mailto:@busa.GetValue("wwemail")" class="btn fleft fw600 light btnlightblue coach normalbtn mt20 mr30">Send din forretningsplan</a>*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tags fleft">
+
+                            @if (tagsId != null)
+                            {
+                                foreach (int tag in tagsId)
+                                {
+                                    <div class="tag fleft fw600 f12 mb5 mr10">@Umbraco.Content(tag).Name</div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7 pl0 eqcol">
+                    @if (mediaItemId > 0)
+                    {
+                        <img src="@Umbraco.Media(mediaItemId).GetCropUrl("coach")" class="img-responsive eqcol" />
+                    }
+
+                </div>
+            </div>
+
+            <div class="col-md-6 pad0 visible-xs">
+                <div class="col-md-7 pl0 ">
+                    @if (mediaItemId > 0)
+                    {
+                        <img src="@Umbraco.Media(mediaItemId).GetCropUrl("coach")" class="img-responsive " />
+                    }
+                </div>
+                <div class="col-md-5 pr0 " style="background-color: rgba(24, 52, 66, 1);">
+                    <div class="businessangelscontent white mb20" style="background-color: rgba(24, 52, 66, 1);">
+                        <div class="fw600 f12 mb30">Coach</div>
+                        <div class="fw600 f25 mb20">@busa.GetValue("wwname")</div>
+                        <div class="f16 mb40 fleft lh24">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            @Html.Raw(busa.GetValue<string>("wwshorttxt").Replace("\n", "<br />"))
+                                        </div>
+                                    </div>
+                                    <a href="mailto:@busa.GetValue("wwemail")" class="btn fleft fw600 light btnlightblue coach normalbtn mt20 mr30">Send din forretningsplan</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tags fleft">
+                            @if (tagsId != null)
+                            {
+                                foreach (int tag in tagsId)
+                                {
+                                    <div class="tag fleft fw600 f12 mb5 mr10">@Umbraco.Content(tag).Name</div>
+                                }
+                            }
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        }
+    </div>
+</section>

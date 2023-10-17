@@ -1,0 +1,214 @@
+.modal-container {
+    display: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    // position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+
+    .modal {
+        padding: 0 2.5%;
+    }
+}
+
+.sc-message-popup {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    @include boxshadow;
+    min-width: 350px;
+    max-width: 500px;
+    background-color: $sc-white;
+
+    .message-popup-header {
+        @include flex(column);
+        flex-direction: column-reverse;
+        text-align: center;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid $sc-border;
+
+        .popup-header-text {
+            margin: 1.5rem 0 0;
+        }
+
+        .popup-header-image {
+            margin: auto;
+
+            img {
+                width: 15rem;
+                height: 15rem;
+                border-radius: 50%;
+            }
+        }
+    }
+
+    .message-popup-body {
+        padding-top: 2.5rem;
+
+        .bp-form-control {
+            margin-bottom: 1.5rem;
+            width: 100%;
+            padding: .5rem;
+            border: 1px solid $sc-border;
+            border-top-left-radius: 1rem;
+            border-bottom-left-radius: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            max-width: 100%;
+            height: 10rem;
+            max-height: 25rem;
+            border: 1px solid $sc-border;
+            border-radius: 1rem;
+            padding: .5rem;
+        }
+    }
+
+    .message-popup-buttons {
+        display: grid;
+        grid: 1fr/1fr 1fr;
+        grid-gap: .25rem;
+
+        .button-left {
+            background-color: $sc-danger;
+            border-color: $sc-danger;
+
+            &:hover {
+                background-color: $sc-danger-hover;
+                border-color: $sc-danger-hover;
+            }
+        }
+    }
+}
+
+.sc-popup {
+    @include flex(column);
+    min-width: 350px;
+    max-width: 500px;
+    border-radius: 1rem;
+    @include boxshadow;
+    padding-bottom: 1.5rem;
+    background-color: $sc-white;
+
+    .success {
+        color: $sc-white;
+        background-color: $sc-success;
+    }
+
+    .danger {
+        background-color: $sc-danger;
+        color: $sc-white;
+    }
+
+    .popup-header {
+        width: 100%;
+        padding: 3rem 1rem 2rem;
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+        @include flex(column);
+        text-align: center;
+
+        img {
+            max-height: 15rem;
+            width: 100%;
+        }
+
+        p {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-top: 2rem;
+        }
+
+        .success-message {
+            font-size: 5rem;
+            font-weight: 800;
+        }
+    }
+
+    .popup-text {
+        text-align: left;
+        padding: 1.5rem;
+    }
+
+    .popup-buttons {
+        margin: auto;
+
+        .button-danger {
+            cursor: pointer;
+            text-align: center;
+            // margin-top: 1rem;
+            padding: .75rem 3rem;
+            border-radius: .5rem;
+            color: $sc-white;
+            background: $sc-danger;
+            font-family: $font-primary;
+            border: 1px solid $sc-danger;
+            @include transition(0.2s);
+
+            &:hover {
+                background: $sc-danger-hover;
+                border: 1px solid $sc-danger-hover;
+            }
+        }
+
+        .button-success {
+            cursor: pointer;
+            text-align: center;
+            // margin-top: 1rem;
+            padding: .75rem 3rem;
+            border-radius: .5rem;
+            color: $sc-white;
+            background: $sc-success;
+            border: 1px solid $sc-success;
+            font-family: $font-primary;
+            @include transition(0.2s);
+
+            &:hover {
+                background: $sc-success-hover;
+                border: 1px solid $sc-success-hover;
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+@include media-md {
+    .sc-message-popup {
+        .message-popup-header {
+            @include flex(row);
+
+            .popup-header-text {
+                margin: auto;
+            }
+        }
+    }
+
+    .sc-popup {
+        width: 500px;
+
+        .popup-header {
+            padding: 5rem 1rem 2rem;
+
+            img {
+                max-height: 20rem;
+                width: 100%;
+            }
+        }
+    }
+}

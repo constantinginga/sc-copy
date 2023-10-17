@@ -1,0 +1,18 @@
+﻿@{
+    Layout = null;
+    
+    var det = new details();
+    var wrapper = new Wrapper();
+    wrapper.applinks = new applinks();
+    wrapper.applinks.apps = new List<string>();
+    wrapper.applinks.details = new List<details>();
+    det.appID = "23V49556TC.com.companyname.scsome.mobileapp";
+    det.paths = new List<string>();
+    det.paths.Add("*");
+    wrapper.applinks.details.Add(det);
+    
+    string json = Json.Encode(wrapper);
+
+    Response.ContentType = "application/json";
+}
+@Html.Raw(json)

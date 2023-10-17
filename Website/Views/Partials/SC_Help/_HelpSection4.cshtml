@@ -1,0 +1,12 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+<div id="sc-help-4" class="sc-section ">
+    <div class="sc-container">
+        <div class="row">
+            <div class="col-12 text-center sc-heading sc-heading-white">
+                <h2>@Umbraco.AssignedContentItem.Value("signupSectionTitle")</h2>
+                <p>@Umbraco.AssignedContentItem.Value("signupSectionDescription")</p>
+                <a href="@Umbraco.Content(29767).Url" class="btn btn-primary mt-3">@Umbraco.AssignedContentItem.Value("signupButtonText")</a>
+            </div>
+        </div>
+    </div>
+</div>

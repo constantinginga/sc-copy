@@ -1,0 +1,192 @@
+﻿@using System.Web
+@using System.Web.Security
+@using StartupCentral.Extensions
+
+@{
+    HttpContext.Current.Application["loginText"] = "Log mig ind";
+    HttpContext.Current.Application["sendPasswordText"] = "Send ny adgangskode";
+}
+@helper LoginForm()
+{
+
+
+    <form method="post" id="loginForm">
+        <div class="row">
+            <div class="col-xs-12 col-md-12 col-sm-12">
+                <input type="email" id="username" name="username" placeholder="E-mail" />
+            </div>
+
+            <div class="col-xs-12 col-md-12  col-sm-12">
+                <input type="password" id="password" name="password" placeholder="Adgangskode" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 text-right">
+                <input type="submit" id="submit" name="submit" class="btn dark" value="@Convert.ToString(HttpContext.Current.Application["loginText"])" />
+            </div>
+            <div class="col-sm-12 text-center f14 underline">
+                <a href="javascript:void(0);" onclick="toggleLoginAndForgot();">Har du glemt dit kodeord? - få tilsendt en nyt her</a>
+            </div>
+        </div>
+    </form>
+
+    <form method="post" id="newPasswordForm" style="display: none;">
+
+        <div class="row">
+            <div class="col-xs-12 col-md-12 col-sm-12">
+                <p>Indtast din e-mail adresse i feltet nedenfor, så fremsender vi dig en ny adgangskode</p>
+
+                <input type="email" id="email" name="email" placeholder="E-mail" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 text-right">
+                <input type="submit" id="submitEmail" name="submitEmail" class="btn dark" value="@Convert.ToString(HttpContext.Current.Application["sendPasswordText"])" />
+                <input type="button" id="cancel" name="cancel" class="btn dark" value="Annuller" onclick="toggleLoginAndForgot();" />
+            </div>
+        </div>
+    </form>
+
+    <script>
+
+        function toggleLoginAndForgot() {
+
+            if ($('#loginForm').is(':visible')) {
+                $('#loginForm').slideUp();
+                $('#newPasswordForm').slideDown();
+            }
+            else {
+                $('#newPasswordForm').slideUp();
+                $('#loginForm').slideDown();
+
+            }
+
+        }
+
+    </script>
+
+}
+
+@helper LogoutForm()
+{
+    <form method="post">
+        <input type="submit" id="submit" name="submit" value="logout" />
+    </form>
+}
+
+@helper Message(string message)
+{
+    <p>@message</p>
+}
+
+
+
+@{
+    var isSubmitLogin = (IsPost && Convert.ToString(Request["submit"]) == Convert.ToString(HttpContext.Current.Application["loginText"]));
+    var isSubmitLogout = (IsPost && Request["submit"] == "logout");
+    var isSubmitNewPassword = (IsPost && Request["submitEmail"] == Convert.ToString(HttpContext.Current.Application["sendPasswordText"]));
+
+    var currentUser = Membership.GetUser();
+    var requestedUrl = "/login/min-side/"; // Model.Url;
+    if (Request["ReturnUrl"] != null)
+    {
+        requestedUrl = Request["ReturnUrl"];
+    }
+
+    if (currentUser != null)
+    {
+        if (!isSubmitLogout)
+        {
+            <div class="mb20 fw600"><a href="/login/min-side/">Gå til Min side</a></div>
+            @* @Message("Logged in : " + currentUser.UserName)*@
+            @LogoutForm()
+        }
+        else
+        {
+            FormsAuthentication.SignOut();
+            FormsAuthentication.RedirectToLoginPage();
+        }
+    }
+
+    if (currentUser == null)
+    {
+        if (isSubmitNewPassword)
+        {
+            string email = Request["email"];
+            email = Convert.ToString(email);
+            string message_text = string.Empty;
+            IMember member = StartupCentral.Code.Controllers.UserController.GetByEmail(email);
+            if (member != null)
+            {
+                //StartupCentral.Code.Controllers.UserController.SendNewPassword(member);
+                System.Threading.Tasks.Task.Run(() => StartupCentral.Code.Controllers.UserController.SendNewPassword(member)).GetAwaiter().GetResult();
+                message_text = "Der blevet sendt en e-mail til din indbakke.";
+            }
+            else
+            {
+                message_text = "E-mailen kunne ikke findes, prøv igen.";
+            }
+
+            <span id="loginerror">@Message(message_text)</span>
+            @LoginForm()
+            <script>
+                $(window).on("load", function () {
+                    setTimeout(function () {
+                        $("#loginview").modal("show");
+                        $('#loginForm').hide();
+                        $('#newPasswordForm').show();
+                    }, 0)
+                });
+            </script>
+        }
+        else if (!isSubmitLogin)
+        {
+            @LoginForm()
+        }
+        else
+        {
+            string username = Request["username"];
+            string password = Request["password"];
+            if (Membership.ValidateUser(username, password))
+            {
+                // RedirectFromLoginPage does not work that good within the Umbraco context
+                // FormsAuthentication.RedirectFromLoginPage(username, true);
+
+                FormsAuthentication.SetAuthCookie(username, true);
+
+                // Redirect to / refresh the requested page
+                Response.Redirect(requestedUrl);
+            }
+            else
+            {
+               <span id="loginerror"> @Message("Login fejlede, tjek brugernavn eller kodeord for bruger: " + username)</span>
+                @LoginForm()
+                
+                <script>
+                    $(window).on("load", function() {
+                        setTimeout(function() {
+                            $("#loginview").modal("show")
+                        }, 0)
+                    });
+                </script>
+            }
+        }
+
+        /*if (isSubmitNewPassword)
+        {
+            string email = Request["email"];
+            if (!string.IsNullOrEmpty(email) && email.ToString().IsEmailAddress())
+            {
+                var userexists = Membership.GetUser();
+                if (userexists == null)
+                {
+                    Message("Brugeren kunne ikke findes");
+                }
+                StartupCentral.Code.Controllers.UserController.SendNewPassword(Convert.ToString(email));
+                Message("Der blevet sendt en e-mail til din indbakke.");
+            }
+        }*/
+    }
+
+}
+

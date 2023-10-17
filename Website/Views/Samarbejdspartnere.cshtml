@@ -1,0 +1,144 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Services;
+@using System.Web
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Extensions
+
+@{
+    Layout = "Master.cshtml";
+    var currentUser = Members.GetCurrentMember();
+
+    //StartupCentral.Code.Controllers.ForretningsplanController fc = new StartupCentral.Code.Controllers.ForretningsplanController();
+    //List<StartupCentral.Code.Model.Forretningsplan> forretningsplaner = fc.GetFinalizedForretningsplaner();
+
+
+}
+
+<section class="mt80">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7 mb40">
+                <div class="bigheadline uppercase f80 f50mob mb40 fw700 dark">
+                    @Page.wwoverskrift
+                </div>
+                <div class="txt dark f18 fw600 lh24 mb60">
+                    @Page.bodyText
+                </div>
+            </div>
+            @if (Umbraco.Member(currentUser.Id).DocumentTypeAlias == "admin")
+            {
+                <div class="col-md-5">
+                    <div class="txt dark f18 fw600 lh24 mb20">
+                        Her kan du indtil videre oprette nye samarbejdspartnere til platformen.
+                    </div>
+                    <a href="/login/opret-samarbejdspartner">
+                        <div class="bigbtn lightbg btn white shadow fw600 mb60">
+                            Opret en ny samarbejdspartner
+                        </div>
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="col-5-md">
+                    <div class="txt dark f18 fw600 lh24 mb20">
+
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row">
+
+            @{ 
+                Umbraco.Core.Models.IContent content = ApplicationContext.Current.Services.ContentService.GetById(Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["StartupCentral.Samarbejdspartnere.RootFolder.Id"]));
+            }
+
+            @foreach (var samarb in content.Children())
+            {
+
+                    
+
+                if (Umbraco.Member(currentUser.Id).DocumentTypeAlias == "admin")
+                {
+                    <div class="col-md-4">
+                        <div class="poolwrapper shadowlight whitebg fleft mb30" data-type="partner" data-id="@samarb.Id">
+                            <div class="poolwrappercontent">
+                                <div class="flex mb20">
+                                    <div class="fleft fw600 f12  mr5">
+                                        @samarb.GetValue("wwkategori")
+                                    </div>
+                                    <a href="javascript:void(0);" class="fright admenubtn poolbullets admenupartner"><img src="/images/bulletslight.jpg" /></a>
+                                    <div class="admenu top0" style="display:none;">
+                                        <div class="admenutop">
+                                            <img src="/images/backarrow.jpg" class="closearrow" />
+                                        </div>
+                                        <div class="admenucontent">
+                                            <div class="admenuinnercontent">
+                                                <ul class="adul">
+                                                    <a href="@Umbraco.NiceUrl(samarb.Id)" id="" class=""><li>Se partner side</li></a>
+
+                                                    <a href="javascript:void(0);" id="aktiverpartner" style="display: @(samarb.Published ? "none" : "block")" class="aktiverpartner" data-id="@samarb.Id" data-toggle="modal" data-target="#aktiverpartnerview"><li>Aktiver</li></a>
+                                                    <a href="javascript:void(0);" id="deaktiverpartner" style="display: @(samarb.Published ? "block" : "none")" class="deaktiverpartner" data-id="@samarb.Id" data-toggle="modal" data-target="#deaktiverpatnerview"><li>Deaktiver</li></a>
+                                                    <a href="@Umbraco.NiceUrl(samarb.Id)?rediger=true" id="editbruger" class="editbruger"><li>Rediger</li></a>
+                                                    <a href="javascript:void(0);" id="deleteparnter" class="deletepartner" data-toggle="modal" data-target="#deletepartnerview"><li>Slet</li></a>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="@Umbraco.NiceUrl(samarb.Id)" class="fleft">
+                                    <div class="fleft w100 f28 fw700 mb15 activetoggle @Umbraco.If(!samarb.Published, "deaktiveret") ">
+                                        @samarb.GetValue("wwfirmanavn")
+                                        @if(samarb.GetValue("wwlogo") != null){
+                                            <img src="@Umbraco.Media(samarb.GetValue("wwlogo")).Url"  class="partnerlogolist"/>
+                                       }
+                                    </div>
+                                    <div class="f18 fw400 lh34 lh22 activetoggle @Umbraco.If(!samarb.Published, "deaktiveret")">
+                                        @samarb.GetValue("wwindledning")
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    @Umbraco.RenderMacro("AdminDeaktiverPartner")
+                    @Umbraco.RenderMacro("AdminSletPartner")
+                }
+                else
+                {
+                    <div class="col-md-4">
+                        <a href="@Umbraco.NiceUrl(samarb.Id)" class="fleft">
+                            <div class="poolwrapper shadowlight whitebg fleft mb30">
+                                <div class="poolwrappercontent">
+                                    <div class="fleft w100 mb20">
+                                        <div class="fleft fw600 w100 mb20 f12  mr5">
+                                            @samarb.GetValue("wwkategori")
+                                        </div>
+
+                                        <div class="fleft w100 f28 fw700 mb15" style="min-height:50px;">
+                                            @samarb.GetValue("wwfirmanavn")
+                                             @if(samarb.GetValue("wwlogo") != null){
+                                            <img src="@Umbraco.Media(samarb.GetValue("wwlogo")).Url"  class="partnerlogolist"/>
+                                       }
+                                        </div>
+                                        <div class="fleft min180 f18 fw400 lh34 lh22 mb15">
+                                            @samarb.GetValue("wwindledning")
+                                        </div>
+                                        @*<div class="btn fleft fw600 light btnlightblue normalbtn mr30">Læs mere</div>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<section id="upload" class="pt0">
+    <img src="@Page.wwbgimg.Url" id="cloudbg" />
+</section>

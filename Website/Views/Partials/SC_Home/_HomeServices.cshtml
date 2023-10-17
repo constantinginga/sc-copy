@@ -1,0 +1,42 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+
+<section class="sc-home-services">
+    <div class="container">
+
+        <div class="title-box">
+            <h2 class="headline-2">@Umbraco.AssignedContentItem.Value("servicesTitle")</h2>
+            <p class="lead">@Umbraco.AssignedContentItem.Value("servicesSubtitle")</p>
+        </div>
+
+        <div class="services-card-container centered">
+            <div class="service-card card">
+                <h3>@Umbraco.AssignedContentItem.Value("leftServiceTitle")</h3>
+                <div class="service-card-img">
+                    <img src="/media/2039/discount.svg" alt="Partners">
+                </div>
+                <p class="lead"> @Umbraco.AssignedContentItem.Value("leftServiceDescription") </p>
+                <a href=@Umbraco.AssignedContentItem.Value("leftServiceBLink") class="service-card-button">@Umbraco.AssignedContentItem.Value("leftServiceButton")</a>
+            </div>
+
+            <div class="service-card card">
+                <h3>@Umbraco.AssignedContentItem.Value("centerServiceTitle")</h3>
+                <div class="service-card-img">
+                    <img src="/media/2040/coaching.svg" alt="Coach">
+                </div>
+                <p class="lead"> @Umbraco.AssignedContentItem.Value("centerServiceDescription") </p>
+                <a href=@Umbraco.AssignedContentItem.Value("centerServiceBLink") class="service-card-button">@Umbraco.AssignedContentItem.Value("centerServiceButton")</a>
+            </div>
+
+            <div class="service-card card">
+                <h3>@Umbraco.AssignedContentItem.Value("rightServiceTitle")</h3>
+                <div class="service-card-img">
+                    <img src="/media/2038/network-handshake.svg" alt="Networking">
+                </div>
+                <p class="lead"> @Umbraco.AssignedContentItem.Value("rightServiceDescription") </p>
+                <a href=@Umbraco.AssignedContentItem.Value("rightServiceBLink") class="service-card-button">@Umbraco.AssignedContentItem.Value("rightServiceButton")</a>
+            </div>
+        </div>
+
+    </div>
+</section>

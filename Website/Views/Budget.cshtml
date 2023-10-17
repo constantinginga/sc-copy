@@ -1,0 +1,173 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+	Layout = "Master.cshtml";
+}
+
+    <div class="content-header">
+        <div class="row-container centered">
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered">
+                        <h2 class="headline-1">
+                            Budget skabeloner
+                        </h2>
+                        <p class="lead">
+                            Bevar det økonomiske overblik når du starter og driver din virksomhed.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <img class="content-header__image" src="../assets/images/Blog Images/86ffb87572d657f335cd7cd828c70de3.jpg"
+            alt=""> -->
+  <img class="content-header__image" src="/media/2375/header400px.svg" alt="StartupCentralHeader">
+    </div>
+
+
+
+
+
+        <section>
+            <div class="row-container">
+                <div class="row center-align-columns">
+                    <div class="column-container">
+                        <div class="column content-column">
+                            <h3 class="headline-3">Hvorfor er budget vigtigt?</h3>
+                            <p>
+                                Som selvstændig og iværksætter har du fjernet dit sikkerhedsnet i form af fast indtægt
+                                fra et lønmodtagerjob. Det økonomiske aspekt vil derfor ofte fylde mere, end det gjorde
+                                da du havde en sikker indtægt. For at fjerne nogle af disse bekymringer, skal du have et
+                                komplet overblik over din økonomi. At lægge et budget handler om at balancere
+                                omkostninger og indtægter, så du altid har penge til at betale udgifter og leve for.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="column-container">
+                        <div class="column">
+                            <img class="content-image" src="/media/2396/budget-skabelon.svg" alt="Budgetter">
+                            <main id="sc-guest-budget">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="row-container">
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column content-column">
+                            <h3 class="headline-3">Bevar det økonomiske overblik</h3>
+                            <p>
+                                Det økonomiske overblik må ikke undervurderes. Skal du optage et banklån eller have
+                                investorer i forbindelse med din virksomhed, skal et økonomisk overblik fremvises, både
+                                for indeværende år og fremtidige regnskabsår. Har du ikke selv overskuet eller
+                                erfaringen til at lave det, anbefaler vi, at du kontakter vores samarbejdspartnere på
+                                området.
+                            </p>
+                            <p>
+                                Overblikket findes ikke kun ved at kigge på din erhvervskonto, men ved at kende dine
+                                eksisterende og kommende indtægter og ikke mindst omkostninger.
+                            </p>
+                            <p>
+                                Et par gode tips:
+                            </p>
+                            <ul>
+                                <li>
+                                    Sørg for at have en erhvervskonto, så du ikke blander din private og din virksomheds
+                                    økonomi sammen.
+                                </li>
+                                <li>
+                                    Ha’ in mente at nogle udgifter kun kommer 1-4 gange om året.
+                                </li>
+                                <li>
+                                    Læg nogle penge til side, så du har til uforudsete udgifter og til udgifter, som kun
+                                    kommer 1-4 gange om året.
+                                </li>
+                            </ul>
+                            <p>
+                                Startup Central tilbyder tre standardiserede budgetskabeloner, som du bør gøre brug af
+                                uanset hvilken virksomhed du driver. Med budgetløsningerne opbygger du en enkel
+                                økonomisk forståelse af din virksomhed. Jo mere detaljeret du udfylder dit budget, desto
+                                færre uforudsete udgifter dukker op. De tre skabeloner er eksklusive tools for vores
+                                medlemmer, du skal derfor være medlem for at kunne downloade dem.
+                            </p>
+
+                            <ul>
+                                <li>
+                                    <strong>
+                                        Etableringsbudgettet
+                                    </strong>
+                                    giver dig en idé om, hvad det vil koste at starte din virksomhed.
+                                </li>
+                                <li>
+                                    <strong>
+                                        Likviditetsbudgettet
+                                    </strong>
+                                    er til for at styrke dine fremtidshandlinger ud fra et økonomisk aspekt.
+                                </li>
+                                <li>
+                                    <strong>
+                                        Driftsbudgettet
+                                    </strong>
+                                    giver dig et overblik over dine driftsmæssige udgifter, så du kan følge din
+                                    økonomiske udvikling.
+                                </li>
+                            </ul>
+
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column centered">
+                            @{if (User.Identity.IsAuthenticated)
+                                {
+                                    <a href="@Umbraco.Content(1670).Url" class="button button--lg button--cta">Tilmeld dig</a>
+                                }
+                                else
+                                {
+                                    <a href="@Umbraco.Content(29767).Url" class="button button--lg button--cta">Tilmeld dig</a>
+                                }
+                            }                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column content-column">
+                            <p>
+                                Er du i tvivl om hvordan du skal udfylde skabelonen, kontakt vores coaches på området,
+                                de vil kunne guide dig igennem opsætningen, ukendte faktorer eller lignende, du må have
+                                udfordringer med.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column content-column ">
+                            <h3 class="headline-3">Typiske fejl i budgettering</h3>
+                            <p>
+                                Den mest almindelig fejl i budgetlægningen er for stor optimisme. Selvfølgelig skal du
+                                tro på din virksomhed, men det er klogt at sætte realistiske mål. Så kan du altid blive
+                                positivt overrasket.
+                            </p>
+                            <p>
+                                Selvom du bruger vores budgetskabeloner, kan der være udfordringer i at få dem alle til
+                                at stemme overens med hinanden. Du skal være opmærksom på, om balancerne stemmer og om
+                                du har hensat det korrekte beløb til SKAT, angivet korrekt skyldig moms osv. Kontakt
+                                vores coaches hvis du er i tvivl.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>

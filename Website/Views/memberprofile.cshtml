@@ -1,0 +1,38 @@
+﻿@using Member = Umbraco.Core.Models.Member
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@using Umbraco.Core.Models;
+
+@{
+    var noNavFooter = Request.Params["noNavFooter"];
+    Layout = (noNavFooter == null) ? "Master.cshtml" : "MasterNoNavFooter.cshtml";
+    //Get the values out of the HTTPContext that we set in the iContentFinder
+    var memberProfile = (Member)HttpContext.Current.Items["memberProfile"];
+    var memberName = (string)HttpContext.Current.Items["memberName"];
+}
+
+
+@if (memberProfile.ContentTypeAlias == "partner")
+{
+    if (!memberProfile.GetValue<bool>("wwunavailable"))
+    {
+        @Html.Partial("MemberProfilePartner", memberProfile)
+    }
+    else
+    {
+        Response.Redirect("/404/");
+        return;
+    }
+}
+else if (memberProfile.ContentTypeAlias == "coach1")
+{
+    if (!memberProfile.GetValue<bool>("wwunavailable"))
+    {
+        @Html.Partial("MemberProfileCoach", memberProfile)
+    }
+    else
+    {
+        Response.Redirect("/404/");
+        return;
+    }
+}

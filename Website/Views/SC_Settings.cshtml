@@ -1,0 +1,37 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Code.Class
+
+@{
+    Layout = "Master.cshtml";
+
+    UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+    var currentUser = Members.GetCurrentMember();
+
+    var _memberService = ApplicationContext.Current.Services.MemberService;
+
+    var member = _memberService.GetById(currentUser.Id);
+    var memberKey = member.Key;
+    var roles = Roles.GetRolesForUser(member.Username);
+}
+
+<main id="sc-settingspage" class="sc-settingspage bg-soft">
+    <div class="aside-container">
+
+        @if (member.ContentTypeAlias == "student" || (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains)))
+        {
+            @Html.Partial("SettingsStudent")
+        }
+        else if (member.ContentTypeAlias == "partner")
+        {
+            @Html.Partial("SettingsPartner")
+        }
+        else if (member.ContentTypeAlias == "coach1")
+        {
+            @Html.Partial("SettingsCoach1")
+        }
+
+    </div>
+</main>
+
+
+

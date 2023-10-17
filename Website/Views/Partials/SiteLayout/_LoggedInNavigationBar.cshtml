@@ -1,0 +1,959 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using Umbraco.Web
+@using StartupCentral.Extensions
+
+@*inherits Umbraco.Web.Mvc.UmbracoViewPage*@
+
+@{
+    var currentUser = Members.GetCurrentMember();
+    if (currentUser == null) { Response.Redirect("/"); }
+    var _memberService = ApplicationContext.Current.Services.MemberService;
+    var member = _memberService.GetById(currentUser.Id);
+
+    string wwavatarImageUrl = "";
+    var myAvatarImageUrl = 0;
+
+    if (member.GetValue("wwavatar") != null)
+    {
+        if (member.GetValue<string>("wwavatar").IsNumeric())
+        {
+            myAvatarImageUrl = Convert.ToInt32(member.GetValue<string>("wwavatar"));
+        }
+        else if (!string.IsNullOrEmpty(member.GetValue<string>("wwavatar")))
+        {
+            myAvatarImageUrl = member.GetValue<string>("wwavatar").GetIdByUdi();
+        }
+
+        if (myAvatarImageUrl > 0)
+        {
+            wwavatarImageUrl = Umbraco.Media(myAvatarImageUrl).Url();
+        }
+    }
+
+    var roles = Roles.GetRolesForUser(member.Username);
+    var contentService = Services.ContentService;
+
+    //get the root content of coaches
+    int root = 0;
+
+    Object coachAsStudent = null;
+    bool studentView = false;
+    if (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains))
+    {
+
+        root = Umbraco.Content(10840).Children().FirstOrDefault(x => x.Name.Equals(member.Name)).Id;
+        var content = contentService.GetById(root);
+        // Get the page using the GUID you've defined
+        coachAsStudent = content.GetValue("isStudent");
+        studentView = Convert.ToBoolean(coachAsStudent);
+    }
+}
+
+<header id="sc-navbar-logged" class="navbar">
+    <div class="nav-wrapper">
+        <div class="navbar-logo">
+            <a class="navbar-logo__link" href="/">
+                <img class="navbar-logo__image" src=@Umbraco.Media(1658).Url alt="SUC Logo">
+            </a>
+        </div>
+        <nav id="logged-nav" class="logged-nav">
+            <ul class="logged-nav__menu">
+                @*
+                <li id="home" class="logged-nav__button">
+                    <a href="/login/min-side/" class="logged-nav__link">
+                        <svg id="home-black-18dp" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                            viewBox="0 0 32 32">
+                            <path id="Path_40" data-name="Path 40" d="M0,0H32V32H0Z" fill="none" />
+                            <path id="Path_41" data-name="Path 41"
+                                d="M13.129,26.52v-7.4h5.739v7.4A1.462,1.462,0,0,0,20.3,28h4.3a1.462,1.462,0,0,0,1.435-1.48V16.157h2.439a.738.738,0,0,0,.473-1.288L16.96,3.722a1.413,1.413,0,0,0-1.923,0L3.043,14.869a.741.741,0,0,0,.473,1.288H5.956V26.52A1.462,1.462,0,0,0,7.39,28h4.3A1.462,1.462,0,0,0,13.129,26.52Z"
+                                transform="translate(0 0)" fill="#182848" />
+                        </svg>
+                        <span>Hjem</span>
+                    </a>
+                </li>
+                *@
+
+                <li id="tools" class="logged-nav__button">
+
+                    @*update the link when startup lounge is published*@
+                    @*https://www.startupcentral.dk/lounge*@
+
+                    <a href="https://www.startupcentral.dk/lounge" class="logged-nav__link" target="_blank">
+                        <div class="notification-badge" id="divbadgeUnreadGroupMessages" style="display: none;">
+                            <span class="notification-badge__counter" id="badgeUnreadGroupMessages"></span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32.06 32.06" xmlns:v="https://vecta.io/nano">
+                            <g fill="#47b2b2">
+                                <path d="M28.31 11.88c-.7-1.1-1.8-2.1-3-3-2.5-1.6-5.8-2.5-9.2-2.5a19.53 19.53 0 0 0-3.4.3c-.7-.7-1.5-1.3-2.3-1.7-3.1-1.6-5.9-1-7.3-.5-.4.1-.5.5-.4.9 0 .1.1.2.1.2 1 1 2.6 3 2.2 4.9-1.6 1.6-2.4 3.5-2.4 5.5s.8 4 2.4 5.6c.4 1.8-1.2 3.8-2.2 4.9-.3.3-.2.7 0 1 .1.1.1.1.2.1 1.4.5 4.2 1.1 7.3-.5.8-.5 1.6-1 2.3-1.7a19.53 19.53 0 0 0 3.4.3c3.5 0 6.7-.9 9.2-2.5 1.3-.9 2.3-1.9 3-3 .8-1.3 1.2-2.6 1.2-4.1 0-1.45-.2-2.9-1.1-4.2zm-12.3 11.3c-1.4 0-2.8-.2-4.2-.5l-.9.9c-.5.5-1.1.9-1.7 1.3-.8.4-1.6.6-2.5.7 0-.1.1-.2.1-.2 1-1.7 1.2-3.3.8-4.7-1.5-1.2-2.5-2.8-2.5-4.5 0-3.9 4.9-7.1 11-7.1s11 3.2 11 7.1c-.2 3.9-5.1 7-11.1 7zm-4.1-7.2c0 .7-.5 1.2-1.2 1.2s-1.2-.5-1.2-1.2.5-1.2 1.2-1.2c.6 0 1.2.5 1.2 1.2z" />
+                                <use xlink:href="#B" />
+                                <use xlink:href="#B" x="3.6" />
+                                <use xlink:href="#B" x="7.2" />
+                            </g>
+                            <defs>
+                                <path id="B" d="M15.51 15.98c0 .7-.5 1.2-1.2 1.2s-1.2-.5-1.2-1.2.5-1.2 1.2-1.2 1.2.5 1.2 1.2z" />
+                            </defs>
+                        </svg>
+                        <span>Startup Lounge</span>
+                    </a>
+                </li>
+
+                @if (member.ContentTypeAlias == "student" || (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains) && (coachAsStudent != null && studentView)))
+                {
+                    <li id="tools" class="logged-nav__button">
+                        <a href="/login/min-profil-projekter/" class="logged-nav__link">
+                            <svg id="Tools" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                <g id="Group_13" data-name="Group 13">
+                                    <rect id="Rectangle_8" data-name="Rectangle 8" width="32" height="32" fill="none" />
+                                    <rect id="Rectangle_9" data-name="Rectangle 9" width="32" height="32" fill="none" />
+                                </g>
+                                <g id="Group_16" data-name="Group 16" transform="translate(2.667 5.333)">
+                                    <g id="Group_15" data-name="Group 15">
+                                        <g id="Group_14" data-name="Group 14" transform="translate(0 14.667)">
+                                            <path id="Path_53" data-name="Path 53"
+                                                  d="M22,16.333A1.337,1.337,0,0,1,20.667,15H10a1.333,1.333,0,1,1-2.667,0H2v4a2.675,2.675,0,0,0,2.667,2.667H26A2.675,2.675,0,0,0,28.667,19V15H23.333A1.337,1.337,0,0,1,22,16.333Z"
+                                                  transform="translate(-2 -15)" fill="#47b2b2" />
+                                        </g>
+                                        <path id="Path_54" data-name="Path 54"
+                                              d="M26,9.333H22V6.667A2.675,2.675,0,0,0,19.333,4h-8A2.675,2.675,0,0,0,8.667,6.667V9.333h-4A2.675,2.675,0,0,0,2,12v5.333H7.333V16A1.333,1.333,0,0,1,10,16v1.333H20.667V16a1.333,1.333,0,1,1,2.667,0v1.333h5.333V12A2.675,2.675,0,0,0,26,9.333Zm-6.667,0h-8V6.667h8Z"
+                                              transform="translate(-2 -4)" fill="#47b2b2" />
+                                    </g>
+                                </g>
+                            </svg>
+                            <span>Tools</span>
+                        </a>
+                    </li>
+                }
+                @if (member.ContentTypeAlias == "student" || (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains) && (coachAsStudent != null && studentView)))
+                {
+                    <li id="coaches" class="logged-nav__button">
+                        <a href="/coaches/" class="logged-nav__link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+                                <g id="Network_1_" transform="translate(0 -386.8)">
+                                    <rect id="Rectangle_7_1_" width="28" height="28" transform="translate(0 386.8)"
+                                          fill="none" />
+                                    <g id="Group_12_1_" transform="translate(3.579 390.372)">
+                                        <g id="Group_34" data-name="Group 34" transform="translate(0 12.141)">
+                                            <path id="Path_99" data-name="Path 99"
+                                                  d="M13.592,398.725,12.276,404.9v.4H7.42a1.773,1.773,0,0,1-1.72-1.72v-1.012a5.258,5.258,0,0,1,3.035-4.755,25.63,25.63,0,0,1,3.642-1.214Z"
+                                                  transform="translate(-5.7 -396.499)" fill="#47b2b2" />
+                                            <path id="Path_100" data-name="Path 100"
+                                                  d="M26.393,402.368v1.113a1.705,1.705,0,0,1-1.72,1.72H19.816v-.4l-.2-.809L18.4,398.726l1.214-2.226c.2,0,.4.1.607.1a28.441,28.441,0,0,1,3.136,1.012A5.2,5.2,0,0,1,26.393,402.368Z"
+                                                  transform="translate(-5.551 -396.5)" fill="#47b2b2" />
+                                        </g>
+                                        <path id="Path_101" data-name="Path 101"
+                                              d="M16.061,384.5a5.261,5.261,0,1,1-5.261,5.261,5.225,5.225,0,0,1,5.261-5.261Z"
+                                              transform="translate(-5.64 -384.5)" fill="#47b2b2" />
+                                        <path id="Path_102" data-name="Path 102"
+                                              d="M16.732,398.729l1.315,6.071v.506H14V404.8l1.315-6.071L14,396.2h4.047Z"
+                                              transform="translate(-5.602 -384.362)" fill="#47b2b2" />
+                                    </g>
+                                    <path id="Path_103" data-name="Path 103"
+                                          d="M19.975,404.587v7.438h-.35v-.35l-.175-.7-1.05-4.55,1.05-1.925A1.11,1.11,0,0,1,19.975,404.587Z"
+                                          transform="translate(-2.3 -2.213)" fill="#47b2b2" />
+                                </g>
+                            </svg>
+                            <span>Coaches</span>
+                        </a>
+                    </li>
+                }
+                <li id="infocenter" class="logged-nav__button">
+                    <a class="logged-nav__link">
+                        <svg id="Menu" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                            <path id="Path_55" data-name="Path 55" d="M0,0H32V32H0Z" fill="none" />
+                            <path id="Path_56" data-name="Path 56"
+                                  d="M16.333,17.964v8A1.337,1.337,0,0,0,17.667,27.3h8A1.337,1.337,0,0,0,27,25.964v-8a1.337,1.337,0,0,0-1.333-1.333h-8A1.337,1.337,0,0,0,16.333,17.964Zm-12,9.333h8a1.337,1.337,0,0,0,1.333-1.333v-8a1.337,1.337,0,0,0-1.333-1.333h-8A1.337,1.337,0,0,0,3,17.964v8A1.337,1.337,0,0,0,4.333,27.3ZM3,4.631v8a1.337,1.337,0,0,0,1.333,1.333h8a1.337,1.337,0,0,0,1.333-1.333v-8A1.337,1.337,0,0,0,12.333,3.3h-8A1.337,1.337,0,0,0,3,4.631ZM20.267,2.5,14.6,8.151a1.328,1.328,0,0,0,0,1.88L20.267,15.7a1.328,1.328,0,0,0,1.88,0l5.667-5.667a1.328,1.328,0,0,0,0-1.88L22.16,2.5a1.344,1.344,0,0,0-1.893,0Z"
+                                  transform="translate(1 0.703)" fill="#47b2b2" />
+                        </svg>
+                        <span>Menu</span>
+                    </a>
+                </li>
+
+                @if (member.ContentTypeAlias == "student" || (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains) && (coachAsStudent != null && studentView)))
+                {
+                    <li id="partners" class="logged-nav__button">
+                        <a href="/partnere/" class="logged-nav__link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                <g id="Group_68" data-name="Group 68" transform="translate(0 -367.6)">
+                                    <g id="Budget_5_" transform="translate(0 367.6)">
+                                        <path id="Path_1_5_" d="M-301-252.4h32v32h-32Z" transform="translate(301 252.4)"
+                                              fill="none" />
+                                    </g>
+                                    <g id="Group_42" data-name="Group 42" transform="translate(2.227 375.6)">
+                                        <path id="Path_115" data-name="Path 115"
+                                              d="M6.178,378.4H3.953a.949.949,0,0,0-.953.953v9.109a.949.949,0,0,0,.953.953H4.8a2.351,2.351,0,0,0,2.33-2.33v-7.732A.949.949,0,0,0,6.178,378.4Zm-1.059,9.639a.708.708,0,0,1-.741-.635.741.741,0,1,1,1.483,0A.909.909,0,0,1,5.118,388.039Z"
+                                              transform="translate(-3 -375.646)" fill="#47b2b2" />
+                                        <path id="Path_116" data-name="Path 116"
+                                              d="M28.278,378.4H26.053a.949.949,0,0,0-.953.953v7.732a2.351,2.351,0,0,0,2.33,2.33h.953a.949.949,0,0,0,.953-.953v-9.109A1.126,1.126,0,0,0,28.278,378.4Zm-.424,9.109a.567.567,0,0,1-.53.53.7.7,0,0,1-.847-.847c.106-.318.318-.53.53-.53A.7.7,0,0,1,27.854,387.509Z"
+                                              transform="translate(-1.692 -375.646)" fill="#47b2b2" />
+                                        <path id="Path_117" data-name="Path 117"
+                                              d="M24.507,378.66v7.732c0,.212-.212.212-.318.106h0l-6.037-4.978a.2.2,0,0,1,0-.318l.953-.847a.674.674,0,0,0-.953-.953l-3.389,3.178h0a1.787,1.787,0,0,1-2.436-.106,1.7,1.7,0,0,1,.106-2.436h0l4.237-3.919a1.3,1.3,0,0,1,.953-.318h3.707a1.15,1.15,0,0,1,.953.424l2.33,2.33C24.507,378.554,24.507,378.554,24.507,378.66Z"
+                                              transform="translate(-2.475 -375.8)" fill="#47b2b2" />
+                                        <path id="Path_118" data-name="Path 118"
+                                              d="M23.664,389.57l-.424.53a1.471,1.471,0,0,1-1.059.53,1.2,1.2,0,0,1-.847-.318.322.322,0,0,0-.424,0l-1.165,1.377a1.642,1.642,0,0,1-2.224.212l-.741-.635h0a2.7,2.7,0,0,1-3.813.424h0L9.047,388.3c-.106,0-.106-.106-.212-.106H8.518a.281.281,0,0,1-.318-.318V378.66c0-.106,0-.106.106-.212l2.224-2.224a1.577,1.577,0,0,1,.953-.424h2.86a.3.3,0,0,1,.212.53l-2.966,2.648a3.074,3.074,0,1,0,4.131,4.555l1.059-.953a.322.322,0,0,1,.424,0l6.249,5.084A1.259,1.259,0,0,1,23.664,389.57Z"
+                                              transform="translate(-2.692 -375.8)" fill="#47b2b2" />
+                                    </g>
+                                </g>
+                            </svg>
+                            <span>Partnere</span>
+                        </a>
+                    </li>
+                }
+                <li id="blog" class="logged-nav__button">
+                    <a href="/blogs/" class="logged-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                            <g id="Group_69" data-name="Group 69" transform="translate(0 -655.6)">
+                                <g id="Budget_11_" transform="translate(301 620)">
+                                    <path id="Path_1_11_" d="M-301,35.6h32v32h-32Z" fill="none" />
+                                </g>
+                                <g id="Group_54" data-name="Group 54" transform="translate(-1.443 -1.332)">
+                                    <path id="Path_136" data-name="Path 136"
+                                          d="M10.544,663.458v2.489H5v-2.489A1.376,1.376,0,0,1,6.358,662.1H9.073A1.339,1.339,0,0,1,10.544,663.458Z"
+                                          transform="translate(0 0.071)" fill="#47b2b2" />
+                                    <rect id="Rectangle_18" data-name="Rectangle 18" width="5.544" height="10.974"
+                                          transform="translate(5 667.601)" fill="#47b2b2" />
+                                    <path id="Path_137" data-name="Path 137"
+                                          d="M5,678h5.544v2.715a1.376,1.376,0,0,1-1.358,1.358H6.471a1.376,1.376,0,0,1-1.358-1.358V678Z"
+                                          transform="translate(0 2.16)" fill="#47b2b2" />
+                                    <path id="Path_138" data-name="Path 138"
+                                          d="M16.631,663.458v3.394l-.226-.905H11.2v-2.489a1.376,1.376,0,0,1,1.358-1.358h2.715a1.344,1.344,0,0,1,1.358,1.131S16.631,663.345,16.631,663.458Z"
+                                          transform="translate(0.815 0.071)" fill="#47b2b2" />
+                                    <rect id="Rectangle_19" data-name="Rectangle 19" width="5.544" height="10.974"
+                                          transform="translate(11.901 667.601)" fill="#47b2b2" />
+                                    <path id="Path_139" data-name="Path 139"
+                                          d="M11.1,678h5.544v2.715a1.376,1.376,0,0,1-1.358,1.358H12.571a1.376,1.376,0,0,1-1.358-1.358L11.1,678Z"
+                                          transform="translate(0.801 2.16)" fill="#47b2b2" />
+                                    <path id="Path_140" data-name="Path 140"
+                                          d="M28.382,680.612l-4.865-17.536c-.339-1.018-1.245-1.7-2.036-1.471l-.566.226c-.226,0-.339.113-.453.339-.113.113-.113.113-.226.113l-2.15.566H17.86a.514.514,0,0,0-.566,0l-.566.226a1.506,1.506,0,0,0-.566.339,2.1,2.1,0,0,0-.453,2.036l.226.792.226.905.226.679,4.3,15.161c.339,1.018,1.245,1.7,2.036,1.471l.566-.226c.226,0,.339-.113.453-.339.113-.113.113-.113.226-.113l2.15-.566h.226a.514.514,0,0,0,.566,0l.566-.226A2.02,2.02,0,0,0,28.382,680.612Zm-3.847.339-.566.226c-.339.113-.566-.113-.679-.453L19.1,665.9a.584.584,0,0,1,.339-.792l.566-.226c.339-.113.566.113.679.453l4.186,14.821A.69.69,0,0,1,24.535,680.952Z"
+                                          transform="translate(1.396)" fill="#47b2b2" />
+                                </g>
+                            </g>
+                        </svg>
+                        <span>Blog</span>
+                    </a>
+                </li>
+
+
+
+
+
+                @if (!Umbraco.Member(currentUser.Id).IsDocumentType("partner"))
+                {
+                    <li id="messages" class="logged-nav__button">
+                        <div class="notification-badge" id="divbadgeUnreadMessages" style="display: none;">
+                            <span class="notification-badge__counter" id="badgeUnreadMessages"></span>
+                        </div>
+                        <a href="/login/indbakke/" class="logged-nav__link">
+                            <svg id="Messages" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                 viewBox="0 0 32 32">
+                                <path id="Path_18" data-name="Path 18" d="M0,0H32V32H0Z" fill="none" />
+                                <path id="Path_19" data-name="Path 19"
+                                      d="M26,2H4.667A2.663,2.663,0,0,0,2.013,4.667L2,28.667l5.333-5.333H26a2.675,2.675,0,0,0,2.667-2.667v-16A2.675,2.675,0,0,0,26,2ZM23.333,18h-16V15.333h16Zm0-4h-16V11.333h16Zm0-4h-16V7.333h16Z"
+                                      transform="translate(0.667 0.667)" fill="#47b2b2" />
+                            </svg>
+                            <span>Beskeder</span>
+                        </a>
+                    </li>
+                }
+
+                @if (Umbraco.Member(currentUser.Id).IsDocumentType("coach1") && (coachAsStudent != null && !studentView))
+                {
+                    <li id="myprofile" class="logged-nav__button">
+
+                        <a href="/login/indstillinger/" class="logged-nav__link">
+
+                            <img class="entity-image-24 entity-image-circle"
+                                 src="@(!string.IsNullOrEmpty(wwavatarImageUrl) ? wwavatarImageUrl : @Umbraco.Media(32440).Url)" alt="Profile Pic">
+                            <span>
+                                Min Profil                             <svg id="DropDown" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                                            viewBox="0 0 24 24" style="position: absolute; right: -4px; bottom: 2px;">
+                                    <path id="Path_51" data-name="Path 51" d="M0,0H24V24H0Z" fill="none" />
+                                    <path id="Path_52" data-name="Path 52"
+                                          d="M8.71,11.71,11.3,14.3a1,1,0,0,0,1.41,0l2.59-2.59A1,1,0,0,0,14.59,10H9.41A1,1,0,0,0,8.71,11.71Z"
+                                          transform="translate(0 0)" fill="#47b2b2" />
+                                </svg>
+                            </span>
+                        </a>
+                        <ul class="logged-nav__submenu">
+                            <li class="logged-nav__submenu-item">
+                                <a href="/login/indstillinger/" class="logged-nav__submenu-item-link">Indstillinger</a>
+                            </li>
+                            @Umbraco.RenderMacro("Loginstatus")
+
+                        </ul>
+                    </li>
+                }
+                else
+                {
+                    <li id="myprofile" class="logged-nav__button">
+
+                        <a href="/login/min-profil/" class="logged-nav__link">
+
+                            <img class="entity-image-24 entity-image-circle"
+                                 src="@(!string.IsNullOrEmpty(wwavatarImageUrl) ? wwavatarImageUrl : @Umbraco.Media(32440).Url)" alt="Profile Pic">
+                            <span>
+                                Min Profil                             <svg id="DropDown" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                                            viewBox="0 0 24 24" style="position: absolute; right: -4px; bottom: 2px;">
+                                    <path id="Path_51" data-name="Path 51" d="M0,0H24V24H0Z" fill="none" />
+                                    <path id="Path_52" data-name="Path 52"
+                                          d="M8.71,11.71,11.3,14.3a1,1,0,0,0,1.41,0l2.59-2.59A1,1,0,0,0,14.59,10H9.41A1,1,0,0,0,8.71,11.71Z"
+                                          transform="translate(0 0)" fill="#47b2b2" />
+                                </svg>
+                            </span>
+                        </a>
+                        <ul class="logged-nav__submenu">
+                            <li class="logged-nav__submenu-item">
+                                <a href="/login/indstillinger/" class="logged-nav__submenu-item-link">Indstillinger</a>
+                            </li>
+
+                            @Umbraco.RenderMacro("Loginstatus")
+                            @*<li class="logged-nav__submenu-item">
+                                <button class="logged-nav__submenu-item-link">Logout</button>
+                            </li>*@
+                        </ul>
+                    </li>
+
+                }
+            </ul>
+        </nav>
+        <button id="hamburger-menu">
+            <svg id="Hamburger" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                <path id="Path_45" data-name="Path 45" d="M0,0H32V32H0Z" fill="none" />
+                <path id="Path_46" data-name="Path 46"
+                      d="M4.333,22H25.667a1.333,1.333,0,0,0,0-2.667H4.333a1.333,1.333,0,1,0,0,2.667Zm0-6.667H25.667a1.333,1.333,0,0,0,0-2.667H4.333a1.333,1.333,0,1,0,0,2.667ZM3,7.333A1.337,1.337,0,0,0,4.333,8.667H25.667a1.333,1.333,0,0,0,0-2.667H4.333A1.337,1.337,0,0,0,3,7.333Z"
+                      transform="translate(1 2)" fill="#47b2b2" />
+            </svg>
+        </button>
+    </div>
+</header>
+
+<div id="logged-nav-popup" class="info-navmenu">
+    <div class="info-navmenu__wrapper">
+        <div class="info-navmenu__header">
+            <h3 class="info-navmenu__title">Menu</h3>
+            <button id="nav-close" class="info-navmenu__close">
+            <svg id="Close" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <path id="Path_49" data-name="Path 49" d="M0,0H32V32H0Z" fill="none" />
+                        <path id="Path_50" data-name="Path 50"
+                            d="M22.6,5.811a1.328,1.328,0,0,0-1.88,0L14.2,12.318,7.678,5.8A1.329,1.329,0,1,0,5.8,7.677l6.52,6.52L5.8,20.718a1.329,1.329,0,0,0,1.88,1.88l6.52-6.52,6.52,6.52a1.329,1.329,0,0,0,1.88-1.88l-6.52-6.52,6.52-6.52A1.336,1.336,0,0,0,22.6,5.811Z"
+                            transform="translate(1.802 1.802)" fill="#47b2b2" />
+                    </svg></button>
+        </div>
+        <div class="info-navmenu__body">
+        <ul class="info-navmenu__main-nav">
+            
+            <!-- Tools -->          
+            <li class="info-navmenu__button">
+                <a href="/login/min-profil-projekter/" class="info-navmenu__button-link">
+                            <svg id="Tools" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                viewBox="0 0 32 32">
+                                <g id="Group_13" data-name="Group 13">
+                                    <rect id="Rectangle_8" data-name="Rectangle 8" width="32" height="32" fill="none" />
+                                    <rect id="Rectangle_9" data-name="Rectangle 9" width="32" height="32" fill="none" />
+                                </g>
+                                <g id="Group_16" data-name="Group 16" transform="translate(2.667 5.333)">
+                                    <g id="Group_15" data-name="Group 15">
+                                        <g id="Group_14" data-name="Group 14" transform="translate(0 14.667)">
+                                            <path id="Path_53" data-name="Path 53"
+                                                d="M22,16.333A1.337,1.337,0,0,1,20.667,15H10a1.333,1.333,0,1,1-2.667,0H2v4a2.675,2.675,0,0,0,2.667,2.667H26A2.675,2.675,0,0,0,28.667,19V15H23.333A1.337,1.337,0,0,1,22,16.333Z"
+                                                transform="translate(-2 -15)" fill="#47b2b2" />
+                                        </g>
+                                        <path id="Path_54" data-name="Path 54"
+                                            d="M26,9.333H22V6.667A2.675,2.675,0,0,0,19.333,4h-8A2.675,2.675,0,0,0,8.667,6.667V9.333h-4A2.675,2.675,0,0,0,2,12v5.333H7.333V16A1.333,1.333,0,0,1,10,16v1.333H20.667V16a1.333,1.333,0,1,1,2.667,0v1.333h5.333V12A2.675,2.675,0,0,0,26,9.333Zm-6.667,0h-8V6.667h8Z"
+                                            transform="translate(-2 -4)" fill="#47b2b2" />
+                                    </g>
+                                </g>
+                            </svg>
+                    <span>Tools</span>
+                </a>
+            </li>
+            
+            <!-- Coaches -->
+            <li class="info-navmenu__button">
+                <a href="/coaches/#All" class="info-navmenu__button-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+                                <g id="Network_1_" transform="translate(0 -386.8)">
+                                    <rect id="Rectangle_7_1_" width="28" height="28" transform="translate(0 386.8)"
+                                        fill="none" />
+                                    <g id="Group_12_1_" transform="translate(3.579 390.372)">
+                                        <g id="Group_34" data-name="Group 34" transform="translate(0 12.141)">
+                                            <path id="Path_99" data-name="Path 99"
+                                                d="M13.592,398.725,12.276,404.9v.4H7.42a1.773,1.773,0,0,1-1.72-1.72v-1.012a5.258,5.258,0,0,1,3.035-4.755,25.63,25.63,0,0,1,3.642-1.214Z"
+                                                transform="translate(-5.7 -396.499)" fill="#47b2b2" />
+                                            <path id="Path_100" data-name="Path 100"
+                                                d="M26.393,402.368v1.113a1.705,1.705,0,0,1-1.72,1.72H19.816v-.4l-.2-.809L18.4,398.726l1.214-2.226c.2,0,.4.1.607.1a28.441,28.441,0,0,1,3.136,1.012A5.2,5.2,0,0,1,26.393,402.368Z"
+                                                transform="translate(-5.551 -396.5)" fill="#47b2b2" />
+                                        </g>
+                                        <path id="Path_101" data-name="Path 101"
+                                            d="M16.061,384.5a5.261,5.261,0,1,1-5.261,5.261,5.225,5.225,0,0,1,5.261-5.261Z"
+                                            transform="translate(-5.64 -384.5)" fill="#47b2b2" />
+                                        <path id="Path_102" data-name="Path 102"
+                                            d="M16.732,398.729l1.315,6.071v.506H14V404.8l1.315-6.071L14,396.2h4.047Z"
+                                            transform="translate(-5.602 -384.362)" fill="#47b2b2" />
+                                    </g>
+                                    <path id="Path_103" data-name="Path 103"
+                                        d="M19.975,404.587v7.438h-.35v-.35l-.175-.7-1.05-4.55,1.05-1.925A1.11,1.11,0,0,1,19.975,404.587Z"
+                                        transform="translate(-2.3 -2.213)" fill="#47b2b2" />
+                                </g>
+                            </svg>
+                    <span>Coaches</span>
+                </a>
+            </li>
+            
+            <!-- Partnere -->
+            <li class="info-navmenu__button">
+                <a href="/partnere/#All" class="info-navmenu__button-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                <g id="Group_68" data-name="Group 68" transform="translate(0 -367.6)">
+                                    <g id="Budget_5_" transform="translate(0 367.6)">
+                                        <path id="Path_1_5_" d="M-301-252.4h32v32h-32Z" transform="translate(301 252.4)"
+                                            fill="none" />
+                                    </g>
+                                    <g id="Group_42" data-name="Group 42" transform="translate(2.227 375.6)">
+                                        <path id="Path_115" data-name="Path 115"
+                                            d="M6.178,378.4H3.953a.949.949,0,0,0-.953.953v9.109a.949.949,0,0,0,.953.953H4.8a2.351,2.351,0,0,0,2.33-2.33v-7.732A.949.949,0,0,0,6.178,378.4Zm-1.059,9.639a.708.708,0,0,1-.741-.635.741.741,0,1,1,1.483,0A.909.909,0,0,1,5.118,388.039Z"
+                                            transform="translate(-3 -375.646)" fill="#47b2b2" />
+                                        <path id="Path_116" data-name="Path 116"
+                                            d="M28.278,378.4H26.053a.949.949,0,0,0-.953.953v7.732a2.351,2.351,0,0,0,2.33,2.33h.953a.949.949,0,0,0,.953-.953v-9.109A1.126,1.126,0,0,0,28.278,378.4Zm-.424,9.109a.567.567,0,0,1-.53.53.7.7,0,0,1-.847-.847c.106-.318.318-.53.53-.53A.7.7,0,0,1,27.854,387.509Z"
+                                            transform="translate(-1.692 -375.646)" fill="#47b2b2" />
+                                        <path id="Path_117" data-name="Path 117"
+                                            d="M24.507,378.66v7.732c0,.212-.212.212-.318.106h0l-6.037-4.978a.2.2,0,0,1,0-.318l.953-.847a.674.674,0,0,0-.953-.953l-3.389,3.178h0a1.787,1.787,0,0,1-2.436-.106,1.7,1.7,0,0,1,.106-2.436h0l4.237-3.919a1.3,1.3,0,0,1,.953-.318h3.707a1.15,1.15,0,0,1,.953.424l2.33,2.33C24.507,378.554,24.507,378.554,24.507,378.66Z"
+                                            transform="translate(-2.475 -375.8)" fill="#47b2b2" />
+                                        <path id="Path_118" data-name="Path 118"
+                                            d="M23.664,389.57l-.424.53a1.471,1.471,0,0,1-1.059.53,1.2,1.2,0,0,1-.847-.318.322.322,0,0,0-.424,0l-1.165,1.377a1.642,1.642,0,0,1-2.224.212l-.741-.635h0a2.7,2.7,0,0,1-3.813.424h0L9.047,388.3c-.106,0-.106-.106-.212-.106H8.518a.281.281,0,0,1-.318-.318V378.66c0-.106,0-.106.106-.212l2.224-2.224a1.577,1.577,0,0,1,.953-.424h2.86a.3.3,0,0,1,.212.53l-2.966,2.648a3.074,3.074,0,1,0,4.131,4.555l1.059-.953a.322.322,0,0,1,.424,0l6.249,5.084A1.259,1.259,0,0,1,23.664,389.57Z"
+                                            transform="translate(-2.692 -375.8)" fill="#47b2b2" />
+                                    </g>
+                                </g>
+                            </svg>
+                    <span>Partnere</span>
+                </a>
+            </li>
+            
+            <!-- Min Profil -->
+            <li class="info-navmenu__button">
+                <a href="#!" class="info-navmenu__button-link">
+                <img class="entity-image-32 entity-image-circle"
+                    src="@(!string.IsNullOrEmpty(wwavatarImageUrl) ? wwavatarImageUrl : @Umbraco.Media(32440).Url)" alt="Profile Picture">
+                <span>Min Profil</span>
+                </a>
+            </li>
+            
+            <!-- Settings -->
+            <li class="info-navmenu__button">
+                <a href="/login/indstillinger/" class="info-navmenu__button-link">
+                            <svg id="Settings" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                viewBox="0 0 32 32">
+                                <g id="Group_20" data-name="Group 20">
+                                    <path id="Path_60" data-name="Path 60" d="M0,0H32V32H0Z" fill="none" />
+                                </g>
+                                <g id="Group_22" data-name="Group 22" transform="translate(2.667 5.333)">
+                                    <g id="Group_21" data-name="Group 21">
+                                        <path id="Path_61" data-name="Path 61"
+                                            d="M13.56,13.027c-.293-.013-.587-.027-.893-.027a17.168,17.168,0,0,0-8.813,2.427A3.9,3.9,0,0,0,2,18.8V21a1.337,1.337,0,0,0,1.333,1.333H14.347A9.284,9.284,0,0,1,12.667,17,9.429,9.429,0,0,1,13.56,13.027Z"
+                                            transform="translate(-2 -1)" fill="#47b2b2" />
+                                        <circle id="Ellipse_2" data-name="Ellipse 2" cx="5.333" cy="5.333" r="5.333"
+                                            transform="translate(5.333)" fill="#47b2b2" />
+                                        <path id="Path_62" data-name="Path 62"
+                                            d="M23.56,17.663a5.784,5.784,0,0,0-.08-.84l1.12-.973a.671.671,0,0,0,.133-.84l-.787-1.36a.651.651,0,0,0-.787-.293l-1.413.48a4.862,4.862,0,0,0-1.44-.84l-.293-1.453a.671.671,0,0,0-.653-.533H17.786a.671.671,0,0,0-.653.533L16.84,13a4.862,4.862,0,0,0-1.44.84l-1.413-.48a.661.661,0,0,0-.787.293l-.787,1.36a.671.671,0,0,0,.133.84l1.12.973a5.784,5.784,0,0,0-.08.84,5.784,5.784,0,0,0,.08.84l-1.12.973a.671.671,0,0,0-.133.84l.787,1.36a.651.651,0,0,0,.787.293l1.413-.48a4.862,4.862,0,0,0,1.44.84l.293,1.453a.671.671,0,0,0,.653.533H19.36a.671.671,0,0,0,.653-.533l.293-1.453a4.862,4.862,0,0,0,1.44-.84l1.413.48a.661.661,0,0,0,.787-.293l.787-1.36a.671.671,0,0,0-.133-.84L23.48,18.5A5.784,5.784,0,0,0,23.56,17.663Zm-5,2.667a2.667,2.667,0,1,1,2.667-2.667A2.675,2.675,0,0,1,18.56,20.33Z"
+                                            transform="translate(1.44 -1.663)" fill="#47b2b2" />
+                                    </g>
+                                </g>
+                            </svg>
+                    <span>Settings</span>
+                </a>
+            </li>
+            
+            <!-- Beskeder -->
+            <li class="info-navmenu__button">
+                <a href="/login/indbakke/" class="info-navmenu__button-link">
+                            <svg id="Messages" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                viewBox="0 0 32 32">
+                                <path id="Path_18" data-name="Path 18" d="M0,0H32V32H0Z" fill="none" />
+                                <path id="Path_19" data-name="Path 19"
+                                    d="M26,2H4.667A2.663,2.663,0,0,0,2.013,4.667L2,28.667l5.333-5.333H26a2.675,2.675,0,0,0,2.667-2.667v-16A2.675,2.675,0,0,0,26,2ZM23.333,18h-16V15.333h16Zm0-4h-16V11.333h16Zm0-4h-16V7.333h16Z"
+                                    transform="translate(0.667 0.667)" fill="#47b2b2" />
+                            </svg>
+                    <span>Beskeder</span>
+                </a>
+            </li>
+            @*
+                                    @Umbraco.RenderMacro("Loginstatus")    
+            <li class="info-navmenu__button">
+                <button href="#!" class="info-navmenu__button-link">
+                            <svg id="Logout" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                viewBox="0 0 32 32">
+                                <g id="Group_17" data-name="Group 17">
+                                    <path id="Path_57" data-name="Path 57" d="M0,0H32V32H0Z" fill="none" />
+                                </g>
+                                <g id="Group_19" data-name="Group 19" transform="translate(4 4)">
+                                    <g id="Group_18" data-name="Group 18">
+                                        <path id="Path_58" data-name="Path 58"
+                                            d="M5.667,5.667h8A1.337,1.337,0,0,0,15,4.333h0A1.337,1.337,0,0,0,13.667,3h-8A2.675,2.675,0,0,0,3,5.667V24.333A2.675,2.675,0,0,0,5.667,27h8A1.337,1.337,0,0,0,15,25.667h0a1.337,1.337,0,0,0-1.333-1.333h-8Z"
+                                            transform="translate(-3 -3)" fill="#182848" />
+                                        <path id="Path_59" data-name="Path 59"
+                                            d="M24.533,12.631l-3.72-3.72a.668.668,0,0,0-1.147.467v2.387H10.333A1.337,1.337,0,0,0,9,13.1H9a1.337,1.337,0,0,0,1.333,1.333h9.333v2.387a.66.66,0,0,0,1.133.467l3.72-3.72A.656.656,0,0,0,24.533,12.631Z"
+                                            transform="translate(-1 -1.097)" fill="#182848" />
+                                    </g>
+                                </g>
+                            </svg>
+                    <span>Sign out</span>
+                </button>
+            </li>
+            *@
+        </ul>
+
+        <ul class="info-navmenu__secondary-nav">
+            <h3>
+                Dét hjælper vi dig med
+            </h3>
+            <li class="info-navmenu__item">
+                <a href="/start-din-virksomhed/" class="info-navmenu__link">
+                            <svg class="material" id="Business-2" xmlns="http://www.w3.org/2000/svg" width="32"
+                                height="32" viewBox="0 0 32 32">
+                                <path id="Path_63-2" d="M0,0H32V32H0Z" fill="none" />
+                                <path id="Path_64-2"
+                                    d="M16,8.8V5.9A2.818,2.818,0,0,0,13.2,3H4.8A2.818,2.818,0,0,0,2,5.9V26.1A2.818,2.818,0,0,0,4.8,29H27.2A2.818,2.818,0,0,0,30,26.1V11.7a2.818,2.818,0,0,0-2.8-2.9ZM7.6,26.1H4.8V23.2H7.6S7.6,26.1,7.6,26.1Zm0-5.8H4.8V17.4H7.6S7.6,20.3,7.6,20.3Zm0-5.7H4.8V11.7H7.6S7.6,14.6,7.6,14.6Zm0-5.8H4.8V5.9H7.6S7.6,8.8,7.6,8.8Zm5.6,17.3H10.4V23.2h2.8Zm0-5.8H10.4V17.4h2.8Zm0-5.7H10.4V11.7h2.8Zm0-5.8H10.4V5.9h2.8ZM25.8,26.1H16V23.2h2.8V20.3H16V17.4h2.8V14.5H16V11.6h9.8A1.43,1.43,0,0,1,27.2,13V24.6A1.394,1.394,0,0,1,25.8,26.1ZM24.4,14.6H21.6v2.9h2.8Zm0,5.7H21.6v2.9h2.8Z"
+                                    fill="#47b2b2" />
+                            </svg>
+                    <span>Start din virksomhed</span>
+                </a>
+            </li>
+            <li class="info-navmenu__item">
+                <a href="/ivaerksaetternetvaerk/" class="info-navmenu__link">
+                            <svg class="material" id="Network" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                viewBox="0 0 32 32">
+                                <rect id="Rectangle_7" data-name="Rectangle 7" width="32" height="32" fill="none" />
+                                <g id="Group_12" data-name="Group 12" transform="translate(0 8)">
+                                    <path id="Path_44" data-name="Path 44"
+                                        d="M16,15a14.148,14.148,0,0,1,5.653,1.2A3.979,3.979,0,0,1,24,19.84v.827A1.337,1.337,0,0,1,22.667,22H9.333A1.337,1.337,0,0,1,8,20.667v-.813a3.951,3.951,0,0,1,2.347-3.64A13.92,13.92,0,0,1,16,15Zm-10.667.333a2.667,2.667,0,1,0-2.667-2.667A2.675,2.675,0,0,0,5.333,15.333ZM6.84,16.8a9.31,9.31,0,0,0-1.507-.133,9.267,9.267,0,0,0-3.707.773A2.681,2.681,0,0,0,0,19.907v.76A1.337,1.337,0,0,0,1.333,22H6V19.853A6,6,0,0,1,6.84,16.8Zm19.827-1.467A2.667,2.667,0,1,0,24,12.667,2.675,2.675,0,0,0,26.667,15.333ZM32,19.907a2.681,2.681,0,0,0-1.627-2.467,9.064,9.064,0,0,0-5.213-.64A6,6,0,0,1,26,19.853V22h4.667A1.337,1.337,0,0,0,32,20.667ZM16,6a4,4,0,1,1-4,4A3.995,3.995,0,0,1,16,6Z"
+                                        transform="translate(0 -6)" fill="#47b2b2" />
+                                </g>
+                            </svg>
+                    <span>
+                        Iværksætternetværk
+                    </span>
+                </a>
+            </li>
+            <li class="info-navmenu__item">
+                <a href="/spar-penge/" class="info-navmenu__link">
+                            <svg class="material" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                viewBox="0 0 32 32">
+                                <g id="Group_39" data-name="Group 39" transform="translate(0 -175.6)">
+                                    <g id="Budget_2_" transform="translate(301 620)">
+                                        <path id="Path_1_2_" d="M-301-444.4h32v32h-32Z" fill="none" />
+                                    </g>
+                                    <g id="Group_38" data-name="Group 38" transform="translate(-1.798 -1.915)">
+                                        <path id="Path_109" data-name="Path 109"
+                                            d="M19.826,186.223H13.252a13.172,13.172,0,0,0-2.152.239v-.239a4.413,4.413,0,0,1,4.423-4.423A4.312,4.312,0,0,1,19.826,186.223Z"
+                                            transform="translate(0.84)" fill="#47b2b2" />
+                                        <path id="Path_110" data-name="Path 110"
+                                            d="M28.059,191.357H26.744a6.669,6.669,0,0,0-1.674-2.391l.837-3.467H24.472a4.448,4.448,0,0,0-3.347,1.554c-.359,0-.717-.12-1.076-.12H14.192a7.312,7.312,0,0,0-7.172,5.857s-.12,1.076-.12,1.434a6.909,6.909,0,0,0,2.988,5.738v3.706a.771.771,0,0,0,.717.717h2.869a.771.771,0,0,0,.717-.717v-2.032h5.857v2.152a.771.771,0,0,0,.717.717h2.869a.771.771,0,0,0,.717-.717v-3.706a8.114,8.114,0,0,0,1.434-1.434h2.271a.771.771,0,0,0,.717-.717v-5.857A.771.771,0,0,0,28.059,191.357ZM22.2,194.226a.717.717,0,1,1,.717-.717A.689.689,0,0,1,22.2,194.226Z"
+                                            transform="translate(0.02 0.723)" fill="#47b2b2" />
+                                        <path id="Path_111" data-name="Path 111"
+                                            d="M6.8,193.034c0-.359.12-1.434.12-1.434" transform="translate(0 1.915)"
+                                            fill="none" />
+                                    </g>
+                                    <path id="Path_123" data-name="Path 123"
+                                        d="M6.7,194H8.17a.618.618,0,0,0,.588-.56v-.98a.618.618,0,0,0-.588-.56H6.7a.618.618,0,0,0-.588.56v.98C5.965,193.72,6.259,194,6.7,194Z"
+                                        transform="translate(-3.103 -0.3)" fill="#47b2b2" />
+                                </g>
+                            </svg>
+                    <span>Spar penge</span>
+                </a>
+            </li>
+            <li class="info-navmenu__item">
+                <a href="/ivaerksaettersparring/" class="info-navmenu__link">
+                            <svg class="material" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                viewBox="0 0 32 32">
+                                <g id="Group_47" data-name="Group 47" transform="translate(0 -223.6)">
+                                    <g id="Budget_6_" transform="translate(301 620)">
+                                        <path id="Path_1_6_" d="M-301-396.4h32v32h-32Z" fill="none" />
+                                    </g>
+                                    <g id="Group_46" data-name="Group 46" transform="translate(-1.748 -1.598)">
+                                        <path id="Path_124" data-name="Path 124"
+                                            d="M11.814,231.734a2.979,2.979,0,0,1-3.58,3.58,3.084,3.084,0,0,1-2.425-2.425,3.014,3.014,0,0,1,3.58-3.58A3.084,3.084,0,0,1,11.814,231.734Z"
+                                            transform="translate(0.161)" fill="#47b2b2" />
+                                        <path id="Path_125" data-name="Path 125"
+                                            d="M9.781,240.727a1.973,1.973,0,0,0,0,3l2.425,2.309v4.85a1.27,1.27,0,0,1-2.54,0v-4.734a.5.5,0,0,0-.462-.231.6.6,0,0,0-.462.231v4.734a1.27,1.27,0,0,1-2.54,0v-6.351a1.528,1.528,0,0,1-1.5-1.5v-4.619A3.1,3.1,0,0,1,7.818,235.3h3a3.273,3.273,0,0,1,2.887,1.963c-.115.115-.231.115-.231.231Z"
+                                            transform="translate(0 0.938)" fill="#47b2b2" />
+                                        <path id="Path_126" data-name="Path 126"
+                                            d="M23.426,240.727a1.973,1.973,0,0,1,0,3L21,246.039v4.85a1.27,1.27,0,0,0,2.54,0v-4.734a.5.5,0,0,1,.462-.231.6.6,0,0,1,.462.231v4.734a1.27,1.27,0,0,0,2.54,0v-6.351a1.528,1.528,0,0,0,1.5-1.5v-4.619a3.1,3.1,0,0,0-3.118-3.118h-3a3.273,3.273,0,0,0-2.887,1.963c.115.115.231.115.231.231Z"
+                                            transform="translate(2.29 0.938)" fill="#47b2b2" />
+                                        <path id="Path_127" data-name="Path 127"
+                                            d="M24.519,242.272l-3.464,3.233a.424.424,0,0,1-.346.115.545.545,0,0,1-.577-.577v-1.732h-6.12v1.732c0,.115,0,.346-.115.346a.558.558,0,0,1-.808,0l-3.464-3.233a.558.558,0,0,1,0-.808l3.464-3.233a.424.424,0,0,1,.346-.115.545.545,0,0,1,.577.577v1.732h6.12v-1.732c0-.115,0-.346.115-.346a.558.558,0,0,1,.808,0l3.464,3.233A.558.558,0,0,1,24.519,242.272Z"
+                                            transform="translate(0.735 1.355)" fill="#47b2b2" />
+                                        <path id="Path_128" data-name="Path 128"
+                                            d="M26.914,231.734a2.979,2.979,0,0,1-3.58,3.58,3.084,3.084,0,0,1-2.425-2.425,3.014,3.014,0,0,1,3.58-3.58A3.084,3.084,0,0,1,26.914,231.734Z"
+                                            transform="translate(2.497)" fill="#47b2b2" />
+                                    </g>
+                                </g>
+                            </svg>
+                    <span>Iværksættersparring</span>
+                </a>
+            </li>
+        </ul>
+
+        <ul class="info-navmenu__secondary-nav">
+            <h3>
+                Medlemsfordele
+            </h3>
+            <li class="info-navmenu__item">
+                <a href="https://www.startupcentral.dk/lounge" class="info-navmenu__link">
+                            <svg class="material" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                viewBox="0 0 32 32">
+                                <g id="Group_50" data-name="Group 50" transform="translate(0 -463.6)">
+                                    <g id="Budget_7_" transform="translate(0 463.6)">
+                                        <path id="Path_1_7_" d="M-301-156.4h32v32h-32Z" transform="translate(301 156.4)"
+                                            fill="none" />
+                                    </g>
+                                    <g id="Group_49" data-name="Group 49" transform="translate(2.5 467.562)">
+                                        <path id="Path_129" data-name="Path 129"
+                                            d="M28.2,475.5a12.2,12.2,0,0,0-3-3A17.334,17.334,0,0,0,16,470a19.534,19.534,0,0,0-3.4.3A9.152,9.152,0,0,0,3,468.1c-.4.1-.5.5-.4.9a.349.349,0,0,0,.1.2c1,1,2.6,3,2.2,4.9a7.677,7.677,0,0,0-2.4,5.5,7.9,7.9,0,0,0,2.4,5.6c.4,1.8-1.2,3.8-2.2,4.9a.76.76,0,0,0,0,1c.1.1.1.1.2.1a9.1,9.1,0,0,0,7.3-.5,12.418,12.418,0,0,0,2.3-1.7,19.528,19.528,0,0,0,3.4.3,17.082,17.082,0,0,0,9.2-2.5,10.686,10.686,0,0,0,3-3,7.537,7.537,0,0,0,1.2-4.1A5.844,5.844,0,0,0,28.2,475.5ZM15.9,486.8a20.074,20.074,0,0,1-4.2-.5l-.9.9a10.918,10.918,0,0,1-1.7,1.3,7.172,7.172,0,0,1-2.5.7.349.349,0,0,1,.1-.2,5.911,5.911,0,0,0,.8-4.7A5.966,5.966,0,0,1,5,479.8c0-3.9,4.9-7.1,11-7.1s11,3.2,11,7.1C26.8,483.7,21.9,486.8,15.9,486.8Z"
+                                            transform="translate(-2.5 -467.562)" fill="#47b2b2" />
+                                        <g id="Group_48" data-name="Group 48" transform="translate(6.9 10.838)">
+                                            <path id="Path_130" data-name="Path 130"
+                                                d="M11.8,479.6a1.2,1.2,0,1,1-1.2-1.2A1.216,1.216,0,0,1,11.8,479.6Z"
+                                                transform="translate(-9.4 -478.4)" fill="#47b2b2" />
+                                            <path id="Path_131" data-name="Path 131"
+                                                d="M15.4,479.6a1.2,1.2,0,1,1-1.2-1.2A1.155,1.155,0,0,1,15.4,479.6Z"
+                                                transform="translate(-9.4 -478.4)" fill="#47b2b2" />
+                                            <path id="Path_132" data-name="Path 132"
+                                                d="M19,479.6a1.2,1.2,0,1,1-1.2-1.2A1.155,1.155,0,0,1,19,479.6Z"
+                                                transform="translate(-9.4 -478.4)" fill="#47b2b2" />
+                                            <path id="Path_133" data-name="Path 133"
+                                                d="M22.6,479.6a1.2,1.2,0,1,1-1.2-1.2A1.155,1.155,0,0,1,22.6,479.6Z"
+                                                transform="translate(-9.4 -478.4)" fill="#47b2b2" />
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                    <span>
+                        Startup Lounge
+                    </span>
+                </a>
+            </li>
+        </ul>
+        <ul class="info-navmenu__secondary-nav">
+            <h3>
+                Tools
+            </h3>
+            <li class="info-navmenu__item">
+                <a href="/forretningsplan/" class="info-navmenu__link">
+                    <svg class="material" id="BusinessPlan-icon" xmlns="http://www.w3.org/2000/svg" width="32"
+                         height="32" viewBox="0 0 32 32">
+                        <path id="Path_42" data-name="Path 42" d="M0,0H32V32H0Z" fill="none" />
+                        <path id="Path_43" data-name="Path 43"
+                              d="M23,4.5a12.4,12.4,0,0,0-7.333,2,12.4,12.4,0,0,0-7.333-2A14.426,14.426,0,0,0,2.627,5.553,2.717,2.717,0,0,0,1,8.02V23.06a2.66,2.66,0,0,0,3.307,2.587,16.467,16.467,0,0,1,4.027-.48,14.1,14.1,0,0,1,6.08,1.227,2.74,2.74,0,0,0,2.493,0,13.907,13.907,0,0,1,6.08-1.227,16.467,16.467,0,0,1,4.027.48A2.648,2.648,0,0,0,30.32,23.06V8.02a2.717,2.717,0,0,0-1.627-2.467A14.317,14.317,0,0,0,23,4.5Zm4.667,16.973a1.346,1.346,0,0,1-1.6,1.307A16.811,16.811,0,0,0,23,22.513a16.06,16.06,0,0,0-7.333,2V9.167a16.06,16.06,0,0,1,7.333-2,16.915,16.915,0,0,1,3.6.373,1.352,1.352,0,0,1,1.067,1.307Z"
+                              transform="translate(0.333 1.5)" fill="#47b2b2" />
+                    </svg>
+                    <span>Forretningsplan</span>
+                </a>
+            </li>
+            <li class="info-navmenu__item">
+                <a href="/pitch-deck/" class="info-navmenu__link">
+                    <svg class="material" id="Pitch-icon"
+                         xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                         viewBox="0 0 32 32">
+                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 32 31.83" style="enable-background:new 0 0 32 31.83" xml:space="preserve" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="Rectangle_8_00000025417577099744623300000007296058445315045010_" class="st0" d="M-298-189h32v32h-32z" />
+                                                                    </defs>
+                        <style>
+                            .st0 {
+                                fill: none
+                            }
+
+                            .st1 {
+                                fill: #47b2b2
+                            }
+
+                            .st2 {
+                                fill: #fff
+                            }
+                        </style>
+                        <g id="Tools-2_00000024000837286304819340000014053998419341702806_" transform="translate(298 189)"><g id="Group_13_00000054983032206482910820000000645015418662454440_"><use class="st0" xlink:href="#Rectangle_8_00000025417577099744623300000007296058445315045010_" /><use id="Rectangle_9_00000163049997279539768800000006743711620278387903_" class="st0" xlink:href="#Rectangle_8_00000025417577099744623300000007296058445315045010_" /></g></g><path class="st1" d="M26.8 4.66H4.99c-.42-.01-.6.17-.6.59.01.73.01 1.45.01 2.18-.01.35.17.57.52.52.47-.06.49.17.49.54-.01 4.38-.01 8.77 0 13.15 0 1.19.61 1.81 1.81 1.81 2.64.01 5.28 0 7.93.01.13 0 .37-.13.39.15.02.21.09.43-.24.59-.77.35-1.11 1.14-.91 1.92.19.71.86 1.22 1.61 1.22.77.01 1.45-.52 1.63-1.26.17-.77-.16-1.54-.91-1.88-.33-.15-.27-.36-.25-.58.02-.31.28-.16.42-.16 2.57-.01 5.14 0 7.71 0 1.46 0 2.01-.55 2.01-1.99 0-4.35 0-8.71-.01-13.06 0-.33.04-.5.43-.46.42.05.6-.18.59-.6-.01-.62 0-1.24 0-1.86 0-.77-.07-.83-.82-.83zM16.75 25.7c0 .42-.33.74-.75.74s-.74-.32-.74-.74c-.01-.43.34-.78.77-.76.41.01.73.34.72.76zm8.95-4.12c0 .76-.2.97-.96.97H7.24c-.72 0-.93-.22-.93-.95 0-4.4.01-8.8-.01-13.19 0-.35.08-.46.45-.46 3.09.02 6.19.01 9.29.01 3.07 0 6.14.01 9.2-.01.39 0 .47.11.47.48-.02 4.38-.01 8.76-.01 13.15zm.95-14.61c-.21.25-.68.08-1.03.08-6.62.01-13.24 0-19.85.01-.36 0-.49-.06-.48-.45.03-1.04.01-1.04 1.06-1.04H16c3.43 0 6.86 0 10.29-.01.32 0 .47.04.42.41-.04.34.11.8-.06 1z" /><path class="st1" d="M26.79 4.66H4.98c-.42-.01-.6.17-.6.59.01.73.01 1.45.01 2.18-.01.35.17.57.52.52.47-.06.49.17.49.54-.01 4.38-.01 8.77 0 13.15 0 1.19.61 1.81 1.81 1.81 2.64.01 5.28 0 7.93.01.13 0 .37-.13.39.15.02.21.09.43-.24.59-.77.35-1.11 1.14-.91 1.92.19.71.86 1.22 1.61 1.22.77.01 1.45-.52 1.63-1.26.17-.77-.16-1.54-.91-1.88-.33-.15-.27-.36-.25-.58.02-.31.28-.16.42-.16 2.57-.01 5.14 0 7.71 0 1.46 0 2.01-.55 2.01-1.99 0-4.35 0-8.71-.01-13.06 0-.33.04-.5.43-.46.42.05.6-.18.59-.6-.01-.62 0-1.24 0-1.86 0-.77-.07-.83-.82-.83zM16.74 25.7c0 .42-.33.74-.75.74s-.74-.32-.74-.74c-.01-.43.34-.78.77-.76.41.01.73.34.72.76zm8.95-4.12c0 .76-.2.97-.96.97H7.23c-.72 0-.93-.22-.93-.95 0-4.4.01-8.8-.01-13.19 0-.35.08-.46.45-.46 3.09.02 6.19.01 9.29.01 3.07 0 6.14.01 9.2-.01.39 0 .47.11.47.48-.02 4.38-.01 8.76-.01 13.15z" /><path class="st1" d="M25.7 8.43c-.02 4.38-.01 8.76-.01 13.15 0 .76-.2.97-.96.97H7.23c-.72 0-.93-.22-.93-.95 0-4.4.01-8.8-.01-13.19 0-.35.08-.46.45-.46 3.09.02 6.19.01 9.29.01 3.07 0 6.14.01 9.2-.01.39 0 .47.11.47.48z" /><path class="st2" d="M20.2 16.59c-.48 1.94-2.5 3.38-4.53 3.2-2.18-.18-3.85-1.92-3.97-4.12-.12-1.98 1.4-3.97 3.31-4.38.34-.07.38.04.38.33-.03.62-.01 1.25-.01 1.86 0 .6.01 1.2 0 1.79-.01.57.23.83.82.83 1.19-.01 2.39.01 3.59-.01.42-.01.49.13.41.5z" /><path class="st2" d="M19.93 14.31c-.48-.03-.94 0-1.52 0-.49-.05-1.27.25-1.61-.12-.29-.33-.1-1.09-.1-1.67-.01-.38 0-.78 0-1.18 0-.74 0-.75.73-.49 1.46.52 2.39 1.53 2.83 3.02.1.33.03.45-.33.44z" /></svg>
+                    </svg>
+                    <span>Pitch Deck</span>
+                </a>
+            </li>
+            <li class="info-navmenu__item">
+                <a href="/budgetskabeloner/" class="info-navmenu__link">
+                    <svg class="material" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                         viewBox="0 0 32 32">
+                        <g id="Group_53" data-name="Group 53" transform="translate(0 -607.6)">
+                            <g id="Budget_10_" transform="translate(301 620)">
+                                <path id="Path_1_10_" d="M-301-12.4h32v32h-32Z" fill="none" />
+                            </g>
+                            <path id="Path_135" data-name="Path 135"
+                                  d="M25.764,612.5H9.721A3.423,3.423,0,0,0,6.3,615.921v19.346a3.424,3.424,0,0,0,3.421,3.421H25.764a3.423,3.423,0,0,0,3.421-3.421V615.921A3.423,3.423,0,0,0,25.764,612.5ZM12.788,633.852a1.613,1.613,0,0,1-1.652,1.652h0a1.613,1.613,0,0,1-1.652-1.652h0a1.613,1.613,0,0,1,1.652-1.652h0a1.613,1.613,0,0,1,1.652,1.652Zm0-6.606a1.613,1.613,0,0,1-1.652,1.652h0a1.613,1.613,0,0,1-1.652-1.652h0a1.613,1.613,0,0,1,1.652-1.652h0a1.613,1.613,0,0,1,1.652,1.652Zm6.606,6.606a1.613,1.613,0,0,1-1.652,1.652h0a1.613,1.613,0,0,1-1.652-1.652h0a1.613,1.613,0,0,1,1.652-1.652h0a1.613,1.613,0,0,1,1.652,1.652Zm0-6.606a1.613,1.613,0,0,1-1.652,1.652h0a1.613,1.613,0,0,1-1.652-1.652h0a1.613,1.613,0,0,1,1.652-1.652h0a1.613,1.613,0,0,1,1.652,1.652ZM26,633.852a1.613,1.613,0,0,1-1.652,1.652h0a1.613,1.613,0,0,1-1.652-1.652v-6.606a1.613,1.613,0,0,1,1.652-1.652h0A1.613,1.613,0,0,1,26,627.246Zm0-13.212a1.613,1.613,0,0,1-1.652,1.652H11.137a1.613,1.613,0,0,1-1.652-1.652v-3.3a1.613,1.613,0,0,1,1.652-1.652H24.231a1.613,1.613,0,0,1,1.652,1.652v3.3Z"
+                                  transform="translate(-1.743 -1.994)" fill="#47b2b2" />
+                        </g>
+                    </svg>
+                    <span>
+                        Budgetskabeloner
+                    </span>
+                </a>
+            </li>
+        </ul>
+        <ul class="info-navmenu__secondary-nav">
+            <h3>
+                Viden
+            </h3>
+            <li class="info-navmenu__item">
+                <a href="/blogs/" class="info-navmenu__link">
+                    <svg class="material" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                         viewBox="0 0 32 32">
+                        <g id="Group_55" data-name="Group 55" transform="translate(0 -655.6)">
+                            <g id="Budget_11_" transform="translate(301 620)">
+                                <path id="Path_1_11_" d="M-301,35.6h32v32h-32Z" fill="none" />
+                            </g>
+                            <g id="Group_54" data-name="Group 54" transform="translate(-1.443 -1.332)">
+                                <path id="Path_136" data-name="Path 136"
+                                      d="M10.544,663.458v2.489H5v-2.489A1.376,1.376,0,0,1,6.358,662.1H9.073A1.339,1.339,0,0,1,10.544,663.458Z"
+                                      transform="translate(0 0.071)" fill="#47b2b2" />
+                                <rect id="Rectangle_18" data-name="Rectangle 18" width="5.544" height="10.974"
+                                      transform="translate(5 667.601)" fill="#47b2b2" />
+                                <path id="Path_137" data-name="Path 137"
+                                      d="M5,678h5.544v2.715a1.376,1.376,0,0,1-1.358,1.358H6.471a1.376,1.376,0,0,1-1.358-1.358V678Z"
+                                      transform="translate(0 2.16)" fill="#47b2b2" />
+                                <path id="Path_138" data-name="Path 138"
+                                      d="M16.631,663.458v3.394l-.226-.905H11.2v-2.489a1.376,1.376,0,0,1,1.358-1.358h2.715a1.344,1.344,0,0,1,1.358,1.131S16.631,663.345,16.631,663.458Z"
+                                      transform="translate(0.815 0.071)" fill="#47b2b2" />
+                                <rect id="Rectangle_19" data-name="Rectangle 19" width="5.544" height="10.974"
+                                      transform="translate(11.901 667.601)" fill="#47b2b2" />
+                                <path id="Path_139" data-name="Path 139"
+                                      d="M11.1,678h5.544v2.715a1.376,1.376,0,0,1-1.358,1.358H12.571a1.376,1.376,0,0,1-1.358-1.358L11.1,678Z"
+                                      transform="translate(0.801 2.16)" fill="#47b2b2" />
+                                <path id="Path_140" data-name="Path 140"
+                                      d="M28.382,680.612l-4.865-17.536c-.339-1.018-1.245-1.7-2.036-1.471l-.566.226c-.226,0-.339.113-.453.339-.113.113-.113.113-.226.113l-2.15.566H17.86a.514.514,0,0,0-.566,0l-.566.226a1.506,1.506,0,0,0-.566.339,2.1,2.1,0,0,0-.453,2.036l.226.792.226.905.226.679,4.3,15.161c.339,1.018,1.245,1.7,2.036,1.471l.566-.226c.226,0,.339-.113.453-.339.113-.113.113-.113.226-.113l2.15-.566h.226a.514.514,0,0,0,.566,0l.566-.226A2.02,2.02,0,0,0,28.382,680.612Zm-3.847.339-.566.226c-.339.113-.566-.113-.679-.453L19.1,665.9a.584.584,0,0,1,.339-.792l.566-.226c.339-.113.566.113.679.453l4.186,14.821A.69.69,0,0,1,24.535,680.952Z"
+                                      transform="translate(1.396)" fill="#47b2b2" />
+                            </g>
+                        </g>
+                    </svg>
+                    <span>Blog</span>
+                </a>
+            </li>
+            <li class="info-navmenu__item">
+                <a href="@Umbraco.Content(32198).Url" class="info-navmenu__link">
+                    <svg class="material" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 455 455" style="enable-background: new 0 0 455 455;" xml:space="preserve" width="32" height="32">
+                    <g>
+                    <path style="fill:#47b2b2;" d="M363.75,0H91.25c-16.5,0-30,13.5-30,30v395c0,16.5,13.5,30,30,30h272.5c16.5,0,30-13.5,30-30V30   C393.75,13.5,380.25,0,363.75,0z" />
+                    <polygon style="fill:#FFFFFF;" points="363.76,30 363.76,395 91.24,395 91.26,29.98  " />
+                    <path style="fill:#082947;" d="M242.501,432.502h-30c-4.142,0-7.5-3.358-7.5-7.5s3.358-7.5,7.5-7.5h30c4.143,0,7.5,3.358,7.5,7.5   S246.644,432.502,242.501,432.502z" />
+                    <path style="fill: #47b2b2;" d="M323.763,77.479h-192.5c-4.142,0-7.5-3.358-7.5-7.5s3.358-7.5,7.5-7.5h192.5   c4.143,0,7.5,3.358,7.5,7.5S327.906,77.479,323.763,77.479z" />
+                    <path style="fill: #47b2b2;" d="M323.763,113.106h-192.5c-4.142,0-7.5-3.358-7.5-7.5s3.358-7.5,7.5-7.5h192.5   c4.143,0,7.5,3.358,7.5,7.5S327.906,113.106,323.763,113.106z" />
+                    <path style="fill: #47b2b2;" d="M227.513,148.734h-96.25c-4.142,0-7.5-3.358-7.5-7.5s3.358-7.5,7.5-7.5h96.25   c4.143,0,7.5,3.358,7.5,7.5S231.656,148.734,227.513,148.734z" />
+                    <path style="fill: #47b2b2;" d="M323.763,184.362h-192.5c-4.142,0-7.5-3.358-7.5-7.5s3.358-7.5,7.5-7.5h192.5   c4.143,0,7.5,3.358,7.5,7.5S327.906,184.362,323.763,184.362z" />
+                    <path style="fill: #47b2b2;" d="M323.763,219.99h-192.5c-4.142,0-7.5-3.358-7.5-7.5s3.358-7.5,7.5-7.5h192.5   c4.143,0,7.5,3.358,7.5,7.5S327.906,219.99,323.763,219.99z" />
+                    <path style="fill: #47b2b2;" d="M323.763,255.618h-192.5c-4.142,0-7.5-3.358-7.5-7.5s3.358-7.5,7.5-7.5h192.5   c4.143,0,7.5,3.358,7.5,7.5S327.906,255.618,323.763,255.618z" />
+                    <path style="fill: #47b2b2;" d="M323.763,291.246h-192.5c-4.142,0-7.5-3.358-7.5-7.5s3.358-7.5,7.5-7.5h192.5   c4.143,0,7.5,3.358,7.5,7.5S327.906,291.246,323.763,291.246z" />
+                    <path style="fill: #47b2b2;" d="M323.763,326.874h-192.5c-4.142,0-7.5-3.358-7.5-7.5s3.358-7.5,7.5-7.5h192.5   c4.143,0,7.5,3.358,7.5,7.5S327.906,326.874,323.763,326.874z" />
+                    <path style="fill: #47b2b2;" d="M227.513,362.502h-96.25c-4.142,0-7.5-3.358-7.5-7.5s3.358-7.5,7.5-7.5h96.25   c4.143,0,7.5,3.358,7.5,7.5S231.656,362.502,227.513,362.502z" />
+                            </g>
+                        </svg>
+
+                    <span>
+                        @Umbraco.Content(32198).Value("menuTitle")
+                    </span>
+                </a>
+            </li>
+            <li class="info-navmenu__item">
+                <a href="/vlogs/" class="info-navmenu__link">
+                    <svg class="svg-icon" style="width: 40px; height: 40px;vertical-align: middle;fill: #47b2b2;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M918.613333 305.066667a42.666667 42.666667 0 0 0-42.666666 0L725.333333 379.306667A128 128 0 0 0 597.333333 256H213.333333a128 128 0 0 0-128 128v256a128 128 0 0 0 128 128h384a128 128 0 0 0 128-123.306667l151.893334 75.946667A42.666667 42.666667 0 0 0 896 725.333333a42.666667 42.666667 0 0 0 22.613333-6.4A42.666667 42.666667 0 0 0 938.666667 682.666667V341.333333a42.666667 42.666667 0 0 0-20.053334-36.266666zM640 640a42.666667 42.666667 0 0 1-42.666667 42.666667H213.333333a42.666667 42.666667 0 0 1-42.666666-42.666667V384a42.666667 42.666667 0 0 1 42.666666-42.666667h384a42.666667 42.666667 0 0 1 42.666667 42.666667z m213.333333-26.453333l-128-64v-75.093334l128-64z" /></svg>
+
+                    <span>Vlogs</span>
+                </a>
+            </li>
+
+
+            <li class="info-navmenu__item">
+                <a href="/startupwiki/" class="info-navmenu__link">
+                    <svg class="material" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <path d="M28 24.4V3.3c0-.6-.5-1.1-1.1-1.1H9.1C6.3 2.2 4 4.4 4 7.2v17.9c0 2.6 2.1 4.8 4.8 4.8h18.1c.6 0 1.1-.5 1.1-1.1v-.6c-.3-.3-.5-.8-.5-1.3v-1.2c0-.5.2-1 .5-1.3zM11.4 8.9c0-.2.2-.4.4-.4h11.1c.2 0 .4.2.4.4V10c0 .2-.2.4-.4.4H11.7c-.2 0-.4-.2-.4-.4l.1-1.1zm0 3.4c0-.2.2-.4.4-.4h11.1c.2 0 .4.2.4.4v1.1c0 .2-.2.4-.4.4H11.7c-.2 0-.4-.2-.4-.4l.1-1.1zm8.6 3.4v1.1c0 .2-.2.4-.4.4h-4.7c-.2 0-.4-.2-.4-.4v-1.1c0-.2.2-.4.4-.4h4.7c.2 0 .4.2.4.4zM26.3 28H9c-.5 0-.9-.2-1.3-.5-.3-.3-.5-.8-.5-1.3 0-1 .8-1.8 1.8-1.8h17.3V28z" fill="#47b2b2" />
+                        <path fill="none" d="M0 0h32v32H0z" />
+                    </svg>
+
+                    <span>
+                        Startup Wiki
+                    </span>
+                </a>
+            </li>
+            <li class="info-navmenu__item">
+                <a href="/podcast/" class="info-navmenu__link">
+                    <svg class="material" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                         viewBox="0 0 32 32">
+                        <g id="Group_37" data-name="Group 37" transform="translate(0 -703.6)">
+                            <g id="Group_36" data-name="Group 36" transform="translate(-0.531 -0.773)">
+                                <path id="Path_107" data-name="Path 107"
+                                      d="M16.82,713.89h3.932a.457.457,0,0,1,.425.425v.744a.457.457,0,0,1-.425.425H16.82a.486.486,0,0,0-.531.425v.85a.486.486,0,0,0,.531.425h3.932a.457.457,0,0,1,.425.425v.744a.457.457,0,0,1-.425.425H16.82a.486.486,0,0,0-.531.425v.85a.486.486,0,0,0,.531.425h3.932a.457.457,0,0,1,.425.425,4.9,4.9,0,0,1-9.778-.531V712.3a5.037,5.037,0,0,1,4.889-5,4.871,4.871,0,0,1,4.889,4.464.457.457,0,0,1-.425.425H16.82a.486.486,0,0,0-.531.425v.85A.486.486,0,0,0,16.82,713.89Z"
+                                      transform="translate(0.245)" fill="#47b2b2" />
+                                <path id="Path_108" data-name="Path 108"
+                                      d="M25.462,717.35v2.445a8.987,8.987,0,0,1-7.121,8.715.912.912,0,0,0-.638.744v.425a.613.613,0,0,0,.638.638h2.232a.838.838,0,0,1,.85.85v.85a.838.838,0,0,1-.85.85H12.389a.838.838,0,0,1-.85-.85v-.85a.838.838,0,0,1,.85-.85h2.232a.613.613,0,0,0,.638-.638v-.425a.711.711,0,0,0-.638-.744A9.264,9.264,0,0,1,7.5,719.37V717.35a.838.838,0,0,1,.85-.85H9.2a.838.838,0,0,1,.85.85v2.126a6.7,6.7,0,0,0,5.846,6.8,6.424,6.424,0,0,0,7.121-6.483V717.35a.838.838,0,0,1,.85-.85h.85A.821.821,0,0,1,25.462,717.35Z"
+                                      transform="translate(0 0.578)" fill="#47b2b2" />
+                            </g>
+                            <g id="Budget_1_" transform="translate(301 620)">
+                                <path id="Path_1_1_" d="M-301,83.6h32v32h-32Z" fill="none" />
+                            </g>
+                        </g>
+                    </svg>
+                    <span>
+                        Podcast
+                    </span>
+                </a>
+            </li>
+
+            <li class="info-navmenu__item">
+                <a href="/events/" class="info-navmenu__link">
+                    <svg class="material" id="Events" xmlns="http://www.w3.org/2000/svg"
+                         width="32" height="32" viewBox="0 0 32 32">
+                        <path id="Path_220" data-name="Path 220" d="M0,0H32V32H0Z"
+                              fill="none" />
+                        <path id="Path_221" data-name="Path 221"
+                              d="M26.111,4.8H24.667V2H21.778V4.8H10.222V2H7.333V4.8H5.889A2.832,2.832,0,0,0,3.014,7.6L3,27.2A2.845,2.845,0,0,0,5.889,30H26.111A2.854,2.854,0,0,0,29,27.2V7.6A2.854,2.854,0,0,0,26.111,4.8Zm0,22.4H5.889v-14H26.111Zm0-16.8H5.889V7.6H26.111ZM16,17.4h7.222v7H16Z"
+                              transform="translate(0)" fill="#47b2b2" />
+                    </svg>
+                    <span>
+                        Startup Events
+                    </span>
+                </a>
+            </li>
+
+            <li class="info-navmenu__item">
+                <a href="/erhvervspartnere/" class="info-navmenu__link">
+                    <svg class="material" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                         viewBox="0 0 32 32">
+                        <g id="Group_43" data-name="Group 43" transform="translate(0 -367.6)">
+                            <g id="Budget_5_" transform="translate(0 367.6)">
+                                <path id="Path_1_5_" d="M-301-252.4h32v32h-32Z" transform="translate(301 252.4)"
+                                      fill="none" />
+                            </g>
+                            <g id="Group_42" data-name="Group 42" transform="translate(2.227 375.339)">
+                                <path id="Path_115" data-name="Path 115"
+                                      d="M6.178,378.4H3.953a.949.949,0,0,0-.953.953v9.109a.949.949,0,0,0,.953.953H4.8a2.351,2.351,0,0,0,2.33-2.33v-7.732A.949.949,0,0,0,6.178,378.4Zm-1.059,9.639a.708.708,0,0,1-.741-.635.741.741,0,1,1,1.483,0A.909.909,0,0,1,5.118,388.039Z"
+                                      transform="translate(-3 -375.646)" fill="#47b2b2" />
+                                <path id="Path_116" data-name="Path 116"
+                                      d="M28.278,378.4H26.053a.949.949,0,0,0-.953.953v7.732a2.351,2.351,0,0,0,2.33,2.33h.953a.949.949,0,0,0,.953-.953v-9.109A1.126,1.126,0,0,0,28.278,378.4Zm-.424,9.109a.567.567,0,0,1-.53.53.7.7,0,0,1-.847-.847c.106-.318.318-.53.53-.53A.7.7,0,0,1,27.854,387.509Z"
+                                      transform="translate(-1.692 -375.646)" fill="#47b2b2" />
+                                <path id="Path_117" data-name="Path 117"
+                                      d="M24.507,378.66v7.732c0,.212-.212.212-.318.106h0l-6.037-4.978a.2.2,0,0,1,0-.318l.953-.847a.674.674,0,0,0-.953-.953l-3.389,3.178h0a1.787,1.787,0,0,1-2.436-.106,1.7,1.7,0,0,1,.106-2.436h0l4.237-3.919a1.3,1.3,0,0,1,.953-.318h3.707a1.15,1.15,0,0,1,.953.424l2.33,2.33C24.507,378.554,24.507,378.554,24.507,378.66Z"
+                                      transform="translate(-2.475 -375.8)" fill="#47b2b2" />
+                                <path id="Path_118" data-name="Path 118"
+                                      d="M23.664,389.57l-.424.53a1.471,1.471,0,0,1-1.059.53,1.2,1.2,0,0,1-.847-.318.322.322,0,0,0-.424,0l-1.165,1.377a1.642,1.642,0,0,1-2.224.212l-.741-.635h0a2.7,2.7,0,0,1-3.813.424h0L9.047,388.3c-.106,0-.106-.106-.212-.106H8.518a.281.281,0,0,1-.318-.318V378.66c0-.106,0-.106.106-.212l2.224-2.224a1.577,1.577,0,0,1,.953-.424h2.86a.3.3,0,0,1,.212.53l-2.966,2.648a3.074,3.074,0,1,0,4.131,4.555l1.059-.953a.322.322,0,0,1,.424,0l6.249,5.084A1.259,1.259,0,0,1,23.664,389.57Z"
+                                      transform="translate(-2.692 -375.8)" fill="#47b2b2" />
+                            </g>
+                        </g>
+                    </svg>
+                    <span>
+                        Erhvervspartnere
+                    </span>
+                </a>
+            </li>
+
+            <li class="info-navmenu__item">
+                <a href="/press-page/" class="info-navmenu__link">
+                    <svg class="material" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                         viewBox="0 0 32 32">
+                        <g id="Group_56" data-name="Group 56" transform="translate(0 -751.6)">
+                            <g id="Budget_12_" transform="translate(301 620)">
+                                <path id="Path_1_12_" d="M-301,131.6h32v32h-32Z" fill="none" />
+                            </g>
+                            <path id="Path_141" data-name="Path 141"
+                                  d="M27.5,759.3H7.3a1,1,0,0,0-1,1v.3H4.5a1,1,0,0,0-1,1v11.8a2.433,2.433,0,0,0,2.4,2.4H26.4a2.112,2.112,0,0,0,2.1-2.1V760.2A.987.987,0,0,0,27.5,759.3ZM5.3,773.5a.3.3,0,0,1-.6,0V762.7h.7l-.1,10.8Zm1.5,0a.3.3,0,0,1-.6,0V762.7h.7l-.1,10.8Zm9.9-.9a.472.472,0,0,1-.5.5H9.6a.472.472,0,0,1-.5-.5v-.3a.472.472,0,0,1,.5-.5h6.6a.472.472,0,0,1,.5.5Zm0-4.1a.472.472,0,0,1-.5.5H9.6a.472.472,0,0,1-.5-.5v-.3a.472.472,0,0,1,.5-.5h6.6a.472.472,0,0,1,.5.5Zm9,4.1a.472.472,0,0,1-.5.5H18.6a.472.472,0,0,1-.5-.5v-.3a.472.472,0,0,1,.5-.5h6.6a.472.472,0,0,1,.5.5Zm0-4.1a.472.472,0,0,1-.5.5H18.6a.472.472,0,0,1-.5-.5v-.3a.472.472,0,0,1,.5-.5h6.6a.472.472,0,0,1,.5.5Zm0-4.2a.472.472,0,0,1-.5.5H9.6a.472.472,0,0,1-.5-.5v-1.7a.472.472,0,0,1,.5-.5H25.2a.472.472,0,0,1,.5.5Z"
+                                  fill="#47b2b2" />
+                        </g>
+                    </svg>
+                    <span>
+                        News
+                    </span>
+                </a>
+            </li>
+            <li class="info-navmenu__item">
+                <a href="/succeser/" class="info-navmenu__link">
+                    <svg class="material" id="trophy-solid" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <path id="Path_217" data-name="Path 217" d="M0,0V32H32V0ZM27.3,11.6a5.274,5.274,0,0,1-2.4,4,9.077,9.077,0,0,1-4.3,1.7,8.918,8.918,0,0,1-2.7,2.9V23h1.9a2.24,2.24,0,0,1,2.5,2.2v.5a.472.472,0,0,1-.5.5H10.2a.472.472,0,0,1-.5-.5v-.5A2.24,2.24,0,0,1,12.2,23h1.9V20.2a7.742,7.742,0,0,1-2.7-2.9,9.077,9.077,0,0,1-4.3-1.7,5,5,0,0,1-2.4-4V9.4a.987.987,0,0,1,.9-1H9.7V6.8a.923.923,0,0,1,1-.9H21.4a.987.987,0,0,1,1,.9V8.4h4.1a.923.923,0,0,1,.9,1v2.2Z" fill="none" />
+                        <path id="Path_218" data-name="Path 218" d="M26.4,8.4H22.3V6.8a.923.923,0,0,0-1-.9H10.6a.987.987,0,0,0-1,.9V8.4h-4a.923.923,0,0,0-.9,1v2.2a5.274,5.274,0,0,0,2.4,4,9.5,9.5,0,0,0,4.3,1.7,8.918,8.918,0,0,0,2.7,2.9V23H12.2a2.24,2.24,0,0,0-2.5,2.2v.5a.472.472,0,0,0,.5.5H21.9a.472.472,0,0,0,.5-.5v-.5A2.24,2.24,0,0,0,19.9,23H18V20.2a7.742,7.742,0,0,0,2.7-2.9A9.077,9.077,0,0,0,25,15.6a5,5,0,0,0,2.4-4V9.4A1.071,1.071,0,0,0,26.4,8.4ZM8.6,13.5a2.887,2.887,0,0,1-1.4-1.9V11H9.7a11.592,11.592,0,0,0,.5,3.4A6.084,6.084,0,0,1,8.6,13.5Zm16.2-1.9c0,.6-.7,1.4-1.4,1.9a6.712,6.712,0,0,1-1.7.8,11.592,11.592,0,0,0,.5-3.4h2.5v.7Z" fill="#47b2b2" />
+                    </svg>
+
+                    <span>
+                        Succeser
+                    </span>
+                </a>
+            </li>
+
+            @Umbraco.RenderMacro("Loginstatus")
+        </ul>
+            </div>
+    </div>
+</div>
+@*<nav class="sc-nav" role="navigation">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div id="sc-logo">
+                        <a href="index.html">
+                            <img src="images/logos/whitelogo.png" alt="StartupCentral Logo"
+                                 height="40">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-sm-8 text-right menu-1">
+                    <ul>
+                        <li class="borderline">
+                            <a href="/login/lav-din-foretningsplan/introduktion/">
+                                Opret din
+                                forretningside
+                            </a>
+                        </li>
+                        <li><a href="/login/minside">Min Side</a></li>
+                        <li class="has-dropdown">
+                            <a href="#">Vi Tilbyder <i class="fas fa-caret-down"></i></a>
+                            <ul class="dropdown">
+                                <li><a href="/sc_startuplounge/">Lounge</a></li>
+                                <li><a href="/sc_help/">Help</a></li>
+                                <li><a href="/vores_coaches/">Coaches</a></li>
+                                <li><a href="/vores-samarbejdspartnere/">Partners</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/login/indbakke/">Beskeder</a> @Umbraco.RenderMacro("IndicatorMessages")</li>
+                        <li><a href="contact.html">Min profil/Projekter</a></li>
+                        <li><a href="#">Log af <i class="fas fa-sign-out-alt"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>*@
+
+<script>
+    $("#infocenter").click(function () {
+        var myElement = document.getElementById("logged-nav-popup");
+        myElement.className += " is-active";
+        $('body').addClass('scroll-lock');
+    });
+
+    $('#hamburger-menu').on('click', function () {
+        $('#logged-nav-popup').show();
+    });
+
+    $('.logged-nav__menu > #infocenter').on('click', function () {
+        $('#logged-nav-popup').show();
+    });
+
+    $('#logged-nav-popup > .info-navmenu__wrapper > .info-navmenu__header > #nav-close').on('click', function () {
+        $('#logged-nav-popup').hide();
+    });
+
+    $("#nav-close").click(function () {
+        var myElement = document.getElementById("logged-nav-popup");
+        myElement.classList.remove("is-active");
+        $('body').removeClass('scroll-lock');
+    });
+    var loggedNav = document.getElementById("logged-nav-popup");
+
+    $(loggedNav).on('click', function () {
+        $(loggedNav).hide();
+    });
+
+    window.onclick = function (event) {
+        if (event.target == loggedNav) {
+            loggedNav.classList.remove("is-active");
+            document.body.classList.remove("scroll-lock");
+        }
+    }
+</script>

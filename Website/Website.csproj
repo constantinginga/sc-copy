@@ -1,0 +1,1350 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\UmbracoCms.8.18.4\build\UmbracoCms.props" Condition="Exists('..\packages\UmbracoCms.8.18.4\build\UmbracoCms.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F51BA0D1-A940-4352-B0EC-8F2584227F37}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>StartupCentral</RootNamespace>
+    <AssemblyName>StartupCentral</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort>1111</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper, Version=3.3.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.Net4, Version=3.3.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.Net4.dll</HintPath>
+    </Reference>
+    <Reference Include="ClientDependency.Core, Version=1.9.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ClientDependency.1.9.10\lib\net45\ClientDependency.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="ClientDependency.Core.Mvc, Version=1.9.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ClientDependency-Mvc5.1.9.3\lib\net45\ClientDependency.Core.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="CookComputing.XmlRpcV2, Version=2.5.0.0, Culture=neutral, PublicKeyToken=a7d6e17aa302004d, processorArchitecture=MSIL">
+      <HintPath>..\packages\CookComputing.XmlRPCv2.2.5.0\lib\CookComputing.XmlRpcV2.dll</HintPath>
+    </Reference>
+    <Reference Include="CSharpTest.Net.Collections, Version=14.906.1403.1082, Culture=neutral, PublicKeyToken=06aee00cce822474, processorArchitecture=MSIL">
+      <HintPath>..\packages\CSharpTest.Net.Collections.14.906.1403.1082\lib\net40\CSharpTest.Net.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=4.5.3.3, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.5.3.3\lib\net40\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="Examine, Version=1.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Examine.1.2.2\lib\net452\Examine.dll</HintPath>
+    </Reference>
+    <Reference Include="Hangfire.Console, Version=1.4.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Console.1.4.2\lib\net45\Hangfire.Console.dll</HintPath>
+    </Reference>
+    <Reference Include="Hangfire.Core, Version=1.7.28.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Core.1.7.28\lib\net46\Hangfire.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Hangfire.LightInject, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Hangfire.LightInject.dll</HintPath>
+    </Reference>
+    <Reference Include="Hangfire.SqlServer, Version=1.7.28.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.SqlServer.1.7.28\lib\net45\Hangfire.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.8.14.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.8.14\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer, Version=1.5.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.Core.1.5.0.5\lib\net45\HtmlRenderer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer.PdfSharp, Version=1.5.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.PdfSharp.1.5.0.6\lib\net45\HtmlRenderer.PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageProcessor, Version=2.9.1.225, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ImageProcessor.2.9.1\lib\net452\ImageProcessor.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageProcessor.Web, Version=4.12.1.216, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ImageProcessor.Web.4.12.1\lib\net452\ImageProcessor.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageProcessor.Web.Plugins.PostProcessor, Version=2.0.0.170, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ImageProcessor.Web.PostProcessor.2.0.0\lib\net452\ImageProcessor.Web.Plugins.PostProcessor.dll</HintPath>
+    </Reference>
+    <Reference Include="K4os.Compression.LZ4, Version=1.1.11.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Compression.LZ4.1.1.11\lib\net46\K4os.Compression.LZ4.dll</HintPath>
+    </Reference>
+    <Reference Include="LightInject, Version=5.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LightInject.5.4.0\lib\net46\LightInject.dll</HintPath>
+    </Reference>
+    <Reference Include="LightInject.Annotation, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LightInject.Annotation.1.1.0\lib\net46\LightInject.Annotation.dll</HintPath>
+    </Reference>
+    <Reference Include="LightInject.Mvc, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LightInject.Mvc.2.0.0\lib\net46\LightInject.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="LightInject.Web, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LightInject.Web.2.0.0\lib\net46\LightInject.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="LightInject.WebApi, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LightInject.WebApi.2.0.0\lib\net46\LightInject.WebApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Log4Net.Async, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Log4Net.Async.2.0.4\lib\net40\Log4Net.Async.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET40\Lucene.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Markdown, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1b320cc08ad5aa89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Markdown.2.2.1\lib\net451\Markdown.dll</HintPath>
+    </Reference>
+    <Reference Include="MessagePack, Version=2.2.0.0, Culture=neutral, PublicKeyToken=b4a0369545f0a1be, processorArchitecture=MSIL">
+      <HintPath>..\packages\MessagePack.2.2.85\lib\netstandard2.0\MessagePack.dll</HintPath>
+    </Reference>
+    <Reference Include="MessagePack.Annotations, Version=2.2.0.0, Culture=neutral, PublicKeyToken=b4a0369545f0a1be, processorArchitecture=MSIL">
+      <HintPath>..\packages\MessagePack.Annotations.2.2.85\lib\netstandard2.0\MessagePack.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.2\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.4.1\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Authentication.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Authentication.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Authentication.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Authentication.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Authentication.Core.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Authentication.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Authorization, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Authorization.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Authorization.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Authorization.Policy, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Authorization.Policy.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Authorization.Policy.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Hosting.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Hosting.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Hosting.Server.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.Server.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Http.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Http.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Extensions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Http.Extensions.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Features, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Http.Features.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Http.Features.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Mvc.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Mvc.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Mvc.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Mvc.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Mvc.Core.2.2.5\lib\netstandard2.0\Microsoft.AspNetCore.Mvc.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.ResponseCaching.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.ResponseCaching.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.ResponseCaching.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Routing, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Routing.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Routing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Routing.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Routing.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Routing.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.WebUtilities, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.WebUtilities.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.WebUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.1.0.0\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.DotNet.PlatformAbstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.DotNet.PlatformAbstractions.2.1.0\lib\net45\Microsoft.DotNet.PlatformAbstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.2.2.0\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyModel, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyModel.2.1.0\lib\net451\Microsoft.Extensions.DependencyModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.FileProviders.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.FileProviders.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.FileProviders.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Hosting.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Hosting.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=1.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.1.1.2\lib\netstandard1.1\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.ObjectPool, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.ObjectPool.2.2.0\lib\netstandard2.0\Microsoft.Extensions.ObjectPool.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Options.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Logging.5.2.2\lib\net451\Microsoft.IdentityModel.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.5.2.2\lib\net451\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=1.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IO.RecyclableMemoryStream.1.2.2\lib\net45\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Net.Http.Headers, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.Headers.2.2.0\lib\netstandard2.0\Microsoft.Net.Http.Headers.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.4.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.4.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.4.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WebSockets, Version=0.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WebSockets.0.2.3.1\lib\net45\Microsoft.WebSockets.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MiniProfiler, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b44f9351044011a3, processorArchitecture=MSIL">
+      <HintPath>..\packages\MiniProfiler.4.0.138\lib\net461\MiniProfiler.dll</HintPath>
+    </Reference>
+    <Reference Include="MiniProfiler.Shared, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b44f9351044011a3, processorArchitecture=MSIL">
+      <HintPath>..\packages\MiniProfiler.Shared.4.0.138\lib\net461\MiniProfiler.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="MissingCode.Umbraco.DictionaryMetadataProvider, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MissingCode.Umbraco.DictionaryMetadataProvider.2.0.0\lib\net472\MissingCode.Umbraco.DictionaryMetadataProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.12.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.12\lib\net45\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPoco, Version=3.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPoco.3.9.4\lib\net45\NPoco.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="RestSharp, Version=106.4.1.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.4.1\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Semver, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Semver.2.0.4\lib\net452\Semver.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.2.10.0\lib\net46\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Enrichers.Process, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Enrichers.Process.2.0.2\lib\net45\Serilog.Enrichers.Process.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Enrichers.Thread, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Enrichers.Thread.3.1.0\lib\net45\Serilog.Enrichers.Thread.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Filters.Expressions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Filters.Expressions.2.1.0\lib\net45\Serilog.Filters.Expressions.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Formatting.Compact, Version=1.1.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Formatting.Compact.1.1.0\lib\net452\Serilog.Formatting.Compact.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Formatting.Compact.Reader, Version=1.0.5.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Formatting.Compact.Reader.1.0.5\lib\net45\Serilog.Formatting.Compact.Reader.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Settings.AppSettings, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Settings.AppSettings.2.2.2\lib\net45\Serilog.Settings.AppSettings.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.Async, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.Async.1.5.0\lib\net461\Serilog.Sinks.Async.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.File, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.File.4.1.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.Map, Version=1.0.2.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.Map.1.0.2\lib\netstandard2.0\Serilog.Sinks.Map.dll</HintPath>
+    </Reference>
+    <Reference Include="Skybrud.Umbraco.RssUtils, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Skybrud.Umbraco.RssUtils.1.0.4\lib\net45\Skybrud.Umbraco.RssUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Stripe.net, Version=41.13.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stripe.net.41.13.0\lib\net461\Stripe.net.dll</HintPath>
+    </Reference>
+    <Reference Include="Superpower, Version=1.0.0.0, Culture=neutral, PublicKeyToken=aec39280ded1b3a7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Superpower.2.3.0\lib\net45\Superpower.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.ClientEngine, Version=0.10.0.0, Culture=neutral, PublicKeyToken=ee9af13f57f00acc, processorArchitecture=MSIL">
+      <HintPath>..\packages\SuperSocket.ClientEngine.Core.0.10.0\lib\net45\SuperSocket.ClientEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.Common, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
+      <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.Facility, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
+      <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Facility.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.SocketBase, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
+      <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.SocketBase.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.WebSocket, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
+      <HintPath>..\packages\SuperSocket.WebSocket.1.6.6.1\lib\net45\SuperSocket.WebSocket.dll</HintPath>
+    </Reference>
+    <Reference Include="System.AppContext, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.AppContext.4.3.0\lib\net463\System.AppContext.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.7.1\lib\net461\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Specialized, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Specialized.4.3.0\lib\net46\System.Collections.Specialized.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Console, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Console.4.3.0\lib\net46\System.Console.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.1, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Umbraco.SqlServerCE.4.0.0.1\lib\net472\System.Data.SqlServerCe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SqlServerCe.Entity, Version=4.0.0.1, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Umbraco.SqlServerCE.4.0.0.1\lib\net472\System.Data.SqlServerCe.Entity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.5.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.Tracing, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.Tracing.4.3.0\lib\net462\System.Diagnostics.Tracing.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Drawing.Common, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Drawing.Common.6.0.0\lib\net461\System.Drawing.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Globalization.Calendars, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Globalization.Calendars.4.3.0\lib\net46\System.Globalization.Calendars.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.2.2\lib\net451\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.FileSystem, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.FileSystem.4.3.0\lib\net46\System.IO.FileSystem.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Packaging, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Packaging.4.0.0\lib\net46\System.IO.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Linq, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.4.3.0\lib\net463\System.Linq.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Linq.Expressions, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Expressions.4.3.0\lib\net463\System.Linq.Expressions.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Net.NameResolution, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.NameResolution.4.3.0\lib\net46\System.Net.NameResolution.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Security, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Security.4.3.0\lib\net46\System.Net.Security.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Sockets, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Sockets.4.3.0\lib\net46\System.Net.Sockets.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reflection, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.4.3.0\lib\net462\System.Reflection.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Reflection.Metadata, Version=1.0.21.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.Metadata.1.0.21\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Extensions, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.Extensions.4.3.0\lib\net462\System.Runtime.Extensions.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.4.3.0\lib\net463\System.Runtime.InteropServices.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Text.Encoding.CodePages, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encoding.CodePages.4.7.1\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.4.5.0\lib\netstandard2.0\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.RegularExpressions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.RegularExpressions.4.3.0\lib\net463\System.Text.RegularExpressions.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks" />
+    <Reference Include="System.Threading.Tasks.Dataflow, Version=4.6.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Dataflow.4.11.1\lib\net461\System.Threading.Tasks.Dataflow.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.3\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.7\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TidyNet, Version=1.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\TidyNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Umbraco.Core, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UmbracoCms.Core.8.18.4\lib\net472\Umbraco.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Umbraco.Examine, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UmbracoCms.Web.8.18.4\lib\net472\Umbraco.Examine.dll</HintPath>
+    </Reference>
+    <Reference Include="Umbraco.ModelsBuilder.Embedded, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UmbracoCms.Web.8.18.4\lib\net472\Umbraco.ModelsBuilder.Embedded.dll</HintPath>
+    </Reference>
+    <Reference Include="Umbraco.Web, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UmbracoCms.Web.8.18.4\lib\net472\Umbraco.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Umbraco.Web.UI, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UmbracoCms.Web.8.18.4\lib\net472\Umbraco.Web.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Upodi.SDK, Version=2021.4.27.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Upodi.SDK.5.2023.2.23.1\lib\net48\Upodi.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="WebSocket4Net, Version=0.15.2.11, Culture=neutral, PublicKeyToken=eb4e154b696bf72a, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebSocket4Net.0.15.2\lib\net45\WebSocket4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Plugins\Attityde.MobilePay.Refunder\controllers\Attityde.MobilePay.Refunder.controller.js" />
+    <Content Include="App_Plugins\Attityde.MobilePay.Refunder\styles\styles.css" />
+    <Content Include="App_Plugins\Attityde.MobilePay.Refunder\views\default.html" />
+    <Content Include="App_Plugins\HangfireConsole\dashboard.html" />
+    <Content Include="App_Plugins\HangfireConsole\lang\en-US.xml" />
+    <Content Include="App_Plugins\ModelsBuilder\modelsbuilder.controller.js" />
+    <Content Include="App_Plugins\ModelsBuilder\modelsbuilder.htm" />
+    <Content Include="App_Plugins\ModelsBuilder\modelsbuilder.resource.js" />
+    <Content Include="App_Plugins\Reports\dashboard.html" />
+    <Content Include="App_Plugins\Reports\lang\en-US.xml" />
+    <Content Include="config\grid.editors.config.js" />
+    <Content Include="config\Lang\cs-CZ.user.xml" />
+    <Content Include="config\Lang\da-DK.user.xml" />
+    <Content Include="config\Lang\de-DE.user.xml" />
+    <Content Include="config\Lang\en-GB.user.xml" />
+    <Content Include="config\Lang\en-US.user.xml" />
+    <Content Include="config\Lang\es-ES.user.xml" />
+    <Content Include="config\Lang\fr-FR.user.xml" />
+    <Content Include="config\Lang\he-IL.user.xml" />
+    <Content Include="config\Lang\it-IT.user.xml" />
+    <Content Include="config\Lang\ja-JP.user.xml" />
+    <Content Include="config\Lang\ko-KR.user.xml" />
+    <Content Include="config\Lang\nb-NO.user.xml" />
+    <Content Include="config\Lang\nl-NL.user.xml" />
+    <Content Include="config\Lang\pl-PL.user.xml" />
+    <Content Include="config\Lang\pt-BR.user.xml" />
+    <Content Include="config\Lang\ru-RU.user.xml" />
+    <Content Include="config\Lang\sv-SE.user.xml" />
+    <Content Include="config\Lang\zh-CN.user.xml" />
+    <Content Include="config\logviewer.searches.config.js" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Site.css" />
+    <Content Include="css\bootstrap-social.css" />
+    <Content Include="css\Custom.css" />
+    <Content Include="css\Login.css" />
+    <Content Include="css\Refined Spring 2020\main.css" />
+    <Content Include="css\Refined Spring 2020\main.min.css" />
+    <Content Include="css\Refined Spring 2020\slick\slick-theme.css" />
+    <Content Include="css\Refined Spring 2020\slick\slick.css" />
+    <Content Include="css\Refined Spring 2020\slick\slick.min.js" />
+    <Content Include="css\sc_bootstrap.css" />
+    <Content Include="css\sc_style.css" />
+    <Content Include="css\signup.css" />
+    <Content Include="css\slick-theme.css" />
+    <Content Include="css\v2\login-desktop.css" />
+    <Content Include="css\v2\login-mobile.css" />
+    <Content Include="css\V4 Winter 2021\prices-da.css" />
+    <Content Include="css\V4 Winter 2021\prices-en.css" />
+    <Content Include="css\V4 Winter 2021\sc-v4-main.css" />
+    <Content Include="css\V4 Winter 2021\sc-v4-main.min.css" />
+    <Content Include="DAL\EntityModels\DbModels.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DbModels.edmx</DependentUpon>
+      <LastGenOutput>DbModels.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="DAL\EntityModels\DbModels.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DbModels.edmx</DependentUpon>
+      <LastGenOutput>DbModels.cs</LastGenOutput>
+    </Content>
+    <Content Include="default.aspx" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="HtmlTemplates\Modals\BusinessPlanSent.html" />
+    <Content Include="HtmlTemplates\Modals\BusinessPlanSentError.html" />
+    <Content Include="images\Avatars\avatar.png" />
+    <Content Include="images\backarrow.jpg" />
+    <Content Include="images\backgrounds\backgroundstuff.png" />
+    <Content Include="images\backgrounds\cool-background.png" />
+    <Content Include="images\backgrounds\Header UI2_Tegnebræt 1.png" />
+    <Content Include="images\backgrounds\header.png" />
+    <Content Include="images\bluelogo.png" />
+    <Content Include="images\bullets.jpg" />
+    <Content Include="images\bulletslight.jpg" />
+    <Content Include="images\close.gif" />
+    <Content Include="images\closebtn.png" />
+    <Content Include="images\close_dark.gif" />
+    <Content Include="images\Coaches\casper.jpg" />
+    <Content Include="images\Coaches\hawaro.jpg" />
+    <Content Include="images\Coaches\peter.jpg" />
+    <Content Include="images\Coaches\rasmus.jpg" />
+    <Content Include="images\Coaches\tobias.jpg" />
+    <Content Include="images\Coaches\viktor.jpg" />
+    <Content Include="images\fillerImages\Untitled.png" />
+    <Content Include="images\installer_attityde.jpg" />
+    <Content Include="images\loading.gif" />
+    <Content Include="images\loginscreen.jpg" />
+    <Content Include="images\logos\bluelogo.png" />
+    <Content Include="images\logos\raket_dialogbox.svg" />
+    <Content Include="images\logos\whitelogo.png" />
+    <Content Include="images\menu-button.svg" />
+    <Content Include="images\menubars.gif" />
+    <Content Include="images\Partners\Aconta.png" />
+    <Content Include="images\Partners\Billy.png" />
+    <Content Include="images\Partners\Codespace.png" />
+    <Content Include="images\Partners\Contractbook.png" />
+    <Content Include="images\Partners\GenieWords.png" />
+    <Content Include="images\Partners\LegalUp.png" />
+    <Content Include="images\Partners\Morningscore.png" />
+    <Content Include="images\Partners\Salary.png" />
+    <Content Include="images\Partners\Saxis.png" />
+    <Content Include="images\Partners\Tryg.png" />
+    <Content Include="images\Partners\UniqKey.png" />
+    <Content Include="images\Partners\Upodi.png" />
+    <Content Include="images\secmenulevel.gif" />
+    <Content Include="images\Services\book.svg" />
+    <Content Include="images\Services\coaches.svg" />
+    <Content Include="images\Services\download.png" />
+    <Content Include="images\Services\light-bulb.svg" />
+    <Content Include="images\Services\money.svg" />
+    <Content Include="images\Services\network.svg" />
+    <Content Include="images\Services\partner.svg" />
+    <Content Include="images\Services\project.png" />
+    <Content Include="images\Services\sc-coach.svg" />
+    <Content Include="images\Services\sc-networking.svg" />
+    <Content Include="images\Services\sc-partners.svg" />
+    <Content Include="images\Services\start-up.png" />
+    <Content Include="images\Services\teamwork.svg" />
+    <Content Include="images\smalldefaultavatar.jpg" />
+    <Content Include="images\whitelogo.png" />
+    <Content Include="images\Workers\anders.jpg" />
+    <Content Include="images\Workers\daniel.jpg" />
+    <Content Include="images\Workers\mathias.jpg" />
+    <Content Include="images\Workers\szabika.jpg" />
+    <Content Include="scripts\adminOpgaver.js" />
+    <Content Include="scripts\bootstrap.js" />
+    <Content Include="scripts\bootstrap.min.js" />
+    <Content Include="scripts\Custom.js" />
+    <Content Include="images\fillerImages\coaching-methodology-V2-min.webp" />
+    <Content Include="css\Refined Spring 2020\main.css.map" />
+    <Content Include="css\Refined Spring 2020\main.min.css.map" />
+    <Content Include="css\Refined Spring 2020\scss\main.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_beforestartup.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_businessplan.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_businessplanoverview.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_coachcard.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_coaches.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_coachpage.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_footer.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_index.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_login.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_messaging.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_minside.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_partnerpage.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_partners.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_podcast.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_popup.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_presspage.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_team.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_usermessages.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_weoffer.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_xconfig.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_settings.scss" />
+    <Content Include="css\Refined Spring 2020\scss\_faq.scss" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="App_Plugins\ModelsBuilder\package.manifest" />
+    <Content Include="css\V4 Winter 2021\sc-v4-main.css.map" />
+    <Content Include="css\V4 Winter 2021\sc-v4-main.min.css.map" />
+    <Content Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </Content>
+    <Content Include="config\ClientDependency.config" />
+    <Content Include="Media\Web.config" />
+    <Content Include="App_Plugins\HangfireConsole\package.manifest" />
+    <Content Include="App_Plugins\Reports\package.manifest" />
+    <Content Include="config\tinyMceConfig.config" />
+    <Content Include="config\serilog.user.config" />
+    <Content Include="config\serilog.config" />
+    <Content Include="config\HealthChecks.config" />
+    <Content Include="config\BackOfficeTours\getting-started.json" />
+    <None Include="scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="scripts\excelexportjs.js" />
+    <Content Include="scripts\Formular.js" />
+    <Content Include="scripts\jquery-1.10.2.js" />
+    <Content Include="scripts\jquery-1.10.2.min.js" />
+    <Content Include="scripts\jQuery.datalink.js" />
+    <Content Include="scripts\main.js" />
+    <Content Include="scripts\modernizr-2.6.2.js" />
+    <Content Include="scripts\Notification.js" />
+    <Content Include="scripts\RichTextEditor.js" />
+    <Content Include="scripts\slick.min.js" />
+    <Content Include="scripts\startupcental.js" />
+    <Content Include="scripts\startupcentral.fp-autosave.js" />
+    <Content Include="scripts\startupcentral.admin.js" />
+    <Content Include="scripts\startupcentral.mobilepay.js" />
+    <Content Include="scripts\startupcentral.student.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Code\AllowCrossSiteAttribute.cs" />
+    <Compile Include="Code\ApiControllers\ActivecampaignApiController.cs" />
+    <Compile Include="Code\ApiControllers\BeskedApiController.cs" />
+    <Compile Include="Code\ApiControllers\CvrController.cs" />
+    <Compile Include="Code\ApiControllers\FagomraaderApiController.cs" />
+    <Compile Include="Code\ApiControllers\ForretningsplanApiController.cs" />
+    <Compile Include="Code\ApiControllers\JobsApiController.cs" />
+    <Compile Include="Code\ApiControllers\MemberApiController.cs" />
+    <Compile Include="Code\ApiControllers\NewsLetterSubscriptionsController.cs" />
+    <Compile Include="Code\ApiControllers\PitchApiController.cs" />
+    <Compile Include="Code\ApiControllers\ReportsApiController.cs" />
+    <Compile Include="Code\ApiControllers\SamarbejdspartnerApiController.cs" />
+    <Compile Include="Code\ApiControllers\StripeApiController.cs" />
+    <Compile Include="Code\ApiControllers\UmbracoSocketApiController.cs" />
+    <Compile Include="Code\ApiControllers\UpodiApiController.cs" />
+    <Compile Include="Code\ApiControllers\UserApiController.cs" />
+    <Compile Include="Code\ApiControllers\VideoApiController.cs" />
+    <Compile Include="Code\ApplicationContext.cs" />
+    <Compile Include="Code\Class\ActiveCampaignAPIResult.cs" />
+    <Compile Include="Code\Class\ActiveCampaignClient.cs" />
+    <Compile Include="Code\Class\ActiveMembersService.cs" />
+    <Compile Include="Code\Class\FormularLoggerService.cs" />
+    <Compile Include="Code\Class\ForretningsPlanService.cs" />
+    <Compile Include="Code\Class\NewsLetterSubscriptionsService.cs" />
+    <Compile Include="Code\Class\UserMessageService.cs" />
+    <Compile Include="Code\Class\Emailing.cs" />
+    <Compile Include="Code\Class\LiveConnections.cs" />
+    <Compile Include="Code\Class\Passwords.cs" />
+    <Compile Include="Code\Class\SocketChannel.cs" />
+    <Compile Include="Code\Class\SocketEnvelope.cs" />
+    <Compile Include="Code\Class\SocketTransmitter.cs" />
+    <Compile Include="Code\Class\TokenValidator.cs" />
+    <Compile Include="Code\Class\UpodiWrapperService.cs" />
+    <Compile Include="Code\Class\UserPitchDeckService.cs" />
+    <Compile Include="Code\Controllers\FormularLoggerController.cs" />
+    <Compile Include="Code\Controllers\ForretningsplanController.cs" />
+    <Compile Include="Code\Controllers\PasswordController.cs" />
+    <Compile Include="Code\Controllers\PitchController.cs" />
+    <Compile Include="Code\Controllers\StudentsController.cs" />
+    <Compile Include="Code\Controllers\UserController.cs" />
+    <Compile Include="Code\Database\Database.cs" />
+    <Compile Include="Code\Database\ScForretningsplan\ScForretningsplan.cs" />
+    <Compile Include="Code\Database\ScForretningsplan\ScForretningsplanRepository.cs" />
+    <Compile Include="Code\Enum\StringCase.cs" />
+    <Compile Include="Code\Extensions\DataReaderExtensions.cs" />
+    <Compile Include="Code\Extensions\DateExtensions.cs" />
+    <Compile Include="Code\Extensions\DoubleExtensions.cs" />
+    <Compile Include="Code\Extensions\EnumExtensions.cs" />
+    <Compile Include="Code\Extensions\HtmlExtensions.cs" />
+    <Compile Include="Code\Extensions\IntegerExtensions.cs" />
+    <Compile Include="Code\Extensions\LinqExtensions.cs" />
+    <Compile Include="Code\Extensions\LongExtensions.cs" />
+    <Compile Include="Code\Extensions\ObjectExtensions.cs" />
+    <Compile Include="Code\Extensions\SQLClientExtensions.cs" />
+    <Compile Include="Code\Extensions\StringConvertExtensions.cs" />
+    <Compile Include="Code\Extensions\StringExtensions.cs" />
+    <Compile Include="Code\Extensions\UdiExtensions.cs" />
+    <Compile Include="Code\Extensions\UmbExtensions.cs" />
+    <Compile Include="Code\Helpers\Nodes.cs" />
+    <Compile Include="Code\LogHelper.cs" />
+    <Compile Include="Code\Model\ApiResponse.cs" />
+    <Compile Include="Code\Model\Besked.cs" />
+    <Compile Include="Code\Model\BeskedWithPlane.cs" />
+    <Compile Include="Code\Model\Coach2StudMsgsReport.cs" />
+    <Compile Include="Code\Model\CreditCard.cs" />
+    <Compile Include="Code\Model\CvrOpslag.cs" />
+    <Compile Include="Code\Model\Fagomraade.cs" />
+    <Compile Include="Code\Model\FormToUmbraco.cs" />
+    <Compile Include="Code\Model\FormToUmbracoWithValue.cs" />
+    <Compile Include="Code\Model\FormularLogger.cs" />
+    <Compile Include="Code\Model\Forretningsplan.cs" />
+    <Compile Include="Code\Model\InvestorSvar.cs" />
+    <Compile Include="Code\Model\Member.cs" />
+    <Compile Include="Code\Model\MobilePay\Agreement.cs" />
+    <Compile Include="Code\Model\MobilePay\AgreementRequest.cs" />
+    <Compile Include="Code\Model\MobilePay\AgreementResponse.cs" />
+    <Compile Include="Code\Model\MobilePay\AgreementStatus.cs" />
+    <Compile Include="Code\Model\MobilePay\PaymentRequest.cs" />
+    <Compile Include="Code\Model\MobilePay\PaymentResponse.cs" />
+    <Compile Include="Code\Model\MobilePay\RefundRequest.cs" />
+    <Compile Include="Code\Model\MobilePay\RequestPaymentRequest.cs" />
+    <Compile Include="Code\Model\MobilePay\StatusCallback.cs" />
+    <Compile Include="Code\Model\PaylikeCreditCardResult.cs" />
+    <Compile Include="Code\Model\PitchDeck.cs" />
+    <Compile Include="Code\Model\Samarbejdspartner.cs" />
+    <Compile Include="Code\Model\TemplateVideo.cs" />
+    <Compile Include="Code\Model\UpodiWebhooksModel.cs" />
+    <Compile Include="Code\Model\ValidationResponse.cs" />
+    <Compile Include="Code\UmbracoHelperExtensions.cs" />
+    <Compile Include="Controllers\AboutController.cs" />
+    <Compile Include="Controllers\CoachesController.cs" />
+    <Compile Include="Controllers\CoachPageController.cs" />
+    <Compile Include="Controllers\ContactController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PartnerPageController.cs" />
+    <Compile Include="Controllers\PartnersController.cs" />
+    <Compile Include="Controllers\RegisterUserDetailsController.cs" />
+    <Compile Include="Controllers\RegisterUserPaymentController.cs" />
+    <Compile Include="Controllers\ServicesController.cs" />
+    <Compile Include="Controllers\SiteLayoutController.cs" />
+    <Compile Include="Controllers\StartupLoungeController.cs" />
+    <Compile Include="DAL\EntityModels\activeMembers.cs">
+      <DependentUpon>DbModels.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\EntityModels\activePlatformMembers.cs">
+      <DependentUpon>DbModels.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\EntityModels\DbModels.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DbModels.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\EntityModels\DbModels.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DbModels.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\EntityModels\DbModels.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DbModels.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\EntityModels\formularLogger.cs">
+      <DependentUpon>DbModels.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\EntityModels\newsLetterSubscriptions.cs">
+      <DependentUpon>DbModels.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\EntityModels\userForretningsPlan.cs">
+      <DependentUpon>DbModels.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\EntityModels\userMessages.cs">
+      <DependentUpon>DbModels.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\EntityModels\userPitch.cs">
+      <DependentUpon>DbModels.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\Repositories\GenericRepository.cs" />
+    <Compile Include="DAL\Repositories\IGenericRepository.cs" />
+    <Compile Include="DAL\Repositories\IUnitOfWork.cs" />
+    <Compile Include="DAL\Repositories\UnitOfWork.cs" />
+    <Compile Include="Hangfire\HangfireJobsComposer.cs" />
+    <Compile Include="Hangfire\InvitationJobs.cs" />
+    <Compile Include="Hangfire\UmbracoAuthorizationFilter.cs" />
+    <Compile Include="Hangfire\UmbracoStandardOwinStartup.cs" />
+    <Compile Include="Member Pipelining\MemberProfileContentFinder.cs" />
+    <Compile Include="Member Pipelining\UmbracoStartup.cs" />
+    <Compile Include="Models\ContactModel.cs" />
+    <Compile Include="Models\iOSDeepLinking.cs" />
+    <Compile Include="Models\NavigationLink.cs" />
+    <Compile Include="Models\NavigationListItem.cs" />
+    <Compile Include="Models\RegisterUserDetails.cs" />
+    <Compile Include="Models\RegisterUserPayment.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="config\imageprocessor\security.config" />
+    <Content Include="config\imageprocessor\processing.config" />
+    <Content Include="config\imageprocessor\cache.config" />
+    <Content Include="config\umbracoSettings.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="config\trees.config" />
+    <Content Include="config\Dashboard.config" />
+    <Content Include="config\applications.config" />
+    <Content Include="App_Plugins\Attityde.MobilePay.Refunder\package.manifest" />
+    <EntityDeploy Include="DAL\EntityModels\DbModels.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>DbModels.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="DAL\EntityModels\DbModels.edmx.diagram">
+      <DependentUpon>DbModels.edmx</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\coach.cshtml" />
+    <Content Include="Views\coaches.cshtml" />
+    <Content Include="Views\Container.cshtml" />
+    <Content Include="Views\ContainerItem.cshtml" />
+    <Content Include="Views\Forside.cshtml" />
+    <Content Include="Views\Introduktion.cshtml" />
+    <Content Include="Views\Investor.cshtml" />
+    <Content Include="Views\Investorer.cshtml" />
+    <Content Include="Views\investorview.cshtml" />
+    <Content Include="Views\Kontakt.cshtml" />
+    <Content Include="Views\Login.cshtml" />
+    <Content Include="Views\markasread.cshtml" />
+    <Content Include="Views\Master.cshtml" />
+    <Content Include="Views\Minside.cshtml" />
+    <Content Include="Views\ModtagSparring.cshtml" />
+    <Content Include="Views\Passwordrecovery.cshtml" />
+    <Content Include="Views\sendmail.cshtml" />
+    <Content Include="Views\Statement.cshtml" />
+    <Content Include="Views\Statements.cshtml" />
+    <Content Include="Views\Tekstside.cshtml" />
+    <Content Include="Views\Upload.cshtml" />
+    <Content Include="Views\uploadfiles.cshtml" />
+    <Content Include="Views\WizardMaster.cshtml" />
+    <Content Include="Views\Idegrundlag.cshtml" />
+    <Content Include="Views\MacroPartials\FormTop.cshtml" />
+    <Content Include="Views\Juridisk.cshtml" />
+    <Content Include="Views\Forretningsplan.cshtml" />
+    <Content Include="Views\Forretningsplan1.cshtml" />
+    <Content Include="Views\Maalsaetning.cshtml" />
+    <Content Include="Views\Markedsanalyse.cshtml" />
+    <Content Include="Views\Okonomi.cshtml" />
+    <Content Include="Views\Produktbeskrivelse.cshtml" />
+    <Content Include="Views\SalgMarkedsfoering.cshtml" />
+    <Content Include="Views\TeamOgRessourcer.cshtml" />
+    <Content Include="Views\Vaerdier.cshtml" />
+    <Content Include="Views\MacroPartials\AdminCreateUser.cshtml" />
+    <Content Include="Views\MacroPartials\IndicatorMessages.cshtml" />
+    <Content Include="Views\MacroPartials\investorview.cshtml" />
+    <Content Include="Views\MacroPartials\Loginname.cshtml" />
+    <Content Include="Views\MacroPartials\LoginNav.cshtml" />
+    <Content Include="Views\MacroPartials\Loginstatus.cshtml" />
+    <Content Include="Views\MacroPartials\menu.cshtml" />
+    <Content Include="Views\MacroPartials\RandomStatements.cshtml" />
+    <Content Include="Views\MacroPartials\sendmail.cshtml" />
+    <Content Include="Views\MacroPartials\TopMenu.cshtml" />
+    <Content Include="Views\MacroPartials\UmbracoRazorLogin.cshtml" />
+    <Content Include="Views\MacroPartials\BlueNavMenu.cshtml" />
+    <Content Include="Views\MacroPartials\CurrentFormHeadManchet.cshtml" />
+    <Content Include="Views\MacroPartials\CurrentPageTopImg.cshtml" />
+    <Content Include="Views\MacroPartials\deviceicons.cshtml" />
+    <Content Include="Views\MacroPartials\facebookpixel.cshtml" />
+    <Content Include="Views\MacroPartials\BusinessAngelsOverview.cshtml" />
+    <Content Include="Views\MacroPartials\CoachesOverview.cshtml" />
+    <Content Include="Views\MinProfil.cshtml" />
+    <Content Include="Views\Pool.cshtml" />
+    <Content Include="Views\Beskeder.cshtml" />
+    <Content Include="Views\MacroPartials\FormTopSeeForeetningsplan.cshtml" />
+    <Content Include="Views\MacroPartials\BlueNavMenuSeeForretningplan.cshtml" />
+    <Content Include="Views\MacroPartials\AdminDeaktiverBruger.cshtml" />
+    <Content Include="Views\MacroPartials\AdminDeleteBruger.cshtml" />
+    <Content Include="Views\MacroPartials\AdminEditBruger.cshtml" />
+    <Content Include="Views\Samarbejdsparter.cshtml" />
+    <Content Include="Views\Samarbejdspartnere.cshtml" />
+    <Content Include="Views\Templates.cshtml" />
+    <Content Include="Views\opretsamarbejdspartner.cshtml" />
+    <Content Include="Views\MacroPartials\AdminDeaktiverPartner.cshtml" />
+    <Content Include="Views\MacroPartials\AdminDeaktiverVideo.cshtml" />
+    <Content Include="Views\MacroPartials\AdminDeleteVideo.cshtml" />
+    <Content Include="Views\MacroPartials\AdminRedigerVideo.cshtml" />
+    <Content Include="Views\MacroPartials\AdminSletPartner.cshtml" />
+    <Content Include="Views\OpretVideo.cshtml" />
+    <Content Include="Views\Video1.cshtml" />
+    <Content Include="Views\Video.cshtml" />
+    <Content Include="Views\Svar.cshtml" />
+    <Content Include="Views\InvestorSvar.cshtml" />
+    <Content Include="Views\Fagomraader.cshtml" />
+    <Content Include="Views\MacroPartials\AdminCreateFagomraade.cshtml" />
+    <Content Include="Views\MacroPartials\AdminDeleteFagomraade.cshtml" />
+    <Content Include="Views\MacroPartials\AdminEditFagomraade.cshtml" />
+    <Content Include="Views\MacroPartials\CoachesOverviewNew.cshtml" />
+    <Content Include="Views\BeskederTilStudent.cshtml" />
+    <Content Include="Views\BeskederTilCoach.cshtml" />
+    <Content Include="Views\MobilePay.cshtml" />
+    <Content Include="Views\Blivbrugersignup.cshtml" />
+    <Content Include="Views\MobilePayCompleted.cshtml" />
+    <Content Include="Views\MacroPartials\AdminUnsubscribeUser.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\SC_WebBase.cshtml" />
+    <Content Include="Views\Partials\SiteLayout\_NavigationBar.cshtml" />
+    <Content Include="Views\Partials\SiteLayout\_Footer.cshtml" />
+    <Content Include="Views\Partials\SC_Home\_HomeLanding.cshtml" />
+    <Content Include="Views\Partials\SC_Home\_HomeStatistics.cshtml" />
+    <Content Include="Views\Partials\SC_Home\_HomeCoaches.cshtml" />
+    <Content Include="Views\Partials\SC_Home\_HomeReviews.cshtml" />
+    <Content Include="Views\Partials\SC_Home\_HomeOffers.cshtml" />
+    <Content Include="Views\Partials\SC_Home\_HomePartners.cshtml" />
+    <Content Include="Views\Partials\SC_Home\_HomeServices.cshtml" />
+    <Content Include="Views\Partials\SiteLayout\_Newsletter.cshtml" />
+    <Content Include="Views\Partials\SiteLayout\_TTTArrow.cshtml" />
+    <Content Include="Views\SC_Home.cshtml" />
+    <Content Include="Views\Partials\SC_About\_AboutHeader.cshtml" />
+    <Content Include="Views\Partials\SC_About\_AboutHistory.cshtml" />
+    <Content Include="Views\Partials\SC_About\_AboutTeam.cshtml" />
+    <Content Include="Views\Partials\SC_Coaches\_CoachesContent15.cshtml" />
+    <Content Include="Views\Partials\SC_Coaches\_CoachesHeader.cshtml" />
+    <Content Include="Views\Partials\SC_Partners\_PartnersContent.cshtml" />
+    <Content Include="Views\Partials\SC_Partners\_PartnersHeader.cshtml" />
+    <Content Include="Views\Partials\SC_Contact\_ContactHeader.cshtml" />
+    <Content Include="Views\Partials\SC_Contact\_ContactContent.cshtml" />
+    <Content Include="Views\Partials\SC_Services\_ServicesHeader.cshtml" />
+    <Content Include="Views\Partials\SC_Services\_ServicesOffers.cshtml" />
+    <Content Include="Views\Partials\SC_Services\_ServicesServices.cshtml" />
+    <Content Include="Views\SC_About.cshtml" />
+    <Content Include="Views\SC_Coaches.cshtml" />
+    <Content Include="Views\SC_Contact.cshtml" />
+    <Content Include="Views\SC_Partners.cshtml" />
+    <Content Include="Views\SC_Services.cshtml" />
+    <Content Include="Views\Partials\SC_About\_AboutPictures.cshtml" />
+    <Content Include="Views\Partials\SiteLayout\_TitleControls.cshtml" />
+    <Content Include="Views\SC_CoachPage.cshtml" />
+    <Content Include="Views\SC_Signup.cshtml" />
+    <Content Include="Views\Partials\SC_CoachPage\_CoachPageHeader.cshtml" />
+    <Content Include="Views\Partials\SC_CoachPage\_CoachPageContent.cshtml" />
+    <Content Include="Views\Partials\SC_CoachPage\_CoachPageIntro.cshtml" />
+    <Content Include="Views\SC_PartnerPage.cshtml" />
+    <Content Include="Views\Partials\SC_PartnerPage\_PartnerPageHeader.cshtml" />
+    <Content Include="Views\Partials\SC_PartnerPage\_PartnerPageContent.cshtml" />
+    <Content Include="Views\Partials\SC_PartnerPage\_PartnerPageIntro.cshtml" />
+    <Content Include="Views\Partials\SC_PartnerPage\_PartnerPageSectionOne.cshtml" />
+    <Content Include="Views\Partials\SC_PartnerPage\_PartnerPageSectionTwo.cshtml" />
+    <Content Include="Views\Partials\SC_PartnerPage\_PartnerPageSectionThree.cshtml" />
+    <Content Include="Views\Partials\SC_Coaches\_CoachesContent30.cshtml" />
+    <Content Include="Views\Partials\SC_Coaches\_CoachesContent45.cshtml" />
+    <Content Include="Views\Partials\SC_Coaches\_CoachesContent60.cshtml" />
+    <Content Include="Views\Partials\SC_StartupLounge\_StartupLoungeHeader.cshtml" />
+    <Content Include="Views\Partials\SC_StartupLounge\_StartupLoungeNetwork.cshtml" />
+    <Content Include="Views\Partials\SC_StartupLounge\_StartupLoungePicture.cshtml" />
+    <Content Include="Views\Partials\SC_StartupLounge\_StartupLoungeValue.cshtml" />
+    <Content Include="Views\SC_StartupLounge.cshtml" />
+    <Content Include="Views\SC_UnsubscribeNewsletter.cshtml" />
+    <Content Include="Views\Partials\SC_Help\_HelpSection1.cshtml" />
+    <Content Include="Views\Partials\SC_Help\_HelpSection2.cshtml" />
+    <Content Include="Views\Partials\SC_Help\_HelpSection3.cshtml" />
+    <Content Include="Views\Partials\SC_Help\_HelpSection4.cshtml" />
+    <Content Include="Views\SC_Help.cshtml" />
+    <Content Include="Views\Partials\SiteLayout\_LoggedInNavigationBar.cshtml" />
+    <Content Include="Views\FoerOpstart.cshtml" />
+    <Content Include="Views\SC_Podcast.cshtml" />
+    <Content Include="Views\SC_PressPage.cshtml" />
+    <Content Include="Views\Tips.cshtml" />
+    <Content Include="Views\Partials\MemberInfo.cshtml" />
+    <Content Include="Views\Partials\MemberProfilePartner.cshtml" />
+    <Content Include="Views\Partials\MemberProfileCoach.cshtml" />
+    <Content Include="Views\BlogMaster.cshtml" />
+    <Content Include="Views\BlogItem.cshtml" />
+    <Content Include="Views\BlogCategories.cshtml" />
+    <Content Include="Views\Blog.cshtml" />
+    <Content Include="Views\Partials\BlogCategories.cshtml" />
+    <Content Include="Views\Partials\AlternatingCards.cshtml" />
+    <Content Include="Views\SC_LogInMember.cshtml" />
+    <Content Include="Views\SC_ReActivateSubscription.cshtml" />
+    <Content Include="Views\memberprofile.cshtml" />
+    <Content Include="Views\SC_RegisterMember.cshtml" />
+    <Content Include="Views\SC_Settings.cshtml" />
+    <Content Include="Views\HelperPage.cshtml" />
+    <Content Include="Views\FaqOverview.cshtml" />
+    <Content Include="Views\Partials\SC_Home\_HomeCases.cshtml" />
+    <Content Include="Views\PaylikeN.cshtml" />
+    <Content Include="Views\Partials\SC_Home\_HomeMedia.cshtml" />
+    <Content Include="Views\Inspiration.cshtml" />
+    <Content Include="Views\SC_RegisterPartner.cshtml" />
+    <Content Include="Views\Partials\ExtraOffers.cshtml" />
+    <Content Include="Views\Partials\SettingsPartner.cshtml" />
+    <Content Include="Views\Partials\SettingsStudent.cshtml" />
+    <Content Include="Views\Partials\SettingsSubscription.cshtml" />
+    <Content Include="Views\Partials\SettingsChangePassword.cshtml" />
+    <Content Include="Views\Partials\SettingsCoach1.cshtml" />
+    <Content Include="Views\ExtraOffersOverview.cshtml" />
+    <Content Include="Views\EventsOverview.cshtml" />
+    <Content Include="Views\Partials\PricingTable.cshtml" />
+    <Content Include="Views\Partnerskab.cshtml" />
+    <Content Include="Views\Budget.cshtml" />
+    <Content Include="Views\SC_FAQ.cshtml" />
+    <None Include="packages.config" />
+    <Content Include="scripts\jquery-1.10.2.min.map" />
+    <Content Include="Views\MinForretningsplan.cshtml" />
+    <Content Include="Views\pdf.cshtml" />
+    <Content Include="Views\Partials\BlogFeaturesSidebar.cshtml" />
+    <Content Include="Views\Partials\SettingsInvoices.cshtml" />
+    <Content Include="Views\Partials\SiteLayout\_GuestNavigationBar.cshtml" />
+    <Content Include="Views\IndustryPartnersOverview.cshtml" />
+    <Content Include="Views\SuccessCasesOverview.cshtml" />
+    <Content Include="Views\SuccessCase.cshtml" />
+    <Content Include="Views\SC_RegisterIvaekst.cshtml" />
+    <Content Include="Views\PaylikeCompleteN.cshtml" />
+    <Content Include="Views\SC_RegisterIndnetTilmelding.cshtml" />
+    <Content Include="Views\CoachingSparring.cshtml" />
+    <Content Include="Views\SC_Privatlivspolitik.cshtml" />
+    <Content Include="Views\Pricing.cshtml" />
+    <Content Include="Views\PartnerExplained.cshtml" />
+    <Content Include="Views\Forretningsplanen.cshtml" />
+    <Content Include="Views\Partials\BasicRichTextEditor.cshtml" />
+    <Content Include="Views\Partials\Notification.cshtml" />
+    <Content Include="Views\UserProfile.cshtml" />
+    <Content Include="Views\SC_RegisterMemberYearly.cshtml" />
+    <Content Include="Views\PaylikeNYearly.cshtml" />
+    <Content Include="Views\Wiki.cshtml" />
+    <Content Include="Views\WikiArticle.cshtml" />
+    <Content Include="Views\SubmitBlog.cshtml" />
+    <Content Include="Views\Vlog.cshtml" />
+    <Content Include="Views\Partials\SiteLayout\_SpinWheel.cshtml" />
+    <Content Include="Views\PaylikeNSpecial.cshtml" />
+    <Content Include="Views\Sitemap.cshtml" />
+    <Content Include="Views\XmlSiteMap.cshtml" />
+    <Content Include="Views\FormularOffer.cshtml" />
+    <Content Include="Views\AdminForm.cshtml" />
+    <Content Include="Views\Partials\AdminNavigation.cshtml" />
+    <Content Include="Views\Partials\Grid\Editors\Media.cshtml" />
+    <Content Include="Views\HvorforStartupCentral.cshtml" />
+    <Content Include="Views\ContentPage.cshtml" />
+    <Content Include="Views\MacroPartials\Buttons\CTAButton.cshtml" />
+    <Content Include="Views\MacroPartials\Buttons\DoubleButtons.cshtml" />
+    <Content Include="Views\MacroPartials\Buttons\PrimaryButton.cshtml" />
+    <Content Include="Views\StartupTOC.cshtml" />
+    <Content Include="Views\Partials\Grid\SC-Grid.cshtml" />
+    <Content Include="Views\StartupTOCPage.cshtml" />
+    <Content Include="Views\Team.cshtml" />
+    <Content Include="Views\MyProfile.cshtml" />
+    <Content Include="Views\BlogSubmit.cshtml" />
+    <Content Include="Views\MasterNoIndex.cshtml" />
+    <Content Include="Views\forretningsplanOnepage.cshtml" />
+    <Content Include="Views\VlogPage.cshtml" />
+    <Content Include="Views\PresseKit.cshtml" />
+    <Content Include="Views\MinPitchDeck.cshtml" />
+    <Content Include="Views\pitchDeckOnePage.cshtml" />
+    <Content Include="Views\PitchDeckOversigt.cshtml" />
+    <Content Include="Views\Partials\ReviewCard.cshtml" />
+    <Content Include="Views\Partials\RegisterUserDetails.cshtml" />
+    <Content Include="Views\Partials\RegisterUserPayment.cshtml" />
+    <Content Include="Views\Partials\RegisterUserPlan.cshtml" />
+    <Content Include="Views\SC_RegisterNew.cshtml" />
+    <Content Include="Views\MembersListView.cshtml" />
+    <Content Include="Views\MasterNoNavFooter.cshtml" />
+    <Content Include="Views\SC_Coaches_NoNavFooter.cshtml" />
+    <Content Include="Views\join_Now.cshtml" />
+    <Content Include="Views\RssFeedBlogsDT.cshtml" />
+    <Content Include="Views\Reports.cshtml" />
+    <Content Include="Views\appleAppSiteAssociation.cshtml" />
+    <Content Include="Views\Partials\Grid\Editors\Textstring.cshtml" />
+    <Content Include="Views\Partials\Grid\Editors\Rte.cshtml" />
+    <Content Include="Views\Partials\Grid\Editors\Macro.cshtml" />
+    <Content Include="Views\Partials\Grid\Editors\Embed.cshtml" />
+    <Content Include="Views\Partials\Grid\Editors\Base.cshtml" />
+    <Content Include="Views\Partials\Grid\Bootstrap3.cshtml" />
+    <Content Include="Views\Partials\Grid\Bootstrap3-Fluid.cshtml" />
+    <Content Include="Views\Partials\BlockList\Default.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Plugins\Attityde.MobilePay.Refunder\dialogs\" />
+    <Folder Include="Code\Entities\" />
+    <Folder Include="Code\EventHandlers\" />
+    <Folder Include="Views\Activecampaign\" />
+    <Folder Include="Views\Cvr\" />
+    <Folder Include="Views\ReportsApi\" />
+    <Folder Include="Views\Reports\" />
+    <Folder Include="Views\UserApi\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>53273</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:1111/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\Umbraco.SqlServerCE.4.0.0.1\build\Umbraco.SqlServerCE.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Umbraco.SqlServerCE.4.0.0.1\build\Umbraco.SqlServerCE.targets'))" />
+    <Error Condition="!Exists('..\packages\UmbracoCms.8.18.4\build\UmbracoCms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\UmbracoCms.8.18.4\build\UmbracoCms.props'))" />
+    <Error Condition="!Exists('..\packages\UmbracoCms.8.18.4\build\UmbracoCms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\UmbracoCms.8.18.4\build\UmbracoCms.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" />
+  <Import Project="..\packages\Umbraco.SqlServerCE.4.0.0.1\build\Umbraco.SqlServerCE.targets" Condition="Exists('..\packages\Umbraco.SqlServerCE.4.0.0.1\build\Umbraco.SqlServerCE.targets')" />
+  <Import Project="..\packages\UmbracoCms.8.18.4\build\UmbracoCms.targets" Condition="Exists('..\packages\UmbracoCms.8.18.4\build\UmbracoCms.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

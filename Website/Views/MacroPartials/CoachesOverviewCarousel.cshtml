@@ -1,0 +1,36 @@
+﻿@using StartupCentral.Extensions
+@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@{
+    int i = 1;
+    IEnumerable<IMember> coachesList = ApplicationContext.Current.Services.MemberService.GetMembersByMemberType("coach1");
+    var currentUser = Members.GetCurrentMember();
+}            
+<div class="owl-carousel owl-theme coaches-carousel">
+    @*.OrderBy(x => Guid.NewGuid()).Take(5)*@
+    @foreach (var busa in coachesList.Where(itm => itm.GetValue<bool>("wwunavailable") == false))
+    {
+        int mediaItemId = 0;
+        if (busa.GetValue<string>("wwavatar").IsNumeric())
+        {
+            mediaItemId = Convert.ToInt32(busa.GetValue<string>("wwavatar"));
+        }
+        else
+        {
+            mediaItemId = busa.GetValue<string>("wwavatar").GetIdByUdi();
+        }
+        List<int> tagsId = busa.GetValue<string>("wwtags").UdiCSVToIntList();
+        <div class="coaches-carousel-item">
+            <div class="coaches-carousel-content" style="background-image: url(@Umbraco.TypedMedia(mediaItemId).GetCropUrl("businessangels"));">
+                @if (mediaItemId > 0)
+                {
+                    @*<img src="@Umbraco.TypedMedia(mediaItemId).GetCropUrl("businessangels")" class="img-responsive" />*@
+                }
+                <div class="coaches-carousel-description fw600">
+                    @busa.GetValue("wwname")
+                </div>
+            </div>
+        </div>
+        i++;
+    }
+</div>  
+<!--dev-->

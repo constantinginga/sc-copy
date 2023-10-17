@@ -1,0 +1,491 @@
+//Imports
+@import './xconfig';
+
+//SiteLayout
+@import './footer';
+@import './popup';
+
+//Landing Pages
+@import './index';
+@import './partners';
+@import './partnerpage';
+@import './coaches';
+@import './coachpage';
+@import './team';
+@import './tipspage';
+@import './podcast';
+@import './presspage';
+
+//Logged in Pages
+@import './minside';
+@import './minprofil';
+@import './usermessages';
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 10px;
+}
+
+body {
+    background-color: #fff;
+    font-family: $font-primary;
+    font-weight: 400;
+    line-height: 1.6;
+    color: $sc-primary;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    line-height: 1.4em;
+    font-weight: 700;
+    width: 100%;
+    max-width: 800px;
+}
+
+h1 {
+    font-size: 35px;
+    line-height: 1.8em;
+}
+
+h2 {
+    font-size: 20px;
+    line-height: 1.4em;
+}
+
+h3 {
+    font-size: 16px;
+}
+
+p,
+i,
+span,
+button {
+    font-size: 1.6rem;
+}
+
+a {
+    text-decoration: none;
+    font-size: 1.6rem;
+    width: 100%;
+}
+
+ul {
+    list-style-type: none;
+}
+
+img {
+    display: block;
+    width: 100%;
+    align-self: center;
+}
+
+section {
+    position: relative;
+    padding-top: 8.5rem;
+    padding-bottom: 10rem;
+}
+
+main > section:first-child {
+    padding-top: 0rem;
+}
+
+
+textarea {
+    font-family: $font-primary;
+}
+
+#main-nav + section {
+    margin-top: 0;
+    padding-top: $nav-sm;
+}
+
+
+
+.headline-1 {
+    font-size: 9vw;
+}
+
+.headline-2 {
+    padding: 0;
+    font-size: 7vw;
+}
+
+.headline-3 {
+    font-size: 6vw;
+}
+
+.headline-4 {
+    font-size: 5vw;
+}
+
+.headline-1,
+.headline-2,
+.headline-3,
+.headline-4 {
+    font-weight: 900;
+    line-height: 1.2em;
+    margin-bottom: 5px;
+}
+
+.lead {
+    max-width: 850px;
+    font-size: 1.5rem;
+    margin-top: auto;
+}
+
+.testimonial {
+    max-width: 850px;
+    font-size: 1.5rem;
+
+    &::first-letter {
+        font-size: 150%;
+    }
+}
+
+.centered {
+    text-align: center;
+    align-items: center;
+}
+
+.icon-container {
+    margin-bottom: 2.5rem;
+    padding: 2.5rem;
+    border-radius: 100%;
+    @include boxshadow;
+
+    .icon {
+        width: 50px;
+        height: 50px;
+        display: grid;
+        align-items: center;
+        justify-content: center;
+
+        i {
+            font-size: 5rem;
+        }
+    }
+}
+
+
+
+////////////////////////////////////////////////
+////////////////////////BOXES///////////////////
+////////////////////////////////////////////////
+.container {
+    position: relative;
+    width: 1200px;
+    max-width: 95%;
+    margin: auto;
+}
+
+.container-small {
+    position: relative;
+    width: 800px;
+    max-width: 95%;
+    margin: auto;
+}
+
+.container-big {
+    position: relative;
+    margin: auto;
+    width: 100%;
+}
+
+.aside-container {
+    position: relative;
+    margin: auto;
+    @include flex(column);
+}
+
+.title-box {
+    @include flex(column);
+    padding: 0 2.5%;
+    margin: auto;
+    max-width: 100%;
+    flex: 0 0 100%;
+    text-align: center;
+    align-items: center;
+}
+
+.read-more-box {
+    text-align: center;
+    padding: 1rem 0 2rem;
+
+    a {
+        color: $sc-primary;
+        font-weight: 600;
+        // padding-bottom: 2px;
+        border-bottom: $sc-accent 2px solid;
+        @include transition(0.2s);
+
+        &:hover {
+            color: $sc-accent;
+        }
+    }
+}
+
+.column-container {
+    display: flex;
+    flex-direction: column;
+    padding: 0 2.5%;
+    max-width: 100%;
+    flex: 0 0 100%;
+    margin-top: 3rem;
+}
+
+.header-big {
+    position: relative;
+    padding-top: 15rem;
+    padding-bottom: 15rem;
+    background-color: $sc-primary;
+    color: $sc-white;
+}
+
+.header-small {
+    padding-top: 10rem;
+    padding-bottom: 10rem;
+    background-color: $sc-primary;
+    color: $sc-white;
+}
+
+.register-now {
+    margin: 2.5rem auto;
+}
+
+.card {
+    border-radius: 1rem;
+    background-color: $sc-white;
+    padding: 2.5rem;
+    border: 1px solid #e6e7e8;
+    @include boxshadow;
+}
+
+.button {
+    @include btn;
+}
+
+.button-white {
+    @include btn-white;
+}
+
+.cta-button {
+    @include cta-btn;
+}
+
+.paragraph {
+    margin: 1rem 0;
+
+    &::first-letter {
+        font-size: 150%;
+    }
+}
+
+.bg-soft {
+    background: $sc-soft;
+}
+
+
+//////////////////
+//Looks
+////////////////
+.tlt-w {
+    height: 5rem;
+    width: 100%;
+    clip-path: polygon(100% 0, 0 0, 0 100%);
+    position: absolute;
+    // background-color: $sc-white;
+    background-color: rgba(255, 255, 255, 0.2);
+    top: 0;
+}
+
+.trt-w {
+    height: 5rem;
+    width: 100%;
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+    position: absolute;
+    background-color: $sc-white;
+    top: 0;
+}
+
+.tlb-w {
+    height: 5rem;
+    width: 100%;
+    clip-path: polygon(0 100%, 100% 100%, 0 0);
+    position: absolute;
+    background-color: $sc-white;
+    bottom: 0;
+}
+
+.trb-w {
+    height: 5rem;
+    width: 100%;
+    clip-path: polygon(0 100%, 100% 100%, 100% 0);
+    position: absolute;
+    background-color: $sc-white;
+    bottom: 0;
+}
+
+//////L
+.tlt-b {
+    height: 5rem;
+    width: 100%;
+    clip-path: polygon(100% 0, 0 0, 0 100%);
+    position: absolute;
+    background-color: $sc-primary;
+    top: 0;
+}
+
+.trt-b {
+    height: 5rem;
+    width: 100%;
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+    position: absolute;
+    background-color: $sc-primary;
+    top: 0;
+}
+
+.tlb-b {
+    height: 5rem;
+    width: 100%;
+    clip-path: polygon(0 100%, 100% 100%, 0 0);
+    position: absolute;
+    background-color: $sc-primary;
+    bottom: 0;
+}
+
+.trb-b {
+    height: 5rem;
+    width: 100%;
+    clip-path: polygon(0 100%, 100% 100%, 100% 0);
+    position: absolute;
+    background-color: $sc-primary;
+    bottom: 0;
+}
+
+
+
+////////////////////////////////////////////////
+//MEDIA QUERIES
+////////////////////////////////////////////////
+
+@include media-md {
+    h2 {
+        font-size: 22.5px;
+    }
+
+    h3 {
+        font-size: 21px;
+    }
+
+    .headline-1 {
+        font-size: 7vw;
+    }
+
+    .headline-2 {
+        font-size: 5vw;
+    }
+
+    .headline-3 {
+        font-size: 4vw;
+    }
+}
+
+
+@include media-lg {
+    #main-nav + section {
+        margin-top: 0;
+        padding-top: $nav-lg;
+    }
+
+    h2 {
+        font-size: 27px;
+        line-height: 1.25em;
+    }
+
+    h3 {
+        font-size: 22.5px;
+    }
+
+    aside {
+        min-width: 350px;
+        width: 350px;
+    }
+
+    .aside-container {
+        position: relative;
+        width: 1200px;
+        max-width: 95%;
+        margin: auto;
+        @include flex(row);
+        justify-content: space-between;
+    }
+
+    .header-big {
+        padding-top: 20rem;
+        padding-bottom: 20rem;
+        background-color: $sc-primary;
+        color: $sc-white;
+    }
+
+    .header-small {
+        padding-top: 15rem;
+        padding-bottom: 14rem;
+        background-color: $sc-primary;
+        color: $sc-white;
+    }
+
+    .headline-1 {
+        font-size: 5vw;
+    }
+
+    .headline-2 {
+        font-size: 3vw;
+    }
+
+    .headline-3 {
+        font-size: 3vw;
+    }
+}
+
+@include media-xl {
+    .headline-1 {
+        font-size: 70px;
+    }
+
+    .headline-2 {
+        font-size: 40px;
+    }
+
+    .headline-3 {
+        font-size: 35px;
+    }
+
+    .headline-4 {
+        font-size: 40px;
+    }
+    // .container {
+    //     width: 1500px;
+    // }
+    // .container-small {
+    //     width: 1100px;
+    // }
+    // .aside-container {
+    //     position: relative;
+    //     width: 1500px;
+    //     max-width: 95%;
+    //     margin: auto;
+    //     @include flex(row);
+    //     justify-content: space-between;
+    // }
+}

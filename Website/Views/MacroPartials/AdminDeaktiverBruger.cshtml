@@ -1,0 +1,79 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+
+@{
+    var currentUser = Members.GetCurrentMember();
+    var memberid = HttpContext.Current.Response.Cookies["memberid"].ToString();
+    
+
+    <div class="modal fade deaktiverbrugerview" id="deaktiverbrugerview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><img src="/images/close.gif"></button>
+                <div class="modal-header text-center">
+                    <img src="/media/1148/raket_dialogbox.svg" class="img-responsive center-block mb25 mt40" />
+                    <h4 class="modal-title f25 mb25  uppercase fw700 lh26" id="myModalLabel">
+                        Du er ved at deaktivere:<br/> 
+
+                       <span class="lblEditingMemberName" ></span>
+
+                        
+                    </h4>
+                </div>
+                <div class="modal-body text-center">
+                    <form action="" method="post" name="deaktiveruser" id="deaktiveruser">
+                        <div class="row">
+                            <div class="radio fleft w100 mb30">
+                                <div class="col-md-6 text-left">
+                                    @if (Umbraco.Member(currentUser.Id).IsDocumentType("student"))
+                                    {
+                                       <span class="studenterblue badge">Student</span>
+                                    }
+                                     @if (Umbraco.Member(currentUser.Id).IsDocumentType("investor"))
+                                     {
+                                       <span class="investordusted badge">Investor</span>
+                                    }
+                                     @if (Umbraco.Member(currentUser.Id).IsDocumentType("teacher"))
+                                    {
+                                        <span class="teacheryellow badge">Underviser</span>
+                                    }
+                                    @if (Umbraco.Member(currentUser.Id).IsDocumentType("coach1"))
+                                    {
+                                       <span class="adminred badge">Coach</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-sm-12">
+                            <div class="checkbox mb30">
+                                <label for="deaktiver"><input type="checkbox" value="1" name="deaktiver" id="deaktiver" data-confirm="deaktiveruser">Er du sikker?<span></span></label>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 text-right">
+                                <input type="button" id="submit" data-id="" name="submit" class="btn dark" value="Deaktiver brugeren" data-invoke="deaktiveruser"/>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="successtxt f18 lh26" style="display:none;">
+                        Brugeren blev deaktiveret.<br /><br />
+                    </div>
+                    <div class="errortxt f18 lh26" style="display:none;">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/scripts/startupcentral.admin.js?v=3"></script>
+    
+
+    
+}

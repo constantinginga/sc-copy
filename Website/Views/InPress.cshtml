@@ -1,0 +1,132 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+<section class="nfp-sc-pressen-section">
+            <div class="nfp-sc-press-title">
+                <h2 class="nfp-press-title">@Umbraco.AssignedContentItem.Value("nfpPressTitle")</h2>
+            </div>
+        <div class="nfp-sc-big-press-container">
+            <div class="nfp-sc-press-section__carousel splide">
+                <div class="splide__arrows">
+                    <div class="splide__arrow splide__arrow--prev arrow-left"></div>
+                    <div class="splide__arrow splide__arrow--next arrow-right"></div>
+                </div>
+                <div class="nfp-sc-press-section-row splide__slider">
+                    <div class="splide__track">
+                        <ul class="nfp-sc-press-section-cards splide__list">
+
+                            <li class="nfp-sc-press-card splide__slide">
+                                <div class="press-card__img">
+                                    <a href="https://www.avisen.dk/vi-skal-goere-det-nemmere-for-de-unge_679225.aspx">
+                                        <img src="@Umbraco.Media(38318).Url" alt="Image" />
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nfp-sc-press-card splide__slide">
+                                <div class="press-card__img">
+                                    <a href="https://www.bizzup.dk/ivaerksaetterplatformen-startupcentral-dk-rejser-fondskapital/">
+                                        <img src="@Umbraco.Media(38319).Url" alt="Image" />
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nfp-sc-press-card splide__slide">
+                                <div class="press-card__img">                      
+                                        <a href="https://borsen.dk/nyheder/opinion/regeringens-hjaelp-gaar-til-private-mens-erhvervslivet-maa-klare-sig-selv?b_source=startup-central&b_medium=row_1&b_campaign=list_1">
+                                            <img src="@Umbraco.Media(38320).Url" alt="Image" />
+                                        </a>
+                                </div>
+                            </li>
+                            <li class="nfp-sc-press-card splide__slide">
+                                <div class="press-card__img">
+                                    <a href="https://erhvervplus.dk/artikel/anders-m%C3%A5tte-k%C3%A6mpe-h%C3%A5rdt-for-sin-iv%C3%A6rks%C3%A6tterdr%C3%B8m-nu-skal-et-st%C3%B8rre-millionbel%C3%B8b-hj%C3%A6lpe-med-at-g%C3%B8re-dr%C3%B8mmen-opn%C3%A5elig-for-flere">
+                                            <img src="@Umbraco.Media(38321).Url" alt="Image" />
+                                        </a>
+                                </div>
+                            </li>
+                            <li class="nfp-sc-press-card splide__slide">
+                                <div class="press-card__img">
+                                    <a href="https://finans.dk/debat/ECE14198842/vi-skal-genfinde-danmarks-skaberkraft/">
+                                        <img src="@Umbraco.Media(38322).Url" alt="Image" />
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nfp-sc-press-card splide__slide">
+                                <div class="press-card__img">                                   
+                                        <a href="https://hsfo.dk/artikel/coronatids-evaluering-vi-har-l%C3%A6rt-at-iv%C3%A6rks%C3%A6ttere-og-selvst%C3%A6ndige-st%C3%A5r-sammen-og-netv%C3%A6rk-er-vor-chance-for-at-st%C3%A5-st%C3%A6rkere-over-for-et-politisk-setup-som-slet-ikke-t%C3%A6nker-p%C3%A5-os">
+                                            <img src="@Umbraco.Media(38323).Url" alt="Image" />
+                                        </a>
+                                </div>
+                            </li>
+                            <li class="nfp-sc-press-card splide__slide">
+                                <div class="press-card__img">
+                                    <a href="https://itwatch.dk/ITNyt/Brancher/venture/article13559963.ece">
+                                        <img src="@Umbraco.Media(38324).Url" alt="Image" />
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nfp-sc-press-card splide__slide">
+                                <div class="press-card__img">
+                                    <a href="https://jyllands-posten.dk/jplokal/jphorsens/debat/ECE14152915/kommentar-hvis-mine-doetre-kommer-paa-en-liste-en-dag-saa-skal-det-vaere-fordi-de-er-dygtige-ikke-fordi-de-er-kvinder/">
+                                        <img src="@Umbraco.Media(38325).Url" alt="Image" />
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nfp-sc-press-card splide__slide">
+                                <div class="press-card__img">
+                                    <a href="https://kapwatch.dk/nyheder/investeringsselskaber/article14253011.ece">
+                                        <img src="@Umbraco.Media(38326).Url" alt="Image" />
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nfp-sc-press-card splide__slide">
+                                <div class="press-card__img">
+                                    <a href="https://techsavvy.media/startup-central-grundlaegger-i-oproer-hvad-laver-du-simon/">
+                                        <img src="@Umbraco.Media(38327).Url" alt="Image" />
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <script src="~/scripts/splide-4.1.3/dist/js/splide.min.js"></script>
+    <script>
+            var pressSplide = new Splide('.nfp-sc-press-section__carousel', {
+                type: 'loop',
+                perPage: 8,
+                perMove: 1,
+                breakpoints: {
+                    1450: {
+                        perPage: 6
+                    },
+                    1250: {
+                        perPage: 5
+                    },
+                    1000: {
+                        perPage: 4
+                    },
+                    700: {
+                        perPage: 3
+                    },
+                    450: {
+                        perPage: 2
+                    },
+                    350: {
+                        perPage: 1
+                    }
+                },
+                autoplay: false,
+                arrows: false,
+                pagination: false,
+                classes: {
+                    arrows: 'splide__arrows',
+                    arrow: 'splide__arrow',
+                    prev: 'splide__arrow--prev arrow-left',
+                    next: 'splide__arrow--next arrow-right'
+                }
+            });
+            pressSplide.mount();
+        </script>

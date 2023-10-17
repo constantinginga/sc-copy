@@ -1,0 +1,180 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using StartupCentral.Code.Class
+
+@{
+	Layout = "SC_WebBase.cshtml";
+}
+
+@{
+    IMember currentMember = null;
+    string errorMessage = string.Empty;
+    string username = "";
+    string email = "";
+    string password = "";
+    string mobilenumber = "";
+    string promocode = "";
+    UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+        
+    if (IsPost)
+    { 
+        if (!string.IsNullOrEmpty(Request.Form["email"]))
+        {
+            if (!string.IsNullOrEmpty(Request.Form["promocode"]))
+            {
+                promocode = Request.Form["promocode"];
+                if (!upodiWrapperService.ValidateDiscountCode(promocode)) //
+                {
+                    errorMessage = "Promokoden er forkert eller ikke længere tilgængelig";
+                }
+            }
+    
+            email = Request.Form["email"];
+            StartupCentral.Code.Model.ValidationResponse response = StartupCentral.Code.Class.Emailing.ValidateEmail(email);
+            
+            if (!response.IsValid)
+            {
+                errorMessage = response.Message;
+            }
+    
+            if (!string.IsNullOrEmpty(Request.Form["username"]))
+            {
+                username = Request.Form["username"];
+            }
+    
+           @* if (!string.IsNullOrEmpty(Request.Form["password"]))
+            {
+                password = Request.Form["password"];
+            } *@
+    
+            if (!string.IsNullOrEmpty(Request.Form["mobilenumber"]))
+            {
+                mobilenumber = Request.Form["mobilenumber"];
+            }
+    
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                IMember member = ApplicationContext.Current.Services.MemberService.CreateMemberWithIdentity(email, email, username, "student");
+                if (member != null)
+                {
+    
+                    member.SetValue("wwmobile", mobilenumber);
+                    member.SetValue("wwMobilePayAbonnementsDato", null);
+    
+                    member.SetValue("wwname", username);
+                    member.SetValue("wwemail", email);
+                    member.IsApproved = false;
+       
+                    ApplicationContext.Current.Services.MemberService.Save(member);
+                    ApplicationContext.Current.Services.MemberService.AssignRole(email, "student");
+    
+                 @*  ApplicationContext.Current.Services.MemberService.SavePassword(member, password); *@
+                 @*  Emailing.SendApprovvalEmail(member,password,true); *@
+                    //Emailing.SendCreationEmail(member, password);
+    
+                    currentMember = member;
+    
+                    Response.Redirect(string.Concat("https://www.startupcentral.dk/betaling/",
+                  @*  Umbraco.NiceUrl(Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["StartupCentral.MobilePay.Id"])), *@
+                    "?memberkey=", member.Key, "&promokode=", promocode), true);
+                    return;
+                }
+            }
+            
+        }
+    }
+}
+
+
+
+<div class="backgroundstuff">
+<div class="container py-5 sc-register">
+    <h2 class="text-center pb-2">@Umbraco.Field("RegisterPageText")</h2>
+    <div class="row">
+        <div class="col-sm-12 col-lg-6 col-12 pb-3">
+            <div class="card h-100 sc-register__su-card">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">@Umbraco.AssignedContentItem.GetPropertyValue("createAccountText")</h3>
+                    <form method="post" id="registrationForm">
+                        <input hidden name="formaction" value="registration" />
+                        
+                        <!-- Display the error -->
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="text-center">
+                                 <font color="red" >@errorMessage</font>          
+                            </div>
+                        }
+                        
+                        <!-- Name -->
+                        <div class="form-group">
+                            <label class="sr-only form-control-label">Username</label>
+                            <div class="mx-auto col-sm-10">
+                                <input class="form-control" required name="username" type="text" placeholder="Navn / Virksomhedsnavn" />
+                            </div>
+                        </div>
+                        
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label class="sr-only form-control-label">Email</label>
+                            <div class="mx-auto col-sm-10">
+                                <input class="form-control" required name="email" type="email" placeholder="E-mail" />
+                            </div>
+                        </div>
+                        
+                        <!-- Password -->
+                        <div class="form-group">
+                            <label class="sr-only form-control-label">Password</label>
+                            <div class="mx-auto col-sm-10">
+                             @*<input class="form-control" required name="password"  type="password" placeholder="Kodeord (Minimum 6 tegn)" minlength="6"> *@
+                             <p align="center">@Umbraco.Field("sendNewPasswordText")</p>
+                            </div>
+                        </div>
+
+                        <!-- Phone number -->
+                        <div class="form-group">
+                            <label class="sr-only form-control-label">Phone Number</label>
+                            <div class="mx-auto col-sm-10">
+                                <div class="phone-container d-flex justify-content-between">
+                                    <span class="areacode">+45</span> 
+                                    <input class="form-control mobileno" required name="mobilenumber" type="text" placeholder="Telefonnummer" maxlength="8">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Promo -->
+                        <div class="form-group">
+                            <label class="sr-only form-control-label">PromoCode</label>
+                            <div class="mx-auto col-sm-10">
+                                <input class="form-control" name="promocode" type="text" placeholder="Promokode" value="@Umbraco.Field("promoCode", recursive: true)">
+                            </div>
+                        </div>
+                            
+                        <!-- sign up button -->
+                        <div class="form-group">
+                            <div class="mx-auto col-sm-10 pb-1 pt-1">
+                                <button type="submit" class="btn btn-outline-secondary btn-lg btn-block">@Umbraco.Field("createAccountButton", recursive: true)</button>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+        </form>
+        
+        <div class="col-lg-6 col-12 pb-3 text-center sc-register__su-card-text">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3>@Umbraco.Field("offerText")</h3>
+                   @*<p>@Umbraco.Field("offerSubText")</p> -->*@
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+</div>
+</div>
+
+
+<style>
+  #sc-newsletter {display: none;}
+</style>

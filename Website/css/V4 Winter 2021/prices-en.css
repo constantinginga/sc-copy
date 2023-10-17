@@ -1,0 +1,56 @@
+﻿#sc-home-page #sc-home-priser .priser-title-container .row-container .row .column-container .column .price-card-container .price-card__price::after,
+.sc-pricing-page .row-container .row .column-container .column .price-card-container .price-card__price::after,
+.choose-plan__price-cards .row .column-container .column .price-card-container .price-card__price::after,
+#sc-payment section .row-container .row .column-container .column .price-card-container .price-card__price::after {
+    content: 'kr'; /*'kr./mo'*/
+    position: relative;
+    font-size: 2rem;
+}
+
+#sc-home-page > #sc-home-priser > .priser-title-container > .row-container > .row > .column-container > .column > .price-card-container > .price-card:nth-of-type(2) > .price-card__price::after,
+.sc-pricing-page > .row-container > .row > .column-container > .column > .price-card-container > .price-card:nth-of-type(2) > .price-card__price::after,
+.choose-plan__price-cards > .row > .column-container > .column > .price-card-container > .price-card:nth-of-type(2) > .price-card__price::after {
+    /*content: 'kr./mo';*/
+    content: 'kr.';
+}
+
+#sc-home-page > #sc-home-priser > .priser-title-container > .row-container > .row > .column-container > .column > .price-card-container > .price-card:nth-of-type(2) > .price-card__price::after,
+.sc-pricing-page > .row-container > .row > .column-container > .column > .price-card-container > .price-card:nth-of-type(2) > .price-card__price::after,
+#sc-payment section > .row-container > .row > .column-container > .column > .price-card-container > .price-card:nth-of-type(2) > .price-card__price::after {
+    /*content: 'kr./mo';*/
+    content: 'kr.';
+}
+
+#sc-home-page > #sc-home-priser > .priser-title-container > .row-container > .row > .column-container > .column > .price-card-container > .price-card:nth-of-type(3) > .price-card__price::after,
+.sc-pricing-page > .row-container > .row > .column-container > .column > .price-card-container > .price-card:nth-of-type(3) > .price-card__price::after,
+.choose-plan__price-cards > .row > .column-container > .column > .price-card-container > .price-card:nth-of-type(3) > .price-card__price::after,
+#sc-payment section > .row-container > .row > .column-container > .column > .price-card-container > .price-card:nth-of-type(3) > .price-card__price::after {
+    /*content: 'kr./mo';*/
+    content: 'kr.';
+}
+
+#sc-register-page .confirm-payment .payment-details .details-section .solution-details__group .amount.monthly::after {
+    content: " kr./mo";
+}
+
+#sc-register-page .confirm-payment .payment-details .details-section .solution-details__group .amount.quarterly::after {
+    content: " kr./qtr";
+}
+
+#sc-register-page .confirm-payment .payment-details .details-section .solution-details__group .amount.yearly::after {
+    /*content: " kr./yr";*/
+    content: " kr.";
+}
+
+#sc-register-page .confirm-payment .payment-details .details-section .solution-summary__content .amount.monthly::after {
+    content: " kr./mo";
+}
+
+#sc-register-page .confirm-payment .payment-details .details-section .solution-summary__content .amount.quarterly::after {
+    content: " kr./qtr";
+}
+
+#sc-register-page .confirm-payment .payment-details .details-section .solution-summary__content .amount.yearly::after {
+    /*content: " kr./yr";*/
+    content: " kr.";
+}

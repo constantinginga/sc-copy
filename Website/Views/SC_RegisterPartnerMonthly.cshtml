@@ -1,0 +1,258 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Code.Class
+@using StartupCentral.Extensions
+
+@{
+    Layout = "MasterNoIndex.cshtml";
+
+    var currentDate = DateTime.Now.Year;
+
+    IMember currentMember = null;
+
+    string errorMessage = string.Empty;
+
+    string companyName = "";
+    string email = "";
+    string cvr = "";
+    string contactPerson = "";
+    string mobilenumber = "";
+    string promocode = "";
+    string password = "";
+
+    UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+    
+    int mediaItemId = 0;
+    IEnumerable<IMember> pList = ApplicationContext.Current.Services.MemberService.GetMembersByMemberType("partner");
+
+
+    if (IsPost)
+    {
+        if (!string.IsNullOrEmpty(Request.Form["email"]))
+        {
+            if (!string.IsNullOrEmpty(Request.Form["promocode"]))
+            {
+                promocode = Request.Form["promocode"];
+                var isValidPromocode = System.Threading.Tasks.Task.Run(() => upodiWrapperService.ValidateDiscountCode(promocode)).GetAwaiter().GetResult();
+                if (!isValidPromocode) //
+                {
+                    errorMessage = "Promokoden er forkert eller ikke længere tilgængelig";
+                }
+            }
+
+            email = Request.Form["email"];
+            StartupCentral.Code.Model.ValidationResponse response = StartupCentral.Code.Class.Emailing.ValidateEmail(email);
+
+            if (!response.IsValid)
+            {
+                errorMessage = response.Message;
+            }
+            
+            if (!string.IsNullOrEmpty(Request.Form["password"]))
+            {
+                password = Request.Form["password"];
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["companyName"]))
+            {
+                companyName = Request.Form["companyName"];
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["mobilenumber"]))
+            {
+                mobilenumber = Request.Form["mobilenumber"];
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["cvr"]))
+            {
+                cvr = Request.Form["cvr"];
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["contactPerson"]))
+            {
+                contactPerson = Request.Form["contactPerson"];
+            }
+
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                IMember member = ApplicationContext.Current.Services.MemberService.CreateMemberWithIdentity(email, email, companyName, "partner");
+
+                if (member != null)
+                {
+                    member.SetValue("wwname", companyName);
+                    member.SetValue("wwemail", email);
+                    member.SetValue("wwcvr", cvr);
+                    member.SetValue("wwcontactPerson", contactPerson);
+                    member.SetValue("wwmobile", mobilenumber);
+                    member.SetValue("wwunavailable", true);
+
+                    member.IsApproved = false;
+
+                    ApplicationContext.Current.Services.MemberService.Save(member);
+                    ApplicationContext.Current.Services.MemberService.AssignRole(email, "partner");
+                    ApplicationContext.Current.Services.MemberService.SavePassword(member, password);
+
+                    Response.Redirect(string.Concat("/bliv-partner/partnerskab/", "?memberkey=", member.Key, "&promokode=StartupCentral-2020", "&concentletters=false"), true);
+                    return;
+                }
+            }
+
+        }
+    }
+}
+
+
+
+    <main id="sc-register-page" class="user-input-page">
+        
+        <div class="input-page-floating">
+            @if (pList.Count() > 0)
+            {
+                foreach (var partner in pList.Where(itm => itm.GetValue<bool>("wwunavailable") == false).OrderBy(itm => itm.Name).OrderBy(itm => itm.Name))
+                {
+                    if (partner.GetValue<string>("wwpartnerAvatar").IsNumeric())
+                    {
+                        mediaItemId = Convert.ToInt32(partner.GetValue<string>("wwpartnerAvatar"));
+                    }
+                    else if (!string.IsNullOrEmpty(partner.GetValue<string>("wwpartnerAvatar")))
+                    {
+                        mediaItemId = partner.GetValue<string>("wwpartnerAvatar").GetIdByUdi();
+                    }
+
+                    <img class="input-page-floating__image" src=@Umbraco.Media(mediaItemId).Url() alt="">
+                }
+            }
+        </div>
+        
+        <div class="sc-register-container">
+            <div class="sc-register-header">
+                <img src="/media/1648/suc-blue-logo.svg" alt="#">
+                <br />
+                <h2>
+                    <strong>
+                    @Model.Value("RegisterPageText")
+                    </strong>
+                </h2>
+                <br />
+                <span>@Umbraco.AssignedContentItem.Value("createAccountText")</span>
+                <br />
+            </div>
+            <div class="sc-register-content">
+                
+
+            <form method="post" id="registrationForm">
+                <input hidden name="formaction" value="registration" />
+
+                <div class="form-box-container">
+
+                    <!-- Display the error -->
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <p class="text-center">
+                            <font color="red">@errorMessage</font>
+                        </p>
+                        <br />
+                    }
+
+                    <!-- Firmanavn -->
+                    <div class="form-container">
+                        <label for="companyName" class="label-name">
+                            <span class="content-name">Firmanavn</span>
+                        </label>
+                        <div class="input-container">
+                            <input type="text" name="companyName" autocomplete="on" required />
+                            <span><i class="far fa-user"></i></span>
+                        </div>
+                    </div>
+
+                    <!-- CVR -->
+                    <div class="form-container">
+                        <label for="cvr" class="label-name">
+                            <span class="content-name">CVR</span>
+                        </label>
+                        <div class="input-container">
+                            <input type="number" name="cvr" autocomplete="on" required />
+                            <span><i class="far fa-user"></i></span>
+                        </div>
+                    </div>
+
+                    <!-- Kontaktperson -->
+                    <div class="form-container">
+                        <label for="contactPerson" class="label-name">
+                            <span class="content-name">Kontaktperson</span>
+                        </label>
+                        <div class="input-container">
+                            <input type="text" name="contactPerson" autocomplete="on" required />
+                            <span><i class="far fa-user"></i></span>
+                        </div>
+                    </div>
+
+
+                    <!-- Email -->
+                    <div class="form-container">
+                        <label for="email" class="label-name">
+                            <span class="content-name">Email</span>
+                        </label>
+                        <div class="input-container">
+                            <input type="email" name="email" autocomplete="on" required />
+                            <span><i class="far fa-envelope"></i></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Password -->
+                    <div class="form-container">
+                        <label for="password" class="label-name">
+                            <span class="content-name">Password</span>
+                        </label>
+                        <div class="input-container">
+                            <input type="password" id="pass" name="password" minlength="6" required />
+                            <span><i class="fas fa-lock"></i></span>
+                        </div>
+                    </div>
+
+                    <!-- Phone number -->
+                    <div class="form-container">
+                        <label for="telephone" class="label-name">
+                            <span class="content-name">Telefonnummer</span>
+                        </label>
+                        <div class="input-container" id="phone">
+                            <span>+45</span>
+                            <input type="tel" id="telephone" name="mobilenumber" autocomplete="on" maxlength="8" required />
+                        </div>
+                    </div>
+
+                    <div class="form-container">
+                        <label class="checkbox">
+                            <span>
+                                Ved tilmelding accepterer jeg hermed Startup Centrals <a href="/brugerbetingelser-for-startup-centrals-portal/" target="_blank">brugerbetingelser</a>
+                                og bekræfter jeg muligvis vil blive kontaktet af virksomheden og deres ansatte; elektronisk pr. mail og telefon.
+                            </span>
+                            <input type="checkbox" id="eng" name="eng" value="english" class="checkbox" required>
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+
+
+                        <button type="submit" class="button button--full-width button--lg">@Umbraco.AssignedContentItem.Value("createAccountButtonMonthly")</button>
+                        <p>Har du allerede en bruger? <a href="/log-in/">Klik her</a></p>
+
+                </div>
+            </form>
+            </div>
+            <div class="sc-register-footer">
+                <div class="sc-register-footer__links">
+                    <a href="/brugerbetingelser-for-startup-centrals-portal/" target="_blank">Brugerbetingselser</a>
+                    <a href="/faq/" target="_blank">FAQ</a>
+                    <a href="/media/1204/privatlivspolitik.pdf" target="_blank">Privatlivspolitik</a>
+                </div>
+                <div class="sc-register-footer__copyright">
+                    <span>© @currentDate Startup Central | CVR - 39319942</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        #sc-navbar-logged, #sc-navbar-main, #sc-newsletter, #main-footer {
+            display: none;
+        }
+    </style>

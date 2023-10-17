@@ -1,0 +1,360 @@
+section.sc-beforesu-intro {
+    margin-top: -$nav-sm;
+    text-align: center;
+    padding-bottom: 0;
+
+    .intro-container {
+
+        .intro {
+            @include flex(column);
+        }
+    }
+}
+
+section.sc-beforesu-timeline {
+    margin-top: -$nav-sm;
+
+    .timeline-box {
+        position: relative;
+
+
+        &:last-child {
+            .timeline-text {
+                // border: none;
+            }
+        }
+
+        .timeline-bubble {
+            top: 0;
+            width: 6rem;
+            height: 6rem;
+            position: absolute;
+            @include boxshadow-soft;
+            display: grid;
+            justify-items: center;
+            align-items: center;
+            border-radius: 50%;
+            z-index: 2;
+            background-color: $sc-white;
+            border: 1px solid $sc-border;
+
+            img {
+                width: 4rem;
+            }
+        }
+
+        .timeline-text {
+            padding-left: 4rem;
+            margin-left: 3rem;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-left: 3px solid $sc-primary;
+
+            h2 {
+                margin: 0;
+                @include sc-title-text-side;
+            }
+
+            .question-box {
+                a {
+                    display: block;
+                    font-size: 1.5rem;
+                }
+
+                h3 {
+                    margin: 0;
+                }
+
+                img {
+                    max-width: 25rem;
+                    margin: auto;
+                }
+
+                text-align: center;
+                border-radius: 1rem;
+                margin: 2.5rem auto;
+                padding: 1.5rem;
+                width: fit-content;
+                border: 1px solid $sc-border;
+                @include boxshadow-soft;
+            }
+        }
+
+    }
+
+    .idea {}
+
+    .export {}
+
+    .skills {}
+
+    .plan {}
+}
+
+section.sc-beforesu-weoffer {
+    padding-top: 0;
+
+    .container-small {
+        width: 50rem;
+    }
+}
+
+@include media-md {
+    section.sc-beforesu-intro {
+        .intro-container {
+            @include flex(row);
+            flex-wrap: wrap;
+
+            .column-container {
+                flex: 0 0 50%;
+            }
+        }
+    }
+
+    section.sc-beforesu-timeline {
+        margin-top: -$nav-lg;
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: minmax(300px, 1fr);
+
+
+            .timeline-box {
+                display: grid;
+
+                &:last-child {
+                    .timeline-text {
+                        &::after {
+                            display: none;
+                        }
+                    }
+                }
+
+                .timeline-bubble {
+                    justify-self: center;
+                    width: 8rem;
+                    height: 8rem;
+
+                    img {
+                        width: 6rem;
+                    }
+                }
+
+                .timeline-text {
+                    margin-left: 0;
+                    padding-left: 0;
+                    padding-top: 1rem;
+                    border: none;
+                    display: grid;
+                    grid-template-columns: repeat(13, 1fr);
+
+                    &::after {
+                        position: absolute;
+                        justify-self: center;
+                        content: "";
+                        height: 100%;
+                        width: 3px;
+                        background-color: $sc-primary;
+                    }
+
+                    h2 {
+                        padding: 0;
+                        text-align: center;
+                        @include sc-title-text;
+                        margin-bottom: 2.5rem;
+                    }
+
+                    p {
+                        margin: auto;
+                    }
+
+                    .question-box {
+                        margin: auto;
+                    }
+                }
+
+            }
+
+            .idea {
+                h2 {
+                    grid-column: 1/7;
+                }
+
+                p {
+                    grid-column: 1/7;
+                }
+
+                .question-box {
+                    grid-column: 8/14;
+                }
+            }
+
+            .export {
+                h2 {
+                    grid-column: 8/14;
+                }
+
+                p {
+                    grid-column: 8/14;
+                }
+
+                .question-box {
+                    grid-column: 1/7;
+                    grid-row: 2/3;
+                    margin: 0;
+                }
+            }
+
+            .skills {
+                h2 {
+                    grid-column: 1/7;
+                }
+
+                p {
+                    grid-column: 1/7;
+                }
+
+                .question-box {
+                    grid-column: 8/14;
+                }
+            }
+
+            .plan {
+                padding-top: 8rem;
+                text-align: center;
+
+                h2 {
+                    margin: auto;
+                    grid-column: 1/14;
+                }
+
+                p {
+                    grid-column: 1/14;
+                }
+
+                .question-box {
+                    grid-column: 1/7;
+                    grid-row: 2/3;
+                    margin: 0;
+                }
+            }
+        }
+    }
+}
+
+@include media-lg {
+    section.sc-beforesu-intro {
+        margin-top: -$nav-lg;
+
+        .intro-container {
+            @include flex(row);
+            flex-wrap: wrap;
+
+            .column-container {
+                flex: 0 0 25%;
+            }
+        }
+    }
+
+    section.sc-beforesu-timeline {
+        margin-top: -$nav-lg;
+
+        .container {
+            .timeline-box {
+                padding-bottom: 0;
+
+                &:last-child {
+                    .timeline-text {
+                        p {
+                            margin: 0;
+                        }
+                    }
+                }
+
+                .timeline-bubble {
+                    width: 10rem;
+                    height: 10rem;
+
+                    img {
+                        width: 6.5rem;
+                    }
+                }
+
+                .timeline-text {
+                    // padding-top: 2rem;
+
+
+                    &>p {
+                        margin: 5rem auto;
+                    }
+                }
+
+            }
+
+            .idea {
+                h2 {
+                    grid-column: 1/7;
+                }
+
+                p {
+                    grid-column: 1/7;
+                }
+
+                .question-box {
+                    grid-column: 8/14;
+                }
+            }
+
+            .export {
+                h2 {
+                    grid-column: 8/14;
+                }
+
+                p {
+                    grid-column: 8/14;
+                }
+
+                .question-box {
+                    grid-column: 1/7;
+                    grid-row: 2/3;
+                    margin: 0;
+                }
+            }
+
+            .skills {
+                h2 {
+                    grid-column: 1/7;
+                }
+
+                p {
+                    grid-column: 1/7;
+                }
+
+                .question-box {
+                    grid-column: 8/14;
+                }
+            }
+
+            .plan {
+                padding-top: 8rem;
+                text-align: center;
+
+                h2 {
+                    margin: auto;
+                    grid-column: 1/14;
+                }
+
+                p {
+                    grid-column: 1/14;
+                }
+
+                .question-box {
+                    grid-column: 1/7;
+                    grid-row: 2/3;
+                    margin: 0;
+                }
+            }
+        }
+    }
+}

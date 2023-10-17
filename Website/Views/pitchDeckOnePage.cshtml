@@ -1,0 +1,376 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Services;
+@using System.Web
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using Umbraco.Web.Security
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Extensions
+
+@{
+    Layout = null;
+
+    var currentUser = Members.GetCurrentMember();
+
+    StartupCentral.Code.Controllers.PitchController pd = new StartupCentral.Code.Controllers.PitchController();
+
+    MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+    IMember currentMember = null;
+    if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+    {
+        currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+    }
+}
+
+@if (currentMember != null)
+{
+    <!DOCTYPE html>
+    <html lang="da">
+    <head>
+        <script>
+            var userToken = ''
+            @if (currentMember != null) {
+                @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(currentMember), "';"))
+            }
+        </script>
+
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+
+        <!--Html2pdf-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
+        <!-- Styles -->
+        @{
+            var cssLastWriteTime = new System.IO.FileInfo(System.AppDomain.CurrentDomain.BaseDirectory + "/css/V4 Winter 2021/sc-v4-main.css")
+                .LastWriteTimeUtc.ToString("O").Replace(":", "");
+        }
+        <link rel="stylesheet" href="~/css/V4 Winter 2021/sc-v4-main.css?trick=@cssLastWriteTime" />
+
+        <meta charset="UTF-8">
+    </head>
+    <body>
+
+        <div id="BusinessPlanOverview" style="height: 100%;"> <!--height here is improtant for pdfs-->
+            <div class="businessplan-container">
+                <div class="bp-header">
+                    <span class="bp-header__subheader">Min Pitch</span>
+                    <h3 class="bp-header__title" id="pitchName"></h3>
+                </div>
+
+                <div class="bp-main-container-onepager">
+                                            
+                    <!--Download Button-->
+                        <div id="ignorOnPdf" class="bp-actions-container download-pdf" data-html2canvas-ignore="true">
+                            <div class="bp-actions">
+                                <a id="downloadbtn" class="bp-actions__button button button--icon button--icon-left button--full-width" data-id="">
+                                    Download
+                                </a>
+
+                            </div>
+                        </div>
+
+
+                    <!-- Introduction -->
+                    <!-- <div class="bp-main tabcontent is-active" id="Introduktion"> -->
+
+                    <div id="Introduktion">
+                        <h1 class="headline-1" id="pitchName"></h1>
+                        <h2>Introduktion</h2>
+
+                        <p id="eng"></p>
+                        <h3>Forside</h3>
+                        <p id="filename"></p>
+                        @*<button type="button" id="showbtn">Vis billede</button>
+            <button type="button" id="hidebtn">Skjul billede</button>
+            <div id="imagePre">
+                <img id="imagePrev" src="#" alt="display image" class="img-responsive img-thumbnail" />
+            </div>*@
+
+
+
+                        <h3>Agenda beskrivelse</h3>
+                        <p id="agenda"></p>
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!--Hvorfor du pitcher-->
+                    <div id="HvorforDuPitcher">
+                        <h2>Hvorfor Du Pitcher</h2>
+
+                        <h3>Hvad søger du? (værdisætning, ejerfordeling)</h3>
+                        <p id="lookFor"></p>
+
+                        <h3>Hvad skal pengene bruges til? </h3>
+                        <p id="moneyUsage"></p>
+
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Din virksomhed  -->
+                    <div id="DinVirksomhed">
+                        <h2>Din Virksomhed</h2>
+                        <h3>Kort men præcis beskrivelse af din virksomhed og dens produkt (vision, mission, impact) </h3>
+                        <p id="companyDesc"></p>
+
+                        <h3>Teamet bag virksomheden (team nu og i fremtiden)</h3>
+                        <p id="teamDesc"></p>
+
+                        <h3>Beskriv det behov du løser</h3>
+                        <p id="satisfyDesc"></p>
+
+                        <h3>Beskriv markedet (målgruppe – deres behov, markedsanalyse) </h3>
+                        <p id="marketDesc"></p>
+
+                        <h3>Traction (red or blue ocean?)  </h3>
+                        <p id="traction"></p>
+
+                        <h3>Eventuelle relevante samarbejder, som skaber værdi for produktet</h3>
+                        <p id="collaborations"></p>
+
+                        <h3>Mulig udvikling</h3>
+                        <p id="developmentDesc"></p>
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Proof Of-->
+                    <div id="Proof">
+                        <h2>Proof of</h2>
+                        <h3>Proof of business </h3>
+                        <p id="proofBusiness"></p>
+
+                        <h3>Proof of market fit</h3>
+                        <p id="proofMarket"></p>
+
+
+                        <h3>Proof of scale</h3>
+                        <p id="proofScale"></p>
+
+                        <h3>Proof of sales</h3>
+                        <p id="proofSales"></p>
+
+                        <h3>Concept payment</h3>
+                        <p id="proofConceptPayment"></p>
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Økonomi -->
+                    <div id="Okonomi">
+                        <h2>Økonomisk Overblik</h2>
+                        <h3>Dit budget (Indtægter og udgifter)</h3>
+                        <p id="finBudget"></p>
+
+                        <h3>Diversiteten</h3>
+                        <p id="finVariety"></p>
+
+                        <h3>Vækstpotentiale (Genkøbseffekten, ITV’en)</h3>
+                        <p id="finGrowth"></p>
+
+                        <h3>Hurtige facts</h3>
+                        <p id="finFacts"></p>
+
+
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Risikoprofilen  -->
+                    <div id="Risiko">
+                        <h2>Risikoprofilen</h2>
+                        <h3>Risikoen ved at investere i virksomheden</h3>
+                        <p id="riskInvest"></p>
+
+                        <h3> Hvad kan spille ind, for at du ikke når dine mål</h3>
+                        <p id="riskGoal"></p>
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Hvad søger du -->
+                    <div id="Søger">
+                        <h2>Hvad søger du/dét vil du have ud af dit pitch:</h2>
+
+                        <h3>Hvad søger du (Værdisætning, ejerfordeling)</h3>
+                        <p id="lookFor2"></p>
+
+                        <h3>Din nuværende ejerkreds og deres procentsats</h3>
+                        <p id="owners"></p>
+
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Summery -->
+                    <div id="Opfølgning">
+                        <h2>Opfølgning :</h2>
+                        <h3>Opsummering</h3>
+                        <p id="summery"></p>
+
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                </div>
+            </div>
+        </div>
+
+        <style>
+            #main-footer {
+                display: none;
+            }
+/*            #imagePre {
+                display: none;
+            }
+            #showbtn {
+                background-color: #4CAF50;
+                border: none;
+                color: white;
+                padding: 5px 15px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 13px;
+            }
+
+            #hidebtn {
+                background-color: #f44336;
+                border: none;
+                color: white;
+                padding: 5px 15px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 13px;
+            }*/
+        </style>
+
+
+        <script src="~/scripts/jQuery.datalink.js"></script>
+        <script src="~/scripts/startupcental.js"></script>
+
+        <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+        <script type="text/javascript">
+
+            var pid = {}
+
+            $(document).ready(Bind());
+
+
+
+            function Bind() {
+                if ($(location).attr('search')) {
+
+                    var x = $(location).attr('search');
+                    x = x.substr(4, 36);
+
+                    $('.pdf-download-link').attr('data-id', x);
+                    $('.download-pdf').css('display', 'block');
+
+                    startupCentral.requestData('/umbraco/api/PitchApi/getPitchById?sBusId=' + x,
+                        function (response) {
+
+                            if (!response.Success) {
+                                alert("Du har ikke tilladelse til at se denne pitch.");//("You don't have permision for this pitch.")
+                            }
+                            else {
+                                $(pid).attr(response.Data);
+
+                                if (pid.Picture != null) {
+                                    //$('#filename').text(pid.BudgetFile);
+                                    $('#filename').append("<a href='" + pid.Picture + "'>Et forsidebillede var vedhæftet, klik for at downloade</a>");
+                                }
+                                else {
+                                    $('#filename').text("Ingen billede er vedhæftet");
+                                }
+                                if (pid.English) {
+                                    $('#eng').text("Note: The pitch deck is written in English");
+                                }
+                                //Display image if exists
+                                //var picture = pid.Picture;
+                                //$(document).ready(function () {
+                                //    if (!!picture) {
+                                //        $('#showbtn').click(function () {
+                                //            $('#imagePrev').attr('src', pid.Picture);
+                                //            $('#imagePre').show();
+                                //        });
+                                //        $('#hidebtn').click(function () {
+                                //            $('#imagePre').hide();
+                                //        });
+                                //    }
+                                //    else {
+                                //        $('#showbtn').hide();
+                                //        $('#hidebtn').hide();
+                                //    }
+                                //});
+
+                                $(pid)
+                                    .linkBoth("PitchName", "#pitchName", "text")
+                                    .linkBoth("Agenda", "#agenda", "text")
+                                    
+                                    .linkBoth("LookFor", "#lookFor", "text")
+                                    .linkBoth("MoneyUsage", "#moneyUsage", "text")
+                                    .linkBoth("CompanyDesc", "#companyDesc", "text")
+                                    .linkBoth("TeamDesc", "#teamDesc", "text")
+                                    .linkBoth("SatisfyDesc", "#satisfyDesc", "text")
+
+                                    .linkBoth("MarketDesc", "#marketDesc", "text")
+                                    .linkBoth("Traction", "#traction", "text")
+                                    .linkBoth("Collaborations", "#collaborations", "text")
+
+                                    .linkBoth("DevelopmentDesc", "#developmentDesc", "text")
+                                    .linkBoth("proofBusiness", "#proofBusiness", "text")
+                                    .linkBoth("proofMarket", "#proofMarket", "text")
+                                    .linkBoth("proofSales", "#proofSales", "text")
+                                    .linkBoth("ProofScale", "#proofScale", "text")
+                                    .linkBoth("proofConceptPayment", "#proofConceptPayment", "text")
+                                    .linkBoth("finBudget", "#finBudget", "text")
+
+                                    .linkBoth("finVariety", "#finVariety", "text")
+                                    .linkBoth("finGrowth", "#finGrowth", "text")
+                                    .linkBoth("finFacts", "#finFacts", "text")
+                                    .linkBoth("riskInvest", "#riskInvest", "text")
+                                    .linkBoth("riskGoal", "#riskGoal", "text")
+                                    .linkBoth("LookFor2", "#lookFor2", "text")
+                                    .linkBoth("Owners", "#owners", "text")
+                                    .linkBoth("Summary", "#summery", "text");
+                            }
+                        });
+                }
+            }
+        </script>
+
+        <script type="text/javascript">
+
+            var divToPdf = document.getElementById('BusinessPlanOverview');
+            var pitchName = $('#pitchName').text();
+            var opt = {
+                margin: 2,
+                filename: 'myPitchdeck.pdf',
+                pagebreak: { after: ['#HvorforDuPitcher', '#DinVirksomhed', '#Proof', '#Okonomi', '#Risiko', '#Søger'], avoid: 'img' },
+            };
+
+           $('#downloadbtn').click(function () {
+
+
+
+               html2pdf().set(opt).from(divToPdf).save();
+
+
+
+           });
+
+           
+        </script>
+    </body>
+</html>
+}

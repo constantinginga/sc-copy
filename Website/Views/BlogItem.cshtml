@@ -1,0 +1,393 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@{
+    //Layout = "BlogMaster.cshtml";
+    Layout = "Master.cshtml";
+    //Layout = "SC_WebBase.cshtml";
+
+    var date = (Model.Value<DateTime>
+    ("datePublished").ToString("dd-MM-yyyy"));
+    var headImage = Model.Value<IPublishedContent>
+        ("bImage");
+        var blogItem = Model.Value("BlogItem");
+        var blogItems = Model.Parent.Children().Where(x => x.IsVisible());
+
+        IPublishedContent categoryContentPicker = Model.Value<IPublishedContent>
+            ("blogCategory");
+
+            var UrlString = Request.Url.AbsoluteUri;
+            string[] splitPoint = UrlString.Split(null);
+            }
+
+            <!-- facebook comments -->
+            <div id="fb-root"></div>
+            <script async defer crossorigin="anonymous"
+                    src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v6.0"></script>
+
+
+
+            <div id="sc-blog-article" class="sc-blog-container">
+
+                <section class="article-header">
+                    <h1 class="article-header__headline-1">
+                        @Model.Value("blogTitle")
+                    </h1>
+                    <div class="article-header__meta">
+                        <div class="article-header__tag">
+                            <a href=@categoryContentPicker.Url()>@categoryContentPicker.Name</a>
+                        </div>
+                        <time datetime="@(Model.Value<DateTime>(" datePublished").ToString("yyyy-dd-MM"))" class="article-header__date">@date</time>
+                    </div>
+                </section>
+
+                <section class="article-body">
+                    <div class="article-content-container">
+                        <div class="article-author-container">
+                            <a class="article-author">
+                                @*<img class="article-author__avatar"
+                                       src="assets/images/Coaches/smz-website_w1024_q80.jpg" alt="">*@
+                                <div class="article-author__info">
+                                    <span class="article-author__name">
+                                        @Model.Value("authorName")
+                                        <meta name="author" content="@Model.Value(" authorName")" />
+                                    </span>
+                                    <div class="article-author__occupation">
+                                        <span>
+                                            @Model.Value("authorTitle")
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <div class="shareable-content">
+
+                                <div class="shareable-content">
+                                    <a href="" target="_blank" id="facebook-btn" class="shareable-content__button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                            <g id="Group_101" data-name="Group 101" transform="translate(-54.3 -1426.8)">
+                                                <path id="Path_209" data-name="Path 209"
+                                                      d="M72.5,1437.3v3h4.4l-.8,4.7H72.3v10.1H67.4v-10H63.3v-4.7h4.1v-3.6c0-4.1,2.4-6.3,6.2-6.3a27.03,27.03,0,0,1,3.6.3v4H75.1A2.249,2.249,0,0,0,72.5,1437.3Z"
+                                                      fill="#182848" />
+                                                <g id="Budget_15_" transform="translate(301 620)">
+                                                    <path id="Path_1_9_" d="M-246.7,806.8h32v32h-32Z" fill="none" />
+                                                </g>
+                                            </g>
+                                        </svg>
+                                    </a>
+
+                                    <a href="" target="_blank" id="linkedin-btn" class="shareable-content__button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                            <g id="Group_103" data-name="Group 103" transform="translate(-54.3 -1479.2)">
+                                                <g id="Group_102" data-name="Group 102">
+                                                    <path id="Path_210" data-name="Path 210"
+                                                          d="M58,1485.8a3,3,0,0,1,6,0,3.075,3.075,0,0,1-3,3A2.946,2.946,0,0,1,58,1485.8Z"
+                                                          fill="#182848" />
+                                                    <path id="Path_211" data-name="Path 211" d="M58.4,1491h5.2l-.2,16.3h-5Z"
+                                                          fill="#182848" />
+                                                    <path id="Path_212" data-name="Path 212"
+                                                          d="M71.8,1507.5h-5v-16.3h4.8v2.2a5.389,5.389,0,0,1,4.8-2.6c5.2,0,6.1,3.3,6.1,7.8v8.7h-5v-8c0-1.9,0-4.3-2.6-4.3s-3.2,2-3.2,4.3l.1,8.2Z"
+                                                          fill="#182848" />
+                                                </g>
+                                                <g id="Budget_17_" transform="translate(301 620)">
+                                                    <path id="Path_1_15_" d="M-246.7,859.2h32v32h-32Z" fill="none" />
+                                                </g>
+                                            </g>
+                                        </svg>
+                                    </a>
+
+                                    <a id="copyurltoclipboard" class="shareable-content__button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 0 24 24" width="28px"
+                                             fill="#182848">
+                                            <path d="M0 0h24v24H0V0z" fill="none" />
+                                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z" />
+                                        </svg>
+                                        <span id="copy-text">
+                                            Kopier til udklipsholder
+                                        </span>
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="article-content">
+
+                            <script type="application/ld+json">
+                                {
+                                  "@@context": "https://schema.org",
+                                  "@@type": "NewsArticle",
+                                  "mainEntityOfPage": {
+                                    "@@type": "WebPage",
+                                    "@@id": "@UrlString"
+                                  },
+                                  "headline": "@Model.Value("blogTitle")",
+                                  "image": [
+                                    "@headImage.Url()"
+                                   ],
+                                  "datePublished": "@(Model.Value<DateTime>("datePublished").ToLocalTime().ToString("yyyy-MM-ddTHH\\:mm\\:sszzz"))",
+                                  @*"dateModified": "@(Model.Value<DateTime>("dateModified").ToString("O"))",*@
+                                  "author": {
+                                      "@@type": "Person",
+                                      "name": "@Model.Value("authorName")"
+                                    }
+                                }
+                            </script>
+
+                            <figure class="article-content__image">
+                                @{
+                                var altText1 = Model.Value("blogTitle") + " | Startup Central";
+                                }
+                                <img src=@headImage.Url() alt="@altText1">
+                                <figcaption>
+                                    @Model.Value("excerpt")
+                                </figcaption>
+                            </figure>
+
+                            @if (User.Identity.IsAuthenticated || Model.Value<bool>
+                                ("visibleForEveryone") ==
+                                true)
+                                {
+                                @Html.GetGridHtml(Model, "bodyText")
+                                }
+                                else
+                                {
+                                try
+                                {
+                                @Html.GetGridHtml(Model, "blogArticleContent")
+                                }
+                                catch
+                                { }
+
+                                <div class="article-content">
+                                    <div class="article-content__gated-content">
+                                        <p>
+                                            We're no strangers to love
+                                            You know the rules and so do I
+                                            A full commitment's what I'm thinking of
+                                            You wouldn't get this from any other guy
+                                        </p>
+
+                                        <p>
+                                            I just wanna tell you how I'm feeling
+                                            Gotta make you understand
+                                        </p>
+
+                                        <ul>
+                                            <li>Never gonna give you up</li>
+                                            <li>Never gonna let you down</li>
+                                            <li>Never gonna run around and desert you</li>
+                                            <li>Never gonna make you cry</li>
+                                            <li>Never gonna say goodbye</li>
+                                            <li>Never gonna tell a lie and hurt you</li>
+                                        </ul>
+
+                                        <p>
+                                            We've known each other for so long
+                                            Your heart's been aching, but you're too shy to say it
+                                            Inside, we both know what's been going on
+                                            We know the game, and we're gonna play it
+                                        </p>
+
+                                        <p>
+                                            And if you ask me how I'm feeling
+                                            Don't tell me you're too blind to see
+                                        </p>
+
+                                        <div class="article-content__featured">
+                                            <h2>Chorus</h2>
+                                            <ol>
+                                                <li>Never gonna give you up</li>
+                                                <li>Never gonna let you down</li>
+                                                <li>Never gonna run around and desert you</li>
+                                                <li>Never gonna make you cry</li>
+                                                <li>Never gonna say goodbye</li>
+                                                <li>Never gonna tell a lie and hurt you</li>
+                                            </ol>
+
+                                            <p>
+                                                Ooh (Give you up)
+                                                Ooh-ooh (Give you up)
+                                                Ooh-ooh
+                                                Never gonna give, never gonna give (Give you up)
+                                                Ooh-ooh
+                                                Never gonna give, never gonna give (Give you up)
+                                            </p>
+                                        </div>
+
+                                        <p>
+                                            We've known each other for so long
+                                            Your heart's been aching, but you're too shy to say it
+                                            Inside, we both know what's been going on
+                                            We know the game, and we're gonna play it
+                                        </p>
+
+                                        <p>
+                                            I just wanna tell you how I'm feeling
+                                            Gotta make you understand
+                                        </p>
+                                        <ul>
+                                            <li>Never gonna give you up</li>
+                                            <li>Never gonna let you down</li>
+                                            <li>Never gonna run around and desert you</li>
+                                            <li>Never gonna make you cry</li>
+                                            <li>Never gonna say goodbye</li>
+                                            <li>Never gonna tell a lie and hurt you</li>
+                                        </ul>
+
+                                        <p>Nice try</p>
+
+                                    </div>
+                                    <div class="article-content__register">
+                                        <p>
+                                            @Umbraco.GetDictionaryValue("Unavailable content", "Dette indhold er ikke tilgængeligt")
+                                        </p>
+                                        <p>
+                                            @Umbraco.GetDictionaryValue("Read more Then join", "Vil du læse videre, skal du tilmelde dig")                                            
+                                        </p>
+                                        <div class="inline-elements">
+                                            @*/bliv-medlem/*@
+                                            <a href="@Umbraco.Content(29767).Url" class="button button--cta button--lg">
+                                                @Umbraco.GetDictionaryValue("BecomeAMember", "Bliv Medlem")
+                                            </a>
+                                            <a href="/login/?NodeId=@Model.Id" class="button button--lg">@Umbraco.GetDictionaryValue("Login", "Log ind")</a>
+                                        </div>
+                                        <div id="leadspin-embed"></div>
+
+
+
+                                    </div>
+                                </div>
+                                }
+                        </div>
+                    </div>
+
+                    @Html.Partial("BlogFeaturesSidebar")
+                </section>
+
+                <section class="sc-blog-related">
+                    @{
+                    var BlogsNode = Umbraco.Content(24024);
+                    var relatedBlogs = BlogsNode.Descendants().Where(x => x.IsDocumentType("blogItem"));
+                    var blogsWithinCategory = relatedBlogs.Where(x => x.Value<IPublishedContent>
+                        ("blogCategory").Name == @categoryContentPicker.Name && x.Name !=
+                        Model.Value("blogTitle").ToString());
+
+                        Random rnd = new Random();
+                        //int toSkip = rnd.Next(0, blogsWithinCategory.Count() - 3);
+
+                        //blogsWithinCategory = blogsWithinCategory.Skip(toSkip).Take(3);
+
+                        blogsWithinCategory = blogsWithinCategory.OrderBy(x => rnd.Next()).Take(3);
+                        }
+
+                        @if(blogsWithinCategory.Count() > 0)
+                        {
+                    <h2>                        
+                        @Umbraco.GetDictionaryValue("SimilarBlogs", "Lignende blogs")
+                    </h2>
+                        <div class="blog-cards-container">
+                            @foreach (var item in blogsWithinCategory)
+                            {
+                            var typedMediaPickerSingle = item.Value<IPublishedContent>
+                                ("bImage");
+                                var dateI = (item.Value<DateTime>
+                                    ("datePublished").ToString("dd-MM-yyyy"));
+                                    var blogTitle = item.Value("blogTitle");
+                                    var blogExcerpt = item.Value("excerpt");
+                                    var blogAuthorName = item.Value("authorName");
+                                    IPublishedContent categoryContentPickerI = item.Value<IPublishedContent>
+                                        ("blogCategory");
+
+                                        <article class="blog-card">
+                                            <div class="blog-card__content">
+                                                <figure class="blog-card__image">
+                                                    <a href=@item.Url()>
+                                                        @{
+                                                        var altText = blogTitle + " | Startup Central";
+                                                        }
+                                                        <img src=@typedMediaPickerSingle.Url() alt="@altText">
+                                                    </a>
+                                                </figure>
+                                                <div class="blog-card__body">
+                                                    <p class="blog-card__author">
+                                                        <a>@blogAuthorName</a>
+                                                    </p>
+                                                    <h3 class="blog-card__title">
+                                                        <a href=@item.Url()>
+                                                            @blogTitle
+                                                        </a>
+                                                    </h3>
+                                                    <p class="blog-card__description">
+                                                        <a href=@item.Url()>
+                                                            @blogExcerpt
+                                                        </a>
+                                                    </p>
+                                                    <div class="blog-card__meta">
+                                                        <div class="blog-card__tag">
+                                                            <a>@categoryContentPickerI.Name</a>
+                                                        </div>
+                                                        <time class="blog-card__date">@dateI</time>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </article>
+                                        }
+                        </div>
+                        }
+                </section>
+
+
+                @Html.Partial("BlogCategories")
+            </div>
+
+            @*
+            WhatsApp:
+            https://wa.me/?text=[post-title] [post-url]
+            Facebook:
+            https://www.facebook.com/sharer.php?u=[post-url]
+            Twitter:
+            https://twitter.com/share?url=[post-url]&text=[post-title]
+            Pinterest:
+            https://pinterest.com/pin/create/bookmarklet/?media=[post-img]&url=[post-url]&is_video=[is_video]&description=[post-title]
+            LinkedIn:
+            https://www.linkedin.com/shareArticle?url=[post-url]&title=[post-title]
+
+            *@
+
+            <script>
+    const facebookBtn = document.querySelector("#facebook-btn");
+    const linkedinBtn = document.querySelector("#linkedin-btn");
+
+    $("#copyurltoclipboard").click(function () {
+        var $temp = $("<input>");
+        var $url = $(location).attr('href');
+
+        $("body").append($temp);
+        $temp.val($url).select();
+        document.execCommand("copy");
+        $temp.remove();
+
+        $("#copy-text").show();
+        setTimeout(() => {
+            $("#copy-text").hide();
+        }, 1500);
+    });
+
+    function init() {
+        let postUrl = encodeURI(document.location.href);
+        let postTitle = $(document).attr('title');
+
+        facebookBtn.setAttribute(
+            "href",
+            `https://www.facebook.com/sharer.php?u=${postUrl}`
+        );
+
+        linkedinBtn.setAttribute(
+            "href",
+            `https://www.linkedin.com/shareArticle?url=${postUrl}&title=${postTitle}`
+        );
+    }
+
+    init();
+            </script>

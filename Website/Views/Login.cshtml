@@ -1,0 +1,85 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+    @using System.Web
+    @using System.Web.Security
+@{
+
+    if (User.Identity.IsAuthenticated)
+    {
+        HttpContext.Current.Response.Redirect("/login/indstillinger/");
+    }
+    else
+    {
+        System.Threading.Tasks.Task.Delay(123).GetAwaiter().GetResult();
+        if (User.Identity.IsAuthenticated)
+        {
+            HttpContext.Current.Response.Redirect("/login/indstillinger/");
+        }
+
+        HttpContext.Current.Response.Redirect("/");
+    }
+
+    Layout = "Master.cshtml";
+    var currentUser = Members.GetCurrentMember();
+    string address = string.Empty;
+    string name = string.Empty;
+    string city = string.Empty;
+    string mail = string.Empty;
+    string mobile = string.Empty;
+    string gender = string.Empty;
+
+    if (currentUser.HasValue("wwname"))
+    { name = (string)currentUser.GetProperty("wwname").ToString(); }
+
+    if (currentUser.HasValue("wwaddress"))
+    { address = (string)currentUser.GetProperty("wwaddress").ToString(); }
+
+    if (currentUser.HasValue("wwcity"))
+    { city = (string)currentUser.GetProperty("wwcity").ToString(); }
+
+    if (currentUser.HasValue("wwemail"))
+    { mail = (string)currentUser.GetProperty("wwemail").ToString(); }
+
+    if (currentUser.HasValue("wwmobile"))
+    { mobile = (string)currentUser.GetProperty("wwmobile").ToString(); }
+
+    if (currentUser.HasValue("gender"))
+    { gender = (string)currentUser.GetProperty("gender").ToString(); }
+}
+
+
+<section>
+    
+     <img src="@Page.wwbgimg.Url" id="cloudbg"/>
+</section>
+
+
+<section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    @if (Members.IsLoggedIn() && Members != null)
+                    {
+                    @*var birth = @currentUser.GetProperty("wwbirth").DataValue;*@
+                    <div class="fleft w100 f24 mb20"><h1 class="fw700 ">Du er registreret med følgende profiloplysninger:</h1></div>
+                    <div class="fleft w100 mb5"><i class="fa fa-user" aria-hidden="true"></i> @name</div>
+                    <div class="fleft w100 mb15">
+                        <i class="fa fa-map-marker aria-hidden="true"></i>
+                        @address<br />
+                        &nbsp;&nbsp;&nbsp;@city
+                    </div>
+                    <div class="fleft w100 mb5"><i class="fa fa-envelope-o" aria-hidden="true"></i> @mail </div>
+                    <div class="fleft w100 mb5 mb15"><i class="fa fa-mobile" aria-hidden="true"></i> @mobile</div>
+                   @* <div class="fleft w100 mb5"><i class="fa fa-birthday-cake" aria-hidden="true"></i> @birth</div>*@
+                    <div class="fleft w100">
+                        @if(gender == "Male"){
+                        <span>Køn:</span> <i class="fa fa-mars" aria-hidden="true"></i>
+                        }else{
+                        <span>Køn:</span> <i class="fa fa-venus" aria-hidden="true"></i>
+                        }
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+   

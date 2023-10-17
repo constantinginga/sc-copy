@@ -1,0 +1,77 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Services;
+@using System.Web
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Extensions
+@{
+    Layout = "Master.cshtml";
+    var currentUser = Members.GetCurrentMember();
+
+}
+
+<section class="mt80">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7 mb40">
+                <div class="bigheadline uppercase f80 f50mob mb40 fw700 dark">
+                    @Page.wwoverskrift
+                </div>
+                <div class="txt dark f18 fw600 lh24 mb60">
+                    
+                </div>
+            </div>
+                <div class="col-md-5">
+                    <div class="txt dark f18 fw600 lh24 mb20">
+                        @Page.bodyText
+                    </div>
+                    <a href="javascript:void(0)" id="newfagomraade" data-toggle="modal" data-target="#opretfagomraadeview">
+                        <div class="bigbtn lightbg btn white shadow fw600 mb60">
+                            Opret et nyt fagområde
+                        </div>
+                    </a>
+                </div>
+        </div>
+        <div class="row">
+            @foreach (var fagom in Umbraco.Content(Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["StartupCentral.FagOmraader.RootFolder.Id"])).Children().OrderBy("Name"))
+            {
+                    <div class="col-md-3">
+                        <div class="poolwrapper shadowlight whitebg fleft mb30" data-type="fagomraade" data-id="@fagom.Id">
+                            <div class="poolwrappercontentsmall">
+                                <div class="flex mb20">
+                                    <div class="fleft fw600 f15  mr5">
+                                        @fagom.Name
+                                    </div>
+                                    <a href="javascript:void(0);" class="fright admenubtn poolbullets admenufagom"><img src="/images/bulletslight.jpg" /></a>
+                                    <div class="admenu top0" style="display:none;">
+                                        <div class="admenutop">
+                                            <img src="/images/backarrow.jpg" class="closearrow" />
+                                        </div>
+                                        <div class="admenucontent">
+                                            <div class="admenuinnercontent">
+                                                <ul class="adul">
+                                                    <a href="javascript:void(0);" id="editfagomraade" class="editfagomraade" data-toggle="modal" data-target="#editfagomraadeview"><li>Rediger</li></a>
+                                                    <a href="javascript:void(0);" id="deletefagomraade" class="deletefagomraade" data-toggle="modal" data-target="#deletefagomraadeview"><li>Slet</li></a>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                @Umbraco.RenderMacro("AdminEditFagomraade")
+                @Umbraco.RenderMacro("AdminDeleteFagomraade")
+            }
+            @Umbraco.RenderMacro("AdminCreateFagomraade")
+        </div>
+    </div>
+</section>
+
+<section id="upload" class="pt0">
+    <img src="@Page.wwbgimg.Url" id="cloudbg" />
+</section>

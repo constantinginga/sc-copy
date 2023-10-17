@@ -1,0 +1,31 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@*
+<div class="row">
+    <div class="col-12 text-center animate-box" data-animate-effect="fadeInUp">
+        <div class=" display-t">
+            <div class="display-tc">
+                <h1>@Umbraco.AssignedContentItem.Value("title")</h1>
+                <h5>@Umbraco.AssignedContentItem.Value("subTitle")</h5>
+            </div>
+        </div>
+    </div>
+</div>
+*@
+
+    <div class="content-header">
+        <div class="row-container centered">
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered">
+                        <h1 class="headline-1">
+                        @Umbraco.AssignedContentItem.Value("title")
+                        </h1>
+                        <p class="lead">
+                        @Umbraco.AssignedContentItem.Value("subTitle")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img class="content-header__image" src="/media/2375/header400px.svg" alt="Blue Header">
+    </div>

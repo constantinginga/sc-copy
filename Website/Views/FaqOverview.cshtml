@@ -1,0 +1,222 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "Master.cshtml";
+}
+
+
+<div class="content-header">
+    <div class="row-container centered">
+        <div class="row">
+            <div class="column-container">
+                <div class="column centered">
+                    <h1 class="headline-1">
+                        @Model.Value("title")
+                    </h1>
+                    <p class="lead">
+                        @Model.Value("subtitle")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <img class="content-header__image" src="/media/2375/header400px.svg" alt="StartupCentralHeader">
+</div>
+
+<main id="sc-faq">
+    <div class="row-container">
+        <div class="row">
+            <div class="column-container">
+                <div class="column">
+                    <div class="faq-container card">
+                        <div class="faq">
+                            <div class="faq__question">
+                                <h2>
+                                    @Umbraco.AssignedContentItem.Value("Question1FAQ")
+                                </h2>
+                                    <span>
+                                        <svg id="ChevronDown" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            viewBox="0 0 32 32">
+                                            <path id="Path_86" data-name="Path 86" d="M32,32H0V0H32Z" fill="none"
+                                                opacity="0.87" />
+                                            <path id="Path_87" data-name="Path 87"
+                                                d="M19.034,9.388l-5.173,5.173L8.688,9.388a1.329,1.329,0,1,0-1.88,1.88l6.12,6.12a1.328,1.328,0,0,0,1.88,0l6.12-6.12a1.328,1.328,0,0,0,0-1.88,1.356,1.356,0,0,0-1.893,0Z"
+                                                transform="translate(2.139 2.999)" fill="#182848" />
+                                        </svg>
+                                    </span>                            </div>
+                            <div class="faq__answer">
+                                <p>
+                                    @Umbraco.AssignedContentItem.Value("Answer1FAQ")
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="faq">
+                            <div class="faq__question">
+                                <h2>
+                                    @Umbraco.AssignedContentItem.Value("Question2FAQ")
+                                </h2>
+                                    <span>
+                                        <svg id="ChevronDown" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            viewBox="0 0 32 32">
+                                            <path id="Path_86" data-name="Path 86" d="M32,32H0V0H32Z" fill="none"
+                                                opacity="0.87" />
+                                            <path id="Path_87" data-name="Path 87"
+                                                d="M19.034,9.388l-5.173,5.173L8.688,9.388a1.329,1.329,0,1,0-1.88,1.88l6.12,6.12a1.328,1.328,0,0,0,1.88,0l6.12-6.12a1.328,1.328,0,0,0,0-1.88,1.356,1.356,0,0,0-1.893,0Z"
+                                                transform="translate(2.139 2.999)" fill="#182848" />
+                                        </svg>
+                                    </span>                            </div>
+                            <div class="faq__answer">
+                                <p>
+                                    @Umbraco.AssignedContentItem.Value("Answer2FAQ")
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="faq">
+                            <div class="faq__question">
+                                <h2>
+                                    @Umbraco.AssignedContentItem.Value("Question3FAQ")
+                                </h2>
+                                    <span>
+                                        <svg id="ChevronDown" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            viewBox="0 0 32 32">
+                                            <path id="Path_86" data-name="Path 86" d="M32,32H0V0H32Z" fill="none"
+                                                opacity="0.87" />
+                                            <path id="Path_87" data-name="Path 87"
+                                                d="M19.034,9.388l-5.173,5.173L8.688,9.388a1.329,1.329,0,1,0-1.88,1.88l6.12,6.12a1.328,1.328,0,0,0,1.88,0l6.12-6.12a1.328,1.328,0,0,0,0-1.88,1.356,1.356,0,0,0-1.893,0Z"
+                                                transform="translate(2.139 2.999)" fill="#182848" />
+                                        </svg>
+                                    </span>                            </div>
+                            <div class="faq__answer">
+                                <p>
+                                    @Umbraco.AssignedContentItem.Value("Answer3FAQ")
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-container">
+        <div class="row centered">
+            <h2 class="headline-2">@Umbraco.GetDictionaryValue("OtherQuestions", "Øvrige spørgsmål")</h2>
+        </div>
+        <div class="row centered">
+            <button class="button button--outline" value="All" onclick="filterSelection('All')">@Umbraco.GetDictionaryValue("All", "Alle")</button>
+            <button class="button button--outline" value="Partner" onclick="filterSelection('Partner')">Partner</button>
+            <button class="button button--outline" value="Coach" onclick="filterSelection('Coach')">Coach</button>
+            <button class="button button--outline" value="Netværk" onclick="filterSelection('Netværk')">@Umbraco.GetDictionaryValue("Network", "Netværk")</button>
+            <button class="button button--outline" value="System" onclick="filterSelection('System')">System</button>
+            <button class="button button--outline" value="Abonnement" onclick="filterSelection('Abonnement')">Abonnement</button>
+            <button class="button button--outline" value="Medlemskab" onclick="filterSelection('Medlemskab')">@Umbraco.GetDictionaryValue("Membership", "Medlemskab")</button>
+        </div>
+        <div class="row">
+            <div class="column-container">
+                <div class="column">
+                    <div class="faq-container card" id="myDIV">
+
+                        @foreach (var faq in Umbraco.Content(25693).Children().Where(x=>x.IsVisible()))
+                        {
+                            var tags = faq.Value<string[]>("tagFaqCat");
+                            var faqQ = faq.Value("question");
+                            var faqA = faq.Value("answer");
+                            var faqL = faq.Value<String>("urlFaq");
+
+                            var newclass = String.Join(" ", tags);
+
+                            <div class="faq filterDiv @newclass">
+                                <div class="faq__question">
+                                    <h2>@faqQ</h2>
+                                    <span>
+                                        <svg id="ChevronDown" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                            viewBox="0 0 32 32">
+                                            <path id="Path_86" data-name="Path 86" d="M32,32H0V0H32Z" fill="none"
+                                                opacity="0.87" />
+                                            <path id="Path_87" data-name="Path 87"
+                                                d="M19.034,9.388l-5.173,5.173L8.688,9.388a1.329,1.329,0,1,0-1.88,1.88l6.12,6.12a1.328,1.328,0,0,0,1.88,0l6.12-6.12a1.328,1.328,0,0,0,0-1.88,1.356,1.356,0,0,0-1.893,0Z"
+                                                transform="translate(2.139 2.999)" fill="#182848" />
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div class="faq__answer">
+                                    @faqA
+                                </div>
+
+                                @if (!string.IsNullOrEmpty(faqL))
+                                {
+                                    <a href="@faqL" class="faq__link">
+                                        Read more
+                                    </a>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    var acc = document.getElementsByClassName("faq__question");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function () {
+            this.classList.toggle("is-open");
+            var panel = this.nextElementSibling;
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+            }
+        });
+    }
+</script>
+
+<script>
+    filterSelection("All")
+
+    function filterSelection(c) {
+        var x, i;
+        x = document.getElementsByClassName("filterDiv");
+        if (c == "All") c = "";
+        for (i = 0; i < x.length; i++) {
+            w3RemoveClass(x[i], "show");
+            if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+        }
+    }
+
+    function w3AddClass(element, name) {
+        var i, arr1, arr2;
+        arr1 = element.className.split(" ");
+        arr2 = name.split(" ");
+        for (i = 0; i < arr2.length; i++) {
+            if (arr1.indexOf(arr2[i]) == -1) { element.className += " " + arr2[i]; }
+        }
+    }
+
+    function w3RemoveClass(element, name) {
+        var i, arr1, arr2;
+        arr1 = element.className.split(" ");
+        arr2 = name.split(" ");
+        for (i = 0; i < arr2.length; i++) {
+            while (arr1.indexOf(arr2[i]) > -1) {
+                arr1.splice(arr1.indexOf(arr2[i]), 1);
+            }
+        }
+        element.className = arr1.join(" ");
+    }
+</script>
+
+<style>
+    .filterDiv {
+        display: none !important;
+    }
+
+    .show {
+        display: block !important;
+    }
+</style>

@@ -1,0 +1,134 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+	Layout = "Master.cshtml";
+	
+	var membersPicture = Umbraco.AssignedContentItem.Value<IPublishedContent>("membersPicture");
+	var membersName = Umbraco.AssignedContentItem.Value("membersName");
+	var customSection1Title = Umbraco.AssignedContentItem.Value("customSection1Title");
+	var customSection1 = Umbraco.AssignedContentItem.Value("customSection1");
+	var customSection2Title = Umbraco.AssignedContentItem.Value("customSection2Title");
+	var customSection2 = Umbraco.AssignedContentItem.Value("customSection2");
+	var customSection3Title = Umbraco.AssignedContentItem.Value("customSection3Title");
+	var customSection3 = Umbraco.AssignedContentItem.Value("customSection3");
+	var customSection4Title = Umbraco.AssignedContentItem.Value("customSection4Title");
+	var customSection4 = Umbraco.AssignedContentItem.Value("customSection4");
+	var adviceToEntrepreneursSection = Umbraco.AssignedContentItem.Value("adviceToEntrepreneurs");
+	var personalSection = Umbraco.AssignedContentItem.Value("personalSection");
+}
+
+    <main id="sc-case-page">
+        <section>
+            <div class="row-container">
+                <div class="row center-align-columns">
+                    <div class="column-container column-7">
+                        <div class="column">
+                            <h1>@membersName</h1>
+                            <h2>@Umbraco.AssignedContentItem.Value("successTitle")</h2>
+                            <p>
+                                @Umbraco.AssignedContentItem.Value("introduction")
+                            </p>
+                        </div>
+                    </div>
+
+                    @if (membersPicture != null)
+                    {
+                        <div class="column-container">
+                            <div class="column">
+                                @{ 
+                                    var altText = membersName + " | Startup Central";
+                                }           
+                                <img src="@membersPicture.Url" alt="@altText" class="">
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+                @if (customSection1.ToString() != string.Empty)
+                {
+                    <div class="row">
+                        <div class="column-container">
+                            <div class="column content-column">
+                                <h2>@customSection1Title</h2>
+                                <p>@customSection1</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (customSection2.ToString() != string.Empty)
+                {
+                    <div class="row">
+                        <div class="column-container">
+                            <div class="column content-column">
+                                <h2>@customSection2Title</h2>
+                                <p>@customSection2</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (customSection3.ToString() != string.Empty)
+                {
+                    <div class="row">
+                        <div class="column-container">
+                            <div class="column content-column">
+                                <h2>@customSection3Title</h2>
+                                <p>@customSection3</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (customSection4.ToString() != string.Empty)
+                {
+                    <div class="row">
+                        <div class="column-container">
+                            <div class="column content-column">
+                                <h2>@customSection4Title</h2>
+                                <p>@customSection4</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+                
+                @if(adviceToEntrepreneursSection.ToString() != string.Empty)
+                {
+                    <div class="row">
+                        <div class="column-container">
+                            <div class="column content-column">
+                                <h2>Hvad er dit råd til andre iværksættere?</h2>
+                                <p>@Umbraco.AssignedContentItem.Value("adviceToEntrepreneurs")</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+                
+                @if(personalSection.ToString() != string.Empty)
+                {
+                
+                    <div class="row">
+                        <div class="column-container">
+                            <div class="column content-column">
+                                <h2>@Umbraco.AssignedContentItem.Value("personalSectionTitle")</h2>
+                                <p>@Umbraco.AssignedContentItem.Value("personalSection")</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+                
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column content-column">
+                            <h2>Læs mere</h2>
+                            <p>
+                                Ønsker du mere information om, hvordan Startup Central kan hjælpe dig, kan du læse mere om os <a href="/hvorfor-startup-central/">her</a> og kontakte os på
+                                telefon: <a href="tel:+4529290113">+45 29 29 01 13</a> eller mail: <a href="mailto: kontakt@startupcentral.dk">kontakt@startupcentral.dk</a>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>

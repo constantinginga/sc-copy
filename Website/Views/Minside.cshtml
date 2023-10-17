@@ -1,0 +1,675 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Services;
+@using System.Web
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Code.Class
+
+@{
+    Layout = "Master.cshtml";
+
+    //UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+    var currentUser = Members.GetCurrentMember();
+
+    var _memberService = ApplicationContext.Current.Services.MemberService;
+
+    var member = _memberService.GetById(currentUser.Id);
+    var memberKey = member.Key;
+
+    var roles = Roles.GetRolesForUser(member.Username);
+
+    // Get access to ContentService
+    var contentService = Services.ContentService;
+
+    //get the root content of coaches
+    int root = 0;
+
+    Object coachAsStudent = null;
+    bool studentView = false;
+    if (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains)) {
+
+        root = Umbraco.Content(10840).Children().FirstOrDefault(x => x.Name.Equals(member.Name)).Id;
+        var content = contentService.GetById(root); // ID of your page
+                                                    // Get the page using the GUID you've defined
+        coachAsStudent = content.GetValue("isStudent");
+        studentView = Convert.ToBoolean(coachAsStudent);
+    }
+
+
+}
+<main id="sc-logged-minside" class="sc-logged sc-bgb10">
+    <div class="rail-grid rail-grid--3-column">
+
+        @Html.Partial("MemberInfo", member)
+
+        <div id="main-feed" class="feed-rail">
+            <!-- General Introduction -->
+            <div class="feed-rail-container">
+                <div class="feed-section">
+                    @if (member.ContentTypeAlias == "student" || (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains) && (coachAsStudent != null && studentView)))
+                    {
+                        <h2 class="feed-section__title">
+                            Tag dine fordele i brug
+                        </h2>
+                    }
+                    else
+                    {
+                        <h2 class="feed-section__title">
+                            Din personlige profil
+                        </h2>
+                    }
+
+                    <div class="feed-section__description">
+
+                        @if (member.ContentTypeAlias == "student" || (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains) && (coachAsStudent != null && studentView)))
+                        {
+                            <p>
+                                Her finder du alt det du skal bruge, for at opnå succes med din virksomhed.
+                            </p>
+                        }
+                        else if (member.ContentTypeAlias == "coach1")
+                        {
+                            <p>
+                                Dette er din personlige profil, her kan du ændre i dine informationer og ikke mindst svare på spørgsmål fra vores medlemmer.
+                            </p>
+                        }
+                        else if (member.ContentTypeAlias == "partner")
+                        {
+                            <p>
+                                Dette er din personlige profil, her kan du ændre dine oplysninger.
+                            </p>
+                        }
+
+
+                    </div>
+                </div>
+
+                <!-- Quick Access Buttons and Setup -->
+                <div class="feed-section">
+                    <div class="feed-section__quick-access-container">
+                        <ul class="feed-section__quick-access-list">
+                            @if (member.ContentTypeAlias == "student" || (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains) && (coachAsStudent != null && studentView)))
+                            {
+                                <li class="quick-access-item">
+                                    <div class="quick-access">
+                                        <div class="quick-access__body">
+                                            <h3 class="quick-access__title">
+                                                Tools
+                                            </h3>
+                                            <div class="quick-access__description">
+                                                <p>
+                                                    Gør det nemmere og mere overskueligt for dig at starte og drive din virksomhed.
+                                                    Disse værktøjer giver både dig, dine investorer og bank et overblik.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="quick-access__button">
+                                            <a href="/login/min-profil-projekter/" class="button">
+                                                <svg id="Tools" xmlns="http://www.w3.org/2000/svg" width="24"
+                                                     height="24" viewBox="0 0 24 24">
+                                                    <g id="Group_13" data-name="Group 13">
+                                                        <rect id="Rectangle_8" data-name="Rectangle 8" width="24"
+                                                              height="24" fill="none" />
+                                                        <rect id="Rectangle_9" data-name="Rectangle 9" width="24"
+                                                              height="24" fill="none" />
+                                                    </g>
+                                                    <g id="Group_16" data-name="Group 16" transform="translate(2 4)">
+                                                        <g id="Group_15" data-name="Group 15">
+                                                            <g id="Group_14" data-name="Group 14"
+                                                               transform="translate(0 11)">
+                                                                <path id="Path_53" data-name="Path 53"
+                                                                      d="M17,16a1,1,0,0,1-1-1H8a1,1,0,0,1-2,0H2v3a2.006,2.006,0,0,0,2,2H20a2.006,2.006,0,0,0,2-2V15H18A1,1,0,0,1,17,16Z"
+                                                                      transform="translate(-2 -15)" fill="#fff" />
+                                                            </g>
+                                                            <path id="Path_54" data-name="Path 54"
+                                                                  d="M20,8H17V6a2.006,2.006,0,0,0-2-2H9A2.006,2.006,0,0,0,7,6V8H4a2.006,2.006,0,0,0-2,2v4H6V13a1,1,0,0,1,2,0v1h8V13a1,1,0,1,1,2,0v1h4V10A2.006,2.006,0,0,0,20,8ZM15,8H9V6h6Z"
+                                                                  transform="translate(-2 -4)" fill="#fff" />
+                                                        </g>
+                                                    </g>
+                                                </svg>
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </li>
+
+                                <li class="quick-access-item">
+                                    <div class="quick-access">
+                                        <div class="quick-access__body">
+                                            <h3 class="quick-access__title">
+                                                Partnere
+                                            </h3>
+                                            <div class="quick-access__description">
+                                                <p>
+                                                    Her finder du alle produkter og servicer du som erhvervsdrivende skal bruge.
+                                                    Det behøver ikke være dyrt, vi har forhandlet priserne, så du får rabatter, prøve-perioder og særtilbud.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="quick-access__button">
+                                            <a href="/partnere/" class="button">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                     viewBox="0 0 24 24">
+                                                    <g id="Group_43" data-name="Group 43"
+                                                       transform="translate(0 -367.6)">
+                                                        <g id="Budget_5_" transform="translate(0 367.6)">
+                                                            <path id="Path_1_5_" d="M-301-252.4h24v24h-24Z"
+                                                                  transform="translate(301 252.4)" fill="none" />
+                                                        </g>
+                                                        <g id="Group_42" data-name="Group 42"
+                                                           transform="translate(1.671 373.404)">
+                                                            <path id="Path_115" data-name="Path 115"
+                                                                  d="M5.383,378.4H3.715a.712.712,0,0,0-.715.715v6.832a.712.712,0,0,0,.715.715H4.35A1.763,1.763,0,0,0,6.1,384.914v-5.8A.712.712,0,0,0,5.383,378.4Zm-.794,7.229a.531.531,0,0,1-.556-.477.556.556,0,1,1,1.112,0A.681.681,0,0,1,4.589,385.629Z"
+                                                                  transform="translate(-3 -376.335)" fill="#fff" />
+                                                            <path id="Path_116" data-name="Path 116"
+                                                                  d="M27.483,378.4H25.815a.712.712,0,0,0-.715.715v5.8a1.763,1.763,0,0,0,1.748,1.748h.715a.712.712,0,0,0,.715-.715v-6.832A.845.845,0,0,0,27.483,378.4Zm-.318,6.832a.426.426,0,0,1-.4.4.526.526,0,0,1-.636-.635c.079-.238.238-.4.4-.4A.526.526,0,0,1,27.165,385.232Z"
+                                                                  transform="translate(-7.544 -376.335)" fill="#fff" />
+                                                            <path id="Path_117" data-name="Path 117"
+                                                                  d="M21.346,377.945v5.8c0,.159-.159.159-.238.079h0l-4.528-3.734a.149.149,0,0,1,0-.238l.715-.636a.506.506,0,0,0-.715-.715l-2.542,2.383h0a1.34,1.34,0,0,1-1.827-.079,1.275,1.275,0,0,1,.079-1.827h0l3.178-2.939a.971.971,0,0,1,.715-.238h2.78a.863.863,0,0,1,.715.318l1.748,1.748C21.346,377.865,21.346,377.865,21.346,377.945Z"
+                                                                  transform="translate(-4.822 -375.8)" fill="#fff" />
+                                                            <path id="Path_118" data-name="Path 118"
+                                                                  d="M19.8,386.127l-.318.4a1.1,1.1,0,0,1-.794.4.9.9,0,0,1-.636-.238.242.242,0,0,0-.318,0l-.874,1.033a1.231,1.231,0,0,1-1.668.159l-.556-.477h0a2.028,2.028,0,0,1-2.86.318h0l-2.939-2.542c-.079,0-.079-.079-.159-.079H8.438a.211.211,0,0,1-.238-.238v-6.911c0-.079,0-.079.079-.159l1.668-1.668a1.183,1.183,0,0,1,.715-.318h2.145a.223.223,0,0,1,.159.4l-2.224,1.986a2.306,2.306,0,1,0,3.1,3.416l.794-.715a.242.242,0,0,1,.318,0l4.687,3.813A.944.944,0,0,1,19.8,386.127Z"
+                                                                  transform="translate(-4.069 -375.8)" fill="#fff" />
+                                                        </g>
+                                                    </g>
+                                                </svg>
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </li>
+
+                                <li class="quick-access-item">
+                                    <div class="quick-access">
+                                        <div class="quick-access__body">
+                                            <h3 class="quick-access__title">
+                                                Coaches
+                                            </h3>
+                                            <div class="quick-access__description">
+                                                <p>
+                                                    Få ubegrænset 1:1 sparring med vores erfarne erhvervscoaches,
+                                                    de kan hjælpe dig videre i din rejse mod succes.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="quick-access__button">
+                                            <a href="/coaches/" class="button">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                     viewBox="0 0 24 24">
+                                                    <g id="Network_1_" transform="translate(0 -386.8)">
+                                                        <rect id="Rectangle_7_1_" width="24" height="24"
+                                                              transform="translate(0 386.8)" fill="none" />
+                                                        <g id="Group_12_1_" transform="translate(4.275 391.075)">
+                                                            <g id="Group_34" data-name="Group 34"
+                                                               transform="translate(0 9)">
+                                                                <path id="Path_99" data-name="Path 99"
+                                                                      d="M11.55,398.175l-.975,4.575v.3h-3.6A1.314,1.314,0,0,1,5.7,401.775v-.75A3.9,3.9,0,0,1,7.95,397.5a19,19,0,0,1,2.7-.9Z"
+                                                                      transform="translate(-5.7 -396.525)" fill="#fff" />
+                                                                <path id="Path_100" data-name="Path 100"
+                                                                      d="M24.325,400.85v.825a1.264,1.264,0,0,1-1.275,1.275h-3.6v-.3l-.15-.6-.9-3.9.9-1.65c.15,0,.3.075.45.075a21.084,21.084,0,0,1,2.325.75A3.851,3.851,0,0,1,24.325,400.85Z"
+                                                                      transform="translate(-8.875 -396.5)" fill="#fff" />
+                                                            </g>
+                                                            <path id="Path_101" data-name="Path 101"
+                                                                  d="M14.7,384.5a3.9,3.9,0,1,1-3.9,3.9,3.873,3.873,0,0,1,3.9-3.9Z"
+                                                                  transform="translate(-6.975 -384.5)" fill="#fff" />
+                                                            <path id="Path_102" data-name="Path 102"
+                                                                  d="M16.025,398.075l.975,4.5v.375H14v-.375l.975-4.5L14,396.2h3Z"
+                                                                  transform="translate(-7.775 -387.425)" fill="#fff" />
+                                                        </g>
+                                                        <path id="Path_103" data-name="Path 103"
+                                                              d="M19.75,404.575v6.375h-.3v-.3l-.15-.6-.9-3.9.9-1.65A.951.951,0,0,1,19.75,404.575Z"
+                                                              transform="translate(-4.6 -4.425)" fill="#fff" />
+                                                    </g>
+                                                </svg>
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </li>
+                            }
+
+                            @if (member.ContentTypeAlias != "partner")
+                            {
+                                <li class="quick-access-item">
+                                    <div class="quick-access">
+                                        <div class="quick-access__body">
+                                            <h3 class="quick-access__title">
+                                                Startup Lounge
+                                            </h3>
+                                            <div class="quick-access__description">
+                                                @if (member.ContentTypeAlias == "student")
+                                                {
+                                                    <p>
+                                                        Et eksklusivt netværk kun for vores medlemmer.
+                                                        Her kan du stille alle dine spørgsmål til ligesindet erhvervsdrivende,
+                                                        som brænder for iværksætteri.
+                                                    </p>
+                                                }
+                                                else if (member.ContentTypeAlias == "coach1")
+                                                {
+                                                    <p>
+                                                        Et eksklusivt netværk kun for os, som er en del af Startup Central.
+                                                        Her kan du møde alle vores medlemmer og andre coaches, vi sparre med hinanden på kryds og tværs.
+                                                        Så vi skaber mest værdi for hinanden.
+                                                    </p>
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="quick-access__button">
+                                            <a href="https://www.facebook.com/groups/startup.lounge/" class="button">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                     viewBox="0 0 24 24">
+                                                    <g id="Group_50" data-name="Group 50"
+                                                       transform="translate(0 -463.6)">
+                                                        <g id="Budget_7_" transform="translate(0 463.6)">
+                                                            <path id="Path_1_7_" d="M-301-156.4h24v24h-24Z"
+                                                                  transform="translate(301 156.4)" fill="none" />
+                                                        </g>
+                                                        <g id="Group_49" data-name="Group 49"
+                                                           transform="translate(1.875 466.572)">
+                                                            <path id="Path_129" data-name="Path 129"
+                                                                  d="M21.775,473.516a9.148,9.148,0,0,0-2.25-2.25,13,13,0,0,0-6.9-1.875,14.65,14.65,0,0,0-2.55.225,6.864,6.864,0,0,0-7.2-1.65c-.3.075-.375.375-.3.675a.262.262,0,0,0,.075.15c.75.75,1.95,2.25,1.65,3.675a5.758,5.758,0,0,0-1.8,4.125,5.923,5.923,0,0,0,1.8,4.2c.3,1.35-.9,2.85-1.65,3.675a.57.57,0,0,0,0,.75c.075.075.075.075.15.075a6.821,6.821,0,0,0,5.475-.375A9.313,9.313,0,0,0,10,483.64a14.645,14.645,0,0,0,2.55.225,12.812,12.812,0,0,0,6.9-1.875,8.015,8.015,0,0,0,2.25-2.25,5.653,5.653,0,0,0,.9-3.075A4.383,4.383,0,0,0,21.775,473.516ZM12.55,481.99a15.055,15.055,0,0,1-3.15-.375l-.675.675a8.187,8.187,0,0,1-1.275.975,5.379,5.379,0,0,1-1.875.525.262.262,0,0,1,.075-.15,4.433,4.433,0,0,0,.6-3.525,4.475,4.475,0,0,1-1.875-3.375c0-2.925,3.675-5.325,8.25-5.325s8.25,2.4,8.25,5.325C20.725,479.666,17.05,481.99,12.55,481.99Z"
+                                                                  transform="translate(-2.5 -467.562)" fill="#fff" />
+                                                            <g id="Group_48" data-name="Group 48"
+                                                               transform="translate(5.175 8.128)">
+                                                                <path id="Path_130" data-name="Path 130"
+                                                                      d="M11.2,479.3a.9.9,0,1,1-.9-.9A.912.912,0,0,1,11.2,479.3Z"
+                                                                      transform="translate(-9.4 -478.4)" fill="#fff" />
+                                                                <path id="Path_131" data-name="Path 131"
+                                                                      d="M14.8,479.3a.9.9,0,1,1-.9-.9A.867.867,0,0,1,14.8,479.3Z"
+                                                                      transform="translate(-10.3 -478.4)" fill="#fff" />
+                                                                <path id="Path_132" data-name="Path 132"
+                                                                      d="M18.4,479.3a.9.9,0,1,1-.9-.9A.867.867,0,0,1,18.4,479.3Z"
+                                                                      transform="translate(-11.2 -478.4)" fill="#fff" />
+                                                                <path id="Path_133" data-name="Path 133"
+                                                                      d="M22,479.3a.9.9,0,1,1-.9-.9A.867.867,0,0,1,22,479.3Z"
+                                                                      transform="translate(-12.1 -478.4)" fill="#fff" />
+                                                            </g>
+                                                        </g>
+                                                    </g>
+                                                </svg>
+
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile template -->
+            @if (member.ContentTypeAlias != "student")
+            {
+                if (member.ContentTypeAlias == "partner")
+                {
+                    <div class="feed-rail-container">
+                        <div class="feed-section">
+                            <h2 class="feed-section__title">Profil skabelon</h2>
+                            <div class="feed-section__description">
+                                <p>
+                                    Udfyld venligst skabelonen nedenfor.
+                                    Det vil udgøre din profil på vores partnerside.
+                                    Send venligst den udfyldte skabelon og dit logo til <a href="mailto:dp@startupcentral.dk">dp@startupcentral.dk</a>.
+                                </p>
+                                <p>
+                                    Download vores logo til jeres landing page, materiale m.m.
+                                    Nedenfor finder du arbejdsfiler såvel som .png’er i hhv. farverne #ffffff (hvid) og #182849 (blå).
+                                    Spørgsmål kan rettes mod Daniel på <a href="mailto:dp@startupcentral.dk">dp@startupcentral.dk</a> eller <a href="tel:29163199">29 16 31 99</a>.
+                                </p>
+                            </div>
+                            <ul class="feed-section__downloadable-container">
+
+                                <li class="downloadable-content">
+                                    <div class="downloadable-content__body">
+                                        <h3 class="downloadable-content__title">Profil</h3>
+                                        <p class="downloadable-content__description">
+                                            Her skal du beskrive tilbuddet til Startup Centrals medlemmer, dine produkter og virksomheden.
+                                        </p>
+                                    </div>
+                                    <a href="/media/2458/partner-skabelon.docx" class="downloadable-content__button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                            <g id="Group_61" data-name="Group 61" transform="translate(0 -1327.6)">
+                                                <g id="Budget_16_" transform="translate(301 620)">
+                                                    <path id="Path_1_16_" d="M-301,707.6h32v32h-32Z" fill="none" />
+                                                </g>
+                                                <g id="Group_60" data-name="Group 60" transform="translate(-1.897 -1.907)">
+                                                    <path id="Path_146" data-name="Path 146"
+                                                          d="M24.6,1344.187l-6.724,6.724a.8.8,0,0,1-1.2,0l-6.724-6.724a.915.915,0,0,1,.6-1.561h3.843v-7.445a1.076,1.076,0,0,1,1.081-1.081h3.6a1.076,1.076,0,0,1,1.081,1.081v7.445h3.843A.89.89,0,0,1,24.6,1344.187Z"
+                                                          transform="translate(0.637 0)" fill="#47b2b2" />
+                                                    <path id="Path_147" data-name="Path 147"
+                                                          d="M7.581,1347.2h6.484l2.161,2.161a2.4,2.4,0,0,0,3.242,0l2.161-2.161h6.484a1.076,1.076,0,0,1,1.081,1.081v4.923a1.076,1.076,0,0,1-1.081,1.081H7.581A1.076,1.076,0,0,1,6.5,1353.2v-4.923A1.076,1.076,0,0,1,7.581,1347.2Zm5.4,5.764a.841.841,0,1,0-.841-.84C12.024,1352.6,12.5,1352.964,12.984,1352.964Zm-2.882,0a.841.841,0,1,0-.841-.84A.821.821,0,0,0,10.1,1352.964Z"
+                                                          transform="translate(0 2.63)" fill="#47b2b2" />
+                                                </g>
+                                            </g>
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li class="downloadable-content">
+                                    <div class="downloadable-content__body">
+                                        <h3 class="downloadable-content__title">Logo i blå vektor-fil.</h3>
+                                    </div>
+                                    <a href="/media/2454/suc-logo-pos-4f-fladt.ai" class="downloadable-content__button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                            <g id="Group_61" data-name="Group 61" transform="translate(0 -1327.6)">
+                                                <g id="Budget_16_" transform="translate(301 620)">
+                                                    <path id="Path_1_16_" d="M-301,707.6h32v32h-32Z" fill="none" />
+                                                </g>
+                                                <g id="Group_60" data-name="Group 60" transform="translate(-1.897 -1.907)">
+                                                    <path id="Path_146" data-name="Path 146"
+                                                          d="M24.6,1344.187l-6.724,6.724a.8.8,0,0,1-1.2,0l-6.724-6.724a.915.915,0,0,1,.6-1.561h3.843v-7.445a1.076,1.076,0,0,1,1.081-1.081h3.6a1.076,1.076,0,0,1,1.081,1.081v7.445h3.843A.89.89,0,0,1,24.6,1344.187Z"
+                                                          transform="translate(0.637 0)" fill="#47b2b2" />
+                                                    <path id="Path_147" data-name="Path 147"
+                                                          d="M7.581,1347.2h6.484l2.161,2.161a2.4,2.4,0,0,0,3.242,0l2.161-2.161h6.484a1.076,1.076,0,0,1,1.081,1.081v4.923a1.076,1.076,0,0,1-1.081,1.081H7.581A1.076,1.076,0,0,1,6.5,1353.2v-4.923A1.076,1.076,0,0,1,7.581,1347.2Zm5.4,5.764a.841.841,0,1,0-.841-.84C12.024,1352.6,12.5,1352.964,12.984,1352.964Zm-2.882,0a.841.841,0,1,0-.841-.84A.821.821,0,0,0,10.1,1352.964Z"
+                                                          transform="translate(0 2.63)" fill="#47b2b2" />
+                                                </g>
+                                            </g>
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li class="downloadable-content">
+                                    <div class="downloadable-content__body">
+                                        <h3 class="downloadable-content__title">Logo i hvide vektor-fil.</h3>
+                                    </div>
+                                    <a href="/media/2457/suc-logo-neg-fladt.ai" class="downloadable-content__button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                            <g id="Group_61" data-name="Group 61" transform="translate(0 -1327.6)">
+                                                <g id="Budget_16_" transform="translate(301 620)">
+                                                    <path id="Path_1_16_" d="M-301,707.6h32v32h-32Z" fill="none" />
+                                                </g>
+                                                <g id="Group_60" data-name="Group 60" transform="translate(-1.897 -1.907)">
+                                                    <path id="Path_146" data-name="Path 146"
+                                                          d="M24.6,1344.187l-6.724,6.724a.8.8,0,0,1-1.2,0l-6.724-6.724a.915.915,0,0,1,.6-1.561h3.843v-7.445a1.076,1.076,0,0,1,1.081-1.081h3.6a1.076,1.076,0,0,1,1.081,1.081v7.445h3.843A.89.89,0,0,1,24.6,1344.187Z"
+                                                          transform="translate(0.637 0)" fill="#47b2b2" />
+                                                    <path id="Path_147" data-name="Path 147"
+                                                          d="M7.581,1347.2h6.484l2.161,2.161a2.4,2.4,0,0,0,3.242,0l2.161-2.161h6.484a1.076,1.076,0,0,1,1.081,1.081v4.923a1.076,1.076,0,0,1-1.081,1.081H7.581A1.076,1.076,0,0,1,6.5,1353.2v-4.923A1.076,1.076,0,0,1,7.581,1347.2Zm5.4,5.764a.841.841,0,1,0-.841-.84C12.024,1352.6,12.5,1352.964,12.984,1352.964Zm-2.882,0a.841.841,0,1,0-.841-.84A.821.821,0,0,0,10.1,1352.964Z"
+                                                          transform="translate(0 2.63)" fill="#47b2b2" />
+                                                </g>
+                                            </g>
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li class="downloadable-content">
+                                    <div class="downloadable-content__body">
+                                        <h3 class="downloadable-content__title">Logo i blå .png-fil.</h3>
+                                    </div>
+                                    <a href="/media/2456/suc-logo-pos-4f-fladt.png" class="downloadable-content__button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                            <g id="Group_61" data-name="Group 61" transform="translate(0 -1327.6)">
+                                                <g id="Budget_16_" transform="translate(301 620)">
+                                                    <path id="Path_1_16_" d="M-301,707.6h32v32h-32Z" fill="none" />
+                                                </g>
+                                                <g id="Group_60" data-name="Group 60" transform="translate(-1.897 -1.907)">
+                                                    <path id="Path_146" data-name="Path 146"
+                                                          d="M24.6,1344.187l-6.724,6.724a.8.8,0,0,1-1.2,0l-6.724-6.724a.915.915,0,0,1,.6-1.561h3.843v-7.445a1.076,1.076,0,0,1,1.081-1.081h3.6a1.076,1.076,0,0,1,1.081,1.081v7.445h3.843A.89.89,0,0,1,24.6,1344.187Z"
+                                                          transform="translate(0.637 0)" fill="#47b2b2" />
+                                                    <path id="Path_147" data-name="Path 147"
+                                                          d="M7.581,1347.2h6.484l2.161,2.161a2.4,2.4,0,0,0,3.242,0l2.161-2.161h6.484a1.076,1.076,0,0,1,1.081,1.081v4.923a1.076,1.076,0,0,1-1.081,1.081H7.581A1.076,1.076,0,0,1,6.5,1353.2v-4.923A1.076,1.076,0,0,1,7.581,1347.2Zm5.4,5.764a.841.841,0,1,0-.841-.84C12.024,1352.6,12.5,1352.964,12.984,1352.964Zm-2.882,0a.841.841,0,1,0-.841-.84A.821.821,0,0,0,10.1,1352.964Z"
+                                                          transform="translate(0 2.63)" fill="#47b2b2" />
+                                                </g>
+                                            </g>
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li class="downloadable-content">
+                                    <div class="downloadable-content__body">
+                                        <h3 class="downloadable-content__title">Logo i hvide .png-fil.</h3>
+                                    </div>
+                                    <a href="/media/2455/suc-logo-neg-fladt.png" class="downloadable-content__button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                            <g id="Group_61" data-name="Group 61" transform="translate(0 -1327.6)">
+                                                <g id="Budget_16_" transform="translate(301 620)">
+                                                    <path id="Path_1_16_" d="M-301,707.6h32v32h-32Z" fill="none" />
+                                                </g>
+                                                <g id="Group_60" data-name="Group 60" transform="translate(-1.897 -1.907)">
+                                                    <path id="Path_146" data-name="Path 146"
+                                                          d="M24.6,1344.187l-6.724,6.724a.8.8,0,0,1-1.2,0l-6.724-6.724a.915.915,0,0,1,.6-1.561h3.843v-7.445a1.076,1.076,0,0,1,1.081-1.081h3.6a1.076,1.076,0,0,1,1.081,1.081v7.445h3.843A.89.89,0,0,1,24.6,1344.187Z"
+                                                          transform="translate(0.637 0)" fill="#47b2b2" />
+                                                    <path id="Path_147" data-name="Path 147"
+                                                          d="M7.581,1347.2h6.484l2.161,2.161a2.4,2.4,0,0,0,3.242,0l2.161-2.161h6.484a1.076,1.076,0,0,1,1.081,1.081v4.923a1.076,1.076,0,0,1-1.081,1.081H7.581A1.076,1.076,0,0,1,6.5,1353.2v-4.923A1.076,1.076,0,0,1,7.581,1347.2Zm5.4,5.764a.841.841,0,1,0-.841-.84C12.024,1352.6,12.5,1352.964,12.984,1352.964Zm-2.882,0a.841.841,0,1,0-.841-.84A.821.821,0,0,0,10.1,1352.964Z"
+                                                          transform="translate(0 2.63)" fill="#47b2b2" />
+                                                </g>
+                                            </g>
+                                        </svg>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                }
+                else if (member.ContentTypeAlias == "coach1")
+                {
+                    <div class="feed-rail-container">
+                        <div class="feed-section">
+                            <h2 class="feed-section__title">Profil skabelon</h2>
+                            <div class="feed-section__description">
+                                <p>
+                                    Udfyld venligst skabelonen nedenfor. Skabelonen vil indeholde et eksempel -
+                                    i blå skrift - på hvordan den skal udfyldes.
+                                    Send venligst den udfyldte skabelon til <a href="mailto:dp@startupcentral.dk">dp@startupcentral.dk</a>.
+                                </p>
+                                <p>
+                                    Spørgsmål kan rettes mod Daniel på <a href="mailto:dp@startupcentral.dk">dp@startupcentral.dk</a> eller <a href="tel:29163199">29 16 31 99</a>.
+                                </p>
+                            </div>
+                            <ul class="feed-section__downloadable-container">
+
+                                <li class="downloadable-content">
+                                    <div class="downloadable-content__body">
+                                        <h3 class="downloadable-content__title">Profil</h3>
+                                        <p class="downloadable-content__description">
+                                            Her skal du beskrive din erhvervsmæssige baggrund, dine kompetencer og fortælle medlemmerne hvad det er de kan forvente at få af sparring fra dig.
+                                        </p>
+                                    </div>
+                                    <a href="/media/2459/coach-skabelon-eksempel.docx" class="downloadable-content__button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                            <g id="Group_61" data-name="Group 61" transform="translate(0 -1327.6)">
+                                                <g id="Budget_16_" transform="translate(301 620)">
+                                                    <path id="Path_1_16_" d="M-301,707.6h32v32h-32Z" fill="none" />
+                                                </g>
+                                                <g id="Group_60" data-name="Group 60" transform="translate(-1.897 -1.907)">
+                                                    <path id="Path_146" data-name="Path 146"
+                                                          d="M24.6,1344.187l-6.724,6.724a.8.8,0,0,1-1.2,0l-6.724-6.724a.915.915,0,0,1,.6-1.561h3.843v-7.445a1.076,1.076,0,0,1,1.081-1.081h3.6a1.076,1.076,0,0,1,1.081,1.081v7.445h3.843A.89.89,0,0,1,24.6,1344.187Z"
+                                                          transform="translate(0.637 0)" fill="#47b2b2" />
+                                                    <path id="Path_147" data-name="Path 147"
+                                                          d="M7.581,1347.2h6.484l2.161,2.161a2.4,2.4,0,0,0,3.242,0l2.161-2.161h6.484a1.076,1.076,0,0,1,1.081,1.081v4.923a1.076,1.076,0,0,1-1.081,1.081H7.581A1.076,1.076,0,0,1,6.5,1353.2v-4.923A1.076,1.076,0,0,1,7.581,1347.2Zm5.4,5.764a.841.841,0,1,0-.841-.84C12.024,1352.6,12.5,1352.964,12.984,1352.964Zm-2.882,0a.841.841,0,1,0-.841-.84A.821.821,0,0,0,10.1,1352.964Z"
+                                                          transform="translate(0 2.63)" fill="#47b2b2" />
+                                                </g>
+                                            </g>
+                                        </svg>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                }
+            }
+
+            <!-- Blog template -->
+            @if (member.ContentTypeAlias != "student")
+            {
+                <div class="feed-rail-container">
+                    <div class="feed-section">
+                        <h2 class="feed-section__title">Blog skabeloner</h2>
+                        <div class="feed-section__description">
+                            <p>
+                                Har du en masse viden inden for dit område, som du rigtig gerne vil dele med vores medlemmer,
+                                kan du lave et blogindlæg herom - det vil vi blive rigtig glade for.
+                            </p>
+                            <p>
+                                Vil du uploade en blog til Startup Central kan du gøre det  <a href="/login/upload-blog/" class="link">her</a>!
+                            </p>
+                        </div>
+
+                        @*
+                    <ul class="feed-section__downloadable-container">
+
+                        <li class="downloadable-content">
+                            <div class="downloadable-content__body">
+                                <h3 class="downloadable-content__title">Blogindlæg om ”Hvad er …”</h3>
+                                <p class="downloadable-content__description">
+                                    Denne skabelon er for dig, som vil lave et blogindlæg omhandlende en oversigt over et emne,
+                                    det vil være en introduktion til et emne, så læseren får grundviden omkring hvordan emnet fungerer.
+                                </p>
+                            </div>
+                            <a href="/media/2451/hvad-er-blog-skabelon.docx" class="downloadable-content__button">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                    <g id="Group_61" data-name="Group 61" transform="translate(0 -1327.6)">
+                                        <g id="Budget_16_" transform="translate(301 620)">
+                                            <path id="Path_1_16_" d="M-301,707.6h32v32h-32Z" fill="none" />
+                                        </g>
+                                        <g id="Group_60" data-name="Group 60" transform="translate(-1.897 -1.907)">
+                                            <path id="Path_146" data-name="Path 146"
+                                                  d="M24.6,1344.187l-6.724,6.724a.8.8,0,0,1-1.2,0l-6.724-6.724a.915.915,0,0,1,.6-1.561h3.843v-7.445a1.076,1.076,0,0,1,1.081-1.081h3.6a1.076,1.076,0,0,1,1.081,1.081v7.445h3.843A.89.89,0,0,1,24.6,1344.187Z"
+                                                  transform="translate(0.637 0)" fill="#182848" />
+                                            <path id="Path_147" data-name="Path 147"
+                                                  d="M7.581,1347.2h6.484l2.161,2.161a2.4,2.4,0,0,0,3.242,0l2.161-2.161h6.484a1.076,1.076,0,0,1,1.081,1.081v4.923a1.076,1.076,0,0,1-1.081,1.081H7.581A1.076,1.076,0,0,1,6.5,1353.2v-4.923A1.076,1.076,0,0,1,7.581,1347.2Zm5.4,5.764a.841.841,0,1,0-.841-.84C12.024,1352.6,12.5,1352.964,12.984,1352.964Zm-2.882,0a.841.841,0,1,0-.841-.84A.821.821,0,0,0,10.1,1352.964Z"
+                                                  transform="translate(0 2.63)" fill="#182848" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </a>
+                        </li>
+                        <li class="downloadable-content">
+                            <div class="downloadable-content__body">
+                                <h3 class="downloadable-content__title">Blogindlæg om ”How to …”</h3>
+                                <p class="downloadable-content__description">
+                                    Denne skabelon er for dig, som vil lave et blogindlæg omhandlende en guide,
+                                    blogindlægget vil give læseren viden om hvordan vedkommende udfører noget bestemt.
+                                </p>
+                            </div>
+                            <a href="/media/2453/how-to-blog-skabelon.docx" class="downloadable-content__button">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                    <g id="Group_61" data-name="Group 61" transform="translate(0 -1327.6)">
+                                        <g id="Budget_16_" transform="translate(301 620)">
+                                            <path id="Path_1_16_" d="M-301,707.6h32v32h-32Z" fill="none" />
+                                        </g>
+                                        <g id="Group_60" data-name="Group 60" transform="translate(-1.897 -1.907)">
+                                            <path id="Path_146" data-name="Path 146"
+                                                  d="M24.6,1344.187l-6.724,6.724a.8.8,0,0,1-1.2,0l-6.724-6.724a.915.915,0,0,1,.6-1.561h3.843v-7.445a1.076,1.076,0,0,1,1.081-1.081h3.6a1.076,1.076,0,0,1,1.081,1.081v7.445h3.843A.89.89,0,0,1,24.6,1344.187Z"
+                                                  transform="translate(0.637 0)" fill="#182848" />
+                                            <path id="Path_147" data-name="Path 147"
+                                                  d="M7.581,1347.2h6.484l2.161,2.161a2.4,2.4,0,0,0,3.242,0l2.161-2.161h6.484a1.076,1.076,0,0,1,1.081,1.081v4.923a1.076,1.076,0,0,1-1.081,1.081H7.581A1.076,1.076,0,0,1,6.5,1353.2v-4.923A1.076,1.076,0,0,1,7.581,1347.2Zm5.4,5.764a.841.841,0,1,0-.841-.84C12.024,1352.6,12.5,1352.964,12.984,1352.964Zm-2.882,0a.841.841,0,1,0-.841-.84A.821.821,0,0,0,10.1,1352.964Z"
+                                                  transform="translate(0 2.63)" fill="#182848" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </a>
+                        </li>
+                        <li class="downloadable-content">
+                            <div class="downloadable-content__body">
+                                <h3 class="downloadable-content__title">Blogindlæg om ”Liste”</h3>
+                                <p class="downloadable-content__description">
+                                    Denne skabelon er for dig, som vil lave et blogindlæg omhandlende gode tips og råd.
+                                </p>
+                            </div>
+                            <a href="/media/2452/liste-blog-skabelon.docx" class="downloadable-content__button">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                    <g id="Group_61" data-name="Group 61" transform="translate(0 -1327.6)">
+                                        <g id="Budget_16_" transform="translate(301 620)">
+                                            <path id="Path_1_16_" d="M-301,707.6h32v32h-32Z" fill="none" />
+                                        </g>
+                                        <g id="Group_60" data-name="Group 60" transform="translate(-1.897 -1.907)">
+                                            <path id="Path_146" data-name="Path 146"
+                                                  d="M24.6,1344.187l-6.724,6.724a.8.8,0,0,1-1.2,0l-6.724-6.724a.915.915,0,0,1,.6-1.561h3.843v-7.445a1.076,1.076,0,0,1,1.081-1.081h3.6a1.076,1.076,0,0,1,1.081,1.081v7.445h3.843A.89.89,0,0,1,24.6,1344.187Z"
+                                                  transform="translate(0.637 0)" fill="#182848" />
+                                            <path id="Path_147" data-name="Path 147"
+                                                  d="M7.581,1347.2h6.484l2.161,2.161a2.4,2.4,0,0,0,3.242,0l2.161-2.161h6.484a1.076,1.076,0,0,1,1.081,1.081v4.923a1.076,1.076,0,0,1-1.081,1.081H7.581A1.076,1.076,0,0,1,6.5,1353.2v-4.923A1.076,1.076,0,0,1,7.581,1347.2Zm5.4,5.764a.841.841,0,1,0-.841-.84C12.024,1352.6,12.5,1352.964,12.984,1352.964Zm-2.882,0a.841.841,0,1,0-.841-.84A.821.821,0,0,0,10.1,1352.964Z"
+                                                  transform="translate(0 2.63)" fill="#182848" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </a>
+                        </li>
+
+                    </ul>
+                        *@
+
+                    </div>
+                </div>
+            }
+
+            @* Unique offer for premium *@
+            <div class="feed-rail-container">
+                <div class="feed-section">
+                    <h2 class="feed-section__title">
+                        Sælg dit produkt som Premium medlem
+                    </h2>
+                    <div class="feed-section__description">
+                        <p>
+                            Som Premium medlem har du mulighed for at sælge dit eget produkt til alle medlemmer af Startup Central.</br>
+                            Dit produkt vil være synligt under "Unikke tilbud".
+                        </p>
+                        <p>Kontakt Victoria på vh@startupcentral.dk for at komme i gang.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOGS -->
+            @if (member.ContentTypeAlias == "student" || (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains) && (coachAsStudent != null && studentView)))
+            {
+                <div class="feed-rail-container">
+                    <div class="feed-section">
+                        <h2 class="feed-section__title">
+                            Seneste blogs
+                        </h2>
+                        Her finder du vores seneste tre blogs ud af vores +150 indlæg. Klik <a href="/blogs" class="link">her</a> for at blive sendt til vores blog.
+                        <div class="feed-section__blog-container">
+                            <div class="feed-section__blogs">
+
+                                @foreach (var article in Umbraco.Content(24024).Children().Where(x => x.IsVisible()).OrderByDescending(x => x.CreateDate).Take(3))
+                                {
+                                    var typedMediaPickerSingle = article.Value<IPublishedContent>("bImage");
+                                    var date = (article.Value<DateTime>("datePublished").ToString("dd-MM-yyyy"));
+                                    IPublishedContent categoryContentPickerI = article.Value<IPublishedContent>("blogCategory");
+
+                                    <article class="blog-card blog-card--small">
+                                        <div class="blog-card__content">
+                                            @if (typedMediaPickerSingle != null)
+                                            {
+                                                <figure class="blog-card__image">
+                                                    <a href="@article.Url">
+                                                        <img src=@typedMediaPickerSingle.Url alt="">
+                                                    </a>
+                                                </figure>
+                                            }
+
+                                            <div class="blog-card__body">
+                                                <h3 class="blog-card__title"><a href="@article.Url">@article.Name</a></h3>
+                                                <div class="blog-card__meta">
+                                                    <div class="blog-card__tag">
+                                                        <a href="@categoryContentPickerI.Url">@categoryContentPickerI.Name</a>
+                                                    </div>
+                                                    <time class="blog-card__date">@date</time>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                }
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+
+
+        @Html.Partial("ExtraOffers", member)
+
+    </div>
+</main>

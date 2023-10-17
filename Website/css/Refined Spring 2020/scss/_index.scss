@@ -1,0 +1,442 @@
+nav {
+    position: absolute;
+    height: $nav-sm;
+    // background-color: $sc-accent;
+    border-bottom: 1px solid $sc-accent;
+    width: 100%;
+    z-index: 99999;
+}
+
+section.sc-home-landing {
+    padding-top: 12.5rem !important;
+    background-color: $sc-primary;
+    color: $sc-white;
+
+    .landing-text {
+        // border: 1px solid greenyellow;
+        // max-width: 600px;
+    }
+
+    .landing-buttons {
+        @include flex(column);
+
+        .button-left {
+            @include btn-white;
+        }
+
+        .button-right {
+            @include btn-white;
+        }
+    }
+
+    .landing-img {
+        margin-top: 2.5rem;
+        height: 25rem;
+
+        img {
+            position: absolute;
+        }
+    }
+
+}
+
+section.sc-home-offers {
+    margin-top: -75px;
+
+    &::before {
+        display: block;
+        content: "";
+        width: 100%;
+        height: 50%;
+        background-color: $sc-primary;
+        left: 0;
+        right: 0;
+        top: 0px;
+        position: absolute;
+        clip-path: polygon(0 0, 100% 0, 100% 75%, 0 100%);
+        z-index: -1;
+    }
+
+    .headline-2 {
+        @include sc-title-text;
+    }
+
+    .offer {
+        @include flex(column);
+    }
+}
+
+section.sc-home-partners {
+    padding-top: 0;
+    padding-bottom: 0;
+
+    .container-big {
+        .partners-carousel {
+            @include transition(0.2s);
+            filter: grayscale(100%);
+
+            &:hover {
+                filter: grayscale(0%);
+            }
+
+            .partner-logo {
+                padding: 0 1rem;
+            }
+        }
+    }
+}
+
+section.sc-home-services {
+    .headline-2 {
+        @include sc-title-text;
+    }
+
+    .services-card-container {
+        margin-top: 1.5rem;
+        display: grid;
+        grid-gap: 2.5rem;
+        grid: 1fr/ 1fr;
+        align-items: stretch;
+
+        .service-card {
+            @include flex(column);
+
+            &-img {
+                overflow: hidden;
+            }
+
+            img {
+                @include transition(0.5s);
+            }
+
+            &:hover {
+                img {
+                    // transform: scale(1.1);
+                }
+            }
+
+            .lead {
+                margin-bottom: 1.5rem;
+            }
+
+            &-button {
+                @include btn;
+                margin-top: auto;
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+section.sc-home-coaches {
+    position: relative;
+    color: $sc-white;
+    background-color: $sc-primary;
+
+    // .triangle {
+    //     top: 0;
+    //     height: 15rem;
+    //     background-color: $sc-gray;
+    //     width: 100%;
+    //     clip-path: polygon(100% 100%, 0 0, 100% 0);
+    //     position: absolute;
+    // }
+
+    .headline-2 {
+        @include sc-title-text;
+    }
+
+    .coaches-carousel {
+        position: relative;
+        margin-top: 5rem;
+
+        .coach-card {
+            .card-body {
+                h3 {
+                    margin: 1rem 0;
+                }
+
+                p {
+                    padding: 0 0.5rem;
+                }
+            }
+        }
+    }
+}
+
+section.sc-home-statistics {
+    .headline-2 {
+        @include sc-title-text;
+    }
+
+    .info-container {
+        padding: 2rem 0 5rem;
+        border-bottom: 1px solid $sc-accent;
+
+        .info {
+            @include flex(row);
+            justify-content: center;
+
+            &-icon {
+                margin: 5px 1rem 0 0;
+
+                i {
+                    font-size: 3rem;
+                }
+            }
+
+            &-text {}
+        }
+    }
+
+    .statistic {
+        .numbers {
+            font-size: 3rem;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 400;
+        }
+    }
+}
+
+section.sc-home-partners-all {
+    .container-big {
+        @include flex(row);
+        flex-wrap: wrap;
+        justify-content: center;
+        overflow: hidden;
+        max-height: 27rem;
+
+        .partner-logo {
+            height: 5rem;
+            max-width: 12.5rem;
+            box-sizing: content-box;
+            padding: 2rem;
+
+            img {
+                width: 100%;
+                opacity: .4;
+                filter: grayscale(100%);
+                @include transition(0.2s);
+
+                &:hover {
+                    filter: grayscale(0);
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}
+
+section.sc-home-reviews {
+    background-color: rgba(0, 0, 0, 0.2);
+
+    .review-container {
+        .trustpilot {
+            border: 5px solid blue;
+            margin-top: 3rem;
+        }
+
+        .trustpilot-carousel {
+            @include flex(row);
+            justify-content: center;
+            margin-top: 5rem;
+
+            .reviews {
+                border: 5px solid green;
+                padding: 1rem;
+
+                &:nth-child(2) {
+                    display: none;
+                }
+
+                &:nth-child(3) {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+@include media-md {
+    section.sc-home-landing {
+        //////////
+    }
+
+    section.sc-home-offers {
+        margin-top: 0;
+    }
+
+    section.sc-home-services {
+        .services-card-container {
+            margin-top: 5rem;
+            grid: 1fr/ 1fr 1fr;
+        }
+    }
+
+    section.sc-home-statistics {
+        .info-container {
+            @include flex(row);
+
+            .info {
+                flex: 0 0 33.33%;
+            }
+        }
+
+        .statistics-container {
+            @include flex(row);
+            justify-content: space-evenly;
+            flex-wrap: wrap;
+            margin-top: 2.5rem;
+
+            .statistic {
+                flex: 0 0 33.33%;
+            }
+        }
+    }
+
+    section.sc-home-reviews {
+        .review-container {
+            .trustpilot-carousel {
+                @include flex(row);
+                justify-content: space-evenly;
+                margin-top: 5rem;
+
+                .reviews {
+                    // flex: 0 0 33.33%;
+                    max-width: 250px;
+
+                    &:nth-child(2) {
+                        display: block;
+                    }
+
+                    &:nth-child(3) {
+                        display: block;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-lg {
+    nav {
+        height: $nav-lg;
+    }
+
+    section.sc-home-landing {
+        padding-top: 14rem !important;
+
+        .landing-text {
+            max-width: 500px;
+        }
+
+        .landing-buttons {
+            min-width: 50rem;
+            width: 50rem;
+        }
+
+        .landing-img {
+            position: absolute;
+            top: -40vh;
+            right: 0;
+            max-width: 47%;
+
+            img {
+                position: relative;
+            }
+        }
+
+    }
+
+    section.sc-home-offers {
+        padding-top: 0;
+        // margin-top: 0;
+
+        &::before {
+            height: 70%;
+            clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%);
+        }
+
+        .offers-container {
+            @include flex(row);
+            margin-top: 2.5rem;
+            margin-bottom: 2.5rem;
+
+            .column-container {
+                margin-top: 0;
+                flex: 0 0 33.33%;
+            }
+        }
+    }
+
+    section.sc-home-services {
+        .services-card-container {
+            grid: 1fr/ 1fr 1fr 1fr;
+        }
+    }
+
+    section.sc-home-statistics {
+        .statistics-container {
+            .statistic {
+                flex: 0 0 20%;
+            }
+        }
+    }
+
+    section.sc-home-reviews {
+        .review-container {
+            @include flex(row);
+
+            .trustpilot-carousel {
+                @include flex(row);
+                width: 100%;
+                justify-content: space-evenly;
+                margin-top: 3rem;
+
+                .reviews {
+                    max-width: 300px;
+                }
+            }
+        }
+    }
+
+    section.sc-home-partners-all {
+        padding: 5rem;
+
+        .container-big {
+            @include flex(row);
+            flex-wrap: wrap;
+            justify-content: center;
+            overflow: hidden;
+            max-height: fit-content;
+        }
+    }
+}
+
+@include media-xl {
+    section.sc-home-landing {
+        .landing-text {
+            max-width: 650px;
+        }
+
+        .landing-buttons {
+            min-width: 65rem;
+            width: 65rem;
+        }
+
+        .landing-img {
+            top: -42vh;
+            max-width: 45%;
+
+            img {
+                position: relative;
+                width: 100%;
+            }
+        }
+
+    }
+}

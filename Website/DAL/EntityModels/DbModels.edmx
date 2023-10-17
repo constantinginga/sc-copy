@@ -1,0 +1,517 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="startupcentraldkModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="activeMembers">
+          <Key>
+            <PropertyRef Name="LoginDate" />
+            <PropertyRef Name="MemberId" />
+          </Key>
+          <Property Name="LoginDate" Type="datetime" Nullable="false" />
+          <Property Name="MemberId" Type="int" Nullable="false" />
+        </EntityType>
+		<EntityType Name="activePlatformMembers">
+          <Key>
+            <PropertyRef Name="LoginDate" />
+            <PropertyRef Name="MemberId" />
+          </Key>
+          <Property Name="LoginDate" Type="datetime" Nullable="false" />
+          <Property Name="MemberId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FormularLogger">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="Owner" Type="uniqueidentifier" />
+          <Property Name="CVRNumber" Type="varchar" MaxLength="50" />
+          <Property Name="Industry" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="PhoneNumber" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Notes" Type="varchar" MaxLength="5000" />
+          <Property Name="Contacted" Type="bit" Nullable="false" />
+          <Property Name="MailFlow" Type="bit" Nullable="false" />
+          <Property Name="Read" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="newsLetterSubscriptions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="250" Nullable="false" />
+        </EntityType>
+        <EntityType Name="userForretningsPlan">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Owner" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="UpdateDate" Type="datetime" />
+          <Property Name="Completed" Type="bit" Nullable="false" />
+          <Property Name="ProjektNavn" Type="varchar" MaxLength="225" Nullable="false" />
+          <Property Name="Kategori" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="English" Type="bit" Nullable="false" />
+          <Property Name="IdeDesc" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="Uddyb" Type="varchar" MaxLength="8000" />
+          <Property Name="Loser" Type="varchar" MaxLength="5000" />
+          <Property Name="Videreudvik" Type="varchar" MaxLength="5000" />
+          <Property Name="Brugprod" Type="varchar" MaxLength="5000" />
+          <Property Name="Splitaktiviteter" Type="varchar" MaxLength="8000" />
+          <Property Name="FirmImportant" Type="varchar" MaxLength="5000" />
+          <Property Name="FirmBehov" Type="varchar" MaxLength="5000" />
+          <Property Name="FirmReach" Type="varchar" MaxLength="5000" />
+          <Property Name="FirmIssues" Type="varchar" MaxLength="5000" />
+          <Property Name="FirmValues" Type="varchar" MaxLength="5000" />
+          <Property Name="FirmRoller" Type="varchar" MaxLength="5000" />
+          <Property Name="FirmOkonomi" Type="varchar" MaxLength="5000" />
+          <Property Name="FirmRes" Type="varchar" MaxLength="5000" />
+          <Property Name="FirmDriv" Type="varchar" MaxLength="5000" />
+          <Property Name="FirmVwork" Type="varchar" MaxLength="5000" />
+          <Property Name="ProdDesc" Type="varchar" MaxLength="5000" />
+          <Property Name="ProdVers" Type="varchar" MaxLength="5000" />
+          <Property Name="ProdFunkt" Type="varchar" MaxLength="5000" />
+          <Property Name="ProdMake" Type="varchar" MaxLength="5000" />
+          <Property Name="ProdReady" Type="varchar" MaxLength="5000" />
+          <Property Name="CusWho" Type="varchar" MaxLength="5000" />
+          <Property Name="CusFind" Type="varchar" MaxLength="5000" />
+          <Property Name="CusNeeds" Type="varchar" MaxLength="5000" />
+          <Property Name="CusKon" Type="varchar" MaxLength="5000" />
+          <Property Name="CusStrong" Type="varchar" MaxLength="5000" />
+          <Property Name="ProdSale" Type="varchar" MaxLength="5000" />
+          <Property Name="ProdStart" Type="varchar" MaxLength="5000" />
+          <Property Name="BudgetFile" Type="varchar" MaxLength="255" />
+          <Property Name="ProdFinance" Type="varchar" MaxLength="5000" />
+          <Property Name="ProdPrice" Type="varchar" MaxLength="5000" />
+          <Property Name="ProdUdregn" Type="varchar" MaxLength="5000" />
+          <Property Name="ProdSaleplace" Type="varchar" MaxLength="5000" />
+          <Property Name="ProdEksi" Type="varchar" MaxLength="5000" />
+          <Property Name="ProdMarkedsf" Type="varchar" MaxLength="5000" />
+          <Property Name="JurAftale" Type="varchar" MaxLength="5000" />
+          <Property Name="JurLeverand" Type="varchar" MaxLength="5000" />
+          <Property Name="JurContact" Type="varchar" MaxLength="5000" />
+          <Property Name="JurCvr" Type="varchar" MaxLength="5000" />
+          <Property Name="AndetChk" Type="bit" Nullable="false" />
+          <Property Name="AndetHeadline" Type="varchar" MaxLength="5000" />
+          <Property Name="Andet" Type="varchar" MaxLength="5000" />
+          <Property Name="Splitaktiviteter3ar" Type="varchar" MaxLength="5000" />
+          <Property Name="Splitaktiviteter5ar" Type="varchar" MaxLength="5000" />
+          <Property Name="Firmres2" Type="varchar" MaxLength="5000" />
+          <Property Name="Firmvinkel" Type="varchar" MaxLength="5000" />
+        </EntityType>
+        <EntityType Name="userMessages">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="FromUser" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ToUser" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Body" Type="varchar" MaxLength="8000" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="Attachment" Type="varchar" MaxLength="255" />
+          <Property Name="Subject" Type="varchar" MaxLength="255" />
+          <Property Name="Read" Type="bit" Nullable="false" />
+          <Property Name="PitchAttatchment" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="userPitch">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="PitchName" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="owner" Type="uniqueidentifier" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="UpdateDate" Type="datetime" />
+          <Property Name="Completed" Type="bit" />
+          <Property Name="English" Type="bit" />
+          <Property Name="Picture" Type="varchar" MaxLength="255" />
+          <Property Name="Agenda" Type="varchar(max)" />
+          <Property Name="LookFor" Type="varchar" MaxLength="8000" />
+          <Property Name="MoneyUsage" Type="varchar" MaxLength="8000" />
+          <Property Name="CompanyDesc" Type="varchar" MaxLength="8000" />
+          <Property Name="TeamDesc" Type="varchar" MaxLength="8000" />
+          <Property Name="SatisfyDesc" Type="varchar" MaxLength="8000" />
+          <Property Name="MarketDesc" Type="varchar" MaxLength="8000" />
+          <Property Name="Traction" Type="varchar" MaxLength="8000" />
+          <Property Name="Collaborations" Type="varchar" MaxLength="8000" />
+          <Property Name="DevelopmentDesc" Type="varchar" MaxLength="8000" />
+          <Property Name="proofBusiness" Type="varchar" MaxLength="8000" />
+          <Property Name="proofMarket" Type="varchar" MaxLength="8000" />
+          <Property Name="proofSales" Type="varchar" MaxLength="8000" />
+          <Property Name="proofConceptPayment" Type="varchar" MaxLength="8000" />
+          <Property Name="finBudget" Type="varchar" MaxLength="8000" />
+          <Property Name="finVariety" Type="varchar" MaxLength="8000" />
+          <Property Name="finGrowth" Type="varchar" MaxLength="8000" />
+          <Property Name="finFacts" Type="varchar" MaxLength="8000" />
+          <Property Name="riskInvest" Type="varchar" MaxLength="8000" />
+          <Property Name="riskGoal" Type="varchar" MaxLength="8000" />
+          <Property Name="Owners" Type="varchar" MaxLength="8000" />
+          <Property Name="Summary" Type="varchar" MaxLength="8000" />
+          <Property Name="ProofScale" Type="varchar" MaxLength="8000" />
+          <Property Name="LookFor2" Type="varchar" MaxLength="8000" />
+        </EntityType>
+        <EntityContainer Name="startupcentraldkModelStoreContainer">
+          <EntitySet Name="activeMembers" EntityType="Self.activeMembers" Schema="dbo" store:Type="Tables" />
+		  <EntitySet Name="activePlatformMembers" EntityType="Self.activePlatformMembers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FormularLogger" EntityType="Self.FormularLogger" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="newsLetterSubscriptions" EntityType="Self.newsLetterSubscriptions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="userForretningsPlan" EntityType="Self.userForretningsPlan" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="userMessages" EntityType="Self.userMessages" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="userPitch" EntityType="Self.userPitch" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="startupcentraldkModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="userMessages">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="FromUser" Type="Guid" Nullable="false" />
+          <Property Name="ToUser" Type="Guid" Nullable="false" />
+          <Property Name="Body" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Attachment" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Subject" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Read" Type="Boolean" Nullable="false" />
+          <Property Name="PitchAttatchment" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityContainer Name="startupcentraldkEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="userMessages" EntityType="Self.userMessages" />
+          <EntitySet Name="newsLetterSubscriptions" EntityType="startupcentraldkModel.newsLetterSubscriptions" />
+          <EntitySet Name="userForretningsPlan" EntityType="startupcentraldkModel.userForretningsPlan" />
+          <EntitySet Name="userPitch" EntityType="startupcentraldkModel.userPitch" />
+          <EntitySet Name="formularLoggerSet" EntityType="startupcentraldkModel.formularLogger" />
+          <EntitySet Name="activeMembers" EntityType="startupcentraldkModel.activeMembers" />
+          <EntitySet Name="activePlatformMembers" EntityType="startupcentraldkModel.activePlatformMembers" />
+        </EntityContainer>
+        <EntityType Name="newsLetterSubscriptions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="userForretningsPlan">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Owner" Type="Guid" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UpdateDate" Type="DateTime" Precision="3" />
+          <Property Name="Completed" Type="Boolean" Nullable="false" />
+          <Property Name="ProjektNavn" Type="String" Nullable="false" MaxLength="225" FixedLength="false" Unicode="false" />
+          <Property Name="Kategori" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="English" Type="Boolean" Nullable="false" />
+          <Property Name="IdeDesc" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Uddyb" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="Loser" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="Videreudvik" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="Brugprod" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="Splitaktiviteter" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="FirmImportant" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="FirmBehov" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="FirmReach" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="FirmIssues" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="FirmValues" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="FirmRoller" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="FirmOkonomi" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="FirmRes" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="FirmDriv" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="FirmVwork" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="ProdDesc" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="ProdVers" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="ProdFunkt" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="ProdMake" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="ProdReady" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="CusWho" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="CusFind" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="CusNeeds" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="CusKon" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="CusStrong" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="ProdSale" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="ProdStart" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="BudgetFile" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="ProdFinance" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="ProdPrice" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="ProdUdregn" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="ProdSaleplace" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="ProdEksi" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="ProdMarkedsf" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="JurAftale" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="JurLeverand" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="JurContact" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="JurCvr" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="AndetChk" Type="Boolean" Nullable="false" />
+          <Property Name="AndetHeadline" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="Andet" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="Splitaktiviteter3ar" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="Splitaktiviteter5ar" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="Firmres2" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="Firmvinkel" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="userPitch">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="PitchName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="owner" Type="Guid" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdateDate" Type="DateTime" Precision="3" />
+          <Property Name="Completed" Type="Boolean" />
+          <Property Name="English" Type="Boolean" />
+          <Property Name="Picture" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="Agenda" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LookFor" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="MoneyUsage" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="CompanyDesc" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="TeamDesc" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="SatisfyDesc" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="MarketDesc" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="Traction" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="Collaborations" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="DevelopmentDesc" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="proofBusiness" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="proofMarket" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="proofSales" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="proofConceptPayment" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="finBudget" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="finVariety" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="finGrowth" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="finFacts" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="riskInvest" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="riskGoal" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="Owners" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="Summary" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="ProofScale" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="LookFor2" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="formularLogger">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Owner" Type="Guid" />
+          <Property Name="CVRNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Industry" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Notes" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <Property Name="Contacted" Type="Boolean" Nullable="false" />
+          <Property Name="MailFlow" Type="Boolean" Nullable="false" />
+          <Property Name="Read" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="activeMembers">
+          <Key>
+            <PropertyRef Name="LoginDate" />
+            <PropertyRef Name="MemberId" />
+          </Key>
+          <Property Name="LoginDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="MemberId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="activePlatformMembers" >
+          <Key>
+            <PropertyRef Name="LoginDate" />
+            <PropertyRef Name="MemberId" />
+          </Key>
+          <Property Name="LoginDate" Type="DateTime" Nullable="false" Precision="6" />
+          <Property Name="MemberId" Type="Int32" Nullable="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="startupcentraldkModelStoreContainer" CdmEntityContainer="startupcentraldkEntities">
+          <EntitySetMapping Name="userMessages">
+            <EntityTypeMapping TypeName="startupcentraldkModel.userMessages">
+              <MappingFragment StoreEntitySet="userMessages">
+                <ScalarProperty Name="PitchAttatchment" ColumnName="PitchAttatchment" />
+                <ScalarProperty Name="Read" ColumnName="Read" />
+                <ScalarProperty Name="Subject" ColumnName="Subject" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="FromUser" ColumnName="FromUser" />
+                <ScalarProperty Name="ToUser" ColumnName="ToUser" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Attachment" ColumnName="Attachment" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="newsLetterSubscriptions">
+            <EntityTypeMapping TypeName="startupcentraldkModel.newsLetterSubscriptions">
+              <MappingFragment StoreEntitySet="newsLetterSubscriptions">
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="userForretningsPlan">
+            <EntityTypeMapping TypeName="startupcentraldkModel.userForretningsPlan">
+              <MappingFragment StoreEntitySet="userForretningsPlan">
+                <ScalarProperty Name="Firmvinkel" ColumnName="Firmvinkel" />
+                <ScalarProperty Name="Firmres2" ColumnName="Firmres2" />
+                <ScalarProperty Name="Splitaktiviteter5ar" ColumnName="Splitaktiviteter5ar" />
+                <ScalarProperty Name="Splitaktiviteter3ar" ColumnName="Splitaktiviteter3ar" />
+                <ScalarProperty Name="Andet" ColumnName="Andet" />
+                <ScalarProperty Name="AndetHeadline" ColumnName="AndetHeadline" />
+                <ScalarProperty Name="AndetChk" ColumnName="AndetChk" />
+                <ScalarProperty Name="JurCvr" ColumnName="JurCvr" />
+                <ScalarProperty Name="JurContact" ColumnName="JurContact" />
+                <ScalarProperty Name="JurLeverand" ColumnName="JurLeverand" />
+                <ScalarProperty Name="JurAftale" ColumnName="JurAftale" />
+                <ScalarProperty Name="ProdMarkedsf" ColumnName="ProdMarkedsf" />
+                <ScalarProperty Name="ProdEksi" ColumnName="ProdEksi" />
+                <ScalarProperty Name="ProdSaleplace" ColumnName="ProdSaleplace" />
+                <ScalarProperty Name="ProdUdregn" ColumnName="ProdUdregn" />
+                <ScalarProperty Name="ProdPrice" ColumnName="ProdPrice" />
+                <ScalarProperty Name="ProdFinance" ColumnName="ProdFinance" />
+                <ScalarProperty Name="BudgetFile" ColumnName="BudgetFile" />
+                <ScalarProperty Name="ProdStart" ColumnName="ProdStart" />
+                <ScalarProperty Name="ProdSale" ColumnName="ProdSale" />
+                <ScalarProperty Name="CusStrong" ColumnName="CusStrong" />
+                <ScalarProperty Name="CusKon" ColumnName="CusKon" />
+                <ScalarProperty Name="CusNeeds" ColumnName="CusNeeds" />
+                <ScalarProperty Name="CusFind" ColumnName="CusFind" />
+                <ScalarProperty Name="CusWho" ColumnName="CusWho" />
+                <ScalarProperty Name="ProdReady" ColumnName="ProdReady" />
+                <ScalarProperty Name="ProdMake" ColumnName="ProdMake" />
+                <ScalarProperty Name="ProdFunkt" ColumnName="ProdFunkt" />
+                <ScalarProperty Name="ProdVers" ColumnName="ProdVers" />
+                <ScalarProperty Name="ProdDesc" ColumnName="ProdDesc" />
+                <ScalarProperty Name="FirmVwork" ColumnName="FirmVwork" />
+                <ScalarProperty Name="FirmDriv" ColumnName="FirmDriv" />
+                <ScalarProperty Name="FirmRes" ColumnName="FirmRes" />
+                <ScalarProperty Name="FirmOkonomi" ColumnName="FirmOkonomi" />
+                <ScalarProperty Name="FirmRoller" ColumnName="FirmRoller" />
+                <ScalarProperty Name="FirmValues" ColumnName="FirmValues" />
+                <ScalarProperty Name="FirmIssues" ColumnName="FirmIssues" />
+                <ScalarProperty Name="FirmReach" ColumnName="FirmReach" />
+                <ScalarProperty Name="FirmBehov" ColumnName="FirmBehov" />
+                <ScalarProperty Name="FirmImportant" ColumnName="FirmImportant" />
+                <ScalarProperty Name="Splitaktiviteter" ColumnName="Splitaktiviteter" />
+                <ScalarProperty Name="Brugprod" ColumnName="Brugprod" />
+                <ScalarProperty Name="Videreudvik" ColumnName="Videreudvik" />
+                <ScalarProperty Name="Loser" ColumnName="Loser" />
+                <ScalarProperty Name="Uddyb" ColumnName="Uddyb" />
+                <ScalarProperty Name="IdeDesc" ColumnName="IdeDesc" />
+                <ScalarProperty Name="English" ColumnName="English" />
+                <ScalarProperty Name="Kategori" ColumnName="Kategori" />
+                <ScalarProperty Name="ProjektNavn" ColumnName="ProjektNavn" />
+                <ScalarProperty Name="Completed" ColumnName="Completed" />
+                <ScalarProperty Name="UpdateDate" ColumnName="UpdateDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Owner" ColumnName="Owner" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="userPitch">
+            <EntityTypeMapping TypeName="startupcentraldkModel.userPitch">
+              <MappingFragment StoreEntitySet="userPitch">
+                <ScalarProperty Name="LookFor2" ColumnName="LookFor2" />
+                <ScalarProperty Name="ProofScale" ColumnName="ProofScale" />
+                <ScalarProperty Name="Summary" ColumnName="Summary" />
+                <ScalarProperty Name="Owners" ColumnName="Owners" />
+                <ScalarProperty Name="riskGoal" ColumnName="riskGoal" />
+                <ScalarProperty Name="riskInvest" ColumnName="riskInvest" />
+                <ScalarProperty Name="finFacts" ColumnName="finFacts" />
+                <ScalarProperty Name="finGrowth" ColumnName="finGrowth" />
+                <ScalarProperty Name="finVariety" ColumnName="finVariety" />
+                <ScalarProperty Name="finBudget" ColumnName="finBudget" />
+                <ScalarProperty Name="proofConceptPayment" ColumnName="proofConceptPayment" />
+                <ScalarProperty Name="proofSales" ColumnName="proofSales" />
+                <ScalarProperty Name="proofMarket" ColumnName="proofMarket" />
+                <ScalarProperty Name="proofBusiness" ColumnName="proofBusiness" />
+                <ScalarProperty Name="DevelopmentDesc" ColumnName="DevelopmentDesc" />
+                <ScalarProperty Name="Collaborations" ColumnName="Collaborations" />
+                <ScalarProperty Name="Traction" ColumnName="Traction" />
+                <ScalarProperty Name="MarketDesc" ColumnName="MarketDesc" />
+                <ScalarProperty Name="SatisfyDesc" ColumnName="SatisfyDesc" />
+                <ScalarProperty Name="TeamDesc" ColumnName="TeamDesc" />
+                <ScalarProperty Name="CompanyDesc" ColumnName="CompanyDesc" />
+                <ScalarProperty Name="MoneyUsage" ColumnName="MoneyUsage" />
+                <ScalarProperty Name="LookFor" ColumnName="LookFor" />
+                <ScalarProperty Name="Agenda" ColumnName="Agenda" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+                <ScalarProperty Name="English" ColumnName="English" />
+                <ScalarProperty Name="Completed" ColumnName="Completed" />
+                <ScalarProperty Name="UpdateDate" ColumnName="UpdateDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="owner" ColumnName="owner" />
+                <ScalarProperty Name="PitchName" ColumnName="PitchName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="formularLoggerSet">
+            <EntityTypeMapping TypeName="startupcentraldkModel.formularLogger">
+              <MappingFragment StoreEntitySet="FormularLogger">
+                <ScalarProperty Name="Read" ColumnName="Read" />
+                <ScalarProperty Name="MailFlow" ColumnName="MailFlow" />
+                <ScalarProperty Name="Contacted" ColumnName="Contacted" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Industry" ColumnName="Industry" />
+                <ScalarProperty Name="CVRNumber" ColumnName="CVRNumber" />
+                <ScalarProperty Name="Owner" ColumnName="Owner" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="activeMembers">
+            <EntityTypeMapping TypeName="startupcentraldkModel.activeMembers">
+              <MappingFragment StoreEntitySet="activeMembers">
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="LoginDate" ColumnName="LoginDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+		  <EntitySetMapping Name="activePlatformMembers">
+            <EntityTypeMapping TypeName="startupcentraldkModel.activePlatformMembers">
+              <MappingFragment StoreEntitySet="activePlatformMembers">
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="LoginDate" ColumnName="LoginDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,48 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using ContentModels = Umbraco.Web.PublishedContentModels;
+@using umbraco.cms.businesslogic.member
+@using Umbraco.Core.Services;
+@using System.Web
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+
+@{
+    @*if (User.Identity.IsAuthenticated)
+    {
+        var currentUser = Members.GetCurrentMember();
+        var investor = Umbraco.Member(currentUser);
+        var unreadfiles = false;
+        var svaret = false;
+        var i = 0;
+
+        foreach (var item in investor.chosenBy)
+        {
+            foreach (var subkat in item.Children)
+            {
+                foreach (var media in subkat.Children)
+                {
+                    if (Umbraco.Media(media.Id).isread == false)
+                    {
+                        unreadfiles = true;
+                        i++;
+                    }
+                }
+            }
+        }
+        if (1 == 1)
+        {
+            <span class="messages">2</span>
+        }
+        else
+        {
+            <span></span>
+        }
+    }*@
+} 
+
+@* --- Load badges for message indication --- *@
+<span id="badgeUnreadMessages" class=""></span>
+<span id="mobilebadgeUnreadMessages" class=""></span>

@@ -1,0 +1,20 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+    @{
+    var partnerPicture = Umbraco.AssignedContentItem.Value<IPublishedContent>
+    ("nfpSponsoredBannerCompanyTitle");
+    }
+
+    <section class="nfp-sponsored-banner-section">
+        <div class="nfp-sponsored-banner-container">
+            <div class="nfp-sponsored-company-name">
+                <img src="@partnerPicture.Url" alt="Partner Picture" style="">
+            </div>
+            <div class="nfp-sponsored-company-description">
+                <p>@Umbraco.AssignedContentItem.Value("nfpSponsoredBannerCompanyDescription")</p>
+            </div>
+            <div class="nfp-sponsored-company-button">
+                <a href="@Umbraco.AssignedContentItem.Value(" nfpSponsoredBannerCompanyButton")">@Umbraco.GetDictionaryValue("ReadMore", "Læs mere")</a>
+            </div>
+        </div>
+    </section>

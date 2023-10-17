@@ -1,0 +1,34 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+<div id="sc-help-2" class="sc-section ">
+    <div class="sc-container">
+        <div class="row">
+            <div class="col-12 text-center sc-heading sc-heading-white">
+                <h2>@Umbraco.AssignedContentItem.Value("helpSectionTitle")</h2>
+                <p>@Umbraco.AssignedContentItem.Value("helpSectionDescription")</p>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="col-md-6 mt-5 ">
+                <div class="help-2-img">
+                    <img src="/media/1680/fordelspris.svg" alt="">
+                    <h3 class="pt-3">@Umbraco.AssignedContentItem.Value("helpTitle1")</h3>
+                    <p>@Umbraco.AssignedContentItem.Value("helpDescription1")</p>
+                </div>
+            </div>
+            <div class="col-md-6 mt-5 ">
+                <div class="help-2-img">
+                    <img src="/media/1683/coaching2.svg"  alt="">
+                    <h3 class="pt-3">@Umbraco.AssignedContentItem.Value("helpTitle2")</h3>
+                    <p>@Umbraco.AssignedContentItem.Value("helpDescription2")</p>
+                </div>
+            </div>
+            <div class="col-md-12 mt-5 ">
+                <div class="help-2-img">
+                    <img src="/media/1681/netvaerk.svg" alt="">
+                    <h3 class="pt-3">@Umbraco.AssignedContentItem.Value("helpTitle3")</h3>
+                    <p>@Umbraco.AssignedContentItem.Value("helpDescription3")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,224 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Umbraco.Core.Models.Member>
+@using StartupCentral.Extensions
+
+@{ 
+    var currentUser = Members.GetCurrentMember();
+    var member = ApplicationContext.Current.Services.MemberService.GetById(currentUser.Id);
+    var roles = Roles.GetRolesForUser(member.Username);
+
+    IEnumerable<IMember> coachesList = ApplicationContext.Current.Services.MemberService.GetMembersByMemberType("coach1");
+    coachesList = coachesList.Where(itm => itm.GetValue<bool>("wwunavailable") == false)
+                             .OrderByDescending(itm => itm.CreateDate)
+                             .Take(3);
+
+    IEnumerable<IMember> partnerList = ApplicationContext.Current.Services.MemberService.GetMembersByMemberType("partner");
+    partnerList = partnerList.Where(itm => itm.GetValue<bool>("wwunavailable") == false)
+                             .OrderByDescending(itm => itm.CreateDate)
+                             .Take(3);
+
+    int mediaItemId = 0;
+
+    var events = new Dictionary<string, DateTime>();
+
+    foreach (var ev in Umbraco.Content(25918).Children().Where(x=>x.IsVisible()))
+    {
+        DateTime StartDate = (ev.Value<DateTime>("startingDateAndTimeOfTheEvent"));
+
+        if (DateTime.Today.Date > StartDate.Date)
+        {
+            continue;
+        }
+
+        events.Add(ev.Name, StartDate);
+    }
+
+    var sortedDict = (from entry in events orderby entry.Value ascending select entry)
+                .ToDictionary(pair => pair.Key, pair => pair.Value).Take(3);
+}
+
+
+<aside class="md-rail">
+
+    @if (member.ContentTypeAlias == "student" || (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains)))
+    {
+        @*<div class="rail-extra-module-container">
+            <div class="rail-extra-module">
+                <div class="rail-extra-module__title">
+                    <h3>Unikke tilbud b2c</h3>
+                </div>
+            </div>
+
+            <ul id="new-partners" class="rail-extra-module__list">
+
+                @foreach (var offer in Umbraco.Content(25917).Children().Where(x => x.IsVisible()).OrderByDescending(x => x.CreateDate).Take(3))
+                {
+                    var typedMedia = offer.Value<IPublishedContent>("offerLogo");
+
+                    <li class="extra-module-entity">
+                        <a href="/login/ekstra-tilbud/" class="extra-module-entity__link">
+                            <div class="extra-module-entity__image">
+                                <img class="entity-image-48 entity-image-squared"
+                                     src=@(!string.IsNullOrEmpty(typedMedia.Url) ? typedMedia.Url : "/media/2189/default-picture-extra-offers.png") alt="@offer.Name Logo">
+
+                            </div>
+
+                            <div class="extra-module-entity__body">
+                                <div class="extra-module-entity__title">@offer.Name</div>
+                                <div class="extra-module-entity__description">
+
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                }
+            </ul>
+
+            @{
+                int numberOfOffers = Umbraco.Content(25917).Children().Where(x => x.IsVisible()).Count();
+                numberOfOffers = numberOfOffers - 3;
+            }
+
+            <a href="/login/ekstra-tilbud/" class="button button--text">+@numberOfOffers andre tilbud</a>
+        </div>*@
+
+    <div class="rail-extra-module-container">
+        <div class="rail-extra-module">
+            <div class="rail-extra-module__title">
+                <h3>Unikke tilbud B2B</h3>
+            </div>
+        </div>
+
+        <ul id="new-partners" class="rail-extra-module__list">
+
+            @foreach (var offer in Umbraco.Content(25917).Children().Where(x => x.IsVisible()).OrderByDescending(x => x.CreateDate).Take(3))
+            {
+                var typedMedia = offer.Value<IPublishedContent>("offerLogo");
+
+                <li class="extra-module-entity">
+                    <a href="/login/ekstra-tilbud/" class="extra-module-entity__link">
+                        <div class="extra-module-entity__image">
+                            <img class="entity-image-48 entity-image-squared"
+                                 src=@(!string.IsNullOrEmpty(typedMedia.Url) ? typedMedia.Url : "/media/2189/default-picture-extra-offers.png") alt="@offer.Name Logo">
+
+                        </div>
+
+                        <div class="extra-module-entity__body">
+                            <div class="extra-module-entity__title">@offer.Name</div>
+                            <div class="extra-module-entity__description">
+
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            }
+        </ul>
+
+        @{
+            int numberOfOffers = Umbraco.Content(25917).Children().Where(x => x.IsVisible()).Count();
+            numberOfOffers = numberOfOffers - 3;
+        }
+
+        @*<a href="/login/ekstra-tilbud/" class="button button--text">+@numberOfOffers andre tilbud</a>*@
+        <a style="color: #47b2b2; font-weight: bold;" href="/login/ekstra-tilbud/" class="button button--text">Se alle tilbud</a>
+    </div>
+    }
+
+    @if (partnerList.Count() > 0)
+    {
+        <div class="rail-extra-module-container">
+            <div class="rail-extra-module">
+                <div class="rail-extra-module__title">
+                    <h3>Nyeste partner</h3>
+                </div>
+            </div>
+
+            <ul id="new-partners" class="rail-extra-module__list">
+
+                @foreach (var p in partnerList)
+                {
+                    if (p.GetValue<string>("wwpartnerAvatar").IsNumeric())
+                    {
+                        mediaItemId = Convert.ToInt32(p.GetValue<string>("wwpartnerAvatar"));
+                    }
+                    else if (!string.IsNullOrEmpty(p.GetValue<string>("wwpartnerAvatar")))
+                    {
+                        mediaItemId = p.GetValue<string>("wwpartnerAvatar").GetIdByUdi();
+                    }
+
+                    var urlprofile = p.GetValue<string>("urlProfile");
+
+                    <li class="extra-module-entity">
+                        <a href="/partnere/@urlprofile/" class="extra-module-entity__link">
+                            <div class="extra-module-entity__image">
+                                <img class="entity-image-48 entity-image-squared"
+                                     src=@Umbraco.Media(mediaItemId).Url() alt="">
+                            </div>
+
+                            <div class="extra-module-entity__body">
+                                <div class="extra-module-entity__title">@p.Name</div>
+                                <div class="extra-module-entity__description">
+                                    @p.GetValue("wwshorttext")
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                }
+
+            </ul>
+
+            <a style="color: #47b2b2; font-weight: bold;" href="/partnere/" class="button button--text">Se alle samarbejdspartnere</a>
+        </div>
+    }
+
+    @if (coachesList.Count() > 0)
+    {
+        <div class="rail-extra-module-container">
+            <div class="rail-extra-module">
+                <div class="rail-extra-module__title">
+                    <h3>Nyeste coaches</h3>
+                </div>
+            </div>
+
+            <ul id="new-coaches" class="rail-extra-module__list">
+
+                @foreach (var coach in coachesList)
+                {
+                    if (coach.GetValue<string>("wwavatar").IsNumeric())
+                    {
+                        mediaItemId = Convert.ToInt32(coach.GetValue<string>("wwavatar"));
+                    }
+                    else if (!string.IsNullOrEmpty(coach.GetValue<string>("wwavatar")))
+                    {
+                        mediaItemId = coach.GetValue<string>("wwavatar").GetIdByUdi();
+                    }
+
+                    var urlprofile = coach.GetValue<string>("urlProfile");
+
+                    <li class="extra-module-entity">
+                        <a href="/coaches/@urlprofile/" class="extra-module-entity__link">
+                            <div class="extra-module-entity__image">
+                                @if (mediaItemId > 0)
+                                {
+                                    <img class="entity-image-48 entity-image-circle"
+                                         src=@Umbraco.Media(mediaItemId).Url() alt="">
+                                }
+
+                            </div>
+
+                            <div class="extra-module-entity__body">
+                                <div class="extra-module-entity__title">@coach.Name.ToString()</div>
+                                <div class="extra-module-entity__description">
+                                    @coach.GetValue("wwshorttxt")
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                }
+
+
+            </ul>
+
+            <a style="color: #47b2b2; font-weight: bold;" href="/coaches/" class="button button--text">Se alle coaches</a>
+        </div>
+    }
+</aside>

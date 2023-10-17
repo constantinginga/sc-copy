@@ -1,0 +1,641 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using RestSharp
+@using System.IO
+@using System.Security.Cryptography.X509Certificates;
+@using StartupCentral.Code.Model.MobilePay;
+@using StartupCentral.Code.Class;
+@using Umbraco.Web.Security
+@using System.Web
+@using System.Web.Security
+
+@{
+    Layout = null;
+
+    IMember member = null;
+    bool exc = false;
+
+    if (Request.QueryString["memberkey"] != null)
+    {
+        member = ApplicationContext.Current.Services.MemberService.GetByKey(new Guid(Request.QueryString["memberkey"]));
+    }
+
+    if (member != null && member.ContentType.Alias.ToLower() == "student")
+    {
+        UpodiWrapperService UpodiWrapperService = new StartupCentral.Code.Class.UpodiWrapperService();
+    }
+
+    <script>
+        var userToken = ''
+        @if (member != null)
+        {
+            @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(member), "';"))
+        }
+    </script>
+
+    if (IsPost)
+    {
+
+    }
+}
+@{
+
+    //var helper = Umbraco.Web.Composing.Current.UmbracoHelper;
+    // Root page (SC_RegisterMember)
+    var node = Umbraco.Content(29767);
+
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+    var currentDate = DateTime.Now;
+    //var monthlyPrice = Int32.Parse(Session["PlanAmount"].ToString());
+    //var totalPrice = monthlyPrice + monthlyPrice * 0.25;
+    var currentPrice = 1788;
+    var proMembershipPrice = 1788;
+    var totalProPrice = proMembershipPrice + proMembershipPrice * 0.25;
+    
+
+    if (Request.QueryString["memberkey"] != null)
+    {
+        member = ApplicationContext.Current.Services.MemberService.GetByKey(new Guid(Request.QueryString["memberkey"]));
+    }
+
+    if (member != null)
+    {
+        try
+        {
+            var UpodiWrapperService = new StartupCentral.Code.Class.UpodiWrapperService();
+            UpodiWrapperService.CreateNewCustomer(member.Id, member);
+        }
+        catch (Exception e)
+        {
+            //
+        }
+    }
+
+    <script>
+        var userToken = ''
+        @if (member != null)
+        {
+            @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(member), "';"))
+        }
+    </script>
+}
+
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Styles -->
+    @{
+        var cssLastWriteTime = new System.IO.FileInfo(System.AppDomain.CurrentDomain.BaseDirectory + "/css/V4 Winter 2021/sc-v4-main.css")
+            .LastWriteTimeUtc.ToString("O").Replace(":", "");
+        var cssLastWriteTime2 = new System.IO.FileInfo(System.AppDomain.CurrentDomain.BaseDirectory + "/css/New 2023/sc-main-2023.css")
+            .LastWriteTimeUtc.ToString("O").Replace(":", "");
+        <link rel="stylesheet" href="@((System.Threading.Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName.Equals("da")) ? "/css/New 2023/prices-da.css" : "/css/New 2023/prices-en.css")">
+
+    }
+    <link rel="stylesheet" href="~/css/V4 Winter 2021/sc-v4-main.css?trick=@cssLastWriteTime" />
+    <link rel="stylesheet" href="~/css/New 2023/sc-main-2023.css?trick=@cssLastWriteTime2" />
+
+    <!-- Fontawesome -->
+    <script src="https://kit.fontawesome.com/0ed5b1a423.js" crossorigin="anonymous"></script>
+
+    <title>Forny Abonnementet</title>
+
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.form/3.50/jquery.form.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/App_Plugins/TeaCommerce/Assets/Scripts/tea-commerce.min.js"></script>
+    @*<script src="https://sdk.paylike.io/6.js"></script>*@
+    <script src="https://sdk.paylike.io/10.js"></script>
+    <script type="text/javascript">
+        _storeId = 1;
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '878782169521900');
+        fbq('track', 'PageView');
+    </script>
+    <noscript>
+        <img height="1" width="1" style="display:none"
+             src="https://www.facebook.com/tr?id=878782169521900&ev=PageView&noscript=1" />
+    </noscript>
+    <!-- End Facebook Pixel Code -->
+</head>
+
+<body>
+
+    <main id="sc-payment">
+        <section>
+            <div class="row-container">
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column centered">
+                            <h2 class="headline-2">@Umbraco.AssignedContentItem.Value("title")</h2>
+                            <h3>@Umbraco.AssignedContentItem.Value("subTitle")</h3>
+                        </div>
+                    </div>
+                </div>
+
+                @if (member != null && member.ContentType.Alias.ToLower() == "student")
+                {
+                    <div class="row">
+                        <div class="column-container">
+                            <div class="column">
+                                <div class="price-card-container">
+
+                                    @foreach (var card in Umbraco.Content(26278).Children().Where(x => x.IsVisible()))
+                                    {
+                                        @*string pricingCardV = card.Value<string>("pricingCardV");
+            var dots = Int32.Parse(pricingCardV);
+            bool highlighted = card.Value<bool>("pricingCardHighlighted");
+            bool isMonthly = card.Value<bool>("pricingCardMonthly");
+            bool banner = card.Value<bool>("pricingCardBanner");
+            var cardTitle = card.Name;
+            var cardPrice = card.Value<string>("pricingCardPrice");
+            var cardUnit = card.Value<string>("priceUnitRate");
+            var cardDescription = card.Value<string>("pricingCardDescription");
+            var cardBindingInfo = card.Value<string>("pricingCardBindingInfo");
+            var cardPriceSubtext = card.Value<string>("pricingCardPriceSub");
+
+            string subscriptionType = "";
+            switch (pricingCardV)
+            {
+                case "1":
+                    subscriptionType = "monthly";
+                    break;
+                case "3":
+                    subscriptionType = "basic";
+                    break;
+                case "12":
+                    subscriptionType = "yearly";
+                    break;
+            }*@
+                                        string pricingCardV = card.Value<string>("pricingCardV");
+                                        var dots = Int32.Parse(pricingCardV);
+                                        var cardDuration = card.Value<string>("priceCardDuration");
+                                        bool highlighted = card.Value<bool>("pricingCardHighlighted");
+                                        bool isMonthly = card.Value<bool>("pricingCardMonthly");
+                                        bool banner = card.Value<bool>("pricingCardBanner");
+                                        var cardTitle = card.Name;
+                                        var cardPrice = card.Value<string>("pricingCardPrice");
+                                        var cardUnit = card.Value<string>("priceUnitRate");
+                                        var cardDescription = card.Value<string>("pricingCardDescription");
+                                        var cardBindingInfo = card.Value<string>("pricingCardBindingInfo");
+                                        var cardPriceSubtext = card.Value<string>("pricingCardPriceSub");
+
+                                        string subscriptionType = "";
+                                        switch (pricingCardV)
+                                        {
+                                            case "1":
+                                                subscriptionType = "monthly";
+                                                break;
+                                            case "3":
+                                                subscriptionType = "basic";
+                                                break;
+                                            case "8":
+                                                subscriptionType = "promonthly";
+                                                break;
+                                            case "12":
+                                                subscriptionType = "yearly";
+                                                break;
+                                            case "16":
+                                                subscriptionType = "premium";
+                                                break;
+                                        }
+
+                                        <!--if (subscriptionType != "yearly")
+        {
+
+            <div class="nfp-price-card-container">
+
+                <div class="nfp-price-card-top_pro">
+                    <div class="nfp-price-card-top_text">
+                        <h2 class="nfp-price-card-top-title">@cardTitle</h2>
+                        <p class="nfp-price-card-top-price">@cardPrice @cardUnit</p>
+                        @if (subscriptionType == "yearly" || subscriptionType == "monthly")
+                        {
+                            var cardPriceNote = card.Value<string>
+                                ("pricingCardPriceNote");
+                            <p class="nfp-price-card-top-price_span">@cardPriceNote</p>
+                        }
+                    </div>
+                </div>
+                <div class="nfp-price-card-text_pro">
+                    <ul class="nfp-price-card-text_list_pro">
+                        <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription1")</li>
+                        <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription2")</li>
+                        <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription3")</li>
+                        <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription4")</li>
+                        <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription5")</li>
+                        <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription6")</li>
+                        <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription7")</li>
+                        <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription8")</li>
+                        <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription9")</li>
+                        <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription10")</li>
+                    </ul>-->
+                                        @*<button class="nfp-price-card-text_button_pro" value="@cardPrice" onclick="savePlan(@cardPrice, '@subscriptionType')">@Umbraco.GetDictionaryValue("Choose", "Vælg")</button>*@
+                                        <!--<button onclick="pay()"
+                            class="nfp-price-card-text_button_pro" value="@dots">
+                        Vælg abonnement
+                    </button>
+                    <p class="nfp-price-card-text_info">@cardBindingInfo</p>
+                </div>
+            </div>
+        }
+        else
+        {
+
+
+            <div class="nfp-price-card-top_premium">
+                <div class="nfp-price-card-top_text">
+                    <h2 class="nfp-price-card-top-title">@cardTitle</h2>
+                    <p class="nfp-price-card-top-price">@cardPrice @cardUnit</p>
+                    @if (subscriptionType == "premium")
+                    {
+                        var cardPriceNote = card.Value<string>
+                            ("pricingCardPriceNote");
+                        <p class="nfp-price-card-top-price_span">@cardPriceNote</p>
+                    }
+                </div>
+            </div>
+            <div class="nfp-price-card-text_premium">
+                <ul class="nfp-price-card-text_list_premium">
+                    @for (var i = 0; i < 10; i++)
+                    {
+                        <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value($"nfpPriceDescription{i + 1}")</li>
+                    }
+                </ul>
+                <p id="demo" style="justify-content: center; display: flex; color: #47b2b2"></p>
+
+                <button onclick="pay()"
+                        class="nfp-price-card-text_button_pro" value="@dots">
+                    Vælg abonnement
+                </button>
+
+                <p class="nfp-price-card-text_info">@cardBindingInfo</p>
+            </div>
+
+
+        }-->
+                                        
+                                            <div class="nfp-price-card-container">
+
+                                                @if (subscriptionType != "premium")
+                                                {
+
+                                                    <div class="nfp-price-card-top_pro">
+                                                        <div class="nfp-price-card-top_text">
+                                                            <h2 class="nfp-price-card-top-title">@cardTitle</h2>
+                                                            <p class="nfp-price-card-top-price">@cardPrice @cardUnit</p>
+                                                            @if (subscriptionType == "promonthly" || subscriptionType == "monthly")
+                                                            {
+                                                                var cardPriceNote = card.Value<string>
+                                                                    ("pricingCardPriceNote");
+                                                                <p class="nfp-price-card-top-price_span">@cardPriceNote</p>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="nfp-price-card-text_pro">
+                                                        <ul class="nfp-price-card-text_list_pro">
+                                                            <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription1")</li>
+                                                            <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription2")</li>
+                                                            <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription3")</li>
+                                                            <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription4")</li>
+                                                            <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription5")</li>
+                                                            <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription6")</li>
+                                                            <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription7")</li>
+                                                            <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription8")</li>
+                                                            <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription9")</li>
+                                                            <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription10")</li>
+                                                        </ul>
+                                                        @*<button class="@((isMonthly) ? " nfp-price-card-text_button_basic" : "nfp-price-card-text_button_pro" )" value="@cardPrice" onclick="savePlan(@cardPrice, '@subscriptionType', '@landingPromoCode')">@Umbraco.GetDictionaryValue("Choose", "Vælg")</button>*@
+                                                    <button onclick="pay('@subscriptionType')"
+                                                            class="nfp-price-card-text_button_pro" value="@dots">
+                                                        @Umbraco.GetDictionaryValue("Choose", "Vælg")
+                                                    </button>
+                                                        <p class="nfp-price-card-text_info">@cardBindingInfo</p>
+                                                    </div>
+                                                }
+
+                                                else
+                                                {
+                                                    <div class="nfp-price-card-top_premium">
+                                                        <div class="nfp-price-card-top_text">
+                                                            <h2 class="nfp-price-card-top-title">@cardTitle</h2>
+                                                            <p class="nfp-price-card-top-price">@cardPrice @cardUnit</p>
+                                                            @if (subscriptionType == "premium")
+                                                            {
+                                                                var cardPriceNote = card.Value<string>
+                                                                    ("pricingCardPriceNote");
+                                                                <p class="nfp-price-card-top-price_span">@cardPriceNote</p>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="nfp-price-card-text_premium">
+                                                        <ul class="nfp-price-card-text_list_premium">
+                                                            @for (var i = 0; i < 10; i++)
+                                                            {
+                                                                <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value($"nfpPriceDescription{i + 1}")</li>
+                                                            }
+                                                        </ul>
+                                                        <p id="demo" style="justify-content: center; display: flex; color: #47b2b2"></p>
+                                                        @*<button class="nfp-price-card-text_button_premium" value="@cardPrice" onclick="savePlan(@cardPrice, '@subscriptionType', '@landingPromoCode')">@Umbraco.GetDictionaryValue("Choose", "Vælg")</button>*@
+                                                    <button onclick="pay('@subscriptionType')"
+                                                            class="nfp-price-card-text_button_pro" value="@dots">
+                                                        @Umbraco.GetDictionaryValue("Choose", "Vælg")
+                                                    </button>
+                                                        <p class="nfp-price-card-text_info">@cardBindingInfo</p>
+                                                    </div>
+                                                }
+
+                                            </div>                                       
+                                    }
+
+
+                                </div>
+                            </div>
+
+                            <div class="details-section">
+                                    <p class="details-section__h">@node.Value("paymentInfoTitle").ToString()</p>
+                                    <div class="promocode-section" id="promocode-section" style="border-bottom: none">
+                                        <p>@node.Value("paymentInfoPromoTitle").ToString()</p>
+                                        <p>@node.Value("paymentInfoPromoDesc").ToString()</p>
+                                        <input type="text" name="promo-code" id="promo-code" placeholder="@node.Value("paymentInfoPromoPlaceholder").ToString()">
+                                        <div class="promocode-section__btns">
+                                            <button id="promo-code-submit">@node.Value("paymentInfoPromoApply").ToString()</button>
+                                            <button id="promo-code-cancel">@node.Value("paymentInfoPromoRemove").ToString()</button>
+                                        </div>
+
+                                        <p class="promocode-section__msg"></p>
+                                    </div>
+                                </div>
+
+                                <div class="loading-modal">
+                                    <div class="modal-content">
+                                        <div class="modal-content__loading">
+                                            <p>@node.Value("loadingModalH")</p>
+                                            @node.Value("loadingModalText")
+                                            <div class="modal-content-loader"></div>
+                                        </div>
+                                        <div class="modal-content__done is-disabled">
+                                            <p>@node.Value("loadingModalHFinished")</p>
+                                            @node.Value("loadingModalTextFinished")
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <p style="display: flex; justify-content: center">
+                                    *Alle priser er eksklusiv moms
+                                </p>
+                                <div class="basic-user-link-to-lounge">
+                                    <p style="margin-bottom: 1.5rem">@Umbraco.AssignedContentItem.Value("basicSection1") <b>Basic medlem:</b></p>
+                                    <a href="https://www.startupcentral.dk/lounge/login">@Umbraco.AssignedContentItem.Value("basicSection2")</a>
+                                    <p style="margin-top: 1.5rem">@Umbraco.AssignedContentItem.Value("basicSection3")</p>
+
+                                </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="column-container column-7">
+                            <div class="column">
+                                <p><strong>@Umbraco.AssignedContentItem.Value("titleOfSection")</strong></p>
+                                @Umbraco.AssignedContentItem.Value("contextOfTheSection")
+                            </div>
+                        </div>
+                        <div class="column-container">
+                            <div class="column">
+                                <img class="content-image" src="/media/2409/payment.svg" alt="Payment">
+                            </div>
+                        </div>
+                    </div>
+                } //if student closing tag
+
+
+                else
+                {
+                    <div class="row">
+                        <div class="column-container column-7">
+                            <div class="column">
+                                <p><strong>@Umbraco.AssignedContentItem.Value("NotAStudent")</strong></p>
+                            </div>
+                        </div>
+                        <div class="column-container">
+                            <div class="column">
+                                <img class="content-image" src="/media/2409/payment.svg" alt="Payment">
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </section>
+    </main>
+
+    <script src="~/scripts/startupcental.js"></script>
+    <script>
+
+
+
+        function pay(type) {
+
+        let subscriptionPeriod = -1;
+        switch (type) {
+            case "monthly":
+                subscriptionPeriod = 1;
+                break;
+            case "quarterly":
+                subscriptionPeriod = 3;
+                break;
+            case "promonthly":
+                subscriptionPeriod = 8;
+                break;
+            case "yearly":
+                subscriptionPeriod = 12;
+                break;
+            case "premium":
+                subscriptionPeriod = 16;
+            }
+
+            console.log(subscriptionPeriod)
+                const paylike = Paylike({ key: '86594f94-baee-4f36-84e7-dec6ed9e4189' });
+                paylike.pay(
+                    {
+                        test: true,
+                        unplanned: { merchant: true },
+                    },
+                    (err, result) => {
+                        if (err) return console.log(err)
+                        $.ajax({
+                        type: "POST",
+                        url: location.origin + "/umbraco/api/upodiapi/savepaymentmethod",
+                        data: {
+                            UserId: '@Request.QueryString["memberkey"]',
+                            Token: result.transaction.id,
+                            PromoKode: promocode,
+                            SubscriptionType: subscriptionPeriod
+                        },
+                            success: function (data) {
+                                window.location.href = "/betaling/gennemfort/";
+                        }
+                    });
+                        console.log(result.transaction.id);
+                    }
+                )
+            }
+
+            function ContactSync() {
+                startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_sync', {},
+                    function (data) {
+                        if (data) {
+                            if (data.Success) {
+                                console.log('Contact Sync');
+                            }
+                        }
+                    });
+
+                window.location.href = "/betaling/gennemfort/";
+            }
+
+
+
+@*PROMOCODE*@
+
+
+
+    var currentPrice = 1788;
+    var proMembershipPrice = 1788;
+    //var totalProPrice = proMembershipPrice + proMembershipPrice * 0.25;
+    let promocode = "";
+
+       $("#promo-code-submit").click(function () {
+        submitPromocode(null);
+    });
+
+    function submitPromocode(promo) {
+        promocode = (!promo) ? $("#promo-code").val().trim() : promo;
+    if (!promocode || promocode === '') return;
+    $(".loading-modal").css("display", "flex");
+    $(".promocode-section__msg").css("color", "red");
+        $("#promo-code-submit").prop("disabled", true);
+        $(".confirm-payment__modal").css("display", "flex");
+        $.ajax({
+            url: '/umbraco/Surface/RegisterUserPayment/ApplyPromocode',
+            type: 'POST',
+            data: {
+                promocode: promocode
+            },
+            success: function (msg) {
+                // check if promocode is valid/invalid
+                if (typeof msg === 'string') {
+                    currentPromocode = "StartupCentral-2020";
+                    $(".promocode-section__msg").text(msg);
+                    discountAmount.text("0");
+                    currentPrice = proMembershipPrice;
+                    $(".nfp-price-card-top-price").text(currentPrice);
+                } else {
+                    currentPrice = roundToTwo(parseInt(proMembershipPrice - roundToTwo(msg["Item1"] * proMembershipPrice)));
+                    $(".nfp-price-card-top-price").text(currentPrice);
+                    $(".promocode-section__msg").css("color", "green");
+                    $(".promocode-section__msg").html("Rabatkoden er aktiveret");
+                    let pcDuration = "";
+
+                    let afterPrice = ('@Session["PlanType"]' === 'monthly') ? 'md.' : ('@Session["PlanType"]' === 'quarterly') ? 'kvt.' : '';
+                }
+
+                // recalculate total price
+                //$(".nfp-price-card-top-price").text(newMonthlyPrice + newMonthlyPrice * 0.25);
+                $(".loading-modal").css("display", "none");
+            },
+            complete: function (msg) {
+                $("#promo-code-submit").prop("disabled", false);
+                $(".confirm-payment__modal").css("display", "none");
+            }
+        });
+    }
+
+    $("#promo-code-cancel").click(function () {
+        $(".promocode-section__msg").html("&nbsp;");
+        $("#promo-code").val(null);
+        $(".nfp-price-card-top-price").text("0");
+        $(".nfp-price-card-top-price").text(proMembershipPrice);
+        currentPromocode = "StartupCentral-2020";
+        dAmount = normalAmount;
+    });
+
+    function roundToTwo(num) {
+        return +(Math.round(num + "e+2") + "e-2");
+
+    }
+    </script>
+
+    <script>
+
+        var countDownDate = new Date("Jul 31, 2023 23:59:59").getTime();
+
+
+        var x = setInterval(function () {
+
+
+            var now = new Date().getTime();
+
+
+            var distance = countDownDate - now;
+
+
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+
+            document.getElementById("demo").innerHTML = "! " + days + "d " + hours + "h "
+                + minutes + "m " + seconds + "s " + " !";
+
+            // If the count down is finished, write some text
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("demo").innerHTML = "EXPIRED";
+            }
+        }, 1000);
+    </script>
+
+
+    <script>
+        const cardsContainer = document.querySelectorAll(".price-card-container");
+        let cardsContainer2 = document.querySelectorAll(".nfp-price-card-container");
+        for (let i = 0; i < cardsContainer.length; i++) {
+            cardsContainer2[i].style.display = "none";
+            cardsContainer2[2].style.display = "none";
+        }
+    </script>
+    <style>
+        .is-hidden {
+            display: none;
+        }
+
+        .price-card-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    </style>
+</body>
+</html>
+
+

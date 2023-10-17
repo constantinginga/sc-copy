@@ -1,0 +1,40 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+
+@{
+    var loginStatusModel = Members.GetCurrentLoginStatus();
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+    Html.RequiresJs("/umbraco_client/ui/jquery.js");
+    Html.RequiresJs("/umbraco_client/Application/JQuery/jquery.validate.min.js");
+    Html.RequiresJs("/umbraco_client/Application/JQuery/jquery.validate.unobtrusive.min.js");
+
+    var logoutModel = new PostRedirectModel();
+    
+    @*
+        Here you can specify a redirect URL for after logging out, by default umbraco will simply
+        redirect to the current page. Example to redirect to the home page:
+        *@
+        logoutModel.RedirectUrl = "https://www.startupcentral.dk"; 
+    
+}
+
+@* NOTE: This RenderJsHere code should be put on your main template page where the rest of your script tags are placed *@
+@Html.RenderJsHere()
+	
+@if (loginStatusModel.IsLoggedIn)
+{
+	using (Html.BeginUmbracoForm<UmbLoginStatusController>("HandleLogout"))    {  
+		
+         <button id="logoutbutton">
+			Log af <i class="fa fa-sign-out" aria-hidden="true"></i>
+         </button>  
+        @Html.HiddenFor(m => logoutModel.RedirectUrl)
+			
+    }
+}

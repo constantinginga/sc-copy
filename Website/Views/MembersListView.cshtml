@@ -1,0 +1,47 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Persistence.DatabaseModelDefinitions;
+
+@{
+    Layout = "MasterNoIndex.cshtml";
+
+    if (!User.Identity.IsAuthenticated)
+    {
+        HttpContext.Current.Response.Redirect("/login/?NodeId="+Model.Id);
+    }
+
+    var top200new = ApplicationContext.Current.Services.MemberService.GetAll(0, 200, out long totalRecords, "Id", Direction.Descending);
+}
+<br />
+<br />
+<br />
+<br />
+
+<div class="column centered">
+    <table cellpadding="2" cellspacing="2" border="1">
+        <tr>
+            <td>ID</td>
+            <td>Username</td>
+            <td>Alias</td>
+            <td>Name</td>
+            <td>Mobile</td>
+            <td>CreateDate</td>
+            <td>Approved</td>
+            <td>UpdateDate</td>            
+            <td>LastLoginDate</td>            
+        </tr>
+        @foreach (var m in top200new)
+        {
+            <tr>
+                <td><a href="/umbraco/#/member/member/edit/@m.Id" target="_blank">@m.Id</a></td>
+                <td>@m.Username</td>
+                <td>@m.ContentType.Alias</td>
+                <td>@m.Name</td>
+                <td>@m.GetValue("wwmobile")</td>
+                <td>@m.CreateDate</td>
+                <td>@(m.IsApproved?"1":"false")</td>
+                <td>@m.UpdateDate</td>                
+                <td>@m.LastLoginDate</td>
+            </tr>
+        }
+    </table>
+</div>

@@ -1,0 +1,16 @@
+{ 
+   propertyEditors: [{ 
+     alias: "Attityde.MobilePay.Refunder", 
+     name: "Attityde.MobilePay.Refunder", 
+     editor: { 
+       view: "~/App_Plugins/Attityde.MobilePay.Refunder/views/default.html", 
+       hideLabel: false 
+     } 
+  }], 
+  javascript: [ 
+    "~/App_Plugins/Attityde.MobilePay.Refunder/controllers/Attityde.MobilePay.Refunder.controller.js" 
+  ], 
+  css: [ 
+	"~/App_Plugins/Attityde.MobilePay.Refunder/styles/styles.css" 
+	]  
+} 

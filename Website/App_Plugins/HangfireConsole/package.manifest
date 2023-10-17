@@ -1,0 +1,9 @@
+﻿{
+  "dashboards": [
+    {
+      "alias": "hangfireConsole",
+      "view": "/App_Plugins/HangfireConsole/dashboard.html",
+      "sections": [ "settings" ]
+    }
+  ]
+}

@@ -1,0 +1,264 @@
+﻿@using Umbraco.Web.Security
+@using System.Web
+@using System.Web.Security
+
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@using StartupCentral.Extensions
+@{
+    Layout = null;
+    var currentUser = Members.GetCurrentMember();
+}
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <!-- PROD-->
+    <meta name="google-site-verification" content="C8M6dxqC_FWomrN7Lk_uDXZ5AhlvDavZpKUVDBFAT-U" />    
+
+    <!-- Google Tag Manager -->
+    @if (User.Identity.IsAuthenticated)
+    {
+        var user_Id = currentUser.Id;
+        var user_Type = currentUser.ContentType.Alias;
+
+        <script>
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+            ga('create', 'UA-117081036-1', 'auto');
+            ga('set', 'userId', '@user_Id');
+            ga('set', 'cd1', '@user_Type');
+            ga('send', 'pageview');
+        </script>
+    }
+    else
+    {
+        <script>
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+            ga('create', 'UA-117081036-1', 'auto');
+            ga('set', 'cd1', 'guest');
+            ga('send', 'pageview');
+        </script>
+    }
+    <!-- End Google Tag Manager -->
+    <!-- ManyChat -->
+    <script src="//widget.manychat.com/390866858042761.js" async="async"></script>
+    <!-- ManyChat End -->
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    @Umbraco.RenderMacro("Robots")
+    @Umbraco.RenderMacro("deviceicons")
+    @*
+    @Umbraco.RenderMacro("META")
+    @Umbraco.RenderMacro("facebookpixel")
+    <title>@Umbraco.RenderMacro("SideTitel")</title>
+    *@
+    
+    @{
+        var wwsidetitle = string.Empty;
+        var wwdescription = string.Empty;
+        var imgPath = string.Empty;
+
+        if (CurrentPage.DocumentTypeAlias == "blogItem")
+        {
+            wwsidetitle = CurrentPage.blogTitle;
+            var a = CurrentPage.excerpt;
+            wwdescription = a.ToString();
+
+            try
+            {
+                var m = Umbraco.Media((int)CurrentPage.bImage.Id);
+                imgPath = m.Url;
+            }
+            catch
+            {
+                imgPath = "/media/1804/header-ui_tegnebraet-1-kopi.png";
+            }
+
+        }
+        else if(CurrentPage.DocumentTypeAlias == "memberProfile")
+        {
+            var memberProfile = (IMember)HttpContext.Current.Items["memberProfile"];
+            var z = 0;
+
+            if (memberProfile.GetValue<string>("wwavatar").IsNumeric())
+            {
+                z = Convert.ToInt32(memberProfile.GetValue<string>("wwavatar"));
+            }
+            else if (!string.IsNullOrEmpty(memberProfile.GetValue<string>("wwavatar")))
+            {
+                z = memberProfile.GetValue<string>("wwavatar").GetIdByUdi();
+            }
+            
+            if(memberProfile.ContentType.Alias == "coach1")
+            {
+                wwsidetitle = memberProfile.Name.ToString() + " | Coach";
+                wwdescription = memberProfile.GetValue<string>("bodyText");
+            }
+            else
+            {
+                //memberProfile.Name.ToString() + " | Partnere";
+                wwsidetitle = memberProfile.GetValue<string>("wwtitleSEO");
+                wwdescription = memberProfile.GetValue<string>("wwdescriptionSEO");
+            }
+            
+            imgPath = Umbraco.Media(z).Url();
+        }
+        else
+        {
+            wwsidetitle = CurrentPage.wwsidetitle;
+            wwdescription = CurrentPage.wwdescription;
+
+            try
+            {
+                var m = Umbraco.Media((int)CurrentPage.wwimage.Id);
+                imgPath = m.Url;
+            }
+            catch
+            {
+                imgPath = "/media/1804/header-ui_tegnebraet-1-kopi.png";
+            }
+        }
+    }
+
+    <title>@wwsidetitle</title>
+    <meta name="title" content="@wwsidetitle">
+    <meta property="og:title" content="@wwsidetitle">
+    <meta name="description" content="@wwdescription">
+    <meta property="og:description" content="@wwdescription">
+    <meta property="og:image" content="@imgPath">
+    
+    <meta charset="UTF-8">
+
+    <!-- Facebook Pixel Code -->
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '295247367997820');
+        fbq('track', 'PageView');
+    </script>
+
+    <noscript>
+        <img height="1" width="1" style="display:none"
+             src="https://www.facebook.com/tr?id=295247367997820&ev=PageView&noscript=1" />
+    </noscript>
+    <!-- End Facebook Pixel Code -->
+    
+    <!-- TrustBox script -->
+    <script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
+    <!-- End TrustBox script -->
+    
+
+    @{
+        MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+        IMember currentMember = null;
+
+        if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+        {
+            currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+        }
+
+        <script>
+            var userToken = ''
+
+            @if (currentMember != null)
+            {
+                @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(currentMember), "';"))
+            }
+        </script>
+
+    }
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/0ed5b1a423.js" crossorigin="anonymous"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="~/css/Refined Spring 2020/main.css">
+    <link rel="stylesheet" href="~/css/Refined Spring 2020/slick/slick.css" />
+    <link rel="stylesheet" href="~/css/Refined Spring 2020/slick/slick-theme.css" />
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/App_Plugins/TeaCommerce/Assets/Scripts/tea-commerce.min.js"></script>
+    
+    <script type="text/javascript">(function(){var s=document.createElement('script');s.type='text/javascript';s.async=true;s.src='//pxl.host/c.js';var x=document.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);})();</script><noscript><a href="https://whocopied.me/" target="_blank">Whocopied.me</a></noscript>
+</head>
+<body>
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PNR3NKD"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TZ8TG9G"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+
+
+    <div id="page">
+
+        @{ Html.RenderAction("RenderNavigationBar", "SiteLayout");}
+
+        @RenderBody()
+
+        @if (!User.Identity.IsAuthenticated)
+        {
+            Html.RenderAction("RenderNewsletter", "SiteLayout");
+        }
+
+        @{ Html.RenderAction("RenderFooter", "SiteLayout");}
+        @{ Html.RenderAction("RenderTTTArrow", "SiteLayout");}
+
+    </div>
+
+    <!-- Slick Carousel -->
+    <script src="/scripts/sc2/slick.min.js"></script>
+
+    <script type="text/javascript" src="/scripts/custom.js?v=3"></script>
+    <script src="~/scripts/startupcental.js?v=3"></script>
+
+    <!-- Main -->
+    @*<script src="/scripts/sc2/main.js"></script>*@
+    
+    <!-- Tryg Badge -->
+    <script src="https://tryghedsmaerket.dk/api/badge.js" async></script>
+    <!-- Tryg Badge -->
+
+</body>
+</html>
+
+
+

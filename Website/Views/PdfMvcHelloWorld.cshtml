@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = null;
+    Response.ContentType = "text/xsl";
+    Response.AppendHeader("X-Pdf-Render", "true");
+	
+	// -- Uncomment this to force the browser to download the PDF.
+    // Response.AppendHeader("X-Pdf-Force-Download","darren.pdf");
+}
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    <fo:layout-master-set>
+    <fo:simple-page-master master-name="A4" page-width="210mm" page-height="297mm" margin-top="1cm" margin-bottom="1cm" margin-left="1cm" margin-right="1cm">
+        <fo:region-body margin="3cm"/>
+        <fo:region-before extent="2cm"/>
+        <fo:region-after extent="2cm"/>
+        <fo:region-start extent="2cm"/>
+        <fo:region-end extent="2cm"/>
+    </fo:simple-page-master>
+    </fo:layout-master-set>
+
+    <fo:page-sequence master-reference="A4">
+    <fo:flow flow-name="xsl-region-body">
+        <fo:block>
+        	<fo:inline font-weight="bold">Hello World the current page is called '@CurrentPage.Name'</fo:inline>
+        </fo:block>
+    </fo:flow>
+    </fo:page-sequence>
+</fo:root>
+	

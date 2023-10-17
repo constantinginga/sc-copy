@@ -1,0 +1,189 @@
+section.coach-holder2 {
+    margin-top: -$nav-sm;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-gap: 2.5rem;
+
+    .coachcard {
+        border: 1px solid $sc-border;
+        width: 350px;
+        margin: auto;
+        @include boxshadow;
+        border-radius: 1rem;
+        background-color: $sc-white;
+
+        &-header {
+            img {
+                max-width: 20rem;
+                border-radius: 50%;
+                margin: auto;
+                border: 1px solid $sc-border;
+                // @include boxshadow;
+            }
+
+            margin-top: 2.5rem;
+        }
+
+        // &-header {
+        //     img {
+        //         width: 100%;
+        //         height: 200px;
+        //         object-fit: cover;
+        //     }
+        // }
+
+
+        &-text {
+            display: grid;
+            grid-gap: 2rem;
+            // margin: 2rem 0;
+            padding: 2.5rem;
+
+            .name {
+                h2 {
+                    margin: 0;
+                }
+
+                p {
+                    font-size: 1.5rem;
+                    color: $sc-gray;
+                }
+            }
+
+            .tags {
+                @include flex(row);
+                justify-content: center;
+                flex-wrap: wrap;
+
+                .tag {
+                    border: 1px solid $sc-border;
+                    // border: 1px solid $sc-primary
+                    @include boxshadow-soft;
+                    margin: .5rem;
+                    border-radius: 2.5rem;
+                    padding: .25rem 1.5rem;
+                    font-size: 1.4rem;
+                    font-weight: bold;
+                }
+            }
+
+            .shortdesc {
+                p {
+                    // color: $sc-secondary;
+                    font-size: 1.5rem;
+                }
+            }
+
+        }
+
+        // &-buttons {
+        //     @include flex(row);
+        //     width: fit-content;
+        //     // border: 2px solid red;
+        //     margin: auto;
+        //     align-items: center;
+
+        //     .profile-btn {
+        //         background-color: $sc-primary;
+        //         color: $sc-white;
+        //         width: fit-content;
+        //         padding: .75rem 1rem;
+        //         border-right: 2px solid $sc-overlay;
+        //         border-top-left-radius: .5rem;
+        //         border-bottom-left-radius: .5rem;
+        //         @include transition(0.2s);
+
+        //         &:hover {
+        //             background-color: $sc-secondary;
+        //         }
+        //     }
+
+        //     .send-msg {
+        //         cursor: pointer;
+        //         background-color: $sc-primary;
+        //         color: $sc-white;
+        //         padding: 1rem 1.5rem;
+        //         border: none;
+        //         border-top-right-radius: .5rem;
+        //         border-bottom-right-radius: .5rem;
+        //         @include transition(0.2s);
+
+        //         i {
+        //             font-size: 2rem;
+        //         }
+
+        //         &:hover {
+        //             background-color: $sc-secondary;
+        //         }
+        //     }
+        // }
+        &-buttons {
+            position: relative;
+            @include flex(column);
+            padding: 1rem 0;
+            // border: 2px solid red;
+            margin: auto;
+            align-items: center;
+            justify-content: center;
+
+            &:before {
+                content: "";
+                position: absolute;
+                top: 0;
+                // left: 50%;
+                width: 15rem;
+                height: 1px;
+                background-color: $sc-border;
+                border-radius: 50%;
+            }
+
+            .profile-btn {
+                display: block;
+                // font-weight: bold;
+                padding: 1rem;
+                color: $sc-primary;
+                @include transition(0.2s);
+
+                &:hover {
+                    color: $sc-white;
+                    background-color: $sc-primary;
+                }
+            }
+
+            .send-msg {
+                display: block;
+                cursor: pointer;
+                background-color: $sc-white;
+                color: $sc-primary;
+                padding: 1rem;
+                border: none;
+                // border: 1px solid red;
+                @include transition(0.2s);
+                width: 100%;
+                // font-weight: bold;
+
+                i {
+                    font-size: 2rem;
+                }
+
+                &:hover {
+                    color: $sc-white;
+                    background-color: $sc-primary;
+                }
+            }
+        }
+    }
+}
+
+@include media-md {
+    section.coach-holder2 {
+        // grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@include media-lg {
+    section.coach-holder2 {
+        margin-top: -$nav-lg;
+        grid-gap: 7.5rem;
+    }
+}

@@ -1,0 +1,29 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Umbraco.Core.Models.Member>
+@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+@{
+    var currentUser = Members.GetCurrentMember();
+    var iepLink = Model.MacroParameters["iepLink"].ToString();
+    var iepCaption = Model.MacroParameters["iepCaption"].ToString();
+    var iepNewWindow = Model.MacroParameters["iepNewWindow"].ToString() == "1" ? "_blank" : null;
+
+    var iectaLink = Model.MacroParameters["iectaLink"].ToString();
+    var iectaCaption = Model.MacroParameters["iectaCaption"].ToString();
+    var iectaNewWindow = Model.MacroParameters["iectaNewWindow"].ToString() == "1" ? "_blank" : null;
+}
+
+                <div class="inline-elements">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        if (Umbraco.Member(currentUser.Id).IsDocumentType("student"))
+                        {
+                            <a href="@iepLink" target="@iepNewWindow" class="button button--lg">@iepCaption</a>
+                        }
+                    }
+                    else
+                    {
+                        <a href="@iepLink" target="@iepNewWindow" class="button button--lg">@iepCaption</a>
+                        <a href="@iectaLink" target="@iectaNewWindow" class="button button--lg button--cta">@iectaCaption</a>
+                    }
+
+                    </div>

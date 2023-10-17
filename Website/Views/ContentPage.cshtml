@@ -1,0 +1,18 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+	Layout = "Master.cshtml";
+}
+
+@{
+    var currentUser = Members.GetCurrentMember();
+}
+
+@{ Html.RenderAction("RenderTTTArrow", "SiteLayout");}
+@{ Html.RenderAction("RenderTitleControls", "SiteLayout");}
+@Html.GetGridHtml(Model, "mainContent", "SC-Grid")
+
+@if (User.Identity.IsAuthenticated && Umbraco.Member(currentUser.Id).IsDocumentType("student"))
+{
+}else{
+    @Html.GetGridHtml(Model, "guestContent", "SC-Grid")
+}

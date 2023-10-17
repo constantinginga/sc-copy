@@ -1,0 +1,672 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@{ 
+    var currentUser = Members.GetCurrentMember();
+    int c = 0;
+}
+
+<header id="sc-site-header" class="sc-site-header">
+    <nav id="main-nav" class="main-nav scrolling">
+        <div class="nav-burger">
+            <button id="nav-burger-button" class="nav-burger-button">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="nav-logo">
+            @if (!User.Identity.IsAuthenticated)
+            {
+
+                <a href="/"> <img src="/media/1825/suc-white-logo.png" alt="SUC LOGO"></a>
+
+              
+
+            }
+            else
+            {
+                        
+                <a href="/login/min-side/"> <img src="/media/1825/suc-white-logo.png" alt="SUC LOGO"> </a>
+                            
+            }
+        </div>
+
+        <div class="nav-menu">
+            <ul class="menu-items">
+                <li class="dropdown">
+                    <div class="dropdown-box">
+                        <div class="dropdown-box-icon">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <div class="dropdown-box-text">
+                            <span>Fordele<i class="fas fa-caret-down"></i></span>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-menu-item">
+                            <a href="/vi-tilbyder/"><i class="far fa-address-card"></i><span>Vi Tilbyder</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/sparring/"><i class="fas fa-user-graduate"></i><span>Sparring</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/coaches/"><i class="fas fa-id-badge"></i><span>Coachteam</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/spar-penge-i-din-virksomhed/"><i class="fas fa-piggy-bank"></i><span>Spar penge</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/partnere/"><i class="fas fa-handshake"></i><span>Samarbejdspartnere</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/forretningsplanen/"><i class="fas fa-book-reader"></i><span>Forretningsplan</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <div class="dropdown-box">
+                        <div class="dropdown-box-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="dropdown-box-text">
+                            <span>Iværksætteri<i class="fas fa-caret-down"></i></span>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-menu-item">
+                            <a href="/foer-opstart/"><i class="fas fa-satellite-dish"></i><span>Før Opstart</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/hvem-vi-hjaelper/"><i class="fas fa-people-carry"></i><span>Hvem vi hjælper</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/podcast/"><i class="fas fa-microphone-alt"></i><span>Podcast</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/erhvervspartnere/"><i class="fas fa-coins"></i><span>Erhvervspartnere</span></a>
+                        </li>
+                        @*<li class="dropdown-menu-item">
+                            <a href="#!"><i class="fas fa-user-astronaut"></i><span>Startup Phase</span></a>
+                        </li>*@
+                        @*<li class="dropdown-menu-item">
+                            <a href="#!"><i class="fas fa-space-shuttle"></i><span>Already Started</span></a>
+                        </li>*@
+                        
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/cvr/"><i class="fas fa-hashtag"></i><span>CVR</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/kom-i-gang-med-adobe/"><i class="fab fa-adobe"></i><span>Kom i gang med Adobe</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/kom-i-gang-med-canva/"><i class="fas fa-palette"></i><span>Kom i gang med Canva</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/vaelg-virksomhedsnavn/"><i class="fas fa-file-signature"></i><span>Vælg virksomhedsnavn</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/vaelg-e-mail-platform/"><i class="fas fa-at"></i><span>Vælg e-mail platform</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/faa-leads-gennem-webinars/"><i class="fab fa-internet-explorer"></i><span>Få leads gennem webinars</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/vaelg-lagersystem/"><i class="fas fa-search"></i><span>Vælg lagersystem</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/en-god-webshop/"><i class="fas fa-shopping-basket"></i><span>En god webshop</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/vaelg-regnskabsprogram/"><i class="fas fa-calculator"></i><span>Vælg regnskabsprogram</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/restaurant-loesninger/"><i class="fas fa-utensils"></i><span>Restaurant løsninger</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/kom-i-gang-med-seo/"><i class="fas fa-search"></i><span>Kom i gang med SEO</span></a>
+                        </li>
+                        
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <div class="dropdown-box">
+                        <div class="dropdown-box-icon">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <div class="dropdown-box-text">
+                            <span>Nyheder<i class="fas fa-caret-down"></i></span>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-menu-item">
+                            <a href="/blogs/"><i class="far fa-comment-dots"></i><span>Blog</span></a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/press-page/"><i class="far fa-newspaper"></i><span>Press</span></a>
+                        </li>
+                    </ul>
+                </li>
+                
+                @*
+                <li class="dropdown">
+                    <div class="dropdown-box">
+                        <div class="dropdown-box-icon">
+                            <i class="fas fa-hands-helping"></i>
+                        </div>
+                        <div class="dropdown-box-text">
+                            <span>Hjælpecenter<i class="fas fa-caret-down"></i></span>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/cvr/">
+                                <i class="fas fa-hashtag" aria-hidden="true"></i>
+                                <span>CVR</span>
+                            </a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/kom-i-gang-med-adobe/">
+                                <i class="fab fa-adobe" aria-hidden="true"></i>
+                                <span>Kom i gang med Adobe</span>
+                            </a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/kom-i-gang-med-canva/">
+                                <i class="fas fa-palette" aria-hidden="true"></i>
+                                <span>Kom i gang med Canva</span>
+                            </a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/vaelg-virksomhedsnavn/">
+                                <i class="fas fa-file-signature" aria-hidden="true"></i>
+                                <span>Vælg virksomhedsnavn</span>
+                            </a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/vaelg-e-mail-platform/">
+                                <i class="fas fa-at" aria-hidden="true"></i>
+                                <span>Vælg e-mail platform</span>
+                            </a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/faa-leads-gennem-webinars/">
+                                <i class="fab fa-internet-explorer" aria-hidden="true"></i>
+                                <span>Få leads gennem webinars</span>
+                            </a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/vaelg-lagersystem/">
+                                <i class="fas fa-search" aria-hidden="true"></i>
+                                <span>Vælg lagersystem</span>
+                            </a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/en-god-webshop/">
+                                <i class="fas fa-shopping-basket" aria-hidden="true"></i>
+                                <span>En god webshop</span>
+                            </a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/vaelg-regnskabsprogram/">
+                                <i class="fas fa-calculator" aria-hidden="true"></i>
+                                <span>Vælg regnskabsprogram</span>
+                            </a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/restaurant-loesninger/">
+                                <i class="fas fa-utensils" aria-hidden="true"></i>
+                                <span>Restaurant løsninger</span>
+                            </a>
+                        </li>
+                        <li class="dropdown-menu-item">
+                            <a href="/tips/kom-i-gang-med-seo/">
+                                <i class="fas fa-search" aria-hidden="true"></i>
+                                <span>Kom i gang med SEO</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                *@
+                
+                <li class="dropdown">
+                    <div class="dropdown-box">
+                        <div class="dropdown-box-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="dropdown-box-text">
+                            <span>Pris<i class="fas fa-caret-down"></i></span>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-menu-item">
+                            <a href="/pris/"><i class="fas fa-coins"></i><span>Pris</span></a>
+                        </li> 
+                    </ul>
+                </li>
+                
+                
+                <li class="dropdown">
+                    <div class="dropdown-box">
+                        <div class="dropdown-box-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="dropdown-box-text">
+                            <span>Community<i class="fas fa-caret-down"></i></span>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-menu-item">
+                            <a href="/cases/"><i class="fas fa-trophy"></i><span>Succeshistorier</span></a>
+                        </li> 
+                        <li class="dropdown-menu-item">
+                            <a href="/startup-lounge/"><i class="fas fa-rocket"></i><span>Startup Lounge</span></a>
+                        </li>
+                    </ul>
+                </li>
+                
+                <li class="dropdown">
+                    <div class="dropdown-box">
+                        <div class="dropdown-box-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="dropdown-box-text">
+                            <span>Om os<i class="fas fa-caret-down"></i></span>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-menu-item">
+                            <a href="/om-os/"><i class="fas fa-user-friends"></i><span>Startup Central</span></a>
+                        </li> 
+                        <li class="dropdown-menu-item">
+                            <a href="/kontakt/"><i class="fas fa-envelope"></i><span>Kontakt os</span></a>
+                        </li>
+                    </ul>
+                </li>
+                
+            </ul>
+        </div>
+
+        <div class="nav-actions">
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                <!-- LOGGED IN USER -->
+                if (Umbraco.Member(currentUser.Id).DocumentTypeAlias != "partner")
+                {
+                    var nMsgs = @Umbraco.RenderMacro("IndicatorMessages").ToString();
+                    
+                    <a href="/login/besked-til-student/" class="nav-actions-button">
+                        <i class="fas fa-envelope-open-text"></i>
+                        <span class="nav-actions-button-name">Beskeder</span>
+                        <span class="message-indicator" id="badgeUnreadMessages"></span>
+                    </a>
+                }
+
+                if (Umbraco.Member(currentUser.Id).IsDocumentType("student"))
+                {
+                    <a href="/login/min-profil-projekter/" class="nav-actions-button">
+                        <i class="fas fa-edit"></i>
+                        <span class="nav-actions-button-name">Mine projekter</span>
+                    </a>
+
+                    <a href="/login/min-forretningsplan/" class="nav-actions-button">
+                        <i class="fas fa-tasks"></i>
+                        <span class="nav-actions-button-name">Ny forretningsplan</span>
+                    </a>
+                    
+                }
+                
+                <a href="/login/min-side/" class="nav-actions-button">
+                    <i class="fas fa-user"></i>
+                    <span class="nav-actions-button-name">Min side</span>
+                </a>
+            }
+            else
+            {
+                <!-- VISITOR -->
+                <a href="/log-in/" class="nav-actions-button register">
+                <i class="fas fa-sign-in-alt"></i>
+                    <span class="nav-actions-button-name">Log In</span>
+                </a>                
+                <a href="@Umbraco.Content(29767).Url" class="nav-actions-button register">
+                <i class="fas fa-user-plus"></i>
+                <span class="nav-actions-button-name">@Umbraco.GetDictionaryValue("BecomeAMember", "Bliv Medlem")</span>
+                </a>
+            }
+
+        </div>
+        
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <a href="@Umbraco.Content(29767).Url" class="signupline">
+                <span>@Umbraco.GetDictionaryValue("StartYourEntrepreneurshipJournyToday", "Start din iværksætterrejse i dag")</span>
+            </a>
+        }
+    </nav>
+
+    <nav class="mobile-menu">
+        <div class="topmenu-section">
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                <!-- LOGGED IN USER -->
+                <a href="/login/min-side/" id="my-profile" class="topmenu-buttons">
+                    <i class="fas fa-user"></i>
+                    <span>Min side</span>
+                </a>
+
+                if (Umbraco.Member(currentUser.Id).IsDocumentType("student"))
+                {
+
+
+                    <a href="/login/min-forretningsplan/" id="business-plan" class="topmenu-buttons">
+                        <i class="fas fa-tasks"></i>
+                        <span>Ny forretningsplan</span>
+                    </a>
+                
+
+                    <a href="/login/min-profil-projekter/" id="my-projects" class="topmenu-buttons">
+                        <i class="fas fa-edit"></i>
+                        <span>Mine projekter</span>
+                    </a>
+                }
+                
+
+            }
+                        else
+            {
+                <!-- VISITOR -->
+                <a href="/log-in/" id="signup-btn" class="signup-button">
+                                <span>
+                                Log In  
+                                <i class="fas fa-sign-in-alt"></i>
+                                </span>
+                </a>                
+                <a href="@Umbraco.Content(29767).Url" id="signup-btn" class="signup-button">
+                        <span>
+                        @Umbraco.GetDictionaryValue("BecomeAMember", "Bliv Medlem")
+                        <i class="fas fa-user-plus"></i>
+                        </span>
+                </a>
+            }
+        </div>
+
+        <div class="main-menu-section">
+            <span class="menu-section-title">Oversigt</span>
+
+            <div class="menu-item dropmenu">
+                <a href="#">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <span>Fordele</span>
+                </a>
+                <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </div>
+            <ul class="submenu">
+                <li class="submenu-item">
+                    <a href="/vi-tilbyder/"><i class="far fa-address-card"></i><span>Vi Tilbyder</span></a>
+                </li>
+                <li class="submenu-item">
+                    <a href="/sparring/"><i class="fas fa-user-graduate"></i><span>Sparring</span></a>
+                </li>
+                <li class="submenu-item">
+                    <a href="/coaches/"><i class="fas fa-id-badge"></i><span>Coachteam</span></a>
+                </li>
+                <li class="submenu-item">
+                    <a href="/spar-penge-i-din-virksomhed/"><i class="fas fa-piggy-bank"></i><span>Spar penge</span></a>
+                </li>
+                <li class="submenu-item">
+                    <a href="/partnere/"><i class="fas fa-handshake"></i><span>Samarbejdspartnere</span></a>
+                </li>
+                <li class="submenu-item">
+                    <a href="/forretningsplanen/"><i class="fas fa-book-reader"></i><span>Forretningsplan</span></a>
+                </li>
+            </ul>
+
+            <div class="menu-item dropmenu">
+                <a href="#">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Iværksætteri</span>
+                </a>
+                <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </div>
+
+            <ul class="submenu">
+                <li class="submenu-item">
+                    <a href="/foer-opstart/">
+                        <i class="fas fa-satellite-dish"></i>
+                        <span>Før Opstart</span>
+                    </a>
+                </li>
+                <li class="submenu-item">
+                    <a href="/hvem-vi-hjaelper/">
+                        <i class="fas fa-people-carry"></i>
+                        <span>Hvem vi hjælper</span>
+                    </a>
+                </li>
+                <li class="submenu-item">
+                    <a href="/podcast/">
+                        <i class="fas fa-microphone-alt"></i>
+                        <span>Podcast</span>
+                    </a>
+                </li>
+                <li class="submenu-item">
+                    <a href="/erhvervspartnere/">
+                        <i class="fas fa-coins"></i>
+                        <span>Erhvervspartnere</span>
+                    </a>
+                </li>
+                
+                @*<li class="submenu-item">
+                <a href="#">
+                    <i class="fas fa-user-astronaut"></i>
+                    <span>Startup Phase</span>
+                </a>
+            </li>
+            <li class="submenu-item">
+                <a href="#">
+                    <i class="fas fa-space-shuttle"></i>
+                    <span>Already Started</span>
+                </a>
+            </li>*@
+            </ul>
+
+            <div class="menu-item dropmenu">
+                <a href="#">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Nyheder</span>
+                </a>
+                <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </div>
+            <ul class="submenu">
+                <li class="submenu-item">
+                    <a href="/blogs/">
+                        <i class="far fa-comment-dots"></i>
+                        <span>Blog</span>
+                    </a>
+                </li>
+                <li class="submenu-item">
+                    <a href="/press-page/">
+                        <i class="far fa-newspaper"></i>
+                        <span>Press</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="menu-item dropmenu">
+                <a href="#">
+                    <i class="fas fa-users"></i>
+                    <span>Community</span>
+                </a>
+                <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </div>
+            <ul class="submenu">
+                <li class="submenu-item">
+                    <a href="/cases/"><i class="fas fa-trophy"></i><span>Succeshistorier</span></a>
+                </li>
+                <li class="submenu-item">
+                    <a href="/startup-lounge/"><i class="fas fa-rocket"></i><span>Startup Lounge</span></a>
+                </li>
+            </ul>
+            
+            <div class="menu-item dropmenu">
+                <a href="#">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Om os</span>
+                </a>
+                <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </div>
+            <ul class="submenu">
+                <li class="submenu-item">
+                    <a href="/om-os/"><i class="fas fa-user-friends"></i><span>Startup Central</span></a>
+                </li>
+                <li class="submenu-item">
+                    <a href="/kontakt/"><i class="fas fa-envelope"></i><span>Kontakt os</span></a>
+                </li>
+            </ul>
+            
+ @*
+            <div class="menu-item dropmenu">
+                <a href="#"> <i class="fas fa-info"></i> <span>Om Os</span> </a>
+                <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </div>
+
+            <ul class="submenu">
+               
+                <li class="submenu-item">
+                    <a href="/hvem-vi-hjaelper/"> <i class="fas fa-history"></i> <span>History</span> </a>
+                </li>
+                
+                <li class="submenu-item">
+                    <a href="/om-os/"> <i class="fas fa-users"></i> <span>Vores Hold</span> </a>
+                </li>
+            </ul>
+*@
+        </div>
+
+        <div class="menu-section">
+            <span class="menu-section-title">Hjælpecenter</span>
+            <ul class="menu-section-links">
+                <li class="nav-link">
+                    <a href="/tips/cvr/"><i class="fas fa-hashtag"></i><span>CVR</span></a>
+                </li>
+                <li class="nav-link">
+                    <a href="/tips/kom-i-gang-med-adobe/"><i class="fab fa-adobe"></i><span>Kom i gang med Adobe</span></a>
+                </li>
+                <li class="nav-link">
+                    <a href="/tips/kom-i-gang-med-canva/"><i class="fas fa-palette"></i><span>Kom i gang med Canva</span></a>
+                </li>
+                <li class="nav-link">
+                    <a href="/tips/vaelg-virksomhedsnavn/"> <i class="fas fa-file-signature"></i><span> Vælg virksomhedsnavn </span> </a>
+                </li>
+                <li class="nav-link">
+                    <a href="/tips/vaelg-e-mail-platform/"><i class="fas fa-at"></i><span>Vælg e-mail platform</span></a>
+                </li>
+                <li class="nav-link">
+                    <a href="/tips/faa-leads-gennem-webinars/"> <i class="fab fa-internet-explorer"></i><span> Få leads gennem webinars </span> </a>
+                </li>
+                <li class="nav-link">
+                    <a href="/tips/en-god-webshop/"> <i class="fas fa-shopping-basket"></i><span> En god webshop </span> </a>
+                </li>
+                <li class="nav-link">
+                    <a href="/tips/vaelg-lagersystem/"><i class="fas fa-warehouse"></i><span>Vælg lagersystem</span></a>
+                </li>
+                <li class="nav-link">
+                    <a href="/tips/vaelg-regnskabsprogram/"> <i class="fas fa-calculator"></i><span> Vælg regnskabsprogram </span> </a>
+                </li>
+                <li class="nav-link">
+                    <a href="/tips/restaurant-loesninger/"> <i class="fas fa-utensils"></i><span> Restaurant løsninger </span> </a>
+                </li>
+                <li class="nav-link">
+                    <a href="/tips/kom-i-gang-med-seo/"><i class="fas fa-search"></i><span>Kom i gang med SEO</span></a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <span class="menu-section-title">Hjælp</span>
+            <ul class="menu-section-links">
+                <li class="nav-link">
+                    <a href="/pris/"><i class="fas fa-coins"></i><span>Pris</span></a>
+                </li>
+                <li class="nav-link">
+                    <a href="/faq/"><i class="fas fa-question-circle"></i><span>FAQ</span></a>
+                </li>
+                <li class="nav-link">
+                    <a href="/media/1204/privatlivspolitik.pdf"><i class="fas fa-user-secret"></i><span>Pivatlivspolitik</span></a>
+                </li>
+                <li class="nav-link">
+                    <a href="/brugerbetingelser-for-startup-centrals-portal/"><i class="fas fa-file-alt"></i><span>Brugerbetingelser</span></a>
+                </li>
+            </ul>
+        </div>
+
+@*
+        <div class="menu-section">
+            <span class="menu-section-title">Settings</span>
+            <ul class="menu-section-links">
+                <li class="nav-link">
+                    <a href="/en/"><i class="fas fa-globe-europe"></i><span>Language</span></a>
+                </li>
+            </ul>
+        </div>*@
+
+        <div class="menu-section">
+            <span class="menu-section-title">Social Media</span>
+            <div class="menu-social">
+                <a href="https://www.facebook.com/StartupCentral.dk/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.linkedin.com/company/startupcentral-dk/" target="_blank"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.instagram.com/startupcentral.dk/" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.youtube.com/channel/UCYjKo0O_b0x1BhJ1PdbrG6w/featured" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </nav>
+    
+</header>
+
+<script>
+    // Mobile Nav and Overlay Toggler toggler
+    const btns = document.querySelectorAll('.nav-burger-button');
+    const bodyBtn = document.querySelectorAll('body');
+    const nav = document.querySelector('.mobile-menu');
+    const overlay = document.querySelector('.mobile-nav-overlay');
+
+    const toggleMenu = () => nav.classList.toggle('active');
+    const toggleScrollLock = () => bodyBtn.classList.toggle('scrollLock');
+    const toggleOverlay = () => overlay.classList.toggle('active');
+
+    btns.forEach(el => el.addEventListener('click', toggleMenu));
+    btns.forEach(el => el.addEventListener('click', toggleScrollLock));
+    btns.forEach(el => el.addEventListener('click', toggleOverlay));
+
+
+
+
+
+
+@*
+    var prevScrollpos = window.pageYOffset;
+    window.onscroll = function () {
+        var currentScrollPos = window.pageYOffset;
+        if (prevScrollpos > currentScrollPos) {
+            document.getElementById("main-nav").style.top = "0";
+        } else {
+            document.getElementById("main-nav").style.top = "-90px";
+        }
+        prevScrollpos = currentScrollPos;
+    }
+*@
+
+    var acc = document.getElementsByClassName("dropmenu");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function () {
+            this.classList.toggle("open");
+            var panel = this.nextElementSibling;
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+            }
+        });
+    }
+</script>

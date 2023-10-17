@@ -1,0 +1,35 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+<div id="sc-help-3" class="sc-section ">
+    <div class="sc-container">
+        <div class="row">
+            <div class="col-12 text-center sc-heading sc-heading-black">
+                <h2>@Umbraco.AssignedContentItem.Value("priceTitleMain")</h2>
+            </div>
+        </div>
+        <div class="row text-center mt-5">
+            <div class="col-md-4">
+                <h3>@Umbraco.AssignedContentItem.Value("priceTitle1")</h3>
+                <p>@Umbraco.AssignedContentItem.Value("priceDescription1")</p>
+            </div>
+            <div class="col-md-4">
+                <h3>@Umbraco.AssignedContentItem.Value("priceTitle2")</h3>
+                <p>@Umbraco.AssignedContentItem.Value("priceDescription2")</p>
+            </div>
+            <div class="col-md-4">
+                <h3>@Umbraco.AssignedContentItem.Value("priceTitle3")</h3>
+                <p>@Umbraco.AssignedContentItem.Value("priceDescription3")</p>
+            </div>
+        </div>
+
+        <div class="row text-center pt-5 pb-0 mb-0">
+            <div class="col-md-4 offset-md-4 text-center">
+                <h1>@Umbraco.AssignedContentItem.Value("price")</h1>
+            </div>
+            <div class="col-md-4 offset-md-4  underbutton">
+                <p>@Umbraco.AssignedContentItem.Value("aboveLine")</p>
+                <hr>
+                <p>Læs vores <a href="https://www.startupcentral.dk/brugerbetingelser-for-startup-centrals-portal/">brugerbetingelser</a> her.</p>
+            </div>
+        </div>
+    </div>
+</div>

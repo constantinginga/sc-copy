@@ -1,0 +1,28 @@
+﻿@using StartupCentral.Extensions
+@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+@{
+    int forretningsplansId = 0;
+
+    if (Request.QueryString["id"] != null)
+    {
+        if (Request.QueryString["id"].IsNumeric())
+        {
+            forretningsplansId = Convert.ToInt32(Request.QueryString["id"]);
+        }
+    }
+
+     <ul class="business-nav">
+        @foreach(var menuitem in Umbraco.Content(1832).Children()){
+            if(menuitem.Id == CurrentPage.Id){
+                <li>
+                    <a href="@menuitem.Url@Umbraco.If(forretningsplansId > 0, "?id=" + forretningsplansId)" class="active">@menuitem.Name</a>
+                </li> 
+            }else{
+                <li>
+                    <a href="@menuitem.Url@Umbraco.If(forretningsplansId > 0, "?id=" + forretningsplansId)">@menuitem.Name</a> 
+                </li>
+                }
+            }
+    </ul>
+}

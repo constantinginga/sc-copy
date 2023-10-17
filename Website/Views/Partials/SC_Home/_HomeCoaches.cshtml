@@ -1,0 +1,95 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Security
+@using StartupCentral.Extensions
+
+@{
+    int mediaItemId = 0;
+    IEnumerable<IMember> coachesList = ApplicationContext.Current.Services.MemberService.GetMembersByMemberType("coach1");
+}
+
+    <section class="sc-home-coaches">
+        <div class="container">
+            <div class="title-box">
+                <h2 class="headline-2">@Umbraco.AssignedContentItem.Value("CoachesTitle")</h2>
+                <h2>@Umbraco.AssignedContentItem.Value("coachesSubtitle")</h2>
+                <p>@Umbraco.AssignedContentItem.Value("coachesText")</p>
+            </div>
+            
+            <div class="read-more-box">
+                <a href="@Umbraco.Content(29767).Url" class="read-more">Kom igang!</a>
+            </div>
+        </div>
+        <div class="coaches-carousel centered">
+            @if (coachesList.Count() > 0)
+            {
+                foreach (var coach in coachesList.Where(itm => itm.GetValue<bool>("wwunavailable") == false).OrderBy(itm => itm.Name))
+                {
+                    if (coach.GetValue<string>("wwavatar").IsNumeric())
+                    {
+                        mediaItemId = Convert.ToInt32(coach.GetValue<string>("wwavatar"));
+                    }
+                    else if (!string.IsNullOrEmpty(coach.GetValue<string>("wwavatar")))
+                    {
+                        mediaItemId = coach.GetValue<string>("wwavatar").GetIdByUdi();
+                    }
+
+                    var urlprofile = coach.GetValue<string>("urlProfile");
+
+                    <a href="/coaches/@urlprofile" class="coach-card">
+                        <div class="card-body">
+
+                            <div class="card-body-img">
+                                <img src=@Umbraco.Media(mediaItemId).GetCropUrl("coach") alt=@coach.Name.ToString()>
+                            </div>
+
+                            <h3>@coach.Name.ToString()</h3>
+                            <p class="lead">
+                                @coach.GetValue("wwshorttxt")
+                            </p>
+                        </div>
+                    </a>
+                }
+            }
+        </div>
+        <div class="read-more-box">
+            <a href="/coaches/" class="read-more">Se alle coaches</a>
+        </div>
+    </section>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.coaches-carousel').slick({
+            infinite: true,
+            slidesToShow: 5,
+            slidesToScroll: 5,
+            autoplay: true,
+            autoplaySpeed: 3000,
+            arrows: false,
+            responsive: [{
+                breakpoint: 1100,
+                settings: {
+                    slidesToShow: 3,
+                    slidesToScroll: 3,
+                }
+            },
+            {
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 2,
+                }
+            },
+            {
+                breakpoint: 500,
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                }
+            },
+            ]
+        });
+    });
+
+</script>

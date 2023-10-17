@@ -1,0 +1,14 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+<div class="sc-container">
+    <div class="row  pt-5">
+        <div class="text-center sc-heading sc-heading-black">
+            <h2>@Umbraco.AssignedContentItem.Value("networkTitle")</h2>
+            <p>@Umbraco.AssignedContentItem.Value("networkSubtitle")</p>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-12  mx-1">
+            <p>@Umbraco.AssignedContentItem.Value("networkContent")</p>
+        </div>
+    </div>
+</div>

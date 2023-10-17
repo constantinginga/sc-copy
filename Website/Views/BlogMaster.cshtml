@@ -1,0 +1,107 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedContentModels;
+@{
+	Layout = null;
+var categoryName="";
+if (Model.HasValue("blogCategory1"))
+        {   categoryName=Model.Value<string>("blogCategory1");}
+}
+<!DOCTYPE html>
+<html lang="da">
+    
+<head>
+    <link rel="icon" type="image/png" href=" /media/1961/fav-icon.png"/>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="Startup Central">
+    <!-- PROD--> 
+    <meta name="google-site-verification" content="C8M6dxqC_FWomrN7Lk_uDXZ5AhlvDavZpKUVDBFAT-U" />
+    <link rel="icon" type="image/png" href="/favicon.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- google font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+        rel="stylesheet">
+        
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+	<link rel="stylesheet" href="/css/sc2/sc_style.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    
+      
+    @{
+        var wwsidetitle = string.Empty;
+        var wwdescription = string.Empty;
+        var imgPath = string.Empty;
+        
+        if(CurrentPage.DocumentTypeAlias == "blogItem")
+        {
+            wwsidetitle = CurrentPage.blogTitle;
+            wwdescription = CurrentPage.excerpt;
+            
+            try
+            {
+                var m = Umbraco.Media((int)CurrentPage.bImage.Id);
+                imgPath = m.Url;
+            }
+            catch
+            {
+                imgPath = "/media/1804/header-ui_tegnebraet-1-kopi.png";
+            }
+           
+        }
+        else
+        {
+            wwsidetitle = CurrentPage.wwsidetitle;
+            wwdescription = CurrentPage.wwdescription;
+            
+            try
+            {
+                var m = Umbraco.Media((int)CurrentPage.wwimage.Id);
+                imgPath = m.Url;
+            }
+            catch
+            {
+                imgPath = "/media/1804/header-ui_tegnebraet-1-kopi.png";
+            }
+        }
+    }
+    
+    <title>@wwsidetitle</title> 
+    <meta name="title" content="@wwsidetitle">
+    <meta property="og:title" content="@wwsidetitle">
+    <meta name="description" content="@wwdescription">
+    <meta property="og:description" content="@wwdescription">
+    <meta property="og:image" content="@imgPath"
+    
+    
+</head>
+<body>
+@Html.Partial("SiteLayout/_NavigationBar")
+@RenderBody()
+@Html.Partial("SiteLayout/_Footer")
+
+
+    <!-- scripts -->
+    <script async src="https://static.addtoany.com/menu/page.js"></script>
+    <script src="https://platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script>
+    <script type="text/javascript" src="bootpag.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js"></script>
+
+      <script src="/scripts/blogScript.js"></script>
+        
+        
+        </body>
+</html>

@@ -1,0 +1,118 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "Master.cshtml";
+}
+
+
+<section class="lp-whatweoffer">
+    <div class="content-header" id="lp-prices-header-id">
+        <div class="lp-prices-header">
+            <h1 class="lp-prices-title" id="lp-prices-title-id">@Model.Value("wwoHeaderTitle")</h1>
+        </div>
+    </div>
+    <div class="lp-offers-big-container">
+        @*Partners*@
+        <div class="lp-offer-container">
+            <div class="lp-offer-picture">
+                <img src="@Umbraco.Media(38337).Url" alt="Partner deals">   @*38392*@
+            </div>
+            <div class="lp-offer-text">
+                <h2 class="lp-offer-title">
+                    @Model.Value("wwoPartnersTitle")
+                </h2>
+                <p class="lp-offer-subtitle">
+                    @Model.Value("wwoPartnersSubtitle")
+                </p>
+                <div class="lp-offer-button"><a href="@Umbraco.Content(10842).Url">@Umbraco.GetDictionaryValue("ReadMore", "Læs mere")</a></div> @*Put correct link*@
+            </div>
+        </div>
+
+        <div class="lp-offers-big-container">
+            @*Coaches*@
+            <div class="lp-offer-container">
+                <div class="lp-offer-text">
+                    <h2 class="lp-offer-title">@Model.Value("wwoCoachesTitle")</h2>
+                    <p class="lp-offer-subtitle">
+                        @Model.Value("wwoCoachesSubtitle")
+                    </p>
+                    <div class="lp-offer-button"><a href="@Umbraco.Content(10840).Url">@Umbraco.GetDictionaryValue("ReadMore", "Læs mere")</a></div> @*Put correct link*@
+                </div>
+                <div class="lp-offer-picture">
+                    <img src="@Umbraco.Media(38336).Url" alt="Coaches Image">
+                </div>
+            </div>
+        </div>
+
+        <div class="lp-offers-big-container">
+            @*Network*@
+            <div class="lp-offer-container">
+                <div class="lp-offer-picture">
+                    <img src="@Umbraco.Media(38335).Url" alt="Network Image">
+                </div>
+                <div class="lp-offer-text">
+                    <h2 class="lp-offer-title">
+                        @Model.Value("wwoNetworkTitle")
+                    </h2>
+                    <p class="lp-offer-subtitle">
+                        @Model.Value("wwoNetworkSubtitle")
+                    </p>
+                    <div class="lp-offer-button"><a href="https://www.startupcentral.dk/lounge">@Umbraco.GetDictionaryValue("ReadMore", "Læs mere")</a></div> @*Put correct link*@
+                </div>
+            </div>
+        </div>
+
+        <div class="lp-offers-big-container">
+            @*Tools*@
+            <div class="lp-offer-container">
+                <div class="lp-offer-text">
+                    <h2 class="lp-offer-title">
+                        @Model.Value("wwoToolsTitle")
+                    </h2>
+                    <p class="lp-offer-subtitle">
+                        @Model.Value("wwoToolsSubtitle")
+                    </p>
+                    <div class="lp-offer-button"><a href="@Umbraco.Content(38373).Url">@Umbraco.GetDictionaryValue("ReadMore", "Læs mere")</a></div> @*Put correct link*@
+                </div>
+                <div class="lp-offer-picture">
+                    <img src="@Umbraco.Media(38392).Url" alt="Tools">
+                </div>
+            </div>
+        </div>
+
+        <div class="lp-offers-big-container">
+            @*Knowledge*@
+            <div class="lp-offer-container">
+                <div class="lp-offer-picture">
+
+                </div>
+                <div class="lp-offer-text">
+                    <h2 class="lp-offer-title">
+                        @Model.Value("wwoKnowledgeTitle")
+                    </h2>
+                    <p class="lp-offer-subtitle">
+                        @Model.Value("wwoKnowledgeSubtitle")
+                    </p>
+                    <div class="lp-offer-button"><a href="@Umbraco.Content(38373).Url">@Umbraco.GetDictionaryValue("ReadMore", "Læs mere")</a></div>    @*Put correct link*@
+                </div>
+            </div>
+        </div>
+
+        <div class="lp-offers-big-container">
+            @*Events*@
+            <div class="lp-offer-container">
+                <div class="lp-offer-text">
+                    <h2 class="lp-offer-title">
+                        @Model.Value("wwoEventsTitle")
+                    </h2>
+                    <p class="lp-offer-subtitle">
+                        @Model.Value("wwoEventsSubtitle")
+                    </p>
+                    <div class="lp-offer-button"><a href="@Umbraco.Content(25918).Url">@Umbraco.GetDictionaryValue("ReadMore", "Læs mere")</a></div> @*Put correct link*@
+                </div>
+                <div class="lp-offer-picture">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

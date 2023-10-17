@@ -1,0 +1,13 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<IOpenGraph>
+    @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using ContentModels = Umbraco.Web.PublishedContentModels;
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+<meta property="og:title" content="@Umbraco.Field("openGraphTitle", altFieldAlias:"sitename", recursive: true)" />
+<meta property="og:type" content="website" />
+@*<meta property="og:url" content="@Model.Url(mode: UrlMode.Absolute)" />*@
+
+@{
+var ogImage = Model.GetPropertyValue<IPublishedContent>("openGraphImage");
+}
+
+@*<meta property="og:image" content="@ogImage.Url(mode: UrlMode.Absolute)" />*@

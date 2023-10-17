@@ -1,0 +1,47 @@
+#sc-user-messages {
+    .container {
+        .row {
+            .message-box {
+                width: 100%;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                border: 1px solid $sc-overlay-dark;
+                border-radius: 1rem;
+                background-color: $sc-white;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                flex-wrap: wrap;
+
+                h3 {
+                    margin: 0;
+                    color: $sc-primary;
+                }
+
+                span {
+                    color: $sc-gray;
+                }
+
+                &-message {
+                    display: none;
+                    flex-basis: 100%;
+                }
+            }
+        }
+    }
+}
+
+@include media-md {
+    #sc-user-messages {
+        .container {
+            .row {
+                .message-box {
+                    &-message {
+                        margin-top: 1rem;
+                        display: block;
+                    }
+                }
+            }
+        }
+    }
+}

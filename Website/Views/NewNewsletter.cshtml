@@ -1,0 +1,41 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+<section class="nfp-newsletter-section">
+    <div class="nfp-newsletter-big-container">
+        <div class="nfp-newsletter-text">
+            <h2>@Umbraco.AssignedContentItem.Value("nfpNewsletterTitle")</h2>
+            <p>@Umbraco.AssignedContentItem.Value("nfpNewsletterParagraph")</p>
+        </div>
+        <form id="nfpnewsletterform">
+            <div class="nfp-newsletter-signup">
+                <input type="text" class="form-control" id="name" name="name" placeholder="@Umbraco.GetDictionaryValue("Name", "Dit navn" )" required>
+                <input type="email" class="form-control" id="email" name="email" placeholder="@Umbraco.GetDictionaryValue("Email", "Din e-mail" )" required>
+                <button class="button button--lg outlined-btn" type="submit" id="submitButtonNewsletters">@Umbraco.GetDictionaryValue("Newsletter", "TilmeId")</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+
+<script>
+
+    $("form#nfpnewsletterform").submit(function (event) {
+        $.ajax({
+            type: "POST",
+            url: '/umbraco/api/ActivecampaignApi/Contact_sync_lead?' + $("#nfpnewsletterform").serialize(),
+            //data: $("#newsletterform").serialize(),
+            success: function (data) {
+                //alert(data);
+
+                $('.nfp-newsletter-signup').hide();
+                //$('#newslettersSubscriptionDescription').hide();
+                //$('#newslettersSubscriptionResult').show();
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+
+        event.preventDefault();
+    });
+</script>

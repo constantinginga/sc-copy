@@ -1,0 +1,63 @@
+section.sc-partners-partnercards {
+    .container {
+        .cards-container {
+            margin-top: -$nav-sm;
+
+            .card-body {
+                color: $sc-primary;
+                margin-bottom: 5rem;
+
+                .card {
+                    @include flex(column);
+
+                    .card-image {
+                        border-bottom: 1px solid $sc-border;
+                    }
+
+                    .card-text {
+                        margin: 1.5rem 0;
+                    }
+
+                    .button {
+                        @include btn;
+                        margin-top: auto;
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-md {
+    section.sc-partners-partnercards {
+        .container {
+            .cards-container {
+                @include flex(row);
+                flex-wrap: wrap;
+                justify-content: space-evenly;
+
+                .card-body {
+                    margin-bottom: 0rem;
+                    display: flex;
+                    padding: 2.5rem 1.5rem;
+                    flex: 0 0 50%;
+                }
+            }
+        }
+    }
+}
+
+@include media-lg {
+    section.sc-partners-partnercards {
+        .container {
+            .cards-container {
+                margin-top: -120px;
+
+                .card-body {
+                    flex: 0 0 33%;
+                }
+            }
+        }
+    }
+}

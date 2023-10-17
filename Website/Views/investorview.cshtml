@@ -1,0 +1,36 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedContentModels;
+@using umbraco.cms.businesslogic.member
+@using Umbraco.Core.Services;
+@using System.Web
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@{
+	Layout = null;
+	
+	    var investor = Umbraco.Member(1092);
+
+}
+
+
+@{
+
+foreach(var item in investor.chosenBy){
+
+<h1>@item.Name</h1>
+foreach(var subkat in item.Children){
+
+<h2>@subkat.Name</h2>
+foreach(var media in subkat.Children){
+<a href="@media.Url">@media.Name</a><br>
+}
+
+}
+
+
+}
+
+}
+

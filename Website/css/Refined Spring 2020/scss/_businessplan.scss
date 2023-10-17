@@ -1,0 +1,378 @@
+.sc-businessplan {
+    .container {
+        section.businessplan {
+            // padding-top: 0;
+            padding-bottom: 1rem;
+
+            .businessplan-container {
+                // border: 1px solid $sc-border;
+                // @include boxshadow;
+
+                .businessplan-navigation-container {
+                    background-color: $sc-primary;
+                    @include flex(column);
+                    border-radius: 1rem;
+                    border-top-left-radius: 1rem;
+                    border-top-right-radius: 1rem;
+
+                    .button {
+                        margin-top: 0;
+                        color: $sc-white;
+                        font-weight: 600;
+                        border-radius: 1rem;
+                    }
+
+                    .open~ul {
+                        margin: 1.5rem;
+                    }
+
+                    .business-nav {
+                        max-height: 0;
+                        overflow: hidden;
+                        @include transition(0.2s);
+                    }
+
+                    ul {
+                        li {
+                            list-style-type: none;
+                            margin-bottom: .5rem;
+
+                            a {
+                                color: $sc-white;
+
+                                &:hover {
+                                    color: $sc-accent;
+                                    text-decoration: underline;
+                                }
+
+                                &.active {
+                                    font-size: 1.8rem;
+                                    font-weight: 600;
+                                    color: $sc-accent;
+                                    // text-decoration: underline;
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .businessplan-form-container {
+                    padding: 1rem;
+                    @include flex(column);
+
+                    .businessplan-form {
+                        padding-top: 1rem;
+
+                        .headline-2 {
+                            max-width: unset;
+                            @include sc-title-text-side;
+                        }
+
+                        p {
+                            margin-bottom: 1.5rem;
+                        }
+
+                        .form-container {}
+                    }
+
+                    .form-header {
+                        @include flex(row);
+                        border-bottom: 1px solid $sc-border;
+                        padding-bottom: .5rem;
+
+                        &-text {
+                            @include flex(column);
+                            color: $sc-gray;
+                            flex: 0 0 50%;
+
+                            .text-name {
+                                margin-right: 1.5rem;
+                                margin-bottom: 1rem;
+                            }
+
+                            h3 {
+                                margin: 0;
+                                // color: $sc-secondary;
+                            }
+                        }
+
+                        &-progress {
+                            flex: 0 0 45%;
+
+                            span {
+                                font-size: 1.4rem;
+                            }
+
+                            text-align: right;
+                            margin-top: auto;
+                            margin-bottom: 0;
+                            margin-left: auto;
+                            margin-right: 0;
+                        }
+                    }
+
+                    .form-container {
+                        textarea {
+                            max-width: 100%;
+                            width: 100%;
+                            height: 15rem;
+                            background-color: $sc-white;
+                            padding: 1rem;
+                            border-radius: 1rem;
+                            border: 1px solid $sc-primary;
+                            // @include transition(.1s);
+
+                            &:focus {
+                                box-shadow: 0px 0px 0px .1rem $sc-primary;
+
+                            }
+                        }
+
+                        input {
+                            display: block;
+                            padding: 1rem;
+                            width: 100%;
+                            font-size: 1.6rem;
+                            border: .2rem solid $sc-light;
+                            border-radius: .5rem;
+
+                            &:focus {
+                                border-color: $sc-primary;
+                            }
+
+                        }
+
+                        .inspo {
+                            text-align: right;
+
+                            a {
+                                font-size: 1.4rem;
+                                color: $sc-gray;
+                                display: inline-block;
+                                width: fit-content;
+
+                                i {
+                                    font-size: 1.4rem;
+                                    margin-left: .2rem;
+                                }
+
+                                &:hover {
+                                    color: $sc-accent;
+                                    text-decoration: underline;
+                                }
+                            }
+                        }
+
+                        #andetheadline {
+                            margin-bottom: 1.5rem;
+                        }
+                    }
+
+                    .form-footer {
+                        @include flex(row);
+                        justify-content: space-between;
+                        align-items: center;
+
+                        .footer-buttons {
+                            margin-top: 1rem;
+
+                            span {
+                                font-size: 1.4rem;
+                                cursor: pointer;
+                                color: $sc-gray;
+
+                                &:hover {
+                                    color: $sc-accent;
+                                    text-decoration: underline;
+                                }
+                            }
+
+                            .button {
+                                margin-top: 0;
+                            }
+                        }
+                    }
+
+                    input {
+                        display: block;
+                        width: 100%;
+                        font-size: 1.5rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-lg {
+    .sc-businessplan {
+        .container {
+            section.businessplan {
+                .businessplan-container {
+                    margin-top: 2.5rem;
+                    @include flex(row);
+                    border: 1px solid $sc-border;
+                    @include boxshadow;
+                    border-radius: 1rem;
+
+                    .businessplan-navigation-container {
+                        flex: 0 0 20%;
+                        padding: 2.5rem;
+                        // min-width: 240px;
+                        border-top-left-radius: 1rem;
+                        border-bottom-left-radius: 1rem;
+                        border-top-right-radius: 0;
+                        border-bottom-right-radius: 0;
+
+                        .button {
+                            display: none;
+                        }
+
+                        .business-nav {
+                            max-height: fit-content;
+                        }
+
+                        ul {
+                            visibility: visible;
+                            padding: .5rem 1.5rem;
+
+                            li {
+                                margin-bottom: 1.5rem;
+                            }
+                        }
+                    }
+
+                    .businessplan-form-container {
+                        padding: 2.5rem;
+                        @include flex(column);
+                        width: 100%;
+
+                        .businessplan-form {
+                            padding-top: 1rem;
+                        }
+
+                        .form-header {
+                            &-text {
+                                @include flex(row);
+                                // justify-content: space-between;
+                                flex: 0 0 55%;
+
+                                .text-name {
+                                    margin-right: 5rem;
+                                }
+
+                                h3 {
+                                    font-size: 2rem;
+                                }
+                            }
+
+                            &-progress {
+                                flex: 0 0 45%;
+
+                                span {
+                                    font-size: 1.6rem;
+                                }
+
+                                margin: auto;
+                            }
+                        }
+
+                        .form-container {
+                            textarea {
+                                max-width: 100%;
+                                width: 100%;
+                                height: 15rem;
+                                background-color: $sc-white;
+                                padding: 1rem;
+                                border-radius: 1rem;
+                                border: 1px solid $sc-primary;
+                                @include transition(.1s);
+
+                                &:focus {
+                                    // border-color: $sc-accent;
+                                    // border: none;
+                                    // border-radius: 0;
+                                    box-shadow: 0px 0px 0px .1rem $sc-primary;
+
+                                }
+                            }
+
+                            input {
+                                display: block;
+                                padding: 1rem;
+                                width: 100%;
+                                font-size: 1.6rem;
+                                border: .2rem solid $sc-light;
+                                border-radius: .5rem;
+                                @include transition(.1s);
+
+                                &:focus {
+                                    box-shadow: 0px 0px 0px .1rem $sc-primary;
+
+                                }
+
+                            }
+
+                            .inspo {
+                                text-align: right;
+
+                                a {
+                                    font-size: 1.4rem;
+                                    color: $sc-gray;
+                                    display: inline-block;
+                                    width: fit-content;
+
+                                    i {
+                                        font-size: 1.4rem;
+                                        margin-left: .2rem;
+                                    }
+
+                                    &:hover {
+                                        color: $sc-accent;
+                                        text-decoration: underline;
+                                    }
+                                }
+                            }
+
+                            #andetheadline {
+                                margin-bottom: 1.5rem;
+                            }
+                        }
+
+                        .form-footer {
+                            @include flex(row);
+                            justify-content: space-between;
+                            align-items: center;
+
+                            .footer-buttons {
+                                margin-top: 0rem;
+
+                                span {
+                                    font-size: 1.4rem;
+                                    cursor: pointer;
+                                    color: $sc-gray;
+
+                                    &:hover {
+                                        color: $sc-accent;
+                                        text-decoration: underline;
+                                    }
+                                }
+
+                                .button {
+                                    margin-top: 0;
+                                }
+                            }
+                        }
+
+                        input {
+                            display: block;
+                            width: 100%;
+                            font-size: 1.5rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

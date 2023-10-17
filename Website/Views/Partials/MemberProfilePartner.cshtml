@@ -1,0 +1,407 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Umbraco.Core.Models.Member>
+@using StartupCentral.Extensions
+
+@{
+    var currentUser = Members.GetCurrentMember();
+    IMember member = null;
+    string[] roles = null;
+    if (currentUser != null)
+    {
+        member = ApplicationContext.Current.Services.MemberService.GetById(currentUser.Id);
+        roles = Roles.GetRolesForUser(member.Username);
+    }
+    var noNavFooter = Request.Params["noNavFooter"];
+    var culture = "da-DK";
+    var en = Request.Path.Split('/')[1].ToLowerInvariant() == "en";
+    if (en) // Manual handling of /en/partners/Name
+    {
+        culture = "en-US";
+    }
+
+    var partnersContent = Umbraco.Content(10842);
+    var partnerDetailsList = partnersContent.Children(culture);
+    IPublishedContent partnerDetail = partnerDetailsList.FirstOrDefault(x => x.Value<IPublishedContent>("partnerPicker") != null && x.Value<IPublishedContent>("partnerPicker").Id == Model.Id);
+    try
+    {
+        if (partnerDetail == null)
+        {
+            var newPartnerInfo = ApplicationContext.Current.ContentService.Create(Model.Name, Umbraco.Content(10842).Key, "PartnerInfo");
+            newPartnerInfo.SetCultureName(Model.Name, "da-DK");
+            newPartnerInfo.SetCultureName(Model.Name, "en-US");
+            newPartnerInfo.SetValue("partnerPicker", Model.GetUdi()); // https://our.umbraco.com/forum/using-umbraco-and-getting-started/99496-programmatically-setting-member-picker-property
+
+            var mediaUdi = Model.GetValue<string>("wwavatar");
+            if (mediaUdi != null)
+            {
+                var mediaId = mediaUdi.GetIdByUdi();
+                var media = ApplicationContext.Current.MediaService.GetById(mediaId);
+                var udi = Udi.Create(Constants.UdiEntityType.Media, media.Key);
+                newPartnerInfo.SetValue("wwavatar", udi.ToString(), "da-DK");
+            }
+            /*
+            {
+              var media2 = ApplicationContext.Current.MediaService.GetById(media.Id);
+              //ApplicationContext.Current.ContentService.
+              // https://our.umbraco.com/forum/using-umbraco-and-getting-started/106296-problem-with-assigning-value-to-media-picker-3-programmatically
+              var udi = Udi.Create(Constants.UdiEntityType.Media, media.Key);
+              newPartnerInfo.SetValue("wwavatar", udi, "da-DK");
+              // https://our.umbraco.com/documentation/Fundamentals/Backoffice/Property-Editors/Built-in-Property-Editors/Media-Picker/
+            }
+            */
+
+            newPartnerInfo.SetValue("wwtitleSEO", Model.GetValue("wwtitleSEO"), "da-DK");
+            newPartnerInfo.SetValue("wwdescriptionSEO", Model.GetValue("wwdescriptionSEO"), "da-DK");
+            newPartnerInfo.SetValue("wwshorttext", Model.GetValue("wwshorttext"), "da-DK");
+            newPartnerInfo.SetValue("wwaboveTilbud", Model.GetValue("wwaboveTilbud"), "da-DK");
+            newPartnerInfo.SetValue("wwOffer", Model.GetValue("wwOffer"), "da-DK");
+
+            newPartnerInfo.SetValue("popupTitle", Model.GetValue("popupTitle"), "da-DK");
+            newPartnerInfo.SetValue("popupText", Model.GetValue("popupText"), "da-DK");
+            newPartnerInfo.SetValue("wwwpromoCode", Model.GetValue("wwwpromoCode"), "da-DK");
+            newPartnerInfo.SetValue("wwpartnerIntroduction", Model.GetValue("wwpartnerIntroduction"), "da-DK");
+            newPartnerInfo.SetValue("firstSectionTitle", Model.GetValue("firstSectionTitle"), "da-DK");
+            newPartnerInfo.SetValue("wwwhoIs", Model.GetValue("wwwhoIs"), "da-DK");
+            newPartnerInfo.SetValue("secondSectionTitle", Model.GetValue("secondSectionTitle"), "da-DK");
+            newPartnerInfo.SetValue("wwwwhatDoesOffer", Model.GetValue("wwwwhatDoesOffer"), "da-DK");
+
+            ApplicationContext.Current.ContentService.SaveAndPublish(newPartnerInfo, "*", raiseEvents: false);
+
+            partnerDetailsList = partnersContent.Children(culture);
+            partnerDetail = partnerDetailsList.FirstOrDefault(x => x.HasValue("partnerPicker") && x.Value<IPublishedContent>("partnerPicker").Id == Model.Id);
+        }
+    }
+    catch (Exception ex)
+    {
+        ex.ToString();
+    }
+
+    string shortText = string.Empty;
+    string aboveTilbud = string.Empty;
+    string partnerIntroduction = string.Empty;
+    string whoIs = string.Empty;
+    string whatDoesOffer = string.Empty;
+
+    string titleTab = "Partner";
+
+    try
+    {
+        shortText = partnerDetail.Value<string>("wwshorttext", culture);
+        aboveTilbud = partnerDetail.Value<string>("wwaboveTilbud", culture);
+        partnerIntroduction = partnerDetail.Value<string>("wwpartnerIntroduction", culture);
+        whoIs = partnerDetail.Value<string>("wwwhoIs", culture);
+        whatDoesOffer = partnerDetail.Value<string>("wwwwhatDoesOffer", culture);
+
+        titleTab = partnerDetail.Value<string>("wwtitleSEO", culture);
+    }
+    catch
+    {
+        shortText = string.Empty;
+        aboveTilbud = string.Empty;
+        partnerIntroduction = string.Empty;
+        whoIs = string.Empty;
+        whatDoesOffer = string.Empty;
+    }
+
+    int mediaItemId = 0;
+    int mediaItemId2 = 0;
+    // logo
+    if (Model.GetValue<string>("wwpartnerAvatar").IsNumeric())
+    {
+        mediaItemId2 = Convert.ToInt32(Model.GetValue<string>("wwpartnerAvatar"));
+    }
+    else if (!string.IsNullOrEmpty(Model.GetValue<string>("wwpartnerAvatar")))
+    {
+        mediaItemId2 = Model.GetValue<string>("wwpartnerAvatar").GetIdByUdi();
+    }
+
+    // SEO image
+    var wwavatar = partnerDetail.Value("wwavatar", culture);
+    if (wwavatar is Umbraco.Web.PublishedModels.Image)
+    {
+        mediaItemId = ((Umbraco.Web.PublishedModels.Image)wwavatar).Id;
+    }
+    else
+    {
+        if (partnerDetail.Value<string>("wwavatar", culture).IsNumeric())
+        {
+            mediaItemId = Convert.ToInt32(partnerDetail.Value<string>("wwavatar", culture));
+        }
+        else if (!string.IsNullOrEmpty(partnerDetail.Value<string>("wwavatar", culture)))
+        {
+            mediaItemId = partnerDetail.Value<string>("wwavatar").GetIdByUdi();
+        }
+    }
+}
+
+<main id="sc-partner-page" class="sc-guest sc-bgb10">
+    <div class="rail-grid rail-grid--3-column">
+        <!-- Profile Container -->
+        <aside class="sm-rail">
+            @if (mediaItemId2 > 0)
+            {
+                <div class="partner-card">
+                    <div class="partner-card__image">
+                        @{
+                            var altText = Model.Name.ToString() + " | Startup Central";
+                        }
+                        <img src=@Umbraco.Media(mediaItemId2).Url() alt="@altText">
+                    </div>
+                    <div class="partner-card__title"></div>
+                </div>
+            }
+        </aside>
+
+
+        <div id="main-feed" class="feed-rail">
+            <!-- General Introduction -->
+            <div class="feed-rail-container">
+                <div class="feed-section">
+                    <h1 style="font-size: 22px">@partnerDetail.Value("firstSectionTitle", culture)</h1>
+                    <p>@Html.Raw(whoIs)</p>
+                </div>
+            </div>
+            <div class="feed-rail-container">
+                <div class="feed-section">
+                    <h2>@partnerDetail.Value("secondSectionTitle", culture)</h2>
+                    <p>@Html.Raw(whatDoesOffer)</p>
+                </div>
+            </div>
+            @if (mediaItemId > 0)
+            {
+                <div class="feed-rail-container">
+                    <div class="feed-section">
+                        @{
+                            var altText = Model.Name.ToString() + " | Startup Central";
+                        }
+                        <img src=@Umbraco.Media(mediaItemId).Url() alt="@altText">
+                    </div>
+                </div>
+            }
+        </div>
+
+        <aside class="md-rail">
+            <div class="discount-card">
+                <h2 class="discount-card__title" data-name="@Model.Name.ToString()">@Model.Name.ToString()</h2>
+                <p>@Html.Raw(partnerIntroduction)</p>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    if ((Umbraco.Member(currentUser.Id).IsDocumentType("student") && System.Web.Security.Roles.IsUserInRole(currentUser.Value<string>("Email"), "student")) || (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains)))
+                    {
+                        if (Model.Id == 27309)
+                        {
+                            <div class="yourpay-card">
+                                <div id="yourpay_signup_form" data-id="1"></div>
+                            </div>
+
+                            <script type="text/javascript" src="https://widget.yourpay.io/1508.js"></script>
+                        }
+                        else
+                        {
+                            var partnerLink = Model.GetValue<string>("wwpartnerLink");
+                            var promoCode = partnerDetail.Value<string>("wwwpromoCode", culture);
+                            var pointer = Model.GetValue<bool>("binding");
+                            pointer = true; // always notify, see Website\scripts\startupcentral.student.js
+                            var popupTitle = partnerDetail.Value<string>("popupTitle", culture);
+                            var popupText = partnerDetail.Value<string>("popupText", culture);
+
+                            if (partnerLink != null)
+                            {
+                                <a href="@partnerLink" target="_blank" data-p="@pointer" data-partnerId="@Model.Id" data-userId="@currentUser.Id" class="button button--lg button--full-width notify">Brug Partner</a>
+                                if (!string.IsNullOrEmpty(promoCode))
+                                {
+                                    <div class="discount-card__promo">
+                                        <p id="copy-text" class="is-copied">Copied to clipboard</p>
+                                        <button id="promo-button" data-p="@pointer" data-partnerId="@Model.Id" data-userId="@currentUser.Id" class="button button--lg button--full-width reveal">Klik her for at se promo kode</button>
+
+                                        <button id="clipboard">
+                                            <span id="promo-code" style="overflow: auto;">@promoCode</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 0 24 24" width="28px"
+                                                 fill="#18284810">
+                                                <path d="M0 0h24v24H0V0z" fill="none" />
+                                                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                }
+                            }
+                            else if (!string.IsNullOrEmpty(popupTitle) || !string.IsNullOrEmpty(popupText))
+                            {
+                                <a href="#" data-p="@pointer" data-partnerId="@Model.Id" data-userId="@currentUser.Id" class="button button--lg button--full-width notify" id="toggle-popup">Brug Partner</a>
+                                <div class="popup is-disabled">
+                                    <div class="popup-content">
+                                        <span class="close">&times;</span>
+                                        <div class="popup-content__text">
+                                            <p class="popup-header">@popupTitle</p>
+                                            @Html.Raw(popupText)
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                    else if (Umbraco.Member(currentUser.Id).IsDocumentType("student") && System.Web.Security.Roles.IsUserInRole(currentUser.Value<string>("Email"), "student paused"))
+                    {
+                        <a class="button button--lg button--cta button--full-width opensend">@Umbraco.GetDictionaryValue("Reactivate", "Genaktiver")</a>
+                    }
+                }
+                else
+                {
+                    if (noNavFooter == null)
+                    {
+                        <div class="auth-links">
+                            <a href="@Umbraco.Content(29767).Url" class="button button--lg button--cta button--full-width" id="partner-button">@Umbraco.GetDictionaryValue("JoinToUsePartner", "Bliv medlem for at bruge partneren")</a>
+                            <div class="button-outlined-btn-container">
+                                @*<a href="@Umbraco.Content(29767).Url" class="button outlined-btn">@Umbraco.GetDictionaryValue("BecomeAMember", "Bliv Medlem")</a>*@
+                                <a href="@(Umbraco.Content(11655).Url + "?return2Url=" + System.Web.HttpUtility.UrlEncode(this.Request.Url.ToString()))" class="button outlined-btn">@Umbraco.GetDictionaryValue("Login", "Log ind")</a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            @if (Model.GetValue<bool>("binding") == true && User.Identity.IsAuthenticated)
+            {
+                <div class="warning-card">
+                    <p>
+                        @Umbraco.GetDictionaryValue("UsingThisOfferYouAcceptToStayAMemberWhileTheOfferLasts", "Ved brug af dette tilbud, accepterer du samtidig, at være medlem af Startup Central i den gældende periode som tilbuddet indeholder.")
+                    </p>
+                </div>
+            }
+
+        </aside>
+    </div>
+
+    <div class="row-container">
+        <div class="row">
+            <h2>@Umbraco.GetDictionaryValue("MorePartnersYouMayUse", "Flere samarbejdspartnere du måske kan bruge")</h2>
+            <ul id="partner-list" class="discover-entity-list">
+                @{
+                    Random rnd = new Random();
+                    IEnumerable<IMember> pList = ApplicationContext.Current.Services.MemberService.GetMembersByMemberType("partner").Where(x => x.Name != Model.Name && x.GetValue<bool>("wwunavailable") == false).OrderBy(x => rnd.Next()).Take(4);
+
+                    foreach (var partnerMember in pList)
+                    {
+                        var partner = partnerDetailsList.FirstOrDefault(x => x.Value<IPublishedContent>("partnerPicker") != null && x.Value<IPublishedContent>("partnerPicker").Id == partnerMember.Id);
+                        if (partner == null) { continue; }
+                        string shortTextC = partner.Value<string>("wwshorttext", culture);
+                        string aboveTilbudC = partner.Value<string>("wwaboveTilbud", culture);
+                        string weOfferC = partner.Value<string>("wwOffer", culture);
+
+                        int mediaItemIdC = 0;
+                        // logo
+                        if (partnerMember.GetValue<string>("wwpartnerAvatar").IsNumeric())
+                        {
+                            mediaItemIdC = Convert.ToInt32(partnerMember.GetValue<string>("wwpartnerAvatar"));
+                        }
+                        else if (!string.IsNullOrEmpty(partnerMember.GetValue<string>("wwpartnerAvatar")))
+                        {
+                            mediaItemIdC = partnerMember.GetValue<string>("wwpartnerAvatar").GetIdByUdi();
+                        }
+
+                        var urlprofileC = partnerMember.GetValue<string>("urlProfile") + '/';
+
+
+                        <li id="@partnersContent.Url@urlprofileC" class="discover-entity-card discover-entity-card--partner">
+                            <div class="discover-entity-type-card">
+                                @{
+                                    var partnerUrl = partnersContent.Url + urlprofileC;
+                                    if (noNavFooter != null)
+                                    {
+                                        partnerUrl += "?noNavFooter=1";
+                                    }
+                                }
+                                <a href="@partnerUrl" class="discover-entity-type-card__info-container">
+
+                                    @if (mediaItemIdC > 0)
+                                    {
+                                        var altText = partner.Name.ToString() + " | Startup Central";
+                                        <img class="discover-entity-type-card__image-squared"
+                                             src=@Umbraco.Media(mediaItemIdC).Url() alt="@altText">
+                                    }
+
+                                    <h3 class="discover-entity-type-card__name">@shortTextC</h3>
+                                    <span class="discover-entity-type-card__description">
+                                        @aboveTilbudC
+                                    </span>
+                                </a>
+                            </div>
+
+                            <div class="discover-entity-type-card__bottom-container">
+                                <div class="discover-entity-type-card__discount">
+                                    <span>
+                                        @weOfferC
+                                    </span>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                }
+
+            </ul>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    $("#promo-button").click(function () {
+        $("#promo-button").prop('disabled', true);
+        $('#promo-button').html("Loading...");
+    });
+
+    $('#clipboard').on('click', function () {
+        var promoCode = $('#promo-code').text();
+        navigator.clipboard.writeText(promoCode)
+            .then(function () {
+                console.log('Text copied to clipboard');
+                $("#copy-text").show();
+
+                setTimeout(() => {
+                    $("#copy-text").hide();
+                }, 1500);
+            })
+            .catch(function (err) {
+                console.error('Could not copy text: ', err);
+            });
+    });
+
+
+    $("#toggle-popup").click(function () {
+        $(".popup").removeClass("is-disabled");
+    });
+
+    $(".popup > .popup-content > .close").click(function () {
+        $(".popup").addClass("is-disabled");
+    });
+
+    $("body").click(function (e) {
+        if (!(($(e.target).closest(".popup-content").length > 0) || ($(e.target).closest("#toggle-popup").length > 0))) {
+            $(".popup").addClass("is-disabled");
+        }
+    });
+</script>
+@if (User.Identity.IsAuthenticated && Umbraco.Member(currentUser.Id).IsDocumentType("student") && System.Web.Security.Roles.IsUserInRole(currentUser.Value<string>("Email"), "student paused"))
+{
+    <div class="modal" id="sendview">
+        <div class="modal-popup modal-popup--coach">
+            <form>
+                <div class="modal-popup__header">
+                    <h2 class="modal-popup__header-text">
+                        @Umbraco.GetDictionaryValue("WelcomeBackTo", "Velkommen tilbage til") Startup Central
+                        <br />
+                        @Umbraco.GetDictionaryValue("ToGetThisOfferYouHaveToJoinAgain", "For at få tilbuddet skal du være medlem igen")
+                    </h2>
+                </div>
+                <div class="modal-popup__body">
+                    <div class="form-container" id="resumLeb" style="display:none;">
+                        <label id="resumLab">@Umbraco.GetDictionaryValue("YourRequestIsBeingProcessedPleaseWait", "Din handling bliver behandlet, vent venligst.")</label>
+                    </div>
+
+                    <button type="button" class="button button--danger" id="getRidOf" data-dismiss="modal-container">@Umbraco.GetDictionaryValue("Cancel", "Annuller")</button>
+                    <button type="button" class="button actsub">@Umbraco.GetDictionaryValue("Activate", "Aktiver")</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}

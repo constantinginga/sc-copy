@@ -1,0 +1,161 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Services;
+@using System.Web
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Extensions
+@{
+    Layout = "Master.cshtml";
+    var currentUser = Members.GetCurrentMember();
+
+    StartupCentral.Code.Controllers.ForretningsplanController fc = new StartupCentral.Code.Controllers.ForretningsplanController();
+    List<StartupCentral.Code.Model.Forretningsplan> forretningsplaner = fc.GetFinalizedForretningsplaner();
+
+
+}
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+                <div class="bigheadline uppercase f80 f50mob mb40 fw700 dark">
+                    @Page.wwoverskrift
+                </div>
+                <div class="txt dark f18 fw600 lh24 mb60">
+                    @Page.bodyText
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            @if (forretningsplaner != null)
+            {
+                foreach (var plan in forretningsplaner)
+                {
+                    <a href="@Umbraco.Content(plan.Content.Id).Url" class="flex">
+                        <div class="col-md-4">
+                            <div class="poolwrapper shadowlight whitebg fleft mb30">
+                                <div class="poolwrappercontent">
+
+
+                                    @{
+                                        if (!plan.Seen)
+                                        {
+                                            <div class="newinpool mb15 f16">Nyhed&nbsp;</div>
+                                        }
+                                    }
+
+                                    <div class="fleft f28 fw700 w100 mb10">@plan.Content.GetValue("wwprojektnavn")</div>
+                                    @if (Convert.ToInt32(plan.Content.GetValue("wweng")) == 1)
+                                    {
+                                        <div class="mb15 f12">This is in english</div>
+                                    }
+
+                                    <div class="f18 fw400 lh22 mb40">
+                                        @plan.Content.GetValue("wwidedesc")
+                                    </div>
+                                    <div class="lighttag fleft fw600 f12 mb20 mr5">
+                                        @plan.Content.GetValue("wwkategori")
+                                    </div>
+                                </div>
+                                <div class="poolwrapperfootertop fleft w100">
+                                    <div class="poolavatar mr15 fleft">
+                                        @{
+
+
+                                            bool profileImageInserted = false;
+
+                                            if (plan.Member != null)
+                                            {
+                                                if (plan.Member.GetValue("wwavatar") != null)
+                                                {
+
+                                                    string avatar = plan.Member.GetValue<string>("wwavatar");
+                                                    int mediaId = 0;
+                                                    if (!string.IsNullOrEmpty(avatar))
+                                                    {
+                                                        if (avatar.IsNumeric())
+                                                        {
+                                                            mediaId = Convert.ToInt32(avatar);
+                                                        }
+                                                        else if (avatar.Contains("umb://"))
+                                                        {
+                                                            mediaId = avatar.GetIdByUdi();
+                                                        }
+
+                                                        if (mediaId > 0)
+                                                        {
+                                                            var mediaItem = Umbraco.Media(mediaId);
+
+                                                            profileImageInserted = true;
+                                                            <img src="@Url.GetCropUrl(mediaItem, "poolavatar")" class="img-responsive border50 svgcrop" />
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            if (!profileImageInserted)
+                                            {
+                                                <img src="/images/smalldefaultavatar.jpg" alt="" />
+                                            }
+
+                                        }
+
+                                    </div>
+                                    <div class="f18 fw700  flexa fleft">@plan.Member.Name</div>
+                                    <a href="javascript:void(0);" class="fright admenubtn poolbullets admenuvideo" data-id="@plan.Member.Id" data-planname="@plan.Content.GetValue("wwprojektnavn")"><img src="/images/bullets.jpg" /></a>
+                                    <div class="admenupool " style="display:none;">
+                                        <div class="admenutop">
+                                            <img src="/images/backarrow.jpg" class="closearrow" />
+                                        </div>
+                                        <div class="admenucontent">
+                                            <div class="admenuinnercontent">
+                                                <ul class="adul">
+                                                    <a href="javascript:void(0);" id="answerplan" class="answerplan" data-id="@plan.Member.Id" data-toggle="modal" data-target="#answerpoolplan"><li>Svar studenten</li></a>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <div class="modal fade" id="answerpoolplan" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><img src="/images/close.gif"></button>
+                                <div class="modal-header text-center">
+
+                                    <img src="/images/smalldefaultavatar.jpg" name="profileImage" alt="" class="img-responsive border50 svgcrop center-block mb25 mt40 round" />
+                                    <h4 class="modal-title f25 mb5  uppercase fw700 lh26 lblEditingMemberName" id="myModalLabel"></h4>
+                                    <div class="mb10 lblMemberType">Student</div>
+                                </div>
+                                <div class="modal-body text-center lh22 mb20">
+                                    Du er ved at sende en svar til <span class="lblEditingMemberName"></span><br />vedr. forretningsplanen <br /><span class="fw700 lblProjectName"></span>
+                                    <br />
+                                </div>
+                                <form action="" method="post" data-id="studentId">
+                                    <div class="form-group">
+                                        <label for="coachmessage">Tilføj en besked</label>
+                                        <textarea class="form-control studentmessage" name="studentmessage" id="studentmessage" row="8" placeholder="Jeg har læst din forretningsplan og ..."></textarea>
+                                    </div>
+                                    <input type="button" value="Send" class="btnlightbg white w100 sendplantostudent" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<section id="upload" class="pt0">
+    <img src="@Page.wwbgimg.Url" id="cloudbg" />
+</section>
+
+
+<script src="~/scripts/startupcentral.student.js?v=3"></script>

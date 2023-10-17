@@ -1,0 +1,319 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Code.Class
+@using StartupCentral.Extensions
+
+@{
+    Layout = "MasterNoIndex.cshtml";
+    var currentDate = DateTime.Now.Year;
+}
+
+@{
+    string loginErrorMessage = string.Empty;
+    string messageTextNewPassword = string.Empty;
+    string messageActivateSub = string.Empty;
+
+    int mediaItemId = 0;
+    IEnumerable<IMember> pList = ApplicationContext.Current.Services.MemberService.GetMembersByMemberType("partner");
+
+    if (IsPost)
+    {
+        if (Request.Form["formaction"] == "loginForm")
+        {
+            string loginemail = Request["loginemail"];
+            string loginpassword = Request["loginpassword"];
+            //string requestedUrl = Umbraco.AssignedContentItem.Value<string>("lUrl");
+
+            if (Membership.ValidateUser(loginemail, loginpassword))
+            {
+                FormsAuthentication.SetAuthCookie(loginemail, true);
+
+                IMember member = StartupCentral.Code.Controllers.UserController.GetByEmail(loginemail);
+
+                if (member != null)
+                {
+                    var db = new StartupCentral.DAL.EntityModels.startupcentraldkEntities();
+                    db.activePlatformMembers.Add(
+                        new StartupCentral.DAL.EntityModels.activePlatformMembers() { LoginDate = DateTime.Now, MemberId = member.Id });
+                    db.SaveChanges();
+                }
+
+
+                //if(System.Web.Security.Roles.IsUserInRole(loginemail, "Admin"))
+                // Response.Redirect("/login/admin-control-hub/"); // broken; and now visble after IsAdmin is added for Groups
+
+
+                var return2Url = Request.Params["return2Url"];
+                if (return2Url != null)
+                {
+                    var url = System.Web.HttpUtility.UrlDecode(return2Url);
+                    Response.Redirect(url);
+                    return;
+                }
+
+                var nodeId = Request.Params["NodeId"];
+                if (nodeId != null)
+                {
+                    Response.Redirect(Umbraco.Content(int.Parse(nodeId)).Url);
+                }
+                else
+                {
+                    Response.Redirect("/login/min-side/");
+                }
+            }
+            else
+            {
+                IMember member = StartupCentral.Code.Controllers.UserController.GetByEmail(loginemail);
+
+                if (member != null)
+                {
+                    if (!member.IsApproved)
+                    {
+                        //loginErrorMessage = string.Format("Venligst aktiver dit abonnementet tilhørende e-mailen: {0}", loginemail);
+                        //messageTextNewPassword = string.Empty;
+                        //messageActivateSub = string.Empty;
+
+                        Response.Redirect(string.Concat("/aktiver-medlemskab/", "?memberkey=", member.Key), true);
+                    }
+                    else
+                    {
+                        int countDownAttempts =  5 - member.FailedPasswordAttempts;
+                        if (member.IsLockedOut)
+                        {
+                            loginErrorMessage = string.Format("Din bruger er blevet blokeret, kontakt Startup Central pr. telefon 29290113", loginemail);
+                            messageTextNewPassword = string.Empty;
+                            messageActivateSub = string.Empty;
+                        }
+                        else
+                        {
+
+                            loginErrorMessage = string.Format("Login fejlede, tjek brugernavn eller kodeord for bruger: {0}.  Du har kun {1} forsøg.", loginemail, countDownAttempts);
+                            messageTextNewPassword = string.Empty;
+                            messageActivateSub = string.Empty;
+                        }
+                    }
+                }
+                else
+                {
+                    loginErrorMessage = string.Format("Login fejlede, tjek brugernavn eller kodeord for bruger: {0}", loginemail);
+                    messageTextNewPassword = string.Empty;
+                    messageActivateSub = string.Empty;
+                }
+            }
+        }
+        else if (Request.Form["formaction"] == "SendNewPassword")
+        {
+            string newPasswordMail = Request["newPasswordMail"];
+            newPasswordMail = Convert.ToString(newPasswordMail);
+            IMember member = StartupCentral.Code.Controllers.UserController.GetByEmail(newPasswordMail);
+
+            if (member != null)
+            {
+                System.Threading.Tasks.Task.Run(() => StartupCentral.Code.Controllers.UserController.SendNewPassword(newPasswordMail)).GetAwaiter().GetResult();
+                //StartupCentral.Code.Controllers.UserController.SendNewPassword(newPasswordMail);
+                messageTextNewPassword = "Der blevet sendt en e-mail til din indbakke.";
+                loginErrorMessage = string.Empty;
+                messageActivateSub = string.Empty;
+            }
+            else
+            {
+                messageTextNewPassword = "E-mailen kunne ikke findes, prøv igen.";
+                loginErrorMessage = string.Empty;
+                messageActivateSub = string.Empty;
+            }
+        }
+        @*
+        else if (Request.Form["formaction"] == "ReActivatesubscription")
+        {
+            string loginemailSub = Request["oldEmail"];
+            IMember member = StartupCentral.Code.Controllers.UserController.GetByEmail(loginemailSub);
+
+            if (member != null)
+            {
+                if (!member.IsApproved)
+                {
+                    Response.Redirect(string.Concat("/aktiver-medlemskab/", "?memberkey=", member.Key),true);
+                }
+                else
+                {
+                    messageActivateSub = "Det ser ud til at du er stødt på en fejl, venligst kontakt os.";
+                    loginErrorMessage = string.Empty;
+                    messageTextNewPassword = string.Empty;
+                }
+            }
+            else
+            {
+                messageActivateSub = "Det ser ud til at du er stødt på en fejl, venligst kontakt os.";
+                loginErrorMessage = string.Empty;
+                messageTextNewPassword = string.Empty;
+            }
+        }
+        *@
+    }
+}
+
+    <main id="sc-login-page" class="user-input-page">
+        
+        <div class="input-page-floating">
+         
+            @if (pList.Count() > 0)
+            {
+                foreach (var partner in pList.Where(itm => itm.GetValue<bool>("wwunavailable") == false).OrderBy(itm => itm.Name).OrderBy(itm => itm.Name))
+                {
+                    if (partner.GetValue<string>("wwpartnerAvatar").IsNumeric())
+                    {
+                        mediaItemId = Convert.ToInt32(partner.GetValue<string>("wwpartnerAvatar"));
+                    }
+                    else if (!string.IsNullOrEmpty(partner.GetValue<string>("wwpartnerAvatar")))
+                    {
+                        mediaItemId = partner.GetValue<string>("wwpartnerAvatar").GetIdByUdi();
+                    }
+
+                    <img loading="lazy" class="input-page-floating__image" src=@Umbraco.Media(mediaItemId).Url() alt="">
+                }
+            }
+        </div>
+
+        <div class="sc-register-container">
+            <div class="sc-register-header">
+            <img src=@Umbraco.Media(32683).Url alt="StartupCentral Blue">
+                <h2>@Umbraco.AssignedContentItem.Value("mainTitleSection1")</h2>
+                <p>@Umbraco.AssignedContentItem.Value("mainDescriptionSection1")</p>
+
+                <!-- Display the error -->
+                @if (!string.IsNullOrEmpty(loginErrorMessage))
+                {
+                    <p>
+                        <br />
+                        <font color="red">@loginErrorMessage</font>
+                    </p>
+                }
+
+                @if (!string.IsNullOrEmpty(messageTextNewPassword))
+                {
+                    <p>
+                        <br />
+                        <font color="red">@messageTextNewPassword</font>
+                    </p>
+                }
+
+                @if (!string.IsNullOrEmpty(messageActivateSub))
+                {
+                    <p>
+                        <br />
+                        <font color="red">@messageActivateSub</font>
+                    </p>
+                }
+            </div>
+            <div class="sc-register-content">
+                <form method="post" id="loginForm">
+                    <input hidden name="formaction" value="loginForm" />
+
+                    <div class="form-container">
+                        <label for="email">E-mail</label>
+                        <input type="email" name="loginemail" placeholder="Email" autocomplete="on" required>
+                    </div>
+
+                    <div class="form-container">
+                        <label for="password">Kodeord</label>
+                        <input type="password" id="pass" name="loginpassword" placeholder="Kodeord" autocomplete="on" required>
+                        <div class="login_password_show" id="togglePassword_show"><svg class="mud-icon-root mud-svg-icon mud-icon-size-large eye-show" focusable="false" viewBox="0 0 24 24" aria-hidden="true">!<path d="M0 0h24v24H0z" fill="none"></path><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="#00000054"></path></svg></div>
+                        <div class="login_password_hide is-hidden" id="togglePassword_hide"><svg class="mud-icon-root mud-svg-icon mud-icon-size-large eye-hide" focusable="false" viewBox="0 0 24 24" aria-hidden="true">!<path d="M0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0z" fill="none"></path><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" fill="#00000054"></path></svg></div>
+                    </div>
+
+                    <button class="button button--full-width button--lg" type="submit">Log ind</button>
+
+                    <a id="gemtditkodeord">Glemt dit kodeord?</a>
+                    <br />
+                    <a href="@Umbraco.Content(29767).Url">Er du ikke tilmeldt?</a>
+                </form>
+
+                <div class="forgot-pw-container" id="requestNewPassword">
+                    <form method="POST" id="newPasswordForm">
+                        <input hidden name="formaction" value="SendNewPassword" />
+
+                        <div class="form-container">
+                            <label for="email">
+                                Indtast din e-mail adresse i feltet nedenfor, så fremsender vi dig en ny adgangskode.
+                            </label>
+                            <input type="email" name="newPasswordMail" autocomplete="off" placeholder="Email" required>
+                        </div>
+                        <button class="button button--full-width button--lg" type="submit" id="submitEmail" name="submitEmail">
+                            Send ny adgangskode
+                        </button>
+                    </form>
+                    <a id="cancelFormNewPassword">Annuller</a>
+                </div>
+
+            </div>
+            <div class="sc-register-footer">
+                <ul class="sc-register-footer__links">
+                    <li>
+                        <a href="/brugerbetingelser/">Brugerbetingselser</a>
+                    </li>
+                    <li>
+                        <a href="/faq/">FAQ</a>
+                    </li>
+                    <li>
+                        <a href="/privatlivspolitik/">Privatlivspolitik</a>
+                    </li>
+                </ul>
+                <span class="sc-register-footer__copyrgiht">
+                    © 2018-@currentDate Startup Central | CVR - 39319942
+                </span>
+            </div>
+        </div>
+    </main>
+
+
+<script>
+    $(document).ready(function () {
+        $("#gemtditkodeord").click(function () {
+            $("#requestNewPassword").toggleClass("is-active");
+        });
+
+        $("#cancelFormNewPassword").click(function () {
+            $("#requestNewPassword").removeClass("is-active");
+        });
+    });
+</script>
+
+<script>
+    const togglePassword_show = document.getElementById("togglePassword_show");
+    const togglePassword_hide = document.getElementById("togglePassword_hide");
+    const password = document.getElementById("pass");
+    const show = document.getElementsByClassName("login_password_show");
+    const hide = document.getElementsByClassName("login_password_hide");
+
+
+    togglePassword_show.addEventListener("click", function () {
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
+        password.setAttribute("type", type);
+
+    });
+    togglePassword_hide.addEventListener("click", function () {
+        const type = password.getAttribute("type") === "text" ? "password" : "text";
+        password.setAttribute("type", type);
+
+    });
+
+    $(togglePassword_show).click(function () {
+        $(togglePassword_hide).removeClass("is-hidden");
+    });
+
+    $(togglePassword_hide).click(function () {
+        $(togglePassword_hide).addClass("is-hidden");
+    });
+
+
+</script>
+
+    <style>
+        #sc-navbar-logged, #sc-navbar-main, #sc-newsletter, #main-footer {
+            display: none;
+    }
+
+        .is-hidden {
+            display: none;
+        }
+       
+    </style>

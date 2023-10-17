@@ -1,0 +1,239 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "Master.cshtml";
+
+    var currentUser = Members.GetCurrentMember();
+
+    var _memberService = ApplicationContext.Current.Services.MemberService;
+
+    var member = _memberService.GetById(currentUser.Id);
+}
+
+
+<main id="sc-logged-extraoffers" class="sc-logged sc-bgb10">
+    <div class="rail-grid rail-grid--3-column">
+
+        @Html.Partial("MemberInfo", member)
+
+        <div id="main-feed" class="feed-rail">
+            <div class="feed-rail-container">
+                <div class="feed-section">
+                    <h2 class="feed-section__title">
+                        Unikke tilbud
+                    </h2>
+                    <div class="feed-section__description">
+                        <p>
+                            Nedenfor finder du dine unikke tilbud. Tilbud som kun er til rådighed for dig som medlem.
+                            De unikke tilbud giver dig og din virksomhed en merværdi, som du ikke vil gå glip af.
+                        </p>
+                        <p>
+                            Du får tilbuddet ved at trykke ”Modtag tilbud”, herefter vil der blive sendt en mail til dig om de påkrævet oplysninger for at benytte dig af tilbuddet.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            @* Unique offer for premium *@
+            <div class="feed-rail-container">
+                <div class="feed-section">
+                    <h2 class="feed-section__title">
+                        Sælg dit produkt som Premium medlem
+                    </h2>
+                    <div class="feed-section__description">
+                        <p>
+                            Som Premium medlem har du mulighed for at sælge dit eget produkt til alle medlemmer af Startup Central.</br>
+                            Dit produkt vil være synligt under "Unikke tilbud".
+                        </p>
+                        <p>Kontakt Victoria på vh@startupcentral.dk for at komme i gang.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extra Offers -->
+            <div class="feed-rail-container">
+                <div class="feed-section">
+                    <h2 class="feed-section__title">
+                        @Umbraco.AssignedContentItem.Value("title")
+                    </h2>
+                    <div class="feed-section__description">
+                        <p>
+                            @Umbraco.AssignedContentItem.Value("subTitle")
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Quick Access Buttons and Setup -->
+                <div class="feed-section">
+                    <div class=" swiper extra-offers">  
+                            <ul class="swiper-wrapper extra-offers__list">
+
+                                @foreach (var offer in Umbraco.Content(25917).Children().Where(x => x.IsVisible()).OrderByDescending(x => x.CreateDate))
+                                {
+                                    var typedMedia = offer.Value<Image>("offerLogo");
+                                    var title = offer.Value("titleOfTheOffer");
+                                    var text = offer.Value<HtmlString>("offerText");
+                                    var description = offer.Value("offerDescription");
+
+                                    var id = offer.Id;
+
+                                    <li class="swiper-slide extra-offers__list-item">
+                                        <img class="extra-offers__image entity-image-104 entity-image-squared"
+                                             src="@(!string.IsNullOrEmpty(typedMedia.Url) ? typedMedia.Url : "/media/2189/default-picture-extra-offers.png")" alt="">
+                                        <div class="extra-offers__body">
+                                            <h3 class="extra-offers__title">@title</h3>
+                                            <p class="extra-offers__description">
+                                                @Html.StripHtml(text)
+                                            </p>
+                                        </div>
+                                        <div class="extra-offers__content">
+                                            <p>
+                                                @description
+                                            </p>
+
+                                            <p class="@id"></p>
+
+                                            <button class="button button--cta offerButton" id="@id" data-user="@currentUser.Id">Modtag tilbud</button>
+                                        </div>
+                                        <button class="extra-offers__button">
+                                            <!--<svg id="ChevronDown" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <path id="Path_86" data-name="Path 86" d="M32,32H0V0H32Z" fill="none" opacity="0.87" />
+                        <path id="Path_87" data-name="Path 87" d="M19.034,9.388l-5.173,5.173L8.688,9.388a1.329,1.329,0,1,0-1.88,1.88l6.12,6.12a1.328,1.328,0,0,0,1.88,0l6.12-6.12a1.328,1.328,0,0,0,0-1.88,1.356,1.356,0,0,0-1.893,0Z"-->
+                                            @*transform="translate(2.139 2.999)"*@
+                                            <!--fill="#182848cc" />
+                        </svg>-->
+                                            <span style="color: #47b2b2; font-weight: bold; font-size: 0.8rem">Læs mere</span>
+                                        </button>
+
+                                    </li>
+                                }
+
+                            </ul>
+                        </div>                        
+                    </div>
+            </div>
+        </div>
+
+        @Html.Partial("ExtraOffers", member)
+
+    </div>
+</main>
+
+
+@*<section class="header-big">
+        <div class="container">
+            <div class="title-box">
+                <h2 class="headline-2">HVAD KOSTER ET MEDLEMSKAB?</h2>
+                <h2>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</h2>
+                <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+            </div>
+        </div>
+    </section>
+
+    <main id="sc-extraoffers" class="sc-extraoffers">
+        <section class="sc-extraoffers-section">
+            <div class="container card">
+                <div class="extraoffers-container">
+
+                    @foreach (var offer in Umbraco.Content(25254).Children().Where(x=>x.IsVisible()).OrderByDescending(x=>x.CreateDate))
+                    {
+                        var typedMedia = offer.Value<Image>("offerLogo");
+                        var title = offer.Value("titleOfTheOffer");
+                        var text = offer.Value("offerText");
+                        var description = offer.Value("offerDescription");
+
+                        var id = offer.Id;
+
+                        <div class="extraoffer">
+                            <div class="extraoffer-header">
+                                <div class="header-img">
+                                    @if (typedMedia != null)
+                                    {
+                                        <img src=@typedMedia.Url alt="">
+                                    }
+                                    else
+                                    {
+                                        <img src="/media/2189/default-picture-extra-offers.png" alt="">
+                                    }
+                                </div>
+                                <div class="header-middle">
+                                    <h2>@title</h2>
+                                    <p>@text</p>
+                                </div>
+                                <div class="icon"><i class="fas fa-chevron-down dropdown-arrow"></i></div>
+                            </div>
+                            <div class="extraoffer-description">
+                                <div class="text">
+                                    <p>@description</p>
+                                    <p class="@id"></p>
+                                </div>
+
+                                <div class="button-box">
+                                    <a id="@id" data-user="@currentUser.Id" class="button offerButton">Button</a>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </section>
+    </main>
+*@
+<script>
+    var acc = document.getElementsByClassName("extra-offers__button ");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function () {
+            this.classList.toggle("is-open");
+            var panel = this.previousElementSibling;
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+            }
+
+            var r = $(this).closest('.extra-offers__list-item').find('.extra-offers__content ');
+            r[0].classList.toggle('is-open');
+        });
+    }
+</script>
+<script>
+
+    var button = document.getElementsByClassName("offerButton");
+    var offer = document.getElementsByClassName("extra-offers__list-item");
+
+    $("#33387").hide($(button).hasClass(button).toString());
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+<script>
+    const swiper = new Swiper('.swiper', {
+        // Optional parameters
+        direction: 'vertical',
+        slidesPerView: 4,
+        loop: true,
+        autoplay: true,
+        
+
+        //breakpoints: {
+        //    300: {
+        //        slidesPerView: 1,
+        //        spaceBetween: 10,
+        //    },
+        //    650: {
+        //        slidesPerView: 2,
+        //        spaceBetween: 20,
+        //    },
+
+        //    1400: {
+        //        slidesPerView: 4,
+        //        spaceBetween: 30,
+        //    },
+        //}
+    });
+</script>

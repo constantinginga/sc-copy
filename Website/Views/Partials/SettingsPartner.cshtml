@@ -1,0 +1,148 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Extensions
+
+@{    
+    var currentUser = Members.GetCurrentMember();
+
+    var _memberService = ApplicationContext.Current.Services.MemberService;
+
+    var member = _memberService.GetById(currentUser.Id);
+    var memberKey = member.Key;
+
+    string wwavatarImageUrl = "";
+    var myAvatarImageUrl = 0;
+
+    if (member.GetValue("wwavatar") != null)
+    {
+        if (member.GetValue<string>("wwavatar").IsNumeric())
+        {
+            myAvatarImageUrl = Convert.ToInt32(member.GetValue<string>("wwavatar"));
+        }
+        else if (!string.IsNullOrEmpty(member.GetValue<string>("wwavatar")))
+        {
+            myAvatarImageUrl = member.GetValue<string>("wwavatar").GetIdByUdi();
+        }
+
+        if (myAvatarImageUrl > 0)
+        {
+            wwavatarImageUrl = Umbraco.Media(myAvatarImageUrl).Url();
+        }
+    }
+}
+
+<main id="AccountSettings" class="sc-logged sc-bgb10">
+    <div class="rail-grid rail-grid--2-column">
+        <h2 class="acc-settings-headline">
+            @member.Name /
+            <span id="acc-pw" class="title-tab account-settings is-active">Info indstillinger</span>
+            <span id="acc-subscription" class="title-tab subscription-settings">Abonnementsindstillinger</span>
+            <span id="acc-invoice" class="title-tab invoices-tab">Faktura</span>
+        </h2>
+
+        <aside class="md-rail">
+            <div class="settings-buttons">
+                <ul class="settings-buttons__list">
+                    <li class="settings-buttons__list-item tablinks" onclick="openTab(event, 'account-settings')">
+                        <button class="settings-button">
+                                <svg id="Password" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                    viewBox="0 0 32 32">
+                                    <path id="Path_21" data-name="Path 21" d="M0,0H32V32H0Z" fill="none" />
+                                    <path id="Path_22" data-name="Path 22"
+                                        d="M22.667,10.333H21.333V7.667A6.667,6.667,0,1,0,8,7.667v2.667H6.667A2.675,2.675,0,0,0,4,13V26.333A2.675,2.675,0,0,0,6.667,29h16a2.675,2.675,0,0,0,2.667-2.667V13A2.675,2.675,0,0,0,22.667,10.333Zm-8,12a2.667,2.667,0,1,1,2.667-2.667A2.675,2.675,0,0,1,14.667,22.333Zm4.133-12H10.533V7.667a4.133,4.133,0,0,1,8.267,0Z"
+                                        transform="translate(1.333 0.333)" fill="#182848" />
+                                </svg>
+                            <span>Kodeord</span>
+                        </button>
+                    </li>
+                    <li class="settings-buttons__list-item tablinks" onclick="openTab(event, 'subscription-settings')">
+                        <button class="settings-button">
+                                <svg id="Subscription" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                    viewBox="0 0 32 32">
+                                    <path id="Path_30" data-name="Path 30" d="M0,0H32V32H0Z" fill="none" />
+                                    <path id="Path_31" data-name="Path 31"
+                                        d="M27,23v1.333A2.675,2.675,0,0,1,24.333,27H5.667A2.666,2.666,0,0,1,3,24.333V5.667A2.666,2.666,0,0,1,5.667,3H24.333A2.675,2.675,0,0,1,27,5.667V7H15a2.666,2.666,0,0,0-2.667,2.667V20.333A2.666,2.666,0,0,0,15,23ZM15,20.333H28.333V9.667H15ZM20.333,17a2,2,0,1,1,2-2A2,2,0,0,1,20.333,17Z"
+                                        transform="translate(1 1)" fill="#182848" />
+                                </svg>
+                            <span>Abonnementsindstillinger</span>
+                        </button>
+                    </li>
+                    <li class="settings-buttons__list-item tablinks" onclick="openTab(event, 'invoices-tab')">
+                        <button class="settings-button">
+                                <svg id="Budget" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                    viewBox="0 0 32 32">
+                                    <path id="Path_1" data-name="Path 1" d="M0,0H32V32H0Z" fill="none" />
+                                    <path id="Path_2" data-name="Path 2"
+                                        d="M17.333,2H6.667A2.663,2.663,0,0,0,4.013,4.667L4,26a2.663,2.663,0,0,0,2.653,2.667H22.667A2.675,2.675,0,0,0,25.333,26V10ZM20,23.333H9.333V20.667H20ZM20,18H9.333V15.333H20Zm-4-6.667V4l7.333,7.333Z"
+                                        transform="translate(1.333 0.667)" fill="#182848" />
+                                </svg>
+                            <span>Faktura</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="lg-rail">
+
+            @Html.Partial("SettingsChangePassword", member)
+
+            @{
+                var upodiWrapperService = new StartupCentral.Code.Class.UpodiWrapperService();
+                //var cust = upodiWrapperService.GetByAccountNumber(member.Id);
+                var cust = System.Threading.Tasks.Task.Run(() => upodiWrapperService.GetByAccountNumber(member.Id)).GetAwaiter().GetResult();
+                if (cust == null)
+                {
+                    //cust = upodiWrapperService.GetByAccountNumber(member.Id);
+                    cust = System.Threading.Tasks.Task.Run(() => upodiWrapperService.GetByAccountNumber(member.Id)).GetAwaiter().GetResult();
+                }
+                if (cust != null)
+                {
+                    Guid? custID = cust.ID;
+                    HttpContext.Current.Items.Add("cust.ID", custID);
+                    HttpContext.Current.Items.Add("nextPaymentDate", System.Threading.Tasks.Task.Run(() => upodiWrapperService.GetNextPaymentDate(cust.ID)).GetAwaiter().GetResult());
+                    HttpContext.Current.Items.Add("cardExpiryDate", System.Threading.Tasks.Task.Run(() => upodiWrapperService.GetCardExpiryDate(cust.ID)).GetAwaiter().GetResult());
+                }
+            }
+
+            @if (cust != null)
+            {
+                @Html.Partial("SettingsInvoices", member)
+            }
+
+            @if (cust != null)
+            {
+                @Html.Partial("SettingsSubscription", member)
+            }
+        </div>
+    </div>
+
+</main>
+
+
+<script>
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks, tabtitles;
+        tabcontent = document.getElementsByClassName("settings-tab");
+
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        tablinks = document.getElementsByClassName("tablinks");
+
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+        }
+
+        tabtitle = document.getElementsByClassName("title-tab");
+        for (i = 0; i < tablinks.length; i++) {
+            tabtitle[i].className = tabtitle[i].className.replace(" is-active", "");
+        }
+
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " is-active";
+
+        var title = document.getElementsByClassName(tabName);
+        title[0].className += " is-active";
+    }
+</script>

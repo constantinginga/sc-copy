@@ -1,0 +1,266 @@
+﻿@using RestSharp
+@using System.IO
+@using System.Security.Cryptography.X509Certificates;
+@using StartupCentral.Code.Model.MobilePay;
+@using StartupCentral.Code.Class;
+@using Umbraco.Web.Security
+@using System.Web
+@using System.Web.Security
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = null;
+    var p = 1;
+}
+
+@* DOCUMENTATION
+
+1. 12-08-19 - SP - Implemented Many chat
+
+*@
+
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,600,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="/css/custom.css?ver=1.2" rel="stylesheet">
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.form/3.50/jquery.form.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/App_Plugins/TeaCommerce/Assets/Scripts/tea-commerce.min.js"></script>
+    <script src="https://sdk.paylike.io/3.js"></script>
+    <script type="text/javascript">
+        _storeId = 1;
+    </script>
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117081036-1"></script>
+    
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'UA-117081036-1');
+    </script>
+
+    <!-- Many Chat -->
+    <script src="//widget.manychat.com/390866858042761.js" async="async"></script>
+
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-117081036-1']);
+        _gaq.push(['_trackPageview']);
+        (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+   
+
+    <!-- Facebook Pixel Code -->
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '295247367997820');
+        fbq('track', 'PageView');
+    </script>
+    <noscript>
+        <img height="1" width="1" style="display:none"
+             src="https://www.facebook.com/tr?id=295247367997820&ev=PageView&noscript=1" />
+    </noscript>
+    <!-- End Facebook Pixel Code -->
+<!-- Start of Evolution360 script -->
+	<script src="https://app.evolution360.com/JavascriptClick/Tracker?cid=1712190"></script>
+<!-- End of Evolution360 script -->
+
+</head>
+<body>
+    <div id="main">
+        <div id="top">
+            <div id="logo">
+                <a href="/">
+                    <img src="/images/bluelogo.png" width="200px" class="img-responsive" />
+                </a>
+            </div>
+        </div>
+
+        <section class="flexdesk">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="sectionheadline uppercase mb60 mt30 f60 fw700 lh60 blue">@Page.wwoverskrift</div>
+                        <div class="fleft w100 f18  lh24 mb20 signuptxt">@Page.bodyText</div>
+                    </div>
+                    <div class="col-md-1 hidden-xs"></div>
+                    <div class="col-md-12">
+                        <div class="payment-error" style="display:none;">
+                            <div class="sectionheadline uppercase mb60 f60 fw700 lh60 blue">Problemer!</div>
+                            <div class="fleft w100 f18  lh24 mb20">
+                                Vi beklager meget, men i øjeblikket er der ikke forbindelse til PayLike. Prøv igen om lidt.
+                            </div>
+                        </div>
+                        <div class="second" style="display:block;">
+                            <div class="fleft w100 f16  lh22 mb20 signuptxt">
+                                <form method="post">
+                                    <img src="@Umbraco.Media(2525).Url" id="btnPay" style="cursor: pointer;width: 100px;" />
+                                </form>
+
+                                <script>
+
+                                    $(document).ready(function () {
+                                        $("#btnPay").on('click', function () {
+                                            var paylike = Paylike('@System.Configuration.ConfigurationManager.AppSettings["StartupCentral.Paylike.PublicKey"]', { style: false });
+                                            paylike.popup({
+                                                title: 'Add card',
+                                                description: 'Please enter your card details',
+                                            }, function (err, r) {
+                                                $.ajax({
+                                                      type: "POST",
+                                                      url: location.origin + "/umbraco/api/upodiapi/savepaymentmethod",
+                                                      data: {
+                                                          UserId: '@Request.QueryString["memberkey"]',
+                                                          Token: r.card.id,
+                                                          PromoKode: '@Request.QueryString["promokode"]'
+                                                      },
+                                                      success: function (data) {
+                                                          console.log(data);
+                                                          window.location.href = "https://www.startupcentral.dk/paylike-takforditkoeb"
+                                                          p = 0;
+                                                     },
+                                                })
+                                            });                                            
+                                        });
+                                        
+                                        $("#btnPay").click();
+                                    });
+                                </script>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <img src="@Page.wwbgimg.Url" id="cloudbg" />
+        </section>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/scripts/custom.js"></script>
+    <script src="~/scripts/moment-with-locales.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet" type='text/css'>
+
+</body>
+</html>
+
+
+@{
+
+    IMember member = null;
+
+    //StartupCentral.Code.Class.MobilePay.Initialize();
+
+    if (Request.QueryString["memberkey"] != null)
+    {
+        member = ApplicationContext.Current.Services.MemberService.GetByKey(new Guid(Request.QueryString["memberkey"]));
+    }
+
+    bool requestSuccess = false;
+
+
+    //if (IsPost)
+    {
+        if (member != null)
+        {
+            UpodiWrapperService UpodiWrapperService = new StartupCentral.Code.Class.UpodiWrapperService();
+            Guid Guid = UpodiWrapperService.CreateNewCustomers(member.Id, member);
+            string PromoKode = Request.QueryString["promokode"];
+        }
+        if (!requestSuccess)
+        {
+          @*  <script>
+
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".payment-error").slideDown();
+                window.setTimeout(function () {
+                    $(".payment-error").slideUp();
+                }, 8000);
+            }, 1000);
+        });
+
+    </script>*@
+        }
+    }
+}
+
+@*
+@{
+
+    IMember member = null;
+
+    StartupCentral.Code.Class.MobilePay.Initialize();
+
+    if (Request.QueryString["memberkey"] != null)
+    {
+        member = ApplicationContext.Current.Services.MemberService.GetByKey(new Guid(Request.QueryString["memberkey"]));
+    }
+
+    bool requestSuccess = false;
+
+
+    if (IsPost)
+    {
+        if (member != null)
+        {
+            AgreementResponse agreementResponse = StartupCentral.Code.Class.MobilePay.RequestPayment(member);
+            if (agreementResponse != null)
+            {
+                if (agreementResponse.Links != null)
+                {
+                    Link link = agreementResponse.Links.Where(itm => itm.Rel == "mobile-pay").FirstOrDefault();
+                    if (link != null)
+                    {
+                        requestSuccess = true;
+                        HttpContext.Current.Response.Redirect(link.Href, false);
+                    }
+                }
+            }
+        }
+
+        if (!requestSuccess)
+        {
+            <script>
+
+                $(document).ready(function () {
+                    window.setTimeout(function () {
+                        $(".payment-error").slideDown();
+                        window.setTimeout(function () {
+                            $(".payment-error").slideUp();
+                        }, 8000);
+                    }, 1000);
+                });
+
+            </script>
+        }
+    }
+}
+*@
+
+
+

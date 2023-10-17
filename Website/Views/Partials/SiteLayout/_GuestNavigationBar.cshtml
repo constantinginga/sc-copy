@@ -1,0 +1,375 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+
+<header class="nfp-navbar-main nfp-navbar">
+    <div class="nfp-nav-wrapper">
+        <div class="nfp-purple-closing" onclick="mobileNavPop()">
+            <p>X</p>
+        </div>
+        <button id="nfp-hamburger-menu" onclick="mobileNavPop()">
+            <svg id="Hamburger" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                <path id="Path_45" data-name="Path 45" d="M0,0H32V32H0Z" fill="#120018" />
+                <path id="Path_46" data-name="Path 46"
+                      d="M4.333,22H25.667a1.333,1.333,0,0,0,0-2.667H4.333a1.333,1.333,0,1,0,0,2.667Zm0-6.667H25.667a1.333,1.333,0,0,0,0-2.667H4.333a1.333,1.333,0,1,0,0,2.667ZM3,7.333A1.337,1.337,0,0,0,4.333,8.667H25.667a1.333,1.333,0,0,0,0-2.667H4.333A1.337,1.337,0,0,0,3,7.333Z"
+                      transform="translate(1 2)" fill="#ffffff" />
+            </svg>
+            
+        </button>
+        <div class="nfp-navbar-logo">
+            <a class="nfp-navbar-logo__link" href="/">
+                <img class="nfp-navbar-logo__image" src=@Umbraco.Media(23496).Url alt=" Startup Central, stedet for dit iværksætteri"> @*local storage:  23496  production: 23496 *@
+            </a>
+        </div>
+
+        <nav class="nfp-navbar-main">
+            <div class="nfp-navbar-main-wrapper">
+                <ul class="nfp-navbar-main-menu">
+                    <li class="nfp-navbar-main-menu__item has-dropdown">
+                        @*<div class="nfp-navbar-main-menu__link">
+                                <span>@Umbraco.GetDictionaryValue("WeOffer", "Vi tilbyder")</span>
+                            <svg id="DropDown" class="nfp-dropdown" xmlns="http://www.w3.org/2000/svg" width="27" height="27"
+                            viewBox="0 0 24 24" fill="#ffffff">
+                                <path id="Path_51" data-name="Path 51" d="M0,0H24V24H0Z" fill="none" />
+                                <path id="Path_52" data-name="Path 52"
+                                 d="M8.71,11.71,11.3,14.3a1,1,0,0,0,1.41,0l2.59-2.59A1,1,0,0,0,14.59,10H9.41A1,1,0,0,0,8.71,11.71Z"
+                                 transform="translate(0 0)"/>
+                            </svg>
+                        </div>*@
+                        <div class="nfp-navbar-main-submenu" id="nfp-first-submenu">
+                            <ul class="nfp-navbar-main-submenu__menu">
+                                <li class="nfp-navbar-main-submenu__item">
+                                    <a href="https://www.startupcentral.dk/lounge" class="nfp-navbar-main-submenu__link">
+                                        <p class="nfp-navbar-main-submenu__title">@Umbraco.Content(27490).Value("menuTitle")</p>
+                                    </a>
+                                </li>
+                                <li class="nfp-navbar-main-submenu__item">
+                                    <a href="@Umbraco.Content(10840).Url" class="nfp-navbar-main-submenu__link">
+                                        <p class="nfp-navbar-main-submenu__title">Coaches</p>
+                                    </a>
+                                </li>
+                                <li class="nfp-navbar-main-submenu__item">
+                                    <a href="@Umbraco.Content(10842).Url" class="nfp-navbar-main-submenu__link">
+                                        <p class="nfp-navbar-main-submenu__title">@Umbraco.Content(10842).Value("menuTitle")</p>
+                                    </a>
+                                </li>
+                                <li class="nfp-navbar-main-submenu__item">
+                                    <a href="@Umbraco.Content(25918).Url" class="nfp-navbar-main-submenu__link">
+                                        <p class="nfp-navbar-main-submenu__title">Events</p>
+                                    </a>
+                                </li>
+                                <li class="nfp-navbar-main-submenu__item">
+                                    <div id="nfp-toolSubsection_whole">
+                                        <div class="nfp-navbar-main-submenu__container">
+                                            <a href="@Umbraco.Content(38742).Url" class="nfp-navbar-main-submenu__link">
+                                                <p class="nfp-navbar-main-submenu__title has-dropdown" id="nfp-toolsDrop" style="cursor: pointer">@Umbraco.GetDictionaryValue("Tools", "Værktøjer")</p>
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <div class="nfp-navbar-main-submenu" id="nfp-second-submenu">
+                        <ul class="nfp-navbar-main-submenu__menu">
+                            <li class="nfp-navbar-main-submenu__item">
+                                <a href="@Umbraco.Content(27479).Url" class="nfp-navbar-main-submenu__link">
+                                    <p class="nfp-navbar-main-submenu__title">@Umbraco.GetDictionaryValue("WhatIsStartupCentral", "Hvad er Startup Central")</p>
+                                </a>
+                            </li>
+                            <li class="nfp-navbar-main-submenu__item">
+                                <a href="@Umbraco.Content(25745).Url" class="nfp-navbar-main-submenu__link">
+                                    <p class="nfp-navbar-main-submenu__title">@Umbraco.Content(25745).Value("menuTitle")</p>
+                                </a>
+                            </li>
+                            <li class="nfp-navbar-main-submenu__item">
+                                <a href="@Umbraco.Content(27510).Url" class="nfp-navbar-main-submenu__link">
+                                    <p class="nfp-navbar-main-submenu__title">@Umbraco.Content(27510).Value("menuTitle")</p>
+                                </a>
+                            </li>
+                            <li class="nfp-navbar-main-submenu__item">
+                                <a href="@Umbraco.Content(33797).Url" class="nfp-navbar-main-submenu__link">
+                                    <p class="nfp-navbar-main-submenu__title">@Umbraco.GetDictionaryValue("Career", "Karriere")</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="nfp-navbar-login-menu">
+            <a href="@Umbraco.Content(11655).Url" class="login-btn">@Umbraco.GetDictionaryValue("Login", "Log ind")</a>
+            <a href="@Umbraco.Content(29767).Url" class="main-btn" id="blivmedlem_button">@Umbraco.GetDictionaryValue("BecomeAMember", "Bliv Medlem")</a>
+            <div class="nfp-language-switcher-container">
+                @{
+                    var isEnglish = this.Request.Url.LocalPath.StartsWith("/en/") || this.Request.Url.LocalPath.Equals("/en");
+                    var acItem = @Umbraco.AssignedContentItem;
+
+                    var url = isEnglish ?
+                    (acItem == null ? "/" : acItem.Url("da-DK", UrlMode.Absolute))
+                    :
+                    (acItem == null ? "/en" : acItem.Url("en-US", UrlMode.Absolute));
+
+                    if (acItem?.Name == "MemberProfile")
+                        url = isEnglish ?
+                        this.Request.Url.LocalPath.Substring(3)
+                        : // it actually also works for /partners and /en/partnere
+                        "/en" + this.Request.Url.LocalPath;
+
+                }
+                @*@if (isEnglish)
+                {
+                    <a href="@url">
+                        DK
+                    </a>
+                }
+                else
+                {
+                    <a href="@url">
+                        ENG
+                    </a>
+                }*@
+            </div>
+            </a>
+        </div>
+    </div>
+
+    <div id="nfp-navbar-main__mobile">
+        <div id="nfp-navbar-main__mobile-content">
+            @*<div class="nfp-navbar-mobile__header">
+                <span class="nfp-close" onclick="mobileNavPop()">&times;</span>
+            </div>*@
+            <div class="nfp-navbar-mobile_big_container">
+                <div class="nfp-navbar-mobile__main">
+                    <div class="nfp-navbar-mobile-section droppingdown">
+                        <div class="nfp-navbar-mobile-section__header has-dropdown">
+                            <h2 class="nfp-sub_title" id="nfp-mobile_sub_title1">@Umbraco.GetDictionaryValue("WeOffer", "Vi tilbyder")</h2>
+                            <svg id="DropDown dropdowntitle1" class="nfp-dropdown" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                 viewBox="0 0 24 24" fill="white">
+                                <path id="Path_51" data-name="Path 51" d="M0,0H24V24H0Z" fill="none" />
+                                <path id="Path_52" data-name="Path 52"
+                                      d="M8.71,11.71,11.3,14.3a1,1,0,0,0,1.41,0l2.59-2.59A1,1,0,0,0,14.59,10H9.41A1,1,0,0,0,8.71,11.71Z"
+                                      transform="translate(0 0)" />
+                            </svg>
+
+                        </div>
+                        <div class="nfp-navbar-mobile-main-submenu" id="nfp-mobile-first-submenu">
+                            <ul class="nfp-navbar-mobile-main-submenu__menu">
+                                <li class="nfp-navbar-mobile-main-submenu__item">
+                                    <a href="@Umbraco.Content(10842).Url" class="nfp-navbar-mobile-main-submenu__link">
+                                        <p class="nfp-navbar-mobile-main-submenu__title">@Umbraco.Content(10842).Value("menuTitle")</p>
+                                    </a>
+                                </li>
+                                <li class="nfp-navbar-mobile-main-submenu__item">
+                                    <a href="@Umbraco.Content(10840).Url" class="nfp-navbar-mobile-main-submenu__link">
+                                        <p class="nfp-navbar-mobile-main-submenu__title">Coaches</p>
+                                    </a>
+                                </li>
+                                <li class="nfp-navbar-mobile-main-submenu__item">
+                                    <a href="https://www.startupcentral.dk/lounge" class="nfp-navbar-mobile-main-submenu__link">
+                                        <p class="nfp-navbar-mobile-main-submenu__title">@Umbraco.Content(27490).Value("menuTitle")</p>
+                                    </a>
+                                </li>
+                                <li class="nfp-navbar-mobile-main-submenu__item" style="margin-bottom: 0.5rem">
+                                    <div class="nfp-navbar-mobile-main-submenu__container">
+                                        <a href="@Umbraco.Content(38742).Url" class="nfp-navbar-main-submenu__link">
+                                            <p class="nfp-navbar-mobile-main-submenu__title has-dropdown" id="nfp-mobile_toolsDrop" style="cursor: pointer">@Umbraco.GetDictionaryValue("Tools", "Værktøjer")</p>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="nfp-navbar-mobile-section">
+                        <div class="nfp-navbar-mobile-section__header">
+                            <a href="@Umbraco.Content(27479).Url" class="nfp-navbar-main-submenu__link">
+                                <h2 class="nfp-sub_title" id="nfp-mobile_sub_title2">@Umbraco.Content(27479).Value("menuTitle")</h2>   @*Make it a link to about us*@
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                        <div class="nfp-navbar-mobile-section" style="background-color: #a09ff7;">
+                            <div class="nfp-navbar-mobile-section__header">
+                                <p class="nfp-sub_paragraph" id="">Phone: <a href="tel:+4529290113" style="color: #d2dae9">&nbsp +45 29 29 01 13 </a></p>
+                                <p class="nfp-sub_paragraph" id="">Email: <a href="mailto:kontakt@startupcentral.dk" style="color: #d2dae9">&nbsp kontakt@startupcentral.dk</a></p>
+                            </div>
+                        </div>
+                
+            </div>
+
+        </div>
+    </div>
+
+    @*<div id="nfp-navbar-warning-msg">
+        <img src="@Umbraco.Media(29422).Url()" alt="Apple Store" />
+        <div id="nfp-navbar-warning-msg__text">
+            Download Startup Central gratis og bliv en del af Startup Lounge omkostningsfrit – <a href="https://www.startupcentral.dk/lounge" style="color: #ffffff"><b>Startup Central Basic</b></a>
+        </div>
+        <img src="@Umbraco.Media(29422).Url()" alt="Warning icon" />
+    </div>*@
+
+</header>
+
+<script>
+    const dropdowns = document.querySelectorAll('.nfp-navbar-main-menu__item.has-dropdown');
+    let submenus = document.querySelectorAll('.nfp-navbar-main-submenu');
+    let submenu = document.getElementById('nfp-first-submenu');
+    let toolSubmenu = document.getElementById('nfp-toolSubsection');
+    const arrow = document.getElementById('nfp-arrow');
+
+    dropdowns.forEach((d, i) => {
+        d.addEventListener('mouseout', () => submenus[i].style.display = 'none');
+        d.addEventListener('mouseover', () => submenus[i].style.display = 'flex');
+    });
+    submenus.forEach(s => {
+        s.addEventListener('mouseover', () => s.style.display = 'flex');
+        s.addEventListener('mouseout', () => s.style.display = 'none');
+    });
+  
+
+    $("#nfp-toolSubsection_whole").hover(function () {
+        if (toolSubmenu.style.display === "none") {
+            toolSubmenu.style.display = "flex";
+        } else {
+            toolSubmenu.style.display = "none";
+        }
+    });
+
+    submenu.addEventListener('mouseleave', myRemoveFunct)
+
+    function myRemoveFunct() {
+        toolSubmenu.style.display = "none";
+    }
+
+
+    //function mobileNavPop() {
+    //    var mobileNav = document.getElementById("nfp-navbar-main__mobile");
+    //    let closingX = document.querySelector(".nfp-purple-closing");
+    //    let hamburger = document.querySelector("#nfp-hamburger-menu");
+
+    //    if (mobileNav.style.display === "block") {
+    //        mobileNav.style.display = "none";
+    //        mobileSubmenu1.style.display = "none";
+    //        mobileSubmenu2.style.display = "none";
+    //        mobile_toolSubmenu.style.display = "none";
+    //        closingX.style.display = "none";
+    //        hamburger.style.display = "block";
+    //        //document.body.style.overflow = "visible";
+
+    //    } else {
+    //        mobileNav.style.display = "block";
+    //        closingX.style.display = "flex";
+    //        hamburger.style.display = "none";
+    //        //document.body.style.overflow = "hidden";
+    //    }
+    //}
+
+    function mobileNavPop() {
+        var mobileNav = document.getElementById("nfp-navbar-main__mobile");
+        var closingX = document.querySelector(".nfp-purple-closing");
+        var hamburger = document.querySelector("#nfp-hamburger-menu");
+
+        if (mobileNav.style.display === "block") {
+            mobileNav.style.display = "none";
+            closingX.style.display = "none";
+            hamburger.style.display = "block";
+        } else {
+            mobileNav.style.display = "block";
+            closingX.style.display = "block";
+            hamburger.style.display = "none";
+        }
+    }
+
+
+
+    let mobileSubmenu1 = document.getElementById('nfp-mobile-first-submenu');
+    let mobileSubmenu2 = document.getElementById('nfp-mobile-second-submenu');
+    let mobile_toolSubmenu = document.getElementById('nfp-mobile_toolSubsection'); 
+
+    
+
+    $(".droppingdown").click(function () {
+        let svg = document.querySelector(".nfp-dropdown");
+
+        if (mobileSubmenu1.style.display === "flex") {
+            mobileSubmenu1.style.display = "none";
+            //mobile_toolSubmenu.style.display = "none";
+            svg.classList.remove("rotate");
+        } else {
+            mobileSubmenu1.style.display = "flex";
+            svg.classList.add("rotate");
+        }
+
+    });
+
+    //$(".droppingdown").click(function () {
+    //    let svg = document.querySelector(".nfp-dropdown");
+
+    //    mobileSubmenu1.style.display = mobileSubmenu1.style.display === "flex" ? "none" : "flex";
+    //    svg.classList.toggle("rotate");
+    //});
+
+
+
+
+</script>
+
+<script>
+    let msg = document.getElementById('nfp-navbar-warning-msg');
+    if (window.location.href === 'https://www.startupcentral.dk/' || window.location.href === 'https://www.startupcentral.dk/en/' || window.location.href === 'https://www.startupcentral.dk/bliv-medlem/' || window.location.href === 'https://www.startupcentral.dk/en/join-now/' || window.location.href === 'https://www.startupcentral.dk/priser/' || window.location.href === 'https://www.startupcentral.dk/en/prices/') {
+        msg.style.display = 'none';
+    }
+</script>
+
+<script>
+    let msg2 = document.getElementById('nfp-navbar-warning-msg');
+    if (window.location.href.includes('from=FP')) {
+        msg2.style.display = 'none';
+        console.log('hi')
+    }
+
+</script>
+@*<script>
+        let msg = document.getElementById('blivmedlem_button');
+        if (window.location.href === 'https://www.startupcentral.dk/bliv-medlem/' || window.location.href === 'https://www.startupcentral.dk/en/join-now/') {
+            msg.style.display = 'none';
+        }
+    </script>*@
+
+
+<script>
+    //let btns = document.querySelectorAll('.main-btn');
+    //if (window.location.href === 'http://localhost:1111/bliv-medlem/' || window.location.href === 'http://localhost:1111/en/join-now/') {
+    //    btns.forEach(btn => {
+    //        btn.style.display = 'none';
+    //    });
+    //}
+
+    const signUpBtn = $('#blivmedlem_button');
+    const logInBtn = $('.login-btn');
+
+    if (window.location.href === 'http://localhost:1111/bliv-medlem/' || window.location.href === 'http://localhost:1111/en/join-now/') {
+        @*signUpBtn.text('@Umbraco.GetDictionaryValue("Login", "Log ind")');*@
+        logInBtn.show();
+        signUpBtn.hide();
+    } else {
+        @*signUpBtn.text('@Umbraco.GetDictionaryValue("BecomeAMember", "Bliv Medlem")');*@
+    }
+</script>
+
+<style>
+    .rotate {
+        /*transform: rotate(180deg);*/
+        transform: rotate(0deg) !important; 
+    }
+</style>

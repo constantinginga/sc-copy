@@ -1,0 +1,111 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@{
+    //Layout = "BlogMaster.cshtml";
+    //Layout = "SC_WebBase.cshtml";
+    Layout = "Master.cshtml";
+
+    var categoryName = "";
+
+    if (Model.HasValue("blogCategory1"))
+    { categoryName = Model.Value<string>("blogCategory1"); } }
+
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous"
+        src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v6.0"></script>
+
+
+
+
+
+
+<div id="sc-blog-main" class="sc-blog-container">
+
+
+    <section class="blog-features">
+            <div>
+                <div>
+                    <h1 style="color: #000000">Blogs</h1>
+                </div>
+            </div>
+        <div class="blog-features__main">
+            <article class="blog-card blog-card--featured">
+                <div class="blog-card__content">
+
+                    @foreach (var latestArticle in Umbraco.Content(24024).Children().Where(x => x.IsVisible()).OrderByDescending(x => x.CreateDate).Take(1))
+                    {
+                        var fImage = latestArticle.Value<IPublishedContent>("bImage");
+                        var date = (latestArticle.Value<DateTime>("datePublished").ToString("dd-MM-yyyy"));
+                        IPublishedContent categoryContentPicker = latestArticle.Value<IPublishedContent>("blogCategory");
+
+                        <figure class="blog-card__image">
+                            <a href=@latestArticle.Url>
+                                @{
+                                    var altText = latestArticle.Value("blogTitle") + " | Startup Central";
+                                }
+                                <img loading="lazy" src=@fImage.Url alt="@altText">
+                            </a>
+                        </figure>
+
+                        <div class="blog-card__body">
+                            <p class="blog-card__author">
+                                <a>@latestArticle.Value("authorName")</a>
+                            </p>
+                            <h3 class="blog-card__title">
+                                <a href=@latestArticle.Url>
+                                    @latestArticle.Value("blogTitle")
+                                </a>
+                            </h3>
+                            <p class="blog-card__description">
+                                <a href="@latestArticle.Url">
+                                    @latestArticle.Value("excerpt")
+                                </a>
+                            </p>
+                            <div class="blog-card__meta">
+                                <div class="blog-card__tag">
+                                    <a href=@categoryContentPicker.Url>@categoryContentPicker.Name</a>
+                                </div>
+                                <time class="blog-card__date">@date</time>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </article>
+        </div>
+
+        @Html.Partial("BlogFeaturesSidebar")
+
+    </section>
+
+    @Html.Partial("AlternatingCards")
+
+    @Html.Partial("BlogCategories")
+
+
+</div>
+
+<script>
+    function liveSearch() {
+
+        let cards = document.querySelectorAll('.blog-card__content')
+        
+        let search_query = document.getElementById("searchbox").value;
+        
+        for (var i = 0; i < cards.length; i++) {
+            if (cards[i].innerText.toLowerCase()
+                .includes(search_query.toLowerCase())) {
+                cards[i].classList.remove("is-hidden");
+            } else {
+                
+                cards[i].classList.add("is-hidden");
+            }
+        }
+    }
+</script>
+
+<style>
+    .is-hidden {
+        display: none;
+    }
+</style>

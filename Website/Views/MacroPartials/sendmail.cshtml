@@ -1,0 +1,28 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+	
+	@{
+    var navn = Request.Form["navn"];
+	var efternavn = Request.Form["efternavn"];
+    var telefon = Request.Form["telefon"];
+    var email = Request.Form["email"];
+    var besked = Request.Form["besked"];		
+	besked = besked.Replace("\n","<br>");
+		
+    try
+    {
+        WebMail.SmtpServer = "127.0.0.1";
+        WebMail.SmtpPort = 25;
+        WebMail.From = Umbraco.Content(xxxx).modtagerMail;
+        WebMail.Send(to: Umbraco.Content(xxxx).modtagerMail,
+            subject: "Besked fra hjemmesiden",
+                     body: "<h3>Kundens indtastninger</h3>Fornavn: " + navn + "<br>Efternavn: " + efternavn +"<br>Telefon: " + telefon + "<br>E-mail: " + email + 
+					 "<h4>Besked</h4> " + besked, isBodyHtml: true);
+     }
+    catch (Exception ex)
+    {
+        
+    }
+	Response.Redirect("/kontakt?mail=sendt");	
+		}
+

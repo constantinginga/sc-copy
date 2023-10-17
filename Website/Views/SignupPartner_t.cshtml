@@ -1,0 +1,192 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using StartupCentral.Code.Class
+
+@{
+	Layout = null;
+}
+
+@{
+   IMember currentMember = null;
+    string errorMessage = string.Empty;
+    string companyName = "";
+    string contactName=""; //added this because it seems they want a contact person's name
+    string email = "";
+    string cvr = "";
+    string mobilenumber = "";
+    string partnerkode = "";
+    UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+        
+       
+    if (IsPost)
+    { 
+        if (!string.IsNullOrEmpty(Request.Form["email"]))
+        {
+            email = Request.Form["email"];
+            StartupCentral.Code.Model.ValidationResponse response = StartupCentral.Code.Class.Emailing.ValidateEmail(email);
+            
+            if (!response.IsValid)
+            {
+                errorMessage = response.Message;
+            }
+    
+            if (!string.IsNullOrEmpty(Request.Form["contactName"]))
+            {
+                contactName = Request.Form["contactName"];
+            }
+             if (!string.IsNullOrEmpty(Request.Form["companyName"]))
+            {
+                companyName = Request.Form["companyName"];
+            }
+            if (!string.IsNullOrEmpty(Request.Form["cvr"]))
+            {
+                cvr = Request.Form["cvr"];
+            } 
+    
+            if (!string.IsNullOrEmpty(Request.Form["mobilenumber"]))
+            {
+                mobilenumber = Request.Form["mobilenumber"];
+            }
+    
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                IMember member = ApplicationContext.Current.Services.MemberService.CreateMemberWithIdentity(email,  companyName, contactName, "partner");
+                
+                if (member != null)
+                {
+        
+                    member.SetValue("wwname", companyName);
+                    member.SetValue("wwname", contactName);  
+                    member.SetValue("wwemail", email);
+                    member.SetValue("wwcvr", cvr);
+                    member.SetValue("wwmobile", mobilenumber);
+                    
+                    member.IsApproved = false;
+       
+                    ApplicationContext.Current.Services.MemberService.Save(member);
+                    ApplicationContext.Current.Services.MemberService.AssignRole(email, "partner");
+    
+                    currentMember = member;
+                  @*  Response.Redirect(string.Concat("https://www.startupcentral.dk/betaling/","?memberkey=", member.Key), true);*@
+                    return;
+                }
+            }
+            
+        }
+    }
+}
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner SignUp</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+    <link rel="stylesheet" href="/css/SC_LoginAndRegister.css">
+</head>
+<body>
+<div class="backgroundstuff">
+<div class="container py-5 sc-register">
+    <h2 class="text-center pb-2">@Umbraco.Field("welcomeText")</h2>
+    <div class="row">
+        <div class="col-sm-12 col-lg-6 col-12 pb-3">
+            <div class="card h-100 sc-register__su-card">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">@Umbraco.Field("signUpText")</h3>
+                    <form method="post" id="registrationForm">
+                        <input hidden name="formaction" value="registration" />
+                        
+                        <!-- Display the error -->
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="text-center">
+                                 <font color="red" >@errorMessage</font>          
+                            </div>
+                        }
+                           <!-- Name -->
+                        <div class="form-group">
+                            <label class="sr-only form-control-label">Navn</label>
+                            <div class="mx-auto col-sm-10">
+                                <input class="form-control" required name="username" type="text" placeholder="Navn" />
+                            </div>
+                        </div>
+                        <!-- Company Name -->
+                        <div class="form-group">
+                            <label class="sr-only form-control-label">Virksomhedsnavn</label>
+                            <div class="mx-auto col-sm-10">
+                                <input class="form-control" required name="username" type="text" placeholder="Virksomhedsnavn" />
+                            </div>
+                        </div>
+                        
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label class="sr-only form-control-label">Email</label>
+                            <div class="mx-auto col-sm-10">
+                                <input class="form-control" required name="email" type="email" placeholder="E-mail" />
+                            </div>
+                        </div>
+                        
+                       
+                         <!-- CVR -->
+                        <div class="form-group">
+                            <label class="sr-only form-control-label">CVR</label>
+                            <div class="mx-auto col-sm-10">
+                                <input class="form-control" required name="CVR" type="text" placeholder="CVR" />
+                            </div>
+                        </div>
+                        <!-- Phone number -->
+                        <div class="form-group">
+                            <label class="sr-only form-control-label">Phone Number</label>
+                            <div class="mx-auto col-sm-10">
+                                <div class="phone-container d-flex justify-content-between">
+                                    <span class="areacode">+45</span> 
+                                    <input class="form-control mobileno" required name="mobilenumber" type="text" placeholder="Telefonnummer" maxlength="8">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Promo -->
+                        <div class="form-group">
+                            <label class="sr-only form-control-label">PromoCode</label>
+                            <div class="mx-auto col-sm-10">
+                                <input class="form-control" name="promocode" type="text" placeholder="Promokode" value="StartupCentral-2020">
+                            </div>
+                        </div>
+                            
+                        <!-- sign up button -->
+                        <div class="form-group">
+                            <div class="mx-auto col-sm-10 pb-1 pt-1">
+                                <button type="submit" class="btn btn-outline-secondary btn-lg btn-block">@Umbraco.Field("registerButton")</button>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+        </form>
+        
+        <div class="col-lg-6 col-12 pb-3 text-center .sc-register__su-card-text">
+            <div class="card h-100">
+                <div class="card-body">
+                <p>@Umbraco.Field("infoText")</p>
+                 <!--   <p>Læs mere om hvad <a href="https://www.startupcentral.dk/vi-tilbyder/">vi tilbyder.</p></a>-->
+                  
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <hr>
+</div>
+</div>
+
+</body>
+
+</html>
+
+<style>
+  #sc-newsletter {display: none;}
+</style>

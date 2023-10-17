@@ -1,0 +1,27 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+
+@{
+    var loginStatusModel = Members.GetCurrentLoginStatus();
+    var logoutModel = new PostRedirectModel();
+    
+    @*
+        Here you can specify a redirect URL for after logging out, by default umbraco will simply
+        redirect to the current page. Example to redirect to the home page:
+        *@
+        logoutModel.RedirectUrl = "/login"; 
+    
+}
+
+@* NOTE: This RenderJsHere code should be put on your main template page where the rest of your script tags are placed *@
+@Html.RenderJsHere()
+	
+@if (loginStatusModel.IsLoggedIn)
+{
+    <span class="fleft mr20 mt15">Du er logget ind som: @loginStatusModel.Name</span> 
+	   		  
+}

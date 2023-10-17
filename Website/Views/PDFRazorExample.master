@@ -1,0 +1,159 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/masterpages/PDFMaster.master" AutoEventWireup="true" %>
+<asp:content ContentPlaceHolderId="PdfContentPlaceHolder" runat="server">
+ <umbraco:Macro  runat="server" language="cshtml">
+    @inherits umbraco.MacroEngines.DynamicNodeContext
+    @using FergusonMoriyama.Pdf
+    @using System.Xml
+    @using umbraco.IO
+    
+    @{
+      Response.ContentType = "text/xsl";
+      Response.AppendHeader("X-Pdf-Render","true");
+  
+      // -- Uncomment this to force the browser to download the PDF.
+      // Response.AppendHeader("X-Pdf-Force-Download","darren.pdf");
+    }
+    
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:ibex="http://www.xmlpdf.com/2003/ibex/Format">
+       <!-- Sets standard PDF Metadata -->
+      <ibex:properties
+        title="@Model.Name"
+        author="@Model.WriterName"
+        subject=""
+        keywords="metat,bacon,sheep"
+        creator="PDF Creator for Umbraco" />
+
+      <!-- Uncomment below to add protection to the PDF - optionally specify a password -->
+      <!-- <ibex:security deny-print="true" deny-extract="true" deny-modify="true" user-password="" owner-password=""/> -->
+
+      <!-- This defines a simple page layout with a heder and a footer -->
+      <!-- See http://www.w3schools.com/xslfo/obj_layout-master-set.asp -->
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="master" page-width="210mm" page-height="297mm" margin-top="1cm" margin-bottom="1cm" margin-left="1cm" margin-right="1cm">
+          <fo:region-body margin-top="1.5cm" margin-bottom="1.5cm" column-count="2" column-gap="0.5cm"/>
+          <fo:region-before region-name="header" extent="3cm"/>
+          <fo:region-after region-name="footer" extent="1.5cm"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      
+       <!-- Main content starts within page sequence -->
+      <fo:page-sequence master-reference="master">
+        
+        <!-- Doucment header -->
+        <fo:flow flow-name="header">
+          <fo:block>
+            <fo:inline font-family="Arial" font-size="23pt" color="#3399ff">
+              @Model.Name
+            </fo:inline>
+          </fo:block>
+        </fo:flow>
+        
+        <!-- Doucment footer -->
+        <fo:static-content flow-name="footer">
+          <fo:block font-size="8pt" color="#aaaaaa">
+            <fo:block text-align-last="justify">
+              @Model.Name by @Model.WriterName - @DateTime.Now
+              
+              <fo:leader leader-pattern="space"/>
+              Page <fo:page-number/> of <fo:page-number-citation ref-id="last-page"/>
+            </fo:block>
+          </fo:block>
+        </fo:static-content>
+        
+        <!-- Document Body -->
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>
+             @ParseRichText(FoHelper.Instance.GetRichTextNodes(@Model.BodyText))
+          </fo:block>
+          
+          <!-- Having this before the closing tag of the body flow allows us to have a pager in the footer -->
+          <fo:block id="last-page" keep-together.within-page="auto"></fo:block>
+          
+        </fo:flow>
+
+      </fo:page-sequence>
+      
+    </fo:root>
+   
+    @helper ParseElement(XmlNode node) { 
+      <!-- @node.Name -->
+      switch(node.Name) 
+      {
+        case "p":
+          <fo:block margin-bottom="0.5cm">
+            @ParseRichText(node.ChildNodes)
+          </fo:block>
+          break;
+        case "strong":
+          <fo:inline font-weight="bold">
+            @ParseRichText(node.ChildNodes)
+          </fo:inline>
+          break;
+        case "em":
+          <fo:inline font-style="italic">
+            @ParseRichText(node.ChildNodes)
+          </fo:inline>
+          break;
+        case "a":
+          <fo:basic-link color="blue" text-decoration="underline" external-destination="url('@node.Attributes["href"].Value')">
+            @ParseRichText(node.ChildNodes)
+          </fo:basic-link>
+          break;
+        case "u":
+          <fo:inline text-decoration="underline">
+            @ParseRichText(node.ChildNodes)
+          </fo:inline>
+          break;
+        case "ol":
+          <fo:list-block margin-bottom="0.5cm">
+            @ParseRichText(node.ChildNodes)
+          </fo:list-block>
+          break;
+        case "ul":
+          <fo:list-block margin-bottom="0.5cm">
+            @ParseRichText(node.ChildNodes)
+          </fo:list-block>
+          break;
+        case "li":
+          <fo:list-item>
+            <fo:list-item-label>
+              <fo:block>-</fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body>
+              <fo:block margin-left="0.5cm">
+               @ParseRichText(node.ChildNodes)
+              </fo:block>
+            </fo:list-item-body>
+          </fo:list-item>
+          break;
+        case "img":
+          var docRoot = IOHelper.MapPath("~/");
+          <fo:block>
+            <fo:external-graphic src="@docRoot/@node.Attributes["src"].Value" content-width="9cm"/>
+          </fo:block>
+          @ParseRichText(node.ChildNodes)
+          break;
+      }
+  }
+
+  @helper ParseRichText(XmlNodeList nodes) {
+    foreach(XmlNode node in nodes) {
+       
+       switch(node.NodeType)
+       {
+           case XmlNodeType.Text:
+             @node.Value
+             @ParseRichText(node.ChildNodes);
+             break;
+           case XmlNodeType.Element:
+             @ParseElement(node);
+             break;
+           default:
+             @ParseRichText(node.ChildNodes);
+             break;
+       }
+    }
+  }
+  </umbraco:Macro>
+ 
+</asp:Content>

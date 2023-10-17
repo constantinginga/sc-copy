@@ -1,0 +1,87 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@{    
+    Layout = null;
+    Response.ContentType = "text/xml";
+    IPublishedContent siteHomePage = Model.Root();
+    IEnumerable<IPublishedContent> sitePages = siteHomePage.Children();
+
+    string excludedDocumentTypeList = Model.Value<string>("blacklistedDocumentsTypes");
+    string[] excludedDocumentTypes = (!String.IsNullOrEmpty(excludedDocumentTypeList)) ? excludedDocumentTypeList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToArray() : new string[] { };
+
+    var extraPages = new List<IPublishedContent>()
+      .Concat(Umbraco.Content(28204).Children())        // Transparent
+      .Concat(Umbraco.Content(28310).Children())        // Viden
+    ;
+}
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.google.com/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  @RenderSiteMapUrlEntry(siteHomePage)
+  @RenderSiteMapUrlEntriesForChildren(siteHomePage, excludedDocumentTypes)
+  <!-- extraPages -->
+  @foreach (var node in extraPages)
+  {
+    @RenderSiteMapUrlEntry(node);
+  }
+</urlset>
+
+@helper RenderSiteMapUrlEntry(IPublishedContent node)
+{
+    const string server = "https://www.startupcentral.dk";
+
+    bool englishPath = Request.Path.Split('/')[1].ToLowerInvariant() == "en";
+    if (englishPath) { 
+      if (!node.HasCulture("en-US")) { 
+        return; /* skip node */ 
+      }
+    }
+
+    if (node.IsDocumentType("CoachInfo"))
+    {
+        var coachId = node.Value<IPublishedContent>("coachPicker")?.Id;
+        if (coachId == null) { return; }
+        var itm = ApplicationContext.Current.Services.MemberService.GetById(coachId.Value);
+        if (itm.GetValue<bool>("wwunavailable")) {
+            return; /* skip node */ 
+        }
+    }
+
+    if (node.IsDocumentType("PartnerInfo"))
+    {
+        var partnerId = node.Value<IPublishedContent>("partnerPicker")?.Id;
+        if (partnerId == null) { return; }
+        var itm = ApplicationContext.Current.Services.MemberService.GetById(partnerId.Value);
+        if (itm.GetValue<bool>("wwunavailable")) {
+            return; /* skip node */ 
+        }
+    }
+
+    if (node.IsDocumentType("startupWikiLetter"))
+    {
+        return;
+    }
+
+    if (node.IsDocumentType("vlogitem"))
+    {
+        return;
+    }
+
+    <url>
+        <loc>@(server + node.Url)</loc>
+        @* https://www.sitemaps.org/protocol.html#lastmoddef *@
+        <lastmod>@node.UpdateDate.ToString("O").Substring(0,10)</lastmod>
+    </url>
+
+}
+
+@helper RenderSiteMapUrlEntriesForChildren(IPublishedContent parentPage, string[] excludedDocumentTypes)
+{
+    foreach (var page in parentPage.Children.Where(f => !excludedDocumentTypes.Contains(f.ContentType.Alias) && !f.Value<bool>("hideFromXmlSiteMap")))
+    {
+        @RenderSiteMapUrlEntry(page)
+        if (page.Children.Any(f => !excludedDocumentTypes.Contains(f.ContentType.Alias) && !f.Value<bool>("hideFromXmlSiteMap")))
+        {
+            @RenderSiteMapUrlEntriesForChildren(page, excludedDocumentTypes)
+        }
+    }
+}

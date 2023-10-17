@@ -1,0 +1,77 @@
+﻿
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+Layout = "Master.cshtml";
+}
+
+@* the fun starts here *@
+
+@{ Html.RenderAction("RenderTitleControls", "SiteLayout");}
+
+    <main id="sc-press-page" class="sc-guest sc-bgb10">
+        <div class="rail-grid rail-grid--2-column">
+            <div class="lg-rail card">
+                @Model.Value("content")
+                <div class="row">
+                    <div class="column-container column-6">
+                        <div class="column">
+                            <img style="padding:1rem;" src="/media/2401/suc-blue-logo.svg" alt="SUC Logo Blue">
+                        </div>
+                    </div>
+                    <div class="column-container">
+                        <div class="column">
+                            <img style="background: #182848; padding:1rem;" src="/media/2402/suc-white-logo.svg"
+                                alt="SUC Logo White">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column centered">
+                            <a href="/media/2511/suc-logos.zip" class="link">Download filerne her</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column-container column-6">
+                        <div class="column">
+                            <img class="clearfix" src="/media/2516/anders-2.jpg" alt="Anders Fogh">
+                        </div>
+                    </div>
+                    <div class="column-container">
+                        <div class="column">
+                            <img class="clearfix" src="/media/2515/anders-1.jpg" alt="Anders">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column centered">
+                            <a class="link" href="/media/2512/anders-images.zip">Download billederne af Anders her</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="md-rail">
+                <div class="press-contact" style="position: sticky; top: 4rem;">
+                    @{ var memberMediaItem = Model.Value<IPublishedContent>("contactPersonImage");}
+                    <h3>@Model.Value("cardTitle")</h3>
+                    <div class="contact-box">
+                        <div class="contact-box__image">
+                            @if (memberMediaItem != null)
+                            {
+                                <img loading="lazy" class="entity-image-72 entity-image-circle" src=@memberMediaItem.Url alt="@Model.Value("contactPersonName")" />
+                            }
+                        </div>
+                        <div class="contact-box__info">
+                            <p><strong>@Model.Value("contactPersonName")</strong></p>
+                            <p>@Model.Value("contactPersonPosition")</p>
+                            <p>Tel: <a href="tel:@Model.Value("contactPersonTelephone")">+45-@Model.Value("contactPersonTelephone")</a></p>
+                            <p>E-mail: <a href="mailto:@Model.Value("contactPersonEmail")">@Model.Value("contactPersonEmail")</a></p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>

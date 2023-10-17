@@ -1,0 +1,78 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+
+<section class="nfp-app-section">
+        <div class="nfp-app-big-container">
+            <h2 class="nfp-app-section-title">@Umbraco.AssignedContentItem.Value("nfploungetitle")</h2>
+            <div class="nfp-app-small-container">
+                <div id="lounge-img">
+                    <div class="nfp-app-phone">
+                        <img src="@Umbraco.Media(38328).Url">
+                    </div>
+                </div>
+                <div id="lounge-img">
+                    <div class="nfp-app-phone">
+                        <img src="@Umbraco.Media(38329).Url">
+                    </div>
+                </div>
+                <div id="lounge-img">
+                    <div class="nfp-app-phone">
+                        <img src="@Umbraco.Media(38330).Url">
+                    </div>
+                </div>
+                <div id="lounge-img">
+                    <div class="nfp-app-phone">
+                        <img src="@Umbraco.Media(38331).Url">
+                    </div>
+                </div>
+                <div id="lounge-img">
+                    <div class="nfp-app-phone">
+                        <img src="@Umbraco.Media(38332).Url">
+                    </div>
+                </div>
+
+                @*<div class="nfp-app-phone">
+            <img id="lounge-img" src="@Umbraco.Media(34269).Url">
+        </div>
+        <div class="nfp-app-phone">
+            <img id="lounge-img" src="@Umbraco.Media(34270).Url">
+        </div>
+        <div class="nfp-app-phone">
+            <img id="lounge-img" src="@Umbraco.Media(34271).Url">
+        </div>
+        <div class="nfp-app-phone">
+            <img id="lounge-img" src="@Umbraco.Media(34272).Url">
+        </div>*@
+        <div class="nfp-app-text">
+            <h2 class="nfp-app-text-title">@Umbraco.AssignedContentItem.Value("nfploungesubtitle")</h2>
+            <p class="nfp-app-text-paragraph">@Umbraco.AssignedContentItem.Value("nfploungeparagraph")</p>
+            <a href="@Umbraco.Content(29767).Url" class="nfp-app-button">@Umbraco.GetDictionaryValue("ProMember", "Bliv Pro medlem")</a>
+            <div class="nfp-app-store">
+                <p class="nfp-app-store-text">@Umbraco.AssignedContentItem.Value("nfploungedownload")</p>
+                <div class="nfp-app-store-logos">
+                    <a href="https://apps.apple.com/dk/app/startup-central-lounge/id1638888731?l=da"><img src="@Umbraco.Media(38333).Url"></a>
+                    <a href="https://play.google.com/store/apps/details?id=com.companyname.scsome.mobileapp"><img src="@Umbraco.Media(38334).Url"></a>
+                </div>
+            </div>
+        </div>
+            </div>
+
+        </div>
+    </section>
+
+<script>
+    let slideIndex = 0;
+    showSlides();
+
+    function showSlides() {
+        /*let i;*/
+        let slides = document.getElementsByClassName("nfp-app-phone");
+        for (let i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        slideIndex++;
+        if (slideIndex > slides.length) { slideIndex = 1 }      
+        slides[slideIndex - 1].style.display = "block";      
+        setTimeout(showSlides, 4000); 
+    }
+</script>

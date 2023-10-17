@@ -1,0 +1,19 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.BasicPriceCardLP>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+	Layout = "Master.cshtml";
+}
+
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+
+<section>
+    <div class="content-header" style="height: 300px">
+        <div class="lp-prices-header" >
+        <h2 class="lp-prices-title">@Model.Value("lpNewsletter")</h2>
+        </div>
+    </div>
+   <div class="lp-newsletter">
+       @Html.Partial("~/Views/NewNewsletter.cshtml")
+   </div>
+</section>

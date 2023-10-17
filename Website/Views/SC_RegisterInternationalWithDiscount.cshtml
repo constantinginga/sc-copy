@@ -1,0 +1,241 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using StartupCentral.Code.Class
+
+@{
+    //Layout = "SC_WebBase.cshtml";
+    Layout = null;
+    
+    var currentDate = DateTime.Now.Year;
+
+    IMember currentMember = null;
+    string errorMessage = string.Empty;
+    string username = "";
+    string email = "";
+    //string password = "";
+    string mobilenumber = "";
+    string promocode = "";
+    UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+
+    if (IsPost)
+    {
+        if (!string.IsNullOrEmpty(Request.Form["email"]))
+        {
+            if (!string.IsNullOrEmpty(Request.Form["promocode"]))
+            {
+                promocode = Request.Form["promocode"];
+                if (!upodiWrapperService.ValidateDiscountCode(promocode)) //
+                {
+                    errorMessage = "The promo code is incorrect or no longer available.";
+                }
+            }
+
+            email = Request.Form["email"];
+            StartupCentral.Code.Model.ValidationResponse response = StartupCentral.Code.Class.Emailing.ValidateEmail(email);
+
+            if (!response.IsValid)
+            {
+                errorMessage = response.Message;
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["username"]))
+            {
+                username = Request.Form["username"];
+            }
+
+            @* if (!string.IsNullOrEmpty(Request.Form["password"]))
+                {
+                    password = Request.Form["password"];
+                } *@
+
+            if (!string.IsNullOrEmpty(Request.Form["mobilenumber"]))
+            {
+                mobilenumber = Request.Form["mobilenumber"];
+            }
+
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                IMember member = ApplicationContext.Current.Services.MemberService.CreateMemberWithIdentity(email, email, username, "student");
+                if (member != null)
+                {
+
+                    member.SetValue("wwmobile", mobilenumber);
+                    member.SetValue("wwMobilePayAbonnementsDato", null);
+
+                    member.SetValue("wwname", username);
+                    member.SetValue("wwemail", email);
+                    member.IsApproved = false;
+
+                    ApplicationContext.Current.Services.MemberService.Save(member);
+                    ApplicationContext.Current.Services.MemberService.AssignRole(email, "student");
+
+                    @*  ApplicationContext.Current.Services.MemberService.SavePassword(member, password); *@
+                    @*  Emailing.SendApprovvalEmail(member,password,true); *@
+                    //Emailing.SendCreationEmail(member, password);
+
+                    currentMember = member;
+
+                    Response.Redirect(string.Concat("https://www.startupcentral.dk/betaling/",
+                    @*  Umbraco.NiceUrl(Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["StartupCentral.MobilePay.Id"])), *@
+                    "?memberkey=", member.Key, "&promokode=", promocode), true);
+                    return;
+                }
+            }
+
+        }
+    }
+}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- Styles -->
+        <link rel="stylesheet" href="~/css/SC_LoginInternationalsCampaign.css">
+        <!-- Fontawesome -->
+        <script src="https://kit.fontawesome.com/0ed5b1a423.js" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="dist/css/main.css">
+        <title>Become a member of Startup Central</title>
+    </head>
+
+    <body>
+        <main id="sc-register-page" class="sc-register-page">
+            <div class="register-page-container container">
+                <div class="register-header">
+                    <img src="/media/1648/suc-blue-logo.svg" alt="#">
+                    <br />
+                    <h2>Welcome to Startup Central - you are now creating a user!</h2>
+                    <br />
+                    <p>Sign up below and get 30 days for free.</p>
+                    <br />
+                </div>
+                <form method="post" id="registrationForm">
+                    <input hidden name="formaction" value="registration" />
+              
+                    <div class="form-box-container">
+
+                        <!-- Display the error -->
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <p class="text-center">
+                                <font color="red">@errorMessage</font>
+                            </p>
+                            <br />
+                        }
+
+                        <!-- Name -->
+                        <div class="form-container">
+                            <label for="firstname" class="label-name">
+                                <span class="content-name">Name / Company Name</span>
+                            </label>
+                            <div class="input-container">
+                                <input type="text" name="username" autocomplete="on" required />
+                                <span><i class="far fa-user"></i></span>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-container">
+                            <label for="email" class="label-name">
+                                <span class="content-name">Email</span>
+                            </label>
+                            <div class="input-container">
+                                <input type="email" name="email" autocomplete="on" required />
+                                <span><i class="far fa-envelope"></i></span>
+                            </div>
+                        </div>
+
+                        <!-- Phone number -->
+                        <div class="form-container">
+                            <label for="telephone" class="label-name">
+                                <span class="content-name">Phone Number</span>
+                            </label>
+                            <div class="input-container" id="phone">
+                                <p>+45</p>
+                                <input type="tel" id="telephone" name="mobilenumber" autocomplete="on" maxlength="8" required />
+                                <span><i class="fas fa-phone"></i></span>
+                            </div>
+                        </div>
+
+                        <!-- Promo -->
+                        <div class="form-container">
+                            <label for="lastname" class="label-name">
+                                <span class="content-name">Promo Code</span>
+                                <div class="tooltip">
+                                    <i class="far fa-question-circle"></i>
+                                    <span class="tooltip-text">
+                                        During the free period there is no binding. <br>
+                                        After the trial period has expired, there will be a binding for the current month plus one month. <br>
+                                        Read more about what we offer.
+                                    </span>
+                                </div>
+                            </label>
+                            <div class="input-container">
+                                <input type="text" name="promocode" autocomplete="off" value="tmf-mCGeuGh5" />
+                                <span><i class="fas fa-percent"></i></span>
+                            </div>
+                        </div>
+
+                        @*<div class="form-container subscription-cb">
+                            <div class="rb-container">
+                                <input class="checkbox-subscription" type="radio" name="subscription" id="subscription-1">
+                                <label class="for-checkbox-subscription" for="subscription-1">
+                                    <i class="fas fa-user-astronaut"></i>
+                                    <span class="month">1 Month</span>
+                                    <span class="price">149DKK</span>
+                                </label>
+
+                                <input class="checkbox-subscription" type="radio" name="subscription" id="subscription-2" checked>
+                                <label class="for-checkbox-subscription" for="subscription-2">
+                                    <i class="fas fa-user-astronaut"></i>
+                                    <span class="month">3 Months</span>
+                                    <span class="price">139DKK</span>
+                                </label>
+
+                                <input class="checkbox-subscription" type="radio" name="subscription" id="subscription-3">
+                                <label class="for-checkbox-subscription" for="subscription-3">
+                                    <i class="fas fa-user-astronaut"></i>
+                                    <span class="month">12 Months</span>
+                                    <span class="price">129DKK</span>
+                                </label>
+                            </div>
+                        </div>*@
+
+                        <div class="form-container">
+                            <label class="checkbox">
+                                <span>
+                                    By signing up you are agreeing to our <a href="/brugerbetingelser-for-startup-centrals-portal/" target="_blank">terms of services</a> and to be on the
+                                    StartupCentral email list and receive occasional messages regarding our services and release date information.
+                                </span>
+                                <input type="checkbox" id="eng" name="eng" value="english" class="checkbox" required>
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+
+                        <div class="button-container">
+                            <button type="submit" class="button">Become a member!</button>
+                            <span>Already have an account? <a href="/log-in/">Click here</a></span>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="register-footer">
+                    <div class="register-footer-links">
+                        <a href="/brugerbetingelser-for-startup-centrals-portal/" target="_blank">Terms of use</a>
+                        <a href="/faq/" target="_blank">FAQ</a>
+                        <a href="/media/1204/privatlivspolitik.pdf" target="_blank">Privacy Policy</a>
+                    </div>
+                    <div class="register-footer-copyright">
+                        <span>© @currentDate Startup Central | CVR - 39319942</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>
+

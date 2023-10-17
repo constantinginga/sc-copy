@@ -1,0 +1,149 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using System.Web
+@using System.Web.Security
+@{
+    Layout = "Master.cshtml";
+    var currentUser = Members.GetCurrentMember();
+    var i = 1;
+}
+    
+    @{
+        <div class="darkbg fleft w100">
+            <div class="forsideimg">
+                <div class="fimg">
+                    <div class="overlay"></div>
+                    <img src="@Page.wwimg.Url" class="img-responsive"/>
+                </div>
+                <div class="imgcontent hidden-xs hidden-sm">
+                <div class="container">
+                    <div class="row">
+                         <div class="col-md-12">
+                          <div class="smallheadline mb20 f14 white">@Page.wwsmallheadline</div>
+                         </div>
+                            <div class="col-md-7">
+                                <div class="bigheadline uppercase f60 fw700 white">@Page.wwbigheadline</div>
+                                <div class="row">
+                                <div class="col-md-10"><div class="white txt f18  lh24 mb20 mt40">@Page.wwteksttilblok3</div></div>
+                                </div>
+                            </div>
+                             <div class="col-md-5">
+                             @if (!User.Identity.IsAuthenticated)
+                                {
+                                <div class="txt white f18 fw600 lh24 mb20">@Html.Raw(CurrentPage.wwshorttxt)</div>
+                                    <a href="@Umbraco.Content(2524).Url">
+                                        <div class="bigbtn lightbg btn white mb20 shadow fw600">@Page.wwbtntxt</div>
+                                    </a>
+                                <div class="txt white f18 fw600 lh24 mb20">@Html.Raw(CurrentPage.wwshortxtunder)</div>
+                                }
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="pb0 visible-xs visible-sm">
+                <div class="container">
+                    <div class="row">
+                         <div class="col-md-12">
+                          <div class="smallheadline mb20 f14 dark">@Page.wwsmallheadline</div>
+                         </div>
+                            <div class="col-md-7">
+                                <div class="bigheadline uppercase f60 mb40 fw700 dark">@Page.wwbigheadline</div>
+                                <div class="row">
+                                <div class="col-md-10"><div class="dark txt f18  lh24 mb40 ">@Page.wwteksttilblok3</div></div>
+                                </div>
+                            </div>
+                             <div class="col-md-5">
+                                <div class="txt dark f18 fw600 lh24 mb20">@Html.Raw(CurrentPage.wwshorttxt)</div>
+                                 <a href="@Umbraco.Content(2524).Url">
+                                        <div class="bigbtn lightbg btn white mb20 shadow fw600">@Page.wwbtntxt</div>
+                                    </a>
+                                <div class="txt dark f18 fw600 lh24 mb20">@Html.Raw(CurrentPage.wwshortxtunder)</div>
+                             </div>
+                        </div>
+                    </div>
+        </section>
+        <section>
+            <div class="container">
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        @*<div class="sectionheadline uppercase mb60 f60 fw700 lh60 blue">@Page.wwgenereloverskriftstep</div>*@
+                        <div class="sectionheadline uppercase mb60 fw700 lh60 blue" style="font-size: 300% !important;">@Page.wwgenereloverskriftstep</div>
+                    </div>
+                </div>
+                 <div class="row mb60">
+                    <div class="col-md-6 ">
+                        <div class="sectionheadline uppercase f60 fw700 lh50 blue">
+                        <img src="@Page.wwimgstep1.Url" class="shadow img-reponsive border50 center-block"/>
+                        <div class="shapeline hidden-xs hidden-sm"></div>
+                        </div>
+                    </div>
+                     <div class="col-md-6">
+                        <div class="uppercase f60 mb10 fw700 lh50 dark">/@Page.wwnummerstep1</div>
+                        <div class="boxheadline fw700 f25 mb20 dark">@Page.wwoverskriftstep1</div>
+                        <div class="boxtxt dark fw600 mb25 lh18">@Html.Raw(CurrentPage.wwshortsteptxt1)</div>
+                        @if(CurrentPage.HasValue("wwlinkstep1")){
+                            <a href="@Page.wwlinkstep1.Url" class="btn  fw600 light btnlightblue normalbtn">@Page.wwlinktxtstep1</a>
+                        }
+                    </div>
+                </div>
+                <div class="row mb60">
+                    <!-- -->
+                    <div class="col-md-6 visible-xs visible-sm">
+                        <div class="sectionheadline uppercase f60 fw700 lh50 blue">
+                        <img src="@Page.wwimgstep2.Url" class="shadow img-reponsive border50 center-block"/>
+                         <div class="shapeline2 hidden-xs hidden-sm"></div>
+                        </div>
+                    </div>
+                     <div class="col-md-6">
+                        <div class="uppercase f60 mb10 fw700 lh50 dark">/@Page.wwnummerstep2</div>
+                        <div class="boxheadline fw700 f25 mb20 dark">@Page.wwoverskriftstep2</div>
+                        <div class="boxtxt dark fw600 mb25 lh18">@Html.Raw(CurrentPage.wwshortsteptxt2)</div>
+                        @if(CurrentPage.HasValue("wwlinkstep2")){
+                            <a href="@Page.wwlinkstep2.Url" class="btn  fw600 light btnlightblue normalbtn">@Page.wwlinktxtstep2</a>
+                        }
+                    </div>
+                     <div class="col-md-6 hidden-xs hidden-sm">
+                        <div class="sectionheadline uppercase f60 fw700 lh50 blue">
+                        <img src="@Page.wwimgstep2.Url" class="shadow img-reponsive border50 center-block"/>
+                         <div class="shapeline2 hidden-xs hidden-sm"></div>
+                        </div>
+                    </div>
+                 </div>
+                    <!-- -->
+                    <div class="row">
+                    <div class="col-md-6">
+                        <div class="sectionheadline uppercase f60 fw700 lh50 blue">
+                        <img src="@Page.wwimgstep3.Url" class="shadow img-reponsive border50 center-block"/>
+                        </div>
+                    </div>
+                     <div class="col-md-6">
+                        <div class="uppercase f60 mb10 fw700 lh50 dark">/@Page.wwnummerstep3</div>
+                        <div class="boxheadline fw700 f25 mb20 dark">@Page.wwoverskriftstep3</div>
+                        <div class="boxtxt dark fw600 mb25 lh18">@Html.Raw(CurrentPage.wwshortsteptxt3)</div>
+                        @if(CurrentPage.HasValue("wwlinkstep3")){
+                            <a href="@Page.wwlinkstep3.Url" class="btn  fw600 light btnlightblue normalbtn">@Page.wwlinktxtstep3</a>
+                        }
+                    </div>
+                </div>
+            </div>
+            <img src="@Page.wwbgimg.Url" id="cloudbg"/>
+        </section>
+        
+        <section class="whitebg pb0">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="sectionheadline uppercase mb60 f60 fw700 lh60 dark">@Page.wwovrskriftbusinessangels</div>
+                     </div>
+                </div>
+            </div>
+        </section>
+        
+       @Umbraco.RenderMacro("BusinessAngelsOverview")
+        
+       @Umbraco.RenderMacro("RandomStatements")
+       
+    }
+   

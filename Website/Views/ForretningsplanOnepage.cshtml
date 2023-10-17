@@ -1,0 +1,422 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Services;
+@using System.Web
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using Umbraco.Web.Security
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Extensions
+
+@{
+    Layout = null;
+
+    var i = 1;
+
+    var currentUser = Members.GetCurrentMember();
+
+    StartupCentral.Code.Controllers.ForretningsplanController fc = new StartupCentral.Code.Controllers.ForretningsplanController();
+
+    MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+    IMember currentMember = null;
+    if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+    {
+        currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+    }
+}
+    
+@if (currentMember != null)
+{
+    <!DOCTYPE html>
+    <html lang="da">
+    <head>
+        <script>
+            var userToken = ''
+            @if (currentMember != null) {
+                @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(currentMember), "';"))
+            }
+        </script>
+
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+        <!--Html2pdf-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
+        <!-- Styles -->
+        @{
+            var cssLastWriteTime = new System.IO.FileInfo(System.AppDomain.CurrentDomain.BaseDirectory + "/css/V4 Winter 2021/sc-v4-main.css")
+                .LastWriteTimeUtc.ToString("O").Replace(":", "");
+        }
+        <link rel="stylesheet" href="~/css/V4 Winter 2021/sc-v4-main.css?trick=@cssLastWriteTime" />
+
+        <meta charset="UTF-8">
+    </head>
+    <body>
+
+        <div id="BusinessPlanOverview" style="height: 100%;"><!--height here is improtant for pdfs-->
+            <div class="businessplan-container">
+                <div class="bp-header">
+                    <span class="bp-header__subheader">Min Forretningsplan</span>
+                    <h3 class="bp-header__title" id="projektnavn"></h3>
+                </div>
+
+                <div class="bp-main-container-onepager">
+
+                    <!--Download Button-->
+                    <div id="ignorOnPdf" class="bp-actions-container download-pdf" data-html2canvas-ignore="true">
+                        <div class="bp-actions">
+                            <a id="downloadbtn" class="bp-actions__button button button--icon button--icon-left button--full-width" data-id="">
+                                Download
+                            </a>
+
+                        </div>
+                    </div>
+
+                    <!-- Introduction -->
+                    <!-- <div class="bp-main tabcontent is-active" id="Introduktion"> -->
+
+                    <div id="Introduktion">
+                        <h1 class="headline-1" id="projektnavn"></h1>
+                        <h2>Introduktion</h2>
+                        <p class="bp-main__tag category" id="kategori"></p>
+                        <p class="english" style="display:none;"> This is in english </p>
+                        <h3>Beskrivelse</h3>
+                        <p id="idedesc"></p>
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <div id="Idegrundlag">
+                        <h2>Idegrundlag</h2>
+
+                        <h3>Uddyb idéen og giv læseren fuld adgang til at se hvordan idéen opstod</h3>
+                        <p id="uddyb"></p>
+
+                        <h3>Løser din idé et problem, som endnu ikke bliver løst?</h3>
+                        <p id="loser"></p>
+
+                        <h3>Er din idé en videreudvikling af noget eksisterende?</h3>
+                        <p id="videreudvik"></p>
+
+                        <h3>Fortæl hvor din idé kan bruges</h3>
+                        <p id="brugprod"></p>
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Målsætning -->
+                    <div id="Malsaetning">
+                        <h2>Målsætning</h2>
+                        <h3>Dine aktiviteter det første år</h3>
+                        <p id="splitaktiviteter"></p>
+
+                        <h3>Dine aktiviteter det tredje år</h3>
+                        <p id="splitaktiviteter3ar"></p>
+
+                        <h3>Dine aktiviteter det femte år</h3>
+                        <p id="splitaktiviteter5ar"></p>
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Verdier -->
+                    <div id="Vaerdier">
+                        <h2>Værdier</h2>
+                        <h3>Beskriv hvorfor virksomheden er vigtig</h3>
+                        <p id="firmimportant"></p>
+
+                        <h3>Hvilke behov opfylder virksomheden og for hvilke kunder</h3>
+                        <p id="firmbehov"></p>
+
+                        <h3 style="display:none" id="firmreachh3">Hvad vil du opnå om 1 mdr., 1 år og 3 år</h3>
+                        <p style="display:none" id="firmreach"></p>
+
+                        <h3>Hvad er de største problemer, og hvordan vil du løse dem?</h3>
+                        <p id="firmissues"></p>
+
+                        <h3>Hvordan er dine værdier?</h3>
+                        <p id="firmvalues"></p>
+
+                        <h3>Har du en bæredygtig vinkel, i så fald hvilken?</h3>
+                        <p id="firmvinkel"></p>
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Team og Ressourcer -->
+                    <div id="Team">
+                        <h2>Team og Ressourcer</h2>
+                        <h3>Hvem er med i projektet og hvilke roller har de?</h3>
+                        <p id="firmroller"></p>
+
+                        <h3>Hvem tager ansvaret for økonomi, salg/markedsføring og produktudvikling?</h3>
+                        <p id="firmokonomi"></p>
+
+                        <h3>Er der behov for eksterne ressourcer?</h3>
+                        <p id="firmres"></p>
+
+                        <h3>Hvilke leverandører har din virksomhed?</h3>
+                        <p id="firmres2"></p>
+
+                        <h3>Hvem er den drivende person og hvem træffer beslutninger?</h3>
+                        <p id="firmdriv"></p>
+
+                        <h3>Hvor mange timer/dage/måneder kan teamet arbejde for projektet?</h3>
+                        <p id="firmvwork"></p>
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Produktbeskrivelse -->
+                    <div id="Produktbeskrivelse">
+                        <h2>Produktbeskrivelse</h2>
+                        <h3>Giv en beskrivelse af produktet - hvad kan det?</h3>
+                        <p id="proddesc"></p>
+
+                        <h3>Er der forskellige versioner?</h3>
+                        <p id="prodvers"></p>
+
+                        <h3>Hvordan fungerer det?</h3>
+                        <p id="prodfunkt"></p>
+
+                        <h3>Hvordan skal det laves og kræves der obligatoriske godkendelser?</h3>
+                        <p id="prodmake"></p>
+
+                        <h3>Hvad mangler, før produktet er klart til salg?</h3>
+                        <p id="prodready"></p>
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Markedsanalyse -->
+                    <div id="Markedsanalyse">
+                        <h2>Markedsanalyse</h2>
+                        <h3>Hvem er kunderne?</h3>
+                        <p id="cuswho"></p>
+
+                        <h3>Hvor mange kunder findes der?</h3>
+                        <p id="cusfind"></p>
+
+                        <h3>Hvordan opfyldes kundens behov nu?</h3>
+                        <p id="cusneeds"></p>
+
+                        <h3>Hvilke konkurrenter er der, og hvordan adskiller dit produkt sig?</h3>
+                        <p id="cuskon"></p>
+
+                        <h3>Hvad er konkurrentens stærke og svage sider?</h3>
+                        <p id="cusstrong"></p>
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Økonomi -->
+                    <div id="Okonomi">
+                        <h2>Økonomi</h2>
+                        <h3>Hvilke større udgifter skal der afholdes før produktet er klar til salg?</h3>
+                        <p id="prodsale"></p>
+
+                        <h3>Kan virksomheden starte op i de små - hvordan?</h3>
+                        <p id="prodstart"></p>
+
+                        <h3>Er der lavet et budget?</h3>
+                        <p id="filename"></p>
+
+                        <h3>Hvornår i de næste 12 måneder er der udgifter og indtægter?</h3>
+                        <p id="prodfinance"></p>
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Salgsmarkedsføring -->
+                    <div id="Salgsmarkedsforing">
+                        <h2>Salgsmarkedsføring</h2>
+                        <h3>Beskriv priserne for produktet</h3>
+                        <p id="prodprice"></p>
+
+                        <h3>Hvordan er priserne udregnet og hvad er overskudsgraden?</h3>
+                        <p id="produdregn"></p>
+
+                        <h3>Hvordan skal salget foregå - og hvem skal stå for det?</h3>
+                        <p id="prodsaleplace"></p>
+
+                        <h3>Hvordan skal kunderne finde ud af at produktet eksisterer?</h3>
+                        <p id="prodeksi"></p>
+
+                        <h3>Hvilke udgifter er der til markedsføring, og hvordan skal det foregå?</h3>
+                        <p id="prodmarkedsf"></p>
+                    </div>
+                    <p />
+                    <hr />
+                    <p />
+                    <!-- Juridisk -->
+                    <div id="Juridisk">
+                        <h2>Juridisk</h2>
+                        <h3>Er der en aftale på, hvem der skal investere tid/penge og hvordan ejeforholdet er?</h3>
+                        <p id="juraftale"></p>
+
+                        <h3>Skal leverandører eller andre involveres i projektet - hvis ja, er der en aftale med dem?</h3>
+                        <p id="jurleverand"></p>
+
+                        <h3>Er der kontaktet jurister - og hvem?</h3>
+                        <p id="jurcontact"></p>
+
+                        <h3>Er der behov for CVR nummer og/eller momsregistrering - hvornår?</h3>
+                        <p id="jurcvr"></p>
+
+                        <div id="andetchk" style="display:none;">
+                            <h3>Har du andet et tilføje?</h3>
+                            <h4 id="andetheadline"></h4>
+                            <p id="andet"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            #main-footer {
+                display: none;
+            }
+        </style>
+
+
+        <script src="~/scripts/jQuery.datalink.js"></script>
+        <script src="~/scripts/startupcental.js"></script>
+
+        <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+        <script type="text/javascript">
+
+            var bsp = {}
+
+            $(document).ready(Bind());
+
+            function Bind() {
+                if ($(location).attr('search')) {
+
+                    var x = $(location).attr('search');
+                    x = x.substr(4, 36);
+
+                    $('.pdf-download-link').attr('data-id', x);
+                    $('.download-pdf').css('display', 'block');
+
+                    startupCentral.requestData('/umbraco/api/forretningsplanApi/getBusinessPlanById?sBusId=' + x,
+                        function (response) {
+
+                            if (!response.Success) {
+                                alert("Du har ikke tilladelse til at se denne forretningsplan.");//("You don't have permision for this business plan.")
+                            }
+                            else {
+                                $(bsp).attr(response.Data);
+
+                                if (bsp.BudgetFile != null) {
+                                    //$('#filename').text(bsp.BudgetFile);
+                                    $('#filename').append("<a href='" + bsp.BudgetFile + "'>Link</a>");
+                                }
+                                else {
+                                    $('#filename').text("Ingen fil er vedhæftet");
+                                }
+
+                                if (bsp.FirmReach) {
+                                    $('#firmreachh3').css('display', 'block');
+                                    $('#firmreach').css('display', 'block');
+                                }
+
+                                if (bsp.AndetChk) {
+                                    $('#andetchk').css('display', 'block');
+
+                                    $(bsp)
+                                        .linkBoth("AndetHeadline", "#andetheadline", "text")
+                                        .linkBoth("Andet", "#andet", "text");
+                                }
+
+                                $(bsp)
+                                    .linkBoth("ProjektNavn", "#projektnavn", "text")
+                                    .linkBoth("Kategori", "#kategori", "text")
+                                    .linkBoth("IdeDesc", "#idedesc", "text")
+
+                                    .linkBoth("Uddyb", "#uddyb", "text")
+                                    .linkBoth("Loser", "#loser", "text")
+                                    .linkBoth("Videreudvik", "#videreudvik", "text")
+                                    .linkBoth("Brugprod", "#brugprod", "text")
+
+                                    .linkBoth("Splitaktiviteter", "#splitaktiviteter", "text")
+                                    .linkBoth("Splitaktiviteter3ar", "#splitaktiviteter3ar", "text")
+                                    .linkBoth("Splitaktiviteter5ar", "#splitaktiviteter5ar", "text")
+
+                                    .linkBoth("FirmImportant", "#firmimportant", "text")
+                                    .linkBoth("FirmBehov", "#firmbehov", "text")
+                                    .linkBoth("FirmReach", "#firmreach", "text")
+                                    .linkBoth("FirmIssues", "#firmissues", "text")
+                                    .linkBoth("FirmValues", "#firmvalues", "text")
+                                    .linkBoth("Firmvinkel", "#firmvinkel", "text")
+
+                                    .linkBoth("FirmRoller", "#firmroller", "text")
+                                    .linkBoth("FirmOkonomi", "#firmokonomi", "text")
+                                    .linkBoth("FirmRes", "#firmres", "text")
+                                    .linkBoth("Firmres2", "#firmres2", "text")
+                                    .linkBoth("FirmDriv", "#firmdriv", "text")
+                                    .linkBoth("FirmVwork", "#firmvwork", "text")
+
+                                    .linkBoth("ProdDesc", "#proddesc", "text")
+                                    .linkBoth("ProdVers", "#prodvers", "text")
+                                    .linkBoth("ProdFunkt", "#prodfunkt", "text")
+                                    .linkBoth("ProdMake", "#prodmake", "text")
+                                    .linkBoth("ProdReady", "#prodready", "text")
+
+                                    .linkBoth("CusWho", "#cuswho", "text")
+                                    .linkBoth("CusFind", "#cusfind", "text")
+                                    .linkBoth("CusNeeds", "#cusneeds", "text")
+                                    .linkBoth("CusKon", "#cuskon", "text")
+                                    .linkBoth("CusStrong", "#cusstrong", "text")
+
+                                    .linkBoth("ProdSale", "#prodsale", "text")
+                                    .linkBoth("ProdStart", "#prodstart", "text")
+                                    .linkBoth("ProdFinance", "#prodfinance", "text")
+
+                                    .linkBoth("ProdPrice", "#prodprice", "text")
+                                    .linkBoth("ProdUdregn", "#produdregn", "text")
+                                    .linkBoth("ProdSaleplace", "#prodsaleplace", "text")
+                                    .linkBoth("ProdEksi", "#prodeksi", "text")
+                                    .linkBoth("ProdMarkedsf", "#prodmarkedsf", "text")
+
+                                    .linkBoth("JurAftale", "#juraftale", "text")
+                                    .linkBoth("JurLeverand", "#jurleverand", "text")
+                                    .linkBoth("JurContact", "#jurcontact", "text")
+                                    .linkBoth("JurCvr", "#jurcvr", "text");
+                            }
+                        });
+                }
+            }
+        </script>
+
+        <script type="text/javascript">
+
+            var divToPdf = document.getElementById('BusinessPlanOverview');
+            var opt = {
+                margin: 2,
+                filename: 'minForretningsPlan.pdf',
+                jsPDF: { format: 'letter', orientation: 'portrait' },
+                pagebreak: { after: [ '#Idegrundlag','#Malsaetning','#Vaerdier', '#Team', '#Produktbeskrivelse', '#Markedsanalyse', '#Okonomi', '#Salgsmarkedsforing'], avoid: 'img' },
+            };
+
+            $('#downloadbtn').click(function () {
+
+
+
+                html2pdf().set(opt).from(divToPdf).save();
+
+
+
+            });
+
+
+        </script>
+
+    </body>
+</html>
+}

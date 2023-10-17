@@ -1,0 +1,84 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+	Layout = "SC_WebBase.cshtml";
+}
+
+@* the fun starts here *@
+<header id="sc-header" class="sc-cover sc-cover-sm" role="banner">
+    <div class="overlay">
+        <div class="sc-container">
+<div class="row">
+    <div class="col-12 text-center animate-box" data-animate-effect="fadeInUp">
+        <div class=" display-t">
+            <div class="display-tc">
+                <h1>@Umbraco.Field("title", recursive: true)</h1>
+                <h5>@Umbraco.Field("subtitle", recursive: true)</h5>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+</header>
+
+<div>
+    <br>
+<hr>
+</div>
+<section class="pb-5">
+  <div class="sc-container mt-5 mb-5">
+             <div class="row">
+                <div class="col-md-9">
+                    <h1>@Umbraco.Field("coachName")</h1>
+                    <p>@Umbraco.Field("description")</p>
+
+                </div>
+                <div class="col-md-3">
+                   @{
+                     
+                            <img  class="img-fluid rounded-circle" src="@typedMediaPickerSingle.GetCropUrl("coach")" alt="@typedMediaPickerSingle.GetPropertyValue("alt")" />
+                        
+                    }
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-4">
+               
+                          <img  class="img-fluid" src="@bImage.GetCropUrl("coachPersonalPage")" alt="@bImage.GetPropertyValue("alt")" />
+                        
+                 }
+                 </div>
+                <div class="col-md-8">
+                            <h4>@Umbraco.Field("introText")</h4>
+                    <p>@Umbraco.Field("bodyText")</p>
+                </div>
+            </div>
+        </div>
+        </section>
+        
+         <hr>
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="my-cards d-flex align-items-stretch offset-1 col-10">
+                    <div class="card testimonial-card">
+                        <!-- Background color -->
+                        <div class="card-up indigo lighten-1"></div>
+                        <!-- Avatar -->
+                        <div class="avatar mx-auto white text-center">
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h3 class="card-title text-center">@Umbraco.Field("coachName")</h3>
+                             <p class="card-text">@Umbraco.Field("description")</p>
+                        </div>
+                        <div class="card-footer d-flex flex-row justify-content-between  px-3">
+                        <img  class="img-fluid px-5" src="@bImage.GetCropUrl("coachPersonalPage")" alt="@bImage.GetPropertyValue("alt")" />
+                         <p class=" px-5">@Umbraco.Field("bodyText")</p>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>

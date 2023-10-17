@@ -1,0 +1,96 @@
+.sc-user-messaging {
+    .container {
+        .messaging-container {
+            .outgoing-message {
+                background-color: $sc-primary;
+                color: $sc-white;
+                border-radius: 1rem;
+            }
+
+            .incoming-message {
+                background-color: $sc-white;
+                color: $sc-primary;
+                border-radius: 1rem;
+            }
+
+            .message {
+                margin-top: 1.5rem;
+
+                &-body {
+                    padding: 1.5rem;
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    border: 1px solid $sc-gray;
+                    border-radius: 1rem;
+                    align-items: center;
+
+                    &-img {
+                        max-width: 2.5rem;
+                        margin-right: 1rem;
+
+                        img {
+                            border-radius: 100%;
+                        }
+                    }
+
+                    &-name {
+                        font-weight: bold;
+                        flex-shrink: 1;
+                        margin-left: 0;
+
+                        span {
+                            font-size: 1.5rem;
+                        }
+                    }
+
+                    &-date {
+                        color: $sc-gray;
+                        margin-left: 1rem;
+
+                        span {
+                            font-size: 1.3rem;
+                        }
+                    }
+
+                    &-text {
+                        margin-top: 1rem;
+                        flex-basis: 100%;
+                    }
+                }
+            }
+        }
+
+        textarea {
+            width: 100%;
+            margin-top: 2.5rem;
+            background-color: $sc-white;
+            padding: 1rem;
+            border-radius: 1rem;
+            border: 1px solid $sc-primary;
+        }
+
+        .button {
+            float: right;
+            cursor: pointer;
+        }
+    }
+}
+
+@include media-md {
+    .sc-user-messaging {
+        .container {
+            .messaging-container {
+                display: grid;
+
+                .outgoing-message {
+                    justify-self: flex-end;
+                }
+
+                .message {
+                    max-width: 80%;
+                }
+            }
+        }
+    }
+}

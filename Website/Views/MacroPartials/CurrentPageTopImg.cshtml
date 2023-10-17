@@ -1,0 +1,15 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@if (CurrentPage.HasValue("wwtopimg")){
+var Image = Model.Content.Value<string>("wwtopimg");
+    if (!Request.Browser.IsMobileDevice) {
+    <div class="outertopimg">
+        <img src="@Umbraco.Media(Image).GetCropUrl("topimg")" class="img-responsive" />
+        </div>
+    </div>
+    }
+    if (Request.Browser.IsMobileDevice) {
+    <div class="outertopimg">
+        <img src="@Umbraco.Media(Image).GetCropUrl("topimgmob")" class="img-responsive" />
+    </div>
+    }
+}

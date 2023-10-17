@@ -1,0 +1,76 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.ToolsOnePage>
+    @using ContentModels = Umbraco.Web.PublishedModels;
+    @{
+        Layout = "Master.cshtml";
+    }
+
+    <div class="tools_page_section">
+        <div class="tools_header">
+            <div class="tools_header_container">
+                <h1 class="tools_page_title">@Umbraco.AssignedContentItem.Value("toolsTitle")</h1>
+                <p class="tools_page_paragraph">@Umbraco.AssignedContentItem.Value("toolsParagraph1")</p>
+                <p class="tools_page_paragraph">@Umbraco.AssignedContentItem.Value("toolsParagraph2")</p>
+            </div>
+        </div>
+        <div class="tools_cards_section">
+            <div class="tools_cards_container">
+
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("toolsCardTitle1")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("toolsCardDescription1")</p>
+                    <div>
+                        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("GetTheTemplate", "Få skabelonen")</a>
+                    </div>
+                </div>
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("toolsCardTitle2")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("toolsCardDescription2")</p>
+                    <div>
+                        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("GetTheTemplate", "Få skabelonen")</a>
+                    </div>
+                </div>
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("toolsCardTitle3")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("toolsCardDescription3")</p>
+                    <div>
+                        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("GetTheTemplate", "Få skabelonen")</a>
+                    </div>
+                </div>
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("toolsCardTitle4")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("toolsCardDescription4")</p>
+                    <div>
+                        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("GetTheTemplate", "Få skabelonen")</a>
+                    </div>
+                </div>
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("toolsCardTitle5")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("toolsCardDescription5")</p>
+                    <div>
+                        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("GetTheTemplate", "Få skabelonen")</a>
+                    </div>
+                </div>
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("toolsCardTitle6")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("toolsCardDescription6")</p>
+                    <div>
+                        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("GetTheTemplate", "Få skabelonen")</a>
+                    </div>
+                </div>
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("toolsCardTitle7")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("toolsCardDescription7")</p>
+                    <div>
+                        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("GetTheTemplate", "Få skabelonen")</a>
+                    </div>
+                </div>
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("toolsCardTitle8")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("toolsCardDescription8")</p>
+                    <div>
+                    <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("GetTheTemplate", "Få skabelonen")</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,260 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.WebMoversPromo>
+	@using ContentModels = Umbraco.Web.PublishedModels;
+	@{
+	Layout = "Master.cshtml";
+	}
+	<section class="landing-webmovers-section"></section>
+	<div class="_form_22"></div>
+	<script src="https://startupcentral.activehosted.com/f/embed.php?id=22" type="text/javascript" charset="utf-8"></script>
+
+	<!--<section class="landing-webmovers-section">
+		<div class="landing-webmovers-header"></div>
+		<div class="landing-webmovers-container">
+			<div class="landing-webmovers-title">
+				<h1>@Umbraco.AssignedContentItem.Value("WebMoversHeaderTitle")</h1>
+			</div>
+			<div class="landing-webmovers-subtext">
+				<p>@Umbraco.AssignedContentItem.Value("WebMoversHeaderSubtitle")</p>
+			</div>
+			<div class="landing-webmovers-button">
+				<a href="@Umbraco.Content(29767).Url" class="ls-button ">@Umbraco.GetDictionaryValue("BecomeAMember", "Bliv medlem")</a>
+			</div>
+			<div id="sc-home-landing__swiper-container">-->
+
+				<!-- Swiper -->
+				<!--<div class="swiper swiper-h">
+					<div class="swiper-wrapper">
+						<div class="swiper-slide">
+
+							<img src="@Umbraco.Media(32103).Url" style="object-fit: cover;" />
+						</div>
+						<div class="swiper-slide">
+							<div class="swiper swiper-v">
+								<div class="swiper-wrapper">
+									<div class="swiper-slide">
+										<img src="@Umbraco.Media(32097).Url" />
+									</div>
+									<div class="swiper-slide">
+
+										<img src="@Umbraco.Media(32100).Url" />
+
+									</div>
+									<div class="swiper-slide">
+
+										<img src="@Umbraco.Media(32095).Url" />
+
+									</div>
+									<div class="swiper-slide">
+
+										<img src="@Umbraco.Media(32098).Url" />
+
+									</div>
+									<div class="swiper-slide">
+
+										<img src="@Umbraco.Media(32099).Url" />
+
+									</div>
+									<div class="swiper-slide">
+
+										<img src="@Umbraco.Media(32101).Url" />
+
+									</div>
+									<div class="swiper-slide">
+
+										<img src="@Umbraco.Media(32096).Url" />
+
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="swiper-slide">
+							<div class="swiper swiper-v2">
+								<div class="swiper-wrapper">
+									<div class="swiper-slide">
+
+										<img src="@Umbraco.Media(32104).Url" style="object-fit: fill; " />
+
+									</div>
+									<div class="swiper-slide">
+
+										<img src="@Umbraco.Media(32102).Url" style="object-fit: cover; " />
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+
+
+				@if ((System.Threading.Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName.Equals("da")))
+				{
+
+				<div class="swiper gallery-thumbs" style="margin-bottom: -240px; border-radius: 25%;">
+					<div class="swiper-wrapper">
+						<div class="swiper-slide">
+							<p id="read-more">
+								Læs mere om
+								<a href="@Umbraco.Content(30725).Url">Netværk</a>
+							</p>
+						</div>
+						<div class="swiper-slide">
+							<p id="read-more">
+								Læs mere om
+								<a href="@Umbraco.Content(10842).Url">Rabatter</a>
+							</p>
+						</div>
+						<div class="swiper-slide">
+							<p id="read-more">
+								Læs mere om
+								<a href="@Umbraco.Content(10840).Url">Sparring</a>
+							</p>
+						</div>
+					</div>
+				</div>
+
+
+				}
+				else
+				{
+				@*<p id="read-more">Read more about our <a href="@Umbraco.Content(30725).Url">network</a></p>*@
+				<div class="swiper gallery-thumbs" style="margin-bottom:-240px; border-radius:25%;">
+					<div class="swiper-wrapper">
+						<div class="swiper-slide">
+							<p id="read-more">
+								Read more about
+								<a href="@Umbraco.Content(30725).Url">Network</a>
+							</p>
+						</div>
+						<div class="swiper-slide">
+							<p id="read-more">
+								Read more about
+								<a href="@Umbraco.Content(10842).Url">Discounts</a>
+							</p>
+						</div>
+						<div class="swiper-slide">
+							<p id="read-more">
+								Read more about
+								<a href="@Umbraco.Content(10840).Url">Sparring</a>
+							</p>
+						</div>
+					</div>
+				</div>
+				}
+			</div>
+		</div>
+	</section>-->
+
+	@*<div class="_form_22"></div>
+	<script src="https://startupcentral.activehosted.com/f/embed.php?id=22" type="text/javascript" charset="utf-8"></script>*@
+
+	<style>
+		#main-footer > .row-container > .sc-footer {
+			display: none;
+		}
+
+		#sc-newsletter {
+			display: none;
+		}
+	</style>
+
+	<!-- Initialize Swiper -->
+	<script type="module">
+		//import Swiper from 'https://unpkg.com/swiper@8/swiper-bundle.min.js'; //linkes were added in the <head> master
+		//import 'https://unpkg.com/swiper@8/swiper-bundle.min.css';
+
+		var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+
+
+		if (width <= 1000) {
+			$('.gallery-thumbs p').show();
+		}
+
+		var galleryThumbs = new Swiper('.gallery-thumbs', {
+			slidesPerView: 1,
+			loop: true,
+			freeMode: true,
+			loopedSlides: 3, //looped slides should be the same
+			watchSlidesProgress: true,
+			speed: 1900,
+		});
+
+		var swiper = new Swiper('.swiper-h', {
+			effect: 'coverflow',
+			centeredSlides: true,
+			slidesPerView: 'auto',
+			loopedSlides: 3, //looped slides should be the same
+			coverflowEffect: {
+				rotate: 43,
+				stretch: 130,
+				depth: 1200,
+				modifier: 1,
+				slideShadows: false,
+				freeMode: true,
+
+			},
+			loop: true,
+			speed: 2000,
+			autoplay: {
+				delay: 4000,
+			},
+			thumbs: {
+				swiper: galleryThumbs,
+			},
+			//pagination: {
+			//    el: '.swiper-pagination-h',
+			//    clickable: true,
+			//},
+		});
+		var Subswiper = new Swiper('.swiper-v', {
+			effect: 'fade',
+			loop: true,
+			speed: 1000,
+			autoplay: {
+				delay: 500,
+			}
+
+		});
+
+		var Subswiper2 = new Swiper('.swiper-v2', {
+			effect: 'fade',
+			loop: true,
+			speed: 1000,
+			autoplay: {
+				delay: 2500,
+			}
+
+		});
+	</script>
+	<!-- swiper style -->
+	<style>
+		.swiper {
+			width: 500px;
+			margin-bottom: 25px;
+			border-radius: 50%;
+		}
+
+		.swiper-slide {
+			background-position: center;
+			background-size: cover;
+			height: 300px;
+		}
+
+			.swiper-slide img {
+				width: 300px;
+				height: 300px;
+				max-width: 100%;
+				max-height: 100%;
+				-ms-transform: translate(-50%, -50%);
+				-webkit-transform: translate(-50%, -50%);
+				-moz-transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%);
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				border: 20px solid #47b2b2;
+				border-radius: 50%;
+			}
+	</style>

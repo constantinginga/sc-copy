@@ -1,0 +1,130 @@
+section.sc-settings {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding: 1rem;
+    background-color: $sc-white;
+    border: 1px solid $sc-border;
+    margin-bottom: 2.5rem;
+
+    .settings-header {
+        @include flex(row);
+        justify-content: space-between;
+
+        .header-tab {
+            text-align: center;
+            flex: 33.33%;
+            padding-bottom: 2rem;
+
+            button {
+                cursor: pointer;
+                background: none;
+                border: none;
+                height: 100%;
+                width: 100%;
+                padding: 0.5rem 1rem;
+
+                &:hover {
+                    @include transition(0.2s);
+                    background-color: $sc-border;
+                }
+            }
+
+
+
+            span {
+                margin: auto;
+            }
+
+            &.active {
+                background-color: $sc-primary;
+                border: none;
+                color: $sc-white;
+                clip-path: polygon(0% 0%, 100% 0, 100% 75%, 50% 100%, 0 75%);
+
+                button {
+                    color: $sc-white;
+
+                    &:hover {
+                        background-color: $sc-primary;
+                    }
+                }
+            }
+        }
+    }
+
+    .settings-main {
+        border-top: $sc-border 1px solid;
+        margin-top: -1.8rem;
+        padding-top: 4rem;
+
+        &.account-settings {
+            display: none;
+        }
+
+        &.info-settings {
+            display: none;
+        }
+
+        &.subscription-settings {
+            display: none;
+        }
+
+        &.active {
+            display: block;
+        }
+
+        .form-box-container {
+            position: relative;
+            @include flex(column);
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+
+            .form-container {
+                #phone {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+
+                    p {
+                        margin-right: .5rem;
+                    }
+                }
+            }
+        }
+    }
+
+    .settings-button {
+        button {
+            width: 100%;
+        }
+    }
+}
+
+@include media-md {
+    section.sc-settings {
+        padding-top: 0;
+        padding-bottom: 0;
+        padding: 1rem;
+        background-color: $sc-white;
+        border: 1px solid $sc-border;
+        margin-bottom: 2.5rem;
+
+        .settings-header {
+            @include flex(row);
+            justify-content: space-between;
+
+            .header-tab {
+                button {
+                    padding: 1rem;
+                }
+            }
+        }
+
+        .settings-main {
+            margin-top: -1.5rem;
+            padding-top: 3rem;
+        }
+    }
+
+}

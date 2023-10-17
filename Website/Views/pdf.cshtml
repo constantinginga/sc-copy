@@ -1,0 +1,762 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using System.Configuration
+@using System.Reflection
+@using System.Xml
+@using log4net
+@using ContentModels = Umbraco.Web.PublishedContentModels;
+@using umbraco.cms.businesslogic.member
+
+@using StartupCentral.Code.ApiControllers
+
+@{
+    Layout = null;
+    Response.ContentType = "text/xsl";
+    Response.AppendHeader("X-Pdf-Render", "true");
+    var id = HttpContext.Current.Request.QueryString["n"];
+
+    var currentUser = Members.GetCurrentMember();
+
+    ForretningsplanApiController fpsController = new ForretningsplanApiController();
+    var res = fpsController.getBusinessPlanPDF(new Guid(id), currentUser.GetKey());
+    var bsp = res;
+
+}<!--  -->
+
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:ibex="http://www.xmlpdf.com/2003/ibex/Format">
+    @* Sets standard PDF Metadata *@
+    <ibex:properties title="@bsp.ProjektNavn" author="@currentUser.Name" subject="@bsp.IdeDesc" keywords="metat,bacon,sheep" creator="PDF Creator for Umbraco" />
+    @* Uncomment below to add protection to the PDF - optionally specify a password *@
+    @*
+    <ibex:security deny-print="true" deny-extract="true" deny-modify="true" user-password="" owner-password="" />
+    *@
+
+    @* This defines a simple page layout with a heder and a footer *@
+    @* See http://www.w3schools.com/xslfo/obj_layout-master-set.asp *@
+    <fo:layout-master-set>
+        <fo:simple-page-master master-name="master" page-width="210mm" page-height="297mm" margin-top="0cm" margin-bottom="0cm" margin-left="0cm" margin-right="0cm">
+            <fo:region-body margin-top="2.54cm" margin-bottom="2.54cm" margin-left="2.54cm" margin-right="2.54cm" column-count="1" column-gap="0.5cm" />
+            <fo:region-before region-name="header" extent="2.54cm" />
+            <fo:region-after region-name="footer" extent="1.77cm" background-color="#182848" />
+        </fo:simple-page-master>
+    </fo:layout-master-set>
+    @* Main content starts within page sequence *@
+    <fo:page-sequence master-reference="master">
+        <!--  -->
+        <!--  -->
+        <!--  -->
+        @* Doucment header *@
+        <fo:flow flow-name="header">
+            <fo:block background-color="#182848">
+                <fo:table>
+                    <fo:table-body>
+                        <fo:table-row>
+                            <fo:table-cell>
+                                <fo:block margin-top="0.5cm" margin-bottom="0.25cm">
+                                    <fo:block text-align="center">
+                                        <fo:external-graphic src="https://www.startupcentral.dk/media/1825/suc-white-logo.png" content-height="scale-to-fit" height="1.25cm" />
+                                    </fo:block>
+                                    <fo:block margin-top="0.2cm" margin-bottom="0.25cm" text-align="center" font-family="verdana" font-size="18pt" font-weight="900" color="#ff4a59">
+                                        @bsp.ProjektNavn
+                                    </fo:block>
+
+                                    <fo:block margin-top="0cm" margin-bottom="0.5cm" text-align="center" font-family="verdana" font-size="12pt" color="#fff">
+                                        @bsp.Kategori | Ejet af @currentUser.Name
+                                    </fo:block>
+                                </fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                    </fo:table-body>
+                </fo:table>
+            </fo:block>
+        </fo:flow>
+        <!--  -->
+        <!--  -->
+        <!--  -->
+        @* Doucment footer *@
+        <fo:static-content flow-name="footer">
+            <fo:table margin-left="2.54cm" margin-right="2.54cm">
+                <fo:table-body color="#fff" text-align="center">
+                    <fo:table-row>
+                        <fo:table-cell font-family="Sofia" font-size="8pt" width="53mm">
+                            <fo:block margin-top="0.5cm">
+                                Startup Central har ikke ophavstret til
+                                resultatet af dette værktøj.</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell width="53mm">
+                            <fo:block margin-top="0.2cm">
+                                <fo:external-graphic text-align="center" src="https://www.startupcentral.dk/media/1825/suc-white-logo.png" content-height="scale-to-fit" height=".8cm" />
+                            </fo:block>
+                            <fo:block font-family="Sofia" margin-right="0.2cm" margin-top="0.1cm" font-size="11pt" text-align="center">
+                                Side
+                                <fo:page-number />
+                                af
+                                <fo:page-number-citation ref-id="TheVeryLastPage" />
+                            </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell font-family="Sofia" font-size="8pt" width="53mm">
+                            <fo:block margin-top="0.5cm">
+                                Lavet i samarbejde med Startup Central
+                            </fo:block>
+                            <fo:block>
+                                © 2021 Startup Central | CVR - 39319942
+                            </fo:block>
+                        </fo:table-cell>
+                    </fo:table-row>
+                </fo:table-body>
+            </fo:table>
+            <!-- <fo:block margin-bottom="0" color="#fff"> -->
+            <!-- @bsp.ProjektNavn -->
+            <!-- <fo:external-graphic text-align="center" src="https://www.startupcentral.dk/media/1825/suc-white-logo.png" content-height="scale-to-fit" height="1cm" /> -->
+            <!-- <fo:block margin-top="0.25cm"></fo:block> -->
+            <!-- Udskrevet den @DateTime.Now.ToShortDateString() -->
+            <!-- <fo:block font-family="Sofia" font-size="11pt" text-align-last="center"> -->
+            <!-- Side -->
+            <!-- <fo:page-number /> -->
+            <!-- </fo:block> -->
+            <!-- </fo:block> -->
+        </fo:static-content>
+        <!--  -->
+        <!--  -->
+        <!--  -->
+        @* Document Body *@
+        <fo:flow flow-name="xsl-region-body">
+            @* Introduktion *@
+            <fo:block margin-top="2.4cm" margin-bottom="0.4cm">
+                <fo:inline font-family="Poppins" font-size="16pt" font-weight="bold" color="#000000">
+                    Introduktion
+            </fo:inline>
+            </fo:block>
+            <fo:block>
+                <fo:inline font-family="Sofia" font-size="12pt" margin-top="1.4cm" color="#000000">
+                @bsp.IdeDesc
+            </fo:inline>
+                <fo:block margin-top="0.6cm" margin-bottom="0.2cm"></fo:block>
+                <!-- <fo:external-graphic src="http://autoadmin.autostatistik.dk/images/pdftop.png" height="0.1mm" content-width="159mm" /> -->
+            </fo:block>
+            <!--  -->
+            <!--  -->
+            <!--  -->
+            <!--  -->
+            <!--  -->
+            @* Idegrundlag *@
+            <fo:block margin-top="0.8cm" margin-bottom="0.4cm">
+                <fo:inline font-family="Poppins" font-size="16pt" font-weight="bold" color="#000000">
+                    Idegrundlag
+                </fo:inline>
+            </fo:block>
+            @if (!string.IsNullOrEmpty(bsp.Uddyb))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Uddyb projektet og giv læseren fuld adgang til at se hvordan ideen opstod
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.Uddyb
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.Loser))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Løser produktet et problem som endnu ikke bliver løst?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.Loser
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.Videreudvik))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Er produktet en videreudvikling af noget eksisterende?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.Videreudvik
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.Brugprod))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Fortæl hvor produktet kan bruges
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.Brugprod
+                </fo:inline>
+            </fo:block>
+            }
+
+
+
+        @* Målsætning *@
+            <fo:block margin-top="0.8cm" margin-bottom="0.4cm">
+                <fo:inline font-family="Poppins" font-size="16pt" font-weight="bold" color="#000000">
+                Målsætning
+            </fo:inline>
+            </fo:block>
+            @if (!string.IsNullOrEmpty(bsp.Splitaktiviteter))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Del aktiviteter op i 1 år, 3 år og 5 års planer
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.Splitaktiviteter
+                </fo:inline>
+            </fo:block>
+            }
+
+        @* Værdier *@
+            <fo:block margin-top="0.8cm" margin-bottom="0.4cm">
+                <fo:inline font-family="Poppins" font-size="16pt" font-weight="bold" color="#000000">
+                Værdier
+            </fo:inline>
+            </fo:block>
+            @if (!string.IsNullOrEmpty(bsp.FirmImportant))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Beskriv hvorfor firmaet er vigtigt
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.FirmImportant
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.FirmBehov))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvilke behov opfylder firmaet og for hvilke kunder
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.FirmBehov
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.FirmReach))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvad vil du opnå om 1 mdr., 1 år og 3 år
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.FirmReach
+                </fo:inline>
+            </fo:block>
+            }
+
+
+        @if (!string.IsNullOrEmpty(bsp.FirmIssues))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvad er de største problemer, og hvordan vil du løse dem?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.FirmIssues
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.FirmValues))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvordan er dine værdier?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.FirmValues
+                </fo:inline>
+            </fo:block>
+            }
+
+
+
+
+        @* Team og ressourcer *@
+            <fo:block margin-top="0.8cm" margin-bottom="0.4cm">
+                <fo:inline font-family="Poppins" font-size="16pt" font-weight="bold" color="#000000">
+                Team og ressourcer
+            </fo:inline>
+            </fo:block>
+            @if (!string.IsNullOrEmpty(bsp.FirmOkonomi))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvem er med i projektet og hvilke roller har de?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.FirmOkonomi
+                </fo:inline>
+            </fo:block>
+            }
+
+
+        @if (!string.IsNullOrEmpty(bsp.FirmOkonomi))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvem tager ansvaret for økonomi, slag/markedsføring og produktudvikling?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.FirmOkonomi
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.FirmRes))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Er der behov for yderligere (eventuelt eksterne) ressourcer?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.FirmRes
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.FirmDriv))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvem er den drivende person og hvem træffer beslutninger?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.FirmDriv
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.FirmVwork))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvor mange timer/dage/måneder kan eamet arbejde for projektet?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.FirmVwork
+                </fo:inline>
+            </fo:block>
+            }
+
+
+
+
+        @* Produktbeskrivelse *@
+            <fo:block margin-top="0.8cm" margin-bottom="0.4cm">
+                <fo:inline font-family="Poppins" font-size="16pt" font-weight="bold" color="#000000">
+                Produktbeskrivelse
+            </fo:inline>
+            </fo:block>
+            @if (!string.IsNullOrEmpty(bsp.ProdDesc))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Giv en beskrivelse af produktet - hvad kan det?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.ProdDesc
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.ProdVers))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Er der forskellige versioner?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.ProdVers
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.ProdFunkt))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvordan fungerer det?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.ProdFunkt
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.ProdMake))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvordan skal det laves og kræves der obligatoriske godkendelser?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.ProdMake
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.ProdReady))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvad mangler, før produktet er klart til salg?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.ProdReady
+                </fo:inline>
+            </fo:block>
+            }
+
+
+
+        @* Markedsanalyse *@
+            <fo:block margin-top="0.8cm" margin-bottom="0.4cm">
+                <fo:inline font-family="Poppins" font-size="16pt" font-weight="bold" color="#000000">
+                Markedsanalyse
+            </fo:inline>
+            </fo:block>
+            @if (!string.IsNullOrEmpty(bsp.CusWho))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvem er kunderne?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.CusWho
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.CusFind))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvor mange kunder findes der?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.CusFind
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.CusNeeds))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvordan opfyldes deres behov nu?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.CusNeeds
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.CusKon))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvilke konkurrenter er der, og hvordan adskiller dit produkt sig?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.CusKon
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.CusStrong))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvad er konkurrentens stærke og svage sider?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.CusStrong
+                </fo:inline>
+            </fo:block>
+            }
+
+
+
+
+        @* Økonomi *@
+            <fo:block margin-top="0.8cm" margin-bottom="0.4cm">
+                <fo:inline font-family="Poppins" font-size="16pt" font-weight="bold" color="#000000">
+                Økonomi
+            </fo:inline>
+            </fo:block>
+            @if (!string.IsNullOrEmpty(bsp.ProdSale))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvilke større udgifter skal der afholdes før produktet er klar til salg?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.ProdSale
+                </fo:inline>
+            </fo:block>
+            }
+
+
+        @if (!string.IsNullOrEmpty(bsp.ProdFinance))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Kan projektet starte op i det små?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.ProdFinance
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.ProdFinance))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvornår i de næste 12 måneder er der udgifter og indtægter?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.ProdFinance
+                </fo:inline>
+            </fo:block>
+            }
+
+
+
+
+        @* Salgsmarkedsføring *@
+            <fo:block margin-top="0.8cm" margin-bottom="0.4cm">
+                <fo:inline font-family="Poppins" font-size="16pt" font-weight="bold" color="#000000">
+                Salgsmarkedsføring
+            </fo:inline>
+            </fo:block>
+            @if (!string.IsNullOrEmpty(bsp.ProdUdregn))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Beskriv priserne for produktet
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.ProdPrice
+                </fo:inline>
+            </fo:block>
+            }
+
+
+        @if (!string.IsNullOrEmpty(bsp.ProdUdregn))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvordan er priserne udregnet og hvad er overskudsgraden?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.ProdUdregn
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.ProdSaleplace))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvordan skal salget foregå - og hvem skal stå for det?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.ProdSaleplace
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.ProdMarkedsf))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvordan skal kunderne finde ud af at produktet eksisterer?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.ProdEksi
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.ProdMarkedsf))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Hvilke udgifter er der til markedsføring, og hvordan skal det foregå?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.ProdMarkedsf
+                </fo:inline>
+            </fo:block>
+            }
+
+
+
+
+        @* Juridisk *@
+            <fo:block margin-top="0.8cm" margin-bottom="0.4cm">
+                <fo:inline font-family="Poppins" font-size="16pt" font-weight="bold" color="#000000">
+                Juridisk
+            </fo:inline>
+            </fo:block>
+            @if (!string.IsNullOrEmpty(bsp.JurAftale))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Er der en aftale på, hvem der skal investere tid/penge og hvordan ejeforholdet er?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.JurAftale
+                </fo:inline>
+            </fo:block>
+            }
+
+
+        @if (!string.IsNullOrEmpty(bsp.JurContact))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Skal leverandører eller andre involveres i projektet - hvis ja, er der en aftale med dem?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.JurLeverand
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.JurContact))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Er der kontaktet jurister - og hvem?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.JurContact
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (!string.IsNullOrEmpty(bsp.JurCvr))
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Er der behov for CVR nummer og/eller momsregistrering - hvornår?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-bottom="1cm">
+                <fo:inline font-family="Sofia" font-size="11pt" color="#000000">
+                    @bsp.JurCvr
+                </fo:inline>
+            </fo:block>
+            }
+
+        @if (bsp.AndetChk)
+        {
+            <fo:block margin-bottom="0.2cm">
+                <fo:inline font-family="Poppins" font-size="12pt" font-weight="bold" color="#ff4a59">
+                    Har du andet at tilføje?
+                </fo:inline>
+            </fo:block>
+            <fo:block margin-left="0.3cm" margin-right="0.3cm" margin-bottom="0.4cm">
+                <fo:inline font-family="Poppins" font-size="11pt" color="#000000">
+                    @bsp.AndetHeadline
+                </fo:inline>
+                <fo:inline font-family="Sofia" font-size="9pt" color="#000000">
+                    @bsp.Andet
+                </fo:inline>
+            </fo:block>
+            }
+            <fo:block-container z-index="-1" position="absolute" left="5pt" top="5pt" width="100%" height="100%">
+
+                <fo:block></fo:block>
+
+            </fo:block-container>
+            <fo:block id="TheVeryLastPage"></fo:block>
+        </fo:flow>
+    </fo:page-sequence>
+</fo:root>

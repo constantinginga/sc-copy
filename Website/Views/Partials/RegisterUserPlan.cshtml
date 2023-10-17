@@ -1,0 +1,74 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using System.Web.SessionState
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+
+@{
+    var landingPromoCode = Request.QueryString["landingpromo"];
+}
+
+<div class="choose-plan__price-cards register-section__main">
+    <div class="row">
+
+                @Html.Partial("~/Views/New_PriceCards.cshtml")
+            
+    </div>
+    <div class="price-cards-subtext">@Umbraco.AssignedContentItem.Value("planSectionDetails")</div>
+</div>
+
+<script>
+
+    // set payment plan amount and type in session state
+    function savePlan(amount, type, promocode) {
+
+        $.ajax({
+            url: '/umbraco/Surface/RegisterUserDetails/SavePaymentSession',
+            type: 'POST',
+            data: {
+                amount: amount,
+                type: type
+            },
+            success: function (data) {
+                console.log(promocode);
+                window.location.href = (promocode) ? `${'https://www.startupcentral.dk/bliv-medlem/'}?plan=${type}&landingpromo=${promocode}` : `${window.location.href}?plan=${type}`;
+            }
+        });
+    }
+</script>
+
+<!-- Meta Pixel Code -->
+<!--
+<script>
+
+
+    var price_button = document.getElementById("price-cards__btns");
+    price_button.addEventListener(
+        'click',
+        function () {
+            fbq('track', 'AddToCart', {
+                content_name: 'monthly',
+                value: 186.00,
+                currency: 'DKK'
+            });
+            fbq('track', 'AddToCart', {
+                content_name: 'quarterly',
+                value: 502.00,
+                currency: 'DKK'
+            });
+            fbq('track', 'AddToCart', {
+                content_name: 'yearly',
+                value: 1786.00,
+                currency: 'DKK'
+            });
+        },
+    );
+</script>
+-->
+<script>
+
+
+</script>
+
+
+

@@ -1,0 +1,102 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+<section class="bmtp-reviews-section">
+    <div class="bmtp-reviews-title bmtp-reviews-title-coach"><p style="font-family: 'Open Sans', sans-serif;"><b>Som medlem får du gratis sparring med alle vores coaches</b></p></div>
+    <div class="bmtp-reviews-section-container">
+        <div class="swiper swiper3" style="height: auto">
+            <div class="swiper-wrapper">
+
+                @for (var i = 0; i < 4; i++) //4 on local, 8 on production
+                {
+                    var coachPicture = Umbraco.AssignedContentItem.Value<IPublishedContent>($"bmcbImg{i + 1}");
+
+                    <div class="bmtp-review-card-container swiper-slide">
+                        <div class="bmcb-coach-card">
+                            <div class="bmcb-coach-card-top">
+                            <div class="bmtp-coach-image">
+                                <img src="@coachPicture.Url" />
+                            </div>
+                            <div class="bmcb-coach-name">
+                                <p>@Umbraco.AssignedContentItem.Value($"bmcbName{i + 1}")</p>
+                            </div>
+                            </div>
+                            <div class="bmcb-coach-description">
+                                <p>@Umbraco.AssignedContentItem.Value($"bmcbSpeciality{i + 1}")</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="bmtp-arrow-prev3 swiper-button-prev" id="bmtp-arrow-left3" style="display: flex; top: 60%"></div>
+        <div class="bmtp-arrow-next3 swiper-button-next" id="bmtp-arrow-right3" style="display: flex; top: 60%"></div>
+    <div class="swiper-pagination" id="bmtp-pagination3"></div>
+    </div>
+</section>
+
+
+@*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>*@
+
+<script>
+    const swiper3 = new Swiper('.swiper3', {
+        // Optional parameters
+        direction: 'horizontal',
+        slidesPerView: 4,
+        loop: true,
+        autoplay: true,
+        navigation: {
+            nextEl: '.bmtp-arrow-next3',
+            prevEl: '.bmtp-arrow-prev3',
+        },
+        pagination: {
+            el: '#bmtp-pagination3',
+            clickable: true,
+        },
+        
+        breakpoints: {
+            300: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+            },
+            750: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+                //navigation: {
+                //    nextEl: '',
+                //    prevEl: '',
+                //},
+            },
+            1000: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+            },
+            1200: {
+                slidesPerView: 3,
+                spaceBetween: 30,
+            },
+
+            1400: {
+                slidesPerView: 4,
+                spaceBetween: 30,
+            },
+        }
+    });
+</script>
+
+<script>
+    var elem5 = document.getElementById("bmtp-arrow-left3");
+    var elem6 = document.getElementById("bmtp-arrow-right3");
+    let pagi3 = document.querySelector("#bmtp-pagination3")
+    if (window.innerWidth < 1350) {
+
+        elem5.parentNode.removeChild(elem5);
+        elem6.parentNode.removeChild(elem6);
+
+    }
+    if (window.innerWidth >= 1350) {
+
+        pagi3.parentNode.removeChild(pagi3);
+    }
+</script>

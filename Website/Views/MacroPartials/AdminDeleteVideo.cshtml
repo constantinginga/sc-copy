@@ -1,0 +1,58 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using umbraco.cms.businesslogic.member
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+
+@{
+
+    
+
+    <div class="modal fade deletevideoview" id="deletevideoview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><img src="/images/close.gif"></button>
+                <div class="modal-header text-center">
+                    <img src="/media/1148/raket_dialogbox.svg" class="img-responsive center-block mb25 mt40" />
+                    <h4 class="modal-title f25 mb25  uppercase fw700 lh26" id="myModalLabel">
+                        Du er ved at slette videoen:<br/> 
+                    </h4>
+                </div>
+                <div class="modal-body text-center">
+                    <form action="" method="post" name="deletevideo" id="deletevideo">
+                        <div class="row">
+                            <div class="radio fleft w100 mb30">
+                                
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-sm-12">
+                            <div class="checkbox mb30">
+                                <label for="delete"><input type="checkbox" value="1" name="delete" id="delete">Er du sikker?<span></span></label>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 text-right">
+                                <input type="button" id="submit" name="submit" class="btn dark" value="Slet" data-invoke="deletevideo"/>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="successtxt f18 lh26" style="display:none;">
+                        Videoen blev slettet.<br /><br />
+                    </div>
+                    <div class="errortxt f18 lh26" style="display:none;">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/scripts/startupcentral.admin.js?v=3"></script>
+    
+
+    
+}

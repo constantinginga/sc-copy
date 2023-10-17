@@ -1,0 +1,267 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@{
+    var currentDate = DateTime.Now.Year;
+}
+
+<footer id="nfp-main-footer" class="nfp-main-footer">
+    <div class="nfp-row-container">
+        <div class="nfp-footer">
+            <div class="nfp-footer__column">
+                <h3 class="nfp-footer__heading">Startup Central</h3>
+                <ul class="nfp-footer__list">
+                    @*<li class="nfp-footer__item">
+                            <a href="@Umbraco.Content(27565).Url" class="nfp-footer__item-link">@Umbraco.Content(27565).Value("menuTitle")</a>
+                        </li>*@
+                    <li class="nfp-footer__item">
+                        <a href="@Umbraco.Content(27479).Url" class="nfp-footer__item-link">@Umbraco.Content(27479).Value("menuTitle")</a>
+                    </li>
+                    <li class="nfp-footer__item">
+                        <a href="@Umbraco.Content(29767).Url" class="nfp-footer__item-link">@Umbraco.Content(26278).Value("menuTitle")</a>
+                    </li>
+                    <li class="nfp-footer__item" style="color: #ffffff; font-weight: 400; font-size: 14px;">
+                        @*<a href="@Umbraco.Content(27528).Url" class="nfp-footer__item-link">@Umbraco.Content(27528).Value("menuTitle")</a>&nbsp og &nbsp
+                            <a href="@Umbraco.Content(24256).Url" class="nfp-footer__item-link">@Umbraco.Content(24256).Value("menuTitle")</a>*@
+                        <a href="@Umbraco.Content(24256).Url" class="nfp-footer__item-link">@Umbraco.GetDictionaryValue("Press", "Pressen")</a>
+                    </li>
+                    @*<li class="nfp-footer__item">
+                            <a href="@Umbraco.Content(26341).Url" class="nfp-footer__item-link">@Umbraco.Content(26341).Value("menuTitle")</a>
+                        </li>
+                        <li class="nfp-footer__item">
+                            <a href="@Umbraco.Content(25693).Url" class="nfp-footer__item-link">@Umbraco.Content(25693).Value("menuTitle")</a>
+                        </li>*@
+                    <li class="nfp-footer__item">
+                        <a href="/media/cktpeed4/regnskabsblanket-maj-2022-v2.pdf" class="nfp-footer__item-link">CoolUnite</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="nfp-footer__column">
+                <h3 class="nfp-footer__heading">@Umbraco.GetDictionaryValue("Product", "Produkt")</h3>
+                <ul class="nfp-footer__list">
+                    <li class="nfp-footer__item">
+                        <a href="@Umbraco.Content(38742).Url" class="nfp-footer__item-link">@Umbraco.Content(38742).Value("toolsTitle")</a>
+                    </li>
+                    @*<li class="nfp-footer__item">
+                            <a href="@Umbraco.Content(27555).Url" class="nfp-footer__item-link">@Umbraco.Content(27555).Value("menuTitle")</a>
+                        </li>
+                        <li class="nfp-footer__item">
+                            <a href="@Umbraco.Content(27550).Url" class="nfp-footer__item-link">@Umbraco.Content(27550).Value("menuTitle")</a>
+                        </li>
+                        <li class="nfp-footer__item">
+                            <a href="@Umbraco.Content(30002).Url" class="nfp-footer__item-link">@Umbraco.Content(30002).Value("menuTitle")</a>
+                        </li>*@
+                    <li class="nfp-footer__item">
+                        <a href="@Umbraco.Content(10840).Url" class="nfp-footer__item-link">Coaches</a>
+                    </li>
+                    <li class="nfp-footer__item">
+                        <a href="@Umbraco.Content(10842).Url" class="nfp-footer__item-link">@Umbraco.Content(10842).Value("menuTitle")</a>
+                    </li>
+                    <li class="nfp-footer__item">
+                        <a href="https://www.startupcentral.dk/lounge" class="nfp-footer__item-link">Startup Lounge</a>
+                    </li>
+                    <li class="nfp-footer__item">
+                        <a href="@Umbraco.Content(39847).Url" class="nfp-footer__item-link">@Umbraco.GetDictionaryValue("Knowledge", "Viden")</a>
+                    </li>
+                </ul>
+            </div>
+            @*<div class="nfp-footer__column">
+                    <h3 class="nfp-footer__heading">@Umbraco.GetDictionaryValue("Knowledge", "Viden")</h3>
+                    <ul class="nfp-footer__list">
+                        <li class="nfp-footer__item">
+                            <a href="@Umbraco.Content(28010).Url" class="nfp-footer__item-link">@Umbraco.Content(28010).Value("menuTitle")</a>
+                        </li>
+                        <li class="nfp-footer__item">
+                            <a href="https://www.startupcentral.dk/blogs/" class="nfp-footer__item-link">Blog</a>
+                        </li>
+                        <li class="nfp-footer__item">
+                            <a href="@Umbraco.Content(28272).Url" class="nfp-footer__item-link">Vlogs</a>
+                        </li>
+                        <li class="nfp-footer__item">
+                            <a href="@Umbraco.Content(25918).Url" class="nfp-footer__item-link">Events</a>
+                        </li>
+                        <li class="nfp-footer__item">
+                            <a href="@Umbraco.Content(27547).Url" class="nfp-footer__item-link">Startup Noise</a>
+                        </li>
+                        <li class="nfp-footer__item">
+                            <a href="@Umbraco.Content(32198).Url" class="nfp-footer__item-link">@Umbraco.Content(32198).Value("menuTitle")</a>
+                        </li>
+                    </ul>
+                </div>*@
+            <div class="nfp-footer__column">
+                <h3 class="nfp-footer__heading">@Umbraco.GetDictionaryValue("Security", "Sikkerhed")</h3>
+                <ul class="nfp-footer__list">
+                    <li class="nfp-footer__item">
+                        <!-- https://www.startupcentral.dk/brugerbetingelser/ -->
+                        @*<a href="@Umbraco.Content(27563).Url" class="nfp-footer__item-link">@Umbraco.Content(27563).Value("menuTitle")</a>*@
+                        <a href="@Umbraco.Content(27563).Url" class="nfp-footer__item-link">@Umbraco.Content(27563).Value("menuTitle")</a>
+                    </li>
+                    <li class="nfp-footer__item">
+                        <!-- https://www.startupcentral.dk/cookies/  -->
+                        <a href="@Umbraco.Content(30626).Url" class="nfp-footer__item-link">@Umbraco.Content(30626).Value("menuTitle")</a>
+                    </li>
+                    <li class="nfp-footer__item">
+                        <!-- https://www.startupcentral.dk/privatlivspolitik/  -->
+                        <a href="@Umbraco.Content(27559).Url" class="nfp-footer__item-link">@Umbraco.Content(27559).Value("menuTitle")</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="nfp-footer__column">
+                <h3 class="nfp-footer__heading">Kontakt os</h3>
+                <ul class="nfp-footer__list">
+                    <li class="nfp-footer__item">
+                        <svg class="nfp-material" id="Location" xmlns="http://www.w3.org/2000/svg" width="24"
+                             height="24" viewBox="0 0 24 24">
+                            <g id="Group_23" data-name="Group 23">
+                                <rect id="Rectangle_10" data-name="Rectangle 10" width="24" height="24"
+                                      fill="none" />
+                            </g>
+                            <g id="Group_24" data-name="Group 24" transform="translate(4 2)">
+                                <path id="Path_69" data-name="Path 69"
+                                      d="M12,2a7.955,7.955,0,0,0-8,8.2q0,4.77,7.34,11.23a1.017,1.017,0,0,0,1.33,0Q19.99,14.965,20,10.2A7.955,7.955,0,0,0,12,2Zm0,10a2,2,0,1,1,2-2A2.006,2.006,0,0,1,12,12Z"
+                                      transform="translate(-4 -2)" fill="#fff" />
+                            </g>
+                        </svg>
+                        <a href="https://g.page/DK-Startup-Central?share" class="nfp-footer__item-link">
+                            Søndergade 43, 1. @Umbraco.GetDictionaryValue("Floor", "sal.")</span><br />
+                            8700 Horsens
+                        </a>
+                    </li>
+                    <li class="nfp-footer__item">
+                        <svg class="nfp-material" id="Telephone" xmlns="http://www.w3.org/2000/svg" width="24"
+                             height="24" viewBox="0 0 24 24">
+                            <rect id="Rectangle_11" data-name="Rectangle 11" width="24" height="24" fill="none" />
+                            <g id="Group_26" data-name="Group 26" transform="translate(3.02 3.02)">
+                                <g id="Group_25" data-name="Group 25">
+                                    <path id="Path_70" data-name="Path 70"
+                                          d="M4.78,15.27l2.54-.29a1.991,1.991,0,0,1,1.64.57l1.84,1.84a15.045,15.045,0,0,0,6.59-6.59L15.54,8.95a1.991,1.991,0,0,1-.57-1.64l.29-2.52a2,2,0,0,1,1.99-1.77h1.73a1.985,1.985,0,0,1,2,2.07A16.992,16.992,0,0,1,5.09,20.98a1.985,1.985,0,0,1-2.07-2V17.25A1.982,1.982,0,0,1,4.78,15.27Z"
+                                          transform="translate(-3.02 -3.02)" fill="#fff" />
+                                </g>
+                            </g>
+                        </svg>
+                        <a href="tel:+4529290113" class="nfp-footer__item-link">+45 29 29 01 13</a>
+                    </li>
+                    <li class="nfp-footer__item">
+                        <svg class="nfp-material" id="Mail" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                             viewBox="0 0 24 24">
+                            <path id="Path_67" data-name="Path 67" d="M0,0H24V24H0Z" fill="none" />
+                            <path id="Path_68" data-name="Path 68"
+                                  d="M20,4H4A2,2,0,0,0,2.01,6L2,18a2.006,2.006,0,0,0,2,2H20a2.006,2.006,0,0,0,2-2V6A2.006,2.006,0,0,0,20,4Zm-.4,4.25-7.07,4.42a1.011,1.011,0,0,1-1.06,0L4.4,8.25a.849.849,0,1,1,.9-1.44L12,11l6.7-4.19a.849.849,0,1,1,.9,1.44Z"
+                                  transform="translate(0 0)" fill="#fff" />
+                        </svg>
+                        <a href="mailto:kontakt@startupcentral.dk"
+                           class="nfp-footer__item-link">kontakt@startupcentral.dk</a>
+                    </li>
+                </ul>
+                <a href="/">
+                    <img class="nfp-footer-logo__image" src=@Umbraco.Media(38340).Url alt=" Startup Central, stedet for dit iværksætteri" />
+                </a>
+            </div>
+        </div>
+        <div class="nfp-footer-bottom">
+            <div class="nfp-footer-bottom__cvr">
+                <span>
+                    © @currentDate Startup Central | CVR - 39319942
+                </span>
+                <a href="https://tryghedsmaerket.dk/certificate/startupcentral.dk">
+                    <svg version="1.1" id="Lag_1" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 400 400"
+                         style="enable-background:new 0 0 400 400;" xml:space="preserve">
+                    <style type="text/css">
+                        .st0 {
+                            fill: #FFFFFF;
+                        }
+</style>
+                    <g>
+                    <g>
+                    <path class="st0"
+                          d="M341.5,58.6c-78.2-78.1-204.9-78.1-283,0c-78.2,78.1-78.2,204.7,0,282.8c78.2,78.1,204.9,78.1,283,0
+                C419.7,263.3,419.7,136.7,341.5,58.6z M252.1,311.1c-0.5,1.2-1.3,2.3-2.2,3.3l-24.4,24.4c-0.9,1-2,1.7-3.3,2.2
+                c-1.2,0.5-2.5,0.8-3.9,0.8c-1.3,0-2.6-0.3-3.9-0.8c-1.2-0.5-2.3-1.3-3.3-2.2l-24.4-24.4c-1-0.9-1.7-2-2.2-3.3
+                c-0.5-1.3-0.8-2.5-0.8-3.9c0-1.3,0.3-2.6,0.8-3.9c0.5-1.3,1.3-2.3,2.2-3.3l24.4-24.4c1-1,2.1-1.7,3.3-2.2c1.3-0.5,2.5-0.8,3.9-0.8
+                c1.3,0,2.6,0.3,3.9,0.8c1.3,0.5,2.4,1.3,3.3,2.2l24.4,24.4c1,1,1.7,2,2.2,3.3c0.5,1.2,0.8,2.5,0.8,3.9
+                C252.9,308.6,252.6,309.9,252.1,311.1z M314.9,122.9c-0.5,1.3-1.3,2.3-2.2,3.3l-150,149.9c-1,1-2.1,1.7-3.3,2.2
+                c-1.2,0.5-2.5,0.8-3.9,0.8c-1.4,0-2.7-0.3-3.9-0.8c-1.2-0.5-2.3-1.3-3.3-2.2L61.2,189c-1-0.9-1.7-2-2.2-3.3
+                c-0.5-1.2-0.8-2.5-0.8-3.9c0-1.3,0.3-2.6,0.8-3.9c0.5-1.3,1.3-2.4,2.2-3.3l24.4-24.4c1-1,2-1.7,3.3-2.2c1.2-0.5,2.5-0.8,3.9-0.8
+                c1.3,0,2.6,0.3,3.9,0.8c1.2,0.5,2.3,1.2,3.3,2.2l55.6,55.5L273.9,87.5c1-1,2-1.7,3.3-2.2c1.3-0.5,2.5-0.8,3.9-0.8s2.6,0.3,3.9,0.8
+                c1.2,0.5,2.3,1.3,3.3,2.2l24.4,24.4c1,1,1.7,2,2.2,3.3c0.5,1.3,0.8,2.6,0.8,3.9C315.7,120.4,315.4,121.7,314.9,122.9z" />
+                                    </g>
+                                </g>
+                            </svg>
+                </a>
+            </div>
+            <div class="nfp-footer-bottom__some">
+                <a href="https://www.facebook.com/StartupCentral.dk/" class="nfp-footer-bottom__some-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <g id="Group_62" data-name="Group 62" transform="translate(0 -1087.6)">
+                            <g id="Budget_22_" transform="translate(0 1087.6)">
+                                <path id="Path_1_22_" d="M-301,467.6h32v32h-32Z" transform="translate(301 -467.6)"
+                                      fill="none" />
+                            </g>
+                            <path id="Path_148" data-name="Path 148"
+                                  d="M23.3,1094.3H8.7a2.006,2.006,0,0,0-2,2v14.6a2.006,2.006,0,0,0,2,2h5.7v-6.3H11.8v-3h2.6v-2.3c0-2.6,1.5-4,3.9-4a16.308,16.308,0,0,1,2.3.2v2.5H19.3a1.5,1.5,0,0,0-1.7,1.6v1.9h2.8l-.5,3H17.5v6.3h5.7a2.006,2.006,0,0,0,2-2v-14.6A1.837,1.837,0,0,0,23.3,1094.3Z"
+                                  fill="#fff" />
+                        </g>
+                    </svg>
+                </a>
+                <a href="https://www.linkedin.com/company/startupcentral-dk/" class="nfp-footer-bottom__some-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <g id="Group_64" data-name="Group 64" transform="translate(0 -1135.6)">
+                            <g id="Budget_20_" transform="translate(0 1135.6)">
+                                <path id="Path_1_20_" d="M-301,515.6h32v32h-32Z" transform="translate(301 -515.6)"
+                                      fill="none" />
+                            </g>
+                            <path id="Path_150" data-name="Path 150"
+                                  d="M23.9,1142.3H8a1.324,1.324,0,0,0-1.3,1.3v15.9a1.324,1.324,0,0,0,1.3,1.3H23.9a1.324,1.324,0,0,0,1.3-1.3v-15.9A1.206,1.206,0,0,0,23.9,1142.3Zm-11.6,15.9H9.6v-8.8h2.8l-.1,8.8Zm-1.3-10a1.6,1.6,0,1,1,1.6-1.6A1.645,1.645,0,0,1,11,1148.2Zm11.6,10H19.9v-4.3c0-1,0-2.3-1.4-2.3s-1.7,1.1-1.7,2.3v4.4H14.1v-8.8h2.6v1.2h0a2.949,2.949,0,0,1,2.6-1.4c2.8,0,3.3,1.8,3.3,4.2v4.7Z"
+                                  fill="#fff" />
+                        </g>
+                    </svg>
+                </a>
+                <a href="https://www.instagram.com/startupcentral.dk/" class="nfp-footer-bottom__some-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <g id="Instagram" transform="translate(0 -1183.6)">
+                            <g id="Budget_14_" transform="translate(0 1183.6)">
+                                <path id="Path_1_14_" d="M-301,563.6h32v32h-32Z" transform="translate(301 -563.6)"
+                                      fill="none" />
+                            </g>
+                            <g id="Group_57" data-name="Group 57" transform="translate(6.725 1190.325)">
+                                <path id="Path_142" data-name="Path 142"
+                                      d="M16,1194.8a4.8,4.8,0,0,0-4.8,4.8,4.739,4.739,0,0,0,4.8,4.8h0a4.8,4.8,0,0,0,0-9.6Zm0,7.9a3.1,3.1,0,1,1,3.1-3.1A3.116,3.116,0,0,1,16,1202.7Z"
+                                      transform="translate(-6.725 -1190.325)" fill="#fff" />
+                                <path id="Path_143" data-name="Path 143"
+                                      d="M22.1,1194.6h0a1.11,1.11,0,0,1-1.1,1.1h0a1.1,1.1,0,1,1,1.1-1.1Z"
+                                      transform="translate(-6.725 -1190.325)" fill="#fff" />
+                                <path id="Path_144" data-name="Path 144"
+                                      d="M25.2,1195.8a5.606,5.606,0,0,0-1.5-3.9,5.606,5.606,0,0,0-3.9-1.5c-1.5-.1-6.1-.1-7.6,0a5.606,5.606,0,0,0-3.9,1.5,5.606,5.606,0,0,0-1.5,3.9c-.1,1.5-.1,6.1,0,7.6a5.606,5.606,0,0,0,1.5,3.9,5.605,5.605,0,0,0,3.9,1.5c1.5.1,6.1.1,7.6,0a5.605,5.605,0,0,0,3.9-1.5,5.606,5.606,0,0,0,1.5-3.9C25.3,1201.9,25.3,1197.3,25.2,1195.8Zm-2,9.3a3.512,3.512,0,0,1-1.8,1.8c-1.2.5-4.1.4-5.5.4-1.3,0-4.2.1-5.5-.4a3.512,3.512,0,0,1-1.8-1.8c-.5-1.2-.4-4.1-.4-5.5s-.1-4.2.4-5.5a3.512,3.512,0,0,1,1.8-1.8c1.2-.5,4.1-.4,5.5-.4s4.2-.1,5.5.4a3.512,3.512,0,0,1,1.8,1.8h0c.5,1.2.4,4.1.4,5.5S23.7,1203.8,23.2,1205.1Z"
+                                      transform="translate(-6.725 -1190.325)" fill="#fff" />
+                            </g>
+                        </g>
+                    </svg>
+                </a>
+                @{string tiktok = "https://www.tiktok.com/@startupcentral.dk?is_from_webapp=1&sender_device=pc";
+                }
+
+                <a href="@tiktok" class="sc-footer-bottom__some-link">
+                    <?xml version="1.0" ?>
+                    <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="-1 -1 30 30" width="30" height="27">
+                        <path d="M24,4H6C4.895,4,4,4.895,4,6v18c0,1.105,0.895,2,2,2h18c1.105,0,2-0.895,2-2V6C26,4.895,25.104,4,24,4z M22.689,13.474 c-0.13,0.012-0.261,0.02-0.393,0.02c-1.495,0-2.809-0.768-3.574-1.931c0,3.049,0,6.519,0,6.577c0,2.685-2.177,4.861-4.861,4.861 C11.177,23,9,20.823,9,18.139c0-2.685,2.177-4.861,4.861-4.861c0.102,0,0.201,0.009,0.3,0.015v2.396c-0.1-0.012-0.197-0.03-0.3-0.03 c-1.37,0-2.481,1.111-2.481,2.481s1.11,2.481,2.481,2.481c1.371,0,2.581-1.08,2.581-2.45c0-0.055,0.024-11.17,0.024-11.17h2.289 c0.215,2.047,1.868,3.663,3.934,3.811V13.474z"
+                              fill="fff" />
+                    </svg>
+                </a>
+
+                <a href="https://www.youtube.com/channel/UCYjKo0O_b0x1BhJ1PdbrG6w/featured" class="nfp-footer-bottom__some-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <g id="Group_59" data-name="Group 59" transform="translate(0 -1231.6)">
+                            <g id="Budget_18_" transform="translate(0 1231.6)">
+                                <path id="Path_1_18_" d="M-301,611.6h32v32h-32Z" transform="translate(301 -611.6)"
+                                      fill="none" />
+                            </g>
+                            <path id="Path_145" data-name="Path 145"
+                                  d="M25.5,1242.7a2.476,2.476,0,0,0-1.6-1.7c-1.4-.4-7.2-.4-7.2-.4s-5.8,0-7.2.4a2.152,2.152,0,0,0-1.6,1.7,25.512,25.512,0,0,0,0,9,2.17,2.17,0,0,0,1.6,1.6c1.4.4,7.2.4,7.2.4s5.8,0,7.2-.4a2.171,2.171,0,0,0,1.6-1.6,24.018,24.018,0,0,0,.4-4.5A23.447,23.447,0,0,0,25.5,1242.7Zm-10.7,7.2v-5.5l4.8,2.8Z"
+                                  fill="#fff" />
+                        </g>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</footer>

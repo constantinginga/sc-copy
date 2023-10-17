@@ -1,0 +1,105 @@
+section.coach-header {
+    padding-top: 10rem;
+    padding-bottom: 10rem;
+    background-color: $sc-primary;
+    color: $sc-white;
+
+    .container {
+        .coach-image {
+            img {
+                margin: auto;
+                width: 15rem;
+                height: 15rem;
+                border: 5px solid $sc-white;
+                border-radius: 50%;
+            }
+        }
+
+        .coach-text {
+            button {
+                @include btn-white-outline;
+                color: $sc-white;
+                @include transition(.2s);
+                margin-bottom: 1rem;
+            }
+        }
+    }
+}
+
+section.coach-testimonial {
+    .container {
+        .card {
+            margin-top: -$nav-sm;
+        }
+    }
+}
+
+@include media-md {
+    section.coach-header {
+        padding-top: 15rem;
+        padding-bottom: 15rem;
+
+        .container {
+            @include flex(row);
+            flex-direction: row-reverse;
+
+            .coach-image {
+                img {
+                    width: 20rem;
+                    height: 20rem;
+                }
+            }
+
+            .coach-text {
+                margin: auto;
+
+                button {
+                    @include btn-white-outline;
+                    color: $sc-white;
+                    @include transition(.2s);
+                    margin-bottom: 1rem;
+                }
+            }
+        }
+    }
+}
+
+@include media-lg {
+    section.coach-header {
+        .container {
+            .coach-image {
+                img {
+                    width: 30rem;
+                    height: 30rem;
+                }
+            }
+
+            .coach-text {
+                margin: auto;
+
+                button {
+                    margin-top: 2.5rem;
+                    margin-bottom: 0;
+                    font-size: 2rem;
+                }
+            }
+        }
+    }
+
+    section.coach-testimonial {
+        .container {
+            .card {
+                margin-top: -$nav-lg;
+
+                .coach-text {
+                    @include flex(row);
+                    margin-bottom: 10rem;
+
+                    &:nth-child(even) {
+                        flex-direction: row-reverse;
+                    }
+                }
+            }
+        }
+    }
+}

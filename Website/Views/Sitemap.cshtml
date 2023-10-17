@@ -1,0 +1,10 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.Sitemap>
+    
+@using ContentModels = Umbraco.Web.PublishedContentModels;
+
+@{
+    Layout = null;
+    umbraco.library.ChangeContentType("text/xml");
+}
+
+@Umbraco.RenderMacro("GetSitemap", new {})

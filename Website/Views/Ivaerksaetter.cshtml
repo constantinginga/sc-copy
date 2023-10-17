@@ -1,0 +1,360 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{ Html.RenderAction("RenderTTTArrow", "SiteLayout");}
+
+@{
+    Layout = "Master.cshtml";
+
+    var currentNode = Umbraco.AssignedContentItem;
+    var cNodeC = currentNode.Children.Where(x => x.IsVisible());
+    var landingPromoCode = Request.QueryString["landingpromo"];
+    var landingPage = Umbraco.Content(32838);
+
+    var culture = "da-DK";
+    var en = Request.Path.Split('/')[1].ToLowerInvariant() == "en";
+    if (en) // Manual handling of /en/coaches/Name
+    {
+        culture = "en-US";
+        System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(culture);
+        System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(culture);
+    }
+}
+
+
+<section class="ivk-static-banner-section">
+    <div class="ivk-static-banner-title">
+        <h3>@Umbraco.AssignedContentItem.Value("bannerTitle")<a href="@Umbraco.Content(29767).Url" class="ivk-button">
+            <br />@Umbraco.GetDictionaryValue("BecomeAMember", "Bliv medlem")</a></h3>
+    </div>
+</section>
+<section class="ivk-people-section">
+    <div class="ivk-people-slick">
+
+        <div class="ivk-people-image">
+            <img src="@Umbraco.Media(32844).Url" alt="People Image" />
+            <h3 class="ivk-people-image-title">Iværksætternes netværk og service</h3>
+        </div>
+        <div class="ivk-people-image">
+            <img src="@Umbraco.Media(32853).Url" alt="People Image" />
+            <h3 class="ivk-people-image-title">Iværksætternes netværk og service</h3>
+        </div>
+        <div class="ivk-people-image">
+            <img src="@Umbraco.Media(32851).Url" alt="People Image" />
+            <h3 class="ivk-people-image-title">Iværksætternes netværk og service</h3>
+        </div>
+        <div class="ivk-people-image">
+            <img src="@Umbraco.Media(32852).Url" alt="People Image" />
+            <h3 class="ivk-people-image-title">Iværksætternes netværk og service</h3>
+        </div>
+
+    </div>
+</section>
+<section class="ivk-video-section">
+    <div class="ivk-video-big-container">
+        <div class="ivk-video-text">
+            <h2>@Umbraco.AssignedContentItem.Value("videoTitle")</h2>
+            <p>@Umbraco.AssignedContentItem.Value("videoDescription")</p>
+            <a href="@Umbraco.Content(29767).Url" class="ivk-video-button">@Umbraco.AssignedContentItem.Value("videoButton")</a>
+        </div>
+        <div class="ivk-video-container">
+            @*<iframe id="ivk-video" allow="autoplay; muted; loop" src="@Umbraco.Media(32858).Url">
+            </iframe>*@           
+            <video id="ivk-video" autoplay muted loop controls src="@Umbraco.Media(32880).Url">
+            </video>
+
+        </div>
+    </div>
+</section>
+<section class="ivk-priser-section">
+    <div class="priser-title-container">
+        <h2 class="priser-title-container__title">@Umbraco.AssignedContentItem.Value("priceTitle")</h2>
+        <div class="section-dots">
+            @{
+                for (var i = 0; i < 3; i++)
+                {
+                    <div class="section-dots__dot"></div>
+                }
+            }
+        </div>
+        <div class="row-container">
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered">
+                        <div class="price-card-container">
+
+                            @{
+                                foreach (var card in Umbraco.Content(26278).Children().Where(x => x.IsVisible()))
+                                {
+                                    string pricingCardV = card.Value<string>("pricingCardV");
+                                    bool highlighted = card.Value<bool>("pricingCardHighlighted");
+                                    bool isMonthly = card.Value<bool>("pricingCardMonthly");
+                                    bool banner = card.Value<bool>("pricingCardBanner");
+                                    var cardTitle = card.Name;
+                                    var cardPrice = card.Value<string>("pricingCardPrice");
+                                    var cardDescription = card.Value<string>("pricingCardDescription");
+                                    var cardBindingInfo = card.Value<string>("pricingCardBindingInfo");
+                                    var cardPriceSubtext = card.Value<string>("pricingCardPriceSub");
+
+                                    string subscriptionType = "";
+                                    switch (pricingCardV)
+                                    {
+                                        case "1":
+                                            subscriptionType = "monthly";
+                                            break;
+                                        case "3":
+                                            subscriptionType = "quarterly";
+                                            break;
+                                        case "12":
+                                            subscriptionType = "yearly";
+                                            break;
+                                    }
+
+                                    <div class="price-card">
+                                        @if (banner)
+                                        {
+                                            <div class="price-card__banner">
+                                                <p>Mest</p>
+                                                <p>populære</p>
+                                            </div>
+                                        }
+                                        <div class="price-card__dots">
+                                            @{
+                                                if (Int32.TryParse(pricingCardV, out int v))
+                                                {
+                                                    for (var i = 0; i < v; i++)
+                                                    {
+                                                        <div class="price-card__dots-dot"></div>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                        @*<div class="price-card__icon"></div>*@
+                                        <h3 class="price-card__title">@cardTitle</h3>
+                                        <h2 class="price-card__price @((isMonthly) ? "not-monthly" : null)">@cardPrice</h2>
+                                        <p class="price-card__price-sub">
+                                            @cardPriceSubtext
+                                        </p>
+                                        <button id="price-cards__btns" class="price-card__btn" value="@cardPrice" onclick="savePlan(@cardPrice, '@subscriptionType', '@landingPromoCode')">@Umbraco.GetDictionaryValue("Choose", "Vælg")</button>
+                                        <p class="price-card__description">@cardDescription</p>
+
+                                        <span class="price-card__subtext">@cardBindingInfo</span>
+                                    </div>
+                                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="ivk-partners-section">       
+    <div class="ivk-partners-slick-container">
+        <div class="ivk-partners-big-container">
+           <div class="ivk-partners-middle-container">
+            <div class="ivk-partners-description-1">
+                <h3><b>@Umbraco.AssignedContentItem.Value("partnersTitle1")</b></h3>
+                <p>@Umbraco.AssignedContentItem.Value("partnersDescription1")</p>
+                <a href="@Umbraco.Content(30077).Url" class="partners-section__btn">@Umbraco.AssignedContentItem.Value("partnersButton")</a>
+             </div>
+            <div class="ivk-partners-image">
+                <img src="@Umbraco.Media(29308).Url" alt="Partner Image" />
+            </div>
+            </div>
+        </div>
+        <div class="ivk-partners-big-container">
+            <div class="ivk-partners-middle-container">
+                <div class="ivk-partners-description-2">
+                    <h3><b>@Umbraco.AssignedContentItem.Value("partnersTitle2")</b></h3>
+                    <p>@Umbraco.AssignedContentItem.Value("partnersDescription2")</p>
+                    <a href="@Umbraco.Content(30110).Url" class="partners-section__btn">@Umbraco.AssignedContentItem.Value("partnersButton")</a>
+                </div>
+                <div class="ivk-partners-image">
+                    <img src="@Umbraco.Media(26631).Url" alt="Partner Image" />
+                </div>
+               </div>
+            </div>
+        <div class="ivk-partners-big-container">
+            <div class="ivk-partners-middle-container">
+                <div class="ivk-partners-description-3">
+                    <h3><b>@Umbraco.AssignedContentItem.Value("partnersTitle3")</b></h3>
+                    <p>@Umbraco.AssignedContentItem.Value("partnersDescription3")</p>
+                    <a href="@Umbraco.Content(30084).Url" class="partners-section__btn">@Umbraco.AssignedContentItem.Value("partnersButton")</a>
+                </div>
+                <div class="ivk-partners-image">
+                    <img src="@Umbraco.Media(27801).Url" alt="Partner Image" />
+                </div>
+            </div>
+        </div>
+        <div class="ivk-partners-big-container">
+            <div class="ivk-partners-middle-container">
+                <div class="ivk-partners-description-4">
+                    <h3><b>@Umbraco.AssignedContentItem.Value("partnersTitle4")</b></h3>
+                    <p>@Umbraco.AssignedContentItem.Value("partnersDescription4")</p>
+                    <a href="@Umbraco.Content(10842).Url" class="partners-section__btn">@Umbraco.AssignedContentItem.Value("partnersButton")</a>
+                </div>
+                <div class="ivk-partners-image">
+                    <img src="@Umbraco.Media(32840).Url" alt="Partner Image" />
+                </div>
+            </div>
+        </div>
+        <div class="ivk-partners-big-container">
+            <div class="ivk-partners-middle-container">
+                <div class="ivk-partners-description-5">
+                    <h3><b>@Umbraco.AssignedContentItem.Value("partnersTitle5")</b></h3>
+                    <p>@Umbraco.AssignedContentItem.Value("partnersDescription5")</p>
+                    <a href="@Umbraco.Content(30099).Url" class="partners-section__btn">@Umbraco.AssignedContentItem.Value("partnersButton")</a>
+                </div>
+                <div class="ivk-partners-image">
+                    <img src="@Umbraco.Media(28467).Url" alt="Partner Image" />
+                </div>
+            </div>
+        </div>
+        </div>
+</section>
+<section class="ivk-trustpilot-section">
+        <div class="ivk-trustpilot-description">
+        <h3>@Umbraco.AssignedContentItem.Value("trustpilotReviewTitle")</h3>
+        <p>@Umbraco.AssignedContentItem.Value("trustpilotReviewDescription")</p>
+         <p><b>-Jens Holm-Christensen</b></p>
+        <a href="@Umbraco.Content(25745).Url" class="partners-section__btn">@Umbraco.AssignedContentItem.Value("trustpilotReviewButton")</a>
+        </div>
+</section>
+<section class="ivk-blogs-section">
+    <div class="ivk-blogs-small-container">      
+    <div class="ivk-blog-item1">
+        <img src="@Umbraco.Media(28875).Url" alt="Blog Image" />
+        @*<h3 class=".ivk-coaches-title">@Umbraco.AssignedContentItem.Value("coachesImageTitle")</h3>*@
+        @*<h3 class="ivk-coaches-image-title">Gør dagen interessant.<br /> Få 1:1 sparring om muligheder og udfordringer i dit iværksætteri </h3>*@
+        <a href="@Umbraco.Content(28877).Url" class="text-section__btn">@Umbraco.AssignedContentItem.Value("blogButton")</a>
+    </div>
+    </div>
+    <div class="ivk-blogs-big-container">
+        <div class="ivk-blog-item2">
+            <img src="@Umbraco.Media(27084).Url" alt="Blog Image" />
+            @*<h3 class=".ivk-coaches-title">@Umbraco.AssignedContentItem.Value("coachesImageTitle")</h3>*@
+            @*<h3 class="ivk-coaches-image-title">Gør dagen interessant.<br /> Få 1:1 sparring om muligheder og udfordringer i dit iværksætteri </h3>*@
+            <a href="@Umbraco.Content(27085).Url" class="text-section__btn">@Umbraco.AssignedContentItem.Value("blogButton")</a>
+        </div>
+        <div class="ivk-blog-item3">
+            <img src="@Umbraco.Media(30562).Url" alt="Blog Image" />
+            @*<h3 class=".ivk-coaches-title">@Umbraco.AssignedContentItem.Value("coachesImageTitle")</h3>*@
+            @*<h3 class="ivk-coaches-image-title">Gør dagen interessant.<br /> Få 1:1 sparring om muligheder og udfordringer i dit iværksætteri </h3>*@
+            <a href="@Umbraco.Content(30563).Url" class="text-section__btn">@Umbraco.AssignedContentItem.Value("blogButton")</a>
+        </div>
+     </div>
+</section>
+<section class="ivk-moving-banner-section">
+    <div id="navbar-warning-msg">
+        <div id="navbar-warning-msg__text">
+            Vores&nbsp;&nbsp;<a href="@Umbraco.Content(28308).Url"> <b>Corporate Social Responsibility </b></a>, <a href="@Umbraco.Content(27657).Url"> <b>&nbsp;&nbsp;kerneværdier&nbsp; </b></a>&nbsp;og&nbsp;<a href="@Umbraco.Content(27510).Url"> <b>&nbsp;teamet</b></a>
+        </div>
+    </div>
+</section>
+<section class="ivk-coaches-section">
+    <div class="ivk-coaches-image">
+        <img src="@Umbraco.Media(32849).Url" alt="Coaches Image" />
+        @*<h3 class=".ivk-coaches-title">@Umbraco.AssignedContentItem.Value("coachesImageTitle")</h3>*@
+        <h3 class="ivk-coaches-image-title">Gør dagen interessant.<br /> Få 1:1 sparring om muligheder og udfordringer i dit iværksætteri </h3>
+        <a href="@Umbraco.Content(10840).Url" class="text-section__btn">@Umbraco.AssignedContentItem.Value("coachButton")</a>
+    </div>
+</section>
+<section class="ivk-newsletter-section">
+    <div class="ivk-newsletter-container">
+        <div class="ivk-row-container">
+
+            <h2>@Umbraco.AssignedContentItem.Value("newsletterTitle")</h2>
+
+            <form class="newsletterform">
+                <div class="newsletter-signup">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="@landingPage.Value("yourName")" required>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="@landingPage.Value("yourEmail")" required>
+                    <button class="button button--lg outlined-btn" type="submit" id="submitButtonNewsletters">@landingPage.Value("subscribe")</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+@*</section>*@
+
+<style>
+    #main-footer > .row-container > .sc-footer {
+        display: none;
+    }
+
+    #sc-newsletter {
+        display: none;
+    }
+</style>
+
+
+<script>
+
+    // set payment plan amount and type in session state
+    function savePlan(amount, type, promocode) {
+
+        $.ajax({
+            url: '/umbraco/Surface/RegisterUserDetails/SavePaymentSession',
+            type: 'POST',
+            data: {
+                amount: amount,
+                type: type
+            },
+            success: function (data) {
+                console.log(promocode);
+                window.location.href = (promocode) ? `${'https://www.startupcentral.dk/bliv-medlem/'}?plan=${type}&landingpromo=${promocode}` : `${'https://www.startupcentral.dk/bliv-medlem/'}?plan=${type}`;
+            }
+        });
+    }
+</script>
+
+<script>
+
+    $("form#newsletterform").submit(function (event) {
+        $.ajax({
+            type: "POST",
+            url: '/umbraco/api/ActivecampaignApi/Contact_sync_lead?' + $("#newsletterform").serialize(),
+            //data: $("#newsletterform").serialize(),
+            success: function (data) {
+                //alert(data);
+
+                $('.newsletter-signup').hide();
+                $('#newslettersSubscriptionDescription').hide();
+                $('#newslettersSubscriptionResult').show();
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+
+        event.preventDefault();
+    });
+</script>
+
+<script type="text/javascript" src="~/scripts/slick.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.ivk-partners-slick-container').slick({
+            /*setting- name: setting - value*/
+            dots: true,
+            //arrows: true,
+            infinite: true,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('.ivk-people-slick').slick({
+            /*setting- name: setting - value*/
+            dots: false,
+            autoplay: true,
+            //arrows: true,
+            infinite: true,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+        });
+    });
+</script>

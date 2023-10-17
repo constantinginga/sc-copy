@@ -1,0 +1,171 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+<script src="https://threejs.org/build/three.min.js"></script>
+<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+    
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.144.0/build/three.module.js" 
+    }
+  }
+</script>
+
+  <script type="module">
+
+  import * as THREE from 'three';
+
+</script>
+
+<section class="nfp-header-section"> 
+    <div class="nfp-header-text">
+        <h1 class="nfp-header-title gradient-text">@Umbraco.AssignedContentItem.Value("nfpherotitle")</h1> <!-- Network and service to entrepreneurs-->
+        <p class="nfp-header-paragraph">@Umbraco.AssignedContentItem.Value("nfpheroparagraph")</p> <!-- We help start-ups to grow and scale their business with business discounts, coaching, networking and knowledge. -->
+        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("BecomeAMember", "Bliv Medlem")</a>
+        <a href="@Umbraco.Content(11655).Url" class="login-btn" id="login-btn-hero" style="margin:1rem 0 1rem 0">@Umbraco.GetDictionaryValue("Login", "Log ind")</a>
+
+    </div>
+
+	@*<div style="position:relative">*@
+    <div id="nfp-canvas_container" class="nfp-globe" style="position: absolute;">
+        <canvas id="canvas"></canvas>
+    @*</div>*@
+	</div>
+  </section>
+  
+  
+  <script type="module">
+
+import OrbitControls from "https://cdn.skypack.dev/orbit-controls-es6@2.0.1";
+
+//Vertex Shader => VS role is to take care of positioning every vertex composing that mesh in the scene -> executed as many times as the numbers of vertices composing the mesh // geometry show correctly
+
+const vertexShader = `
+varying vec2 vertexUV;
+varying vec3 vertexNormal;
+void main() {
+	vertexUV = uv;
+	vertexNormal = normalize(normalMatrix * normal);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );   
+}
+`;
+
+const fragmentShader = `
+uniform sampler2D globeTexture;
+varying vec2 vertexUV; 
+varying vec3 vertexNormal;
+void main() {
+	float intensity = 1.0 - dot(vertexNormal, vec3(0.0, 0.0, 1.0));
+	vec3 atmosphere = vec3(0.3, 0.0, 0.3) * pow(intensity, 1.5);
+    gl_FragColor = vec4(atmosphere + texture2D(globeTexture, vertexUV).xyz, 1.0);
+}
+`;
+
+const atmosphereVertexShader = `
+varying vec3 vertexNormal;
+void main() {
+	vertexNormal = normalize(normalMatrix * normal);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );   
+}
+`;
+
+const atmosphereFragmentShader = `
+varying vec3 vertexNormal;
+void main() {
+	float intensity = pow(0.75 - dot(vertexNormal, vec3(0, 0, 1.0)), 2.0);
+    gl_FragColor = vec4(0.3, 0.2, 0.7, 1.0) * intensity;
+}
+`;
+			const scene = new THREE.Scene();
+			
+			const canvasContainer = document.querySelector('#nfp-canvas_container');
+			const camera = new THREE.PerspectiveCamera( 75, canvasContainer.offsetWidth / canvasContainer.offsetHeight, 0.1, 1000 ); //field of view(degrees-> wide camera or not etc); aspect ratio of the scene; near clipping scene=> how close object need sto be to the camera to be clip out; far clipping plane;
+
+			const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: document.querySelector('canvas')}); //combines scene and camera together
+			renderer.setSize( canvasContainer.offsetWidth, canvasContainer.offsetHeight);
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setClearColor( 0x00000, 0);
+			//document.body.appendChild( renderer.domElement ); //canvas representing our scene 
+
+			//creating sphere
+			const geometry = new THREE.SphereGeometry( 6, 50, 50 );
+			const material = new THREE.ShaderMaterial( { 
+				vertexShader: vertexShader,  //could be written as just vertexShader-> if it has the same name
+				fragmentShader: fragmentShader,
+				uniforms: {
+					globeTexture: {
+                        value: new THREE.TextureLoader().load('@Umbraco.Media(38311).Url'),
+					}
+				}
+			}); 
+			
+			const sphere = new THREE.Mesh( geometry, material );		
+			//scene.add( sphere );
+
+
+			const controls = new OrbitControls( camera, renderer.domElement );
+				controls.rotateSpeed = 0.05;
+				controls.enableDamping = true;
+				controls.dampingFactor = 0.07;
+				controls.minPolarAngle = Math.PI * .3;
+				controls.maxPolarAngle = Math.PI * .6;
+				controls.enableZoom = false;
+
+			//create atmosphere
+			const atmosphere = new THREE.Mesh(
+			new THREE.SphereGeometry( 6, 50, 50 ),
+			new THREE.ShaderMaterial( { 
+				vertexShader: atmosphereVertexShader,
+				fragmentShader: atmosphereFragmentShader,
+				blending: THREE.AdditiveBlending,
+				side: THREE.BackSide
+			})
+			); 
+
+			atmosphere.scale.set(1.1, 1.1, 1.1);
+			scene.add(atmosphere);
+
+			const group = new THREE.Group()
+			group.add(sphere);
+			scene.add(group);
+
+
+			camera.position.z = 15; //if not set, the camers is inside the sphere
+
+			//const mouse = {
+			//	x: undefined,
+			//	y: undefined
+			//}
+	  const mouse = {
+		  x: 0,
+		  y: 0
+	  };
+			
+			function animate() {
+				requestAnimationFrame( animate ); 
+
+				sphere.rotation.y += 0.0035;
+				group.rotation.y = mouse.x * 0.5;
+				controls.update();
+				renderer.render( scene, camera );
+			};
+
+			animate();
+
+			
+			addEventListener('mousemove', () => {
+				mouse.x = (event.clientX / innerWidth) * 2 - 1;
+				mouse.y = (event.clientY / innerHeight) * 2 + 1;
+			})
+
+
+
+  </script>
+<script>
+    var elem = document.getElementById("nfp-canvas_container");
+	if (window.innerWidth < 500) {
+
+		elem.parentNode.removeChild(elem);
+
+    }
+</script>

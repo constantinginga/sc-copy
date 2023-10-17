@@ -1,0 +1,184 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedContentModels;
+@using umbraco.cms.businesslogic.member
+@using Umbraco.Core.Services;
+@using System.Web
+@using Umbraco.Web.Security
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Extensions
+@{
+	Layout = "Master.cshtml";
+	var currentUser = Members.GetCurrentMember();
+}
+
+<section class="mt80">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+                 <div class="bigheadline uppercase f80 f50mob mb40 fw700 dark">
+                    @if(Umbraco.Member(currentUser.Id).IsDocumentType("student")){
+                        @Page.wwoverskrift
+                     }
+                    @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "investor"){
+                        @Umbraco.Content(1063).wwoverskriftinvestor
+                    }
+                    @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "coach1"){
+                         @Umbraco.Content(1063).wwoverskriftcoach
+                    }
+                    @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "teacher"){
+                         @Umbraco.Content(1063).wwoverskriftteacher
+                    }
+                    @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "admin"){
+                         @Umbraco.Content(1063).wwoverskrift2
+                    }
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="txt dark f18 fw600 lh24 mb20">
+                    @if(Umbraco.Member(currentUser.Id).IsDocumentType("student")){
+                        @Html.Raw(@Umbraco.Content(1063).wwstarttxt)
+                     }
+                    @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "investor"){
+                        @Umbraco.Content(1063).wwshorttxtinvestor
+                    }
+                    @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "coach1"){
+                         @Umbraco.Content(1063).wwshottxtcoach
+                    }
+                    @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "teacher"){
+                         @Umbraco.Content(1063).wwshorttxtteacher
+                    }
+                    @if(Umbraco.Member(currentUser.Id).DocumentTypeAlias == "admin"){
+                        <span class="fleft w100 mb20">@Umbraco.Content(1063).wwshottxttemplates</span> 
+                         
+                          <a href="/login/opret-video">
+                        <div class="bigbtn lightbg btn white shadow fw600">
+                           Opret en ny template video
+                        </div>
+                    </a>
+
+                    }
+                </div>
+                @*if(Umbraco.Member(currentUser.Id).IsDocumentType("student") && Umbraco.Content(1063).HasValue("wwstarterkit")){
+                    <a href="@Umbraco.Content(1063).wwstarterkit.Url" >
+                        <div class="bigbtn lightbg btn white shadow fw600">
+                            @Umbraco.Content(1063).wwkittxt
+                        </div>
+                    </a>
+                }*@
+        </div>
+    </div>
+</section>   
+
+<section>
+     <img src="@Page.wwbgimg.Url" id="cloudbg"/>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="">
+                @{
+                    Umbraco.Core.Models.IContent content = ApplicationContext.Current.Services.ContentService.GetById(Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["StartupCentral.VideoTemplate.RootFolder.Id"]));
+                }
+
+
+                @foreach (var video in content.Children())
+                {
+                    <div class="col-md-6 mb80" data-type="video" data-id="@video.Id">
+                        <div class="mb40">
+                            @if (video.HasProperty("wwytid"))
+                            {
+                                <div id="video">
+                                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/@video.GetValue("wwytid")" frameborder="0" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" allowfullscreen="allowfullscreen" encrypted-media"></iframe>
+                                </div>
+                            }
+                        </div>
+                        <div class="flexa posrel">
+                            <div class="f28 lh34 fw700 mb10 w100 activetoggle @Umbraco.If(!video.GetValue("wwaktiveret").ParseBoolean(), "deaktiveret")">
+                                @video.GetValue("wwoverskrift")
+                            </div>
+                            @if (Umbraco.Member(currentUser.Id).DocumentTypeAlias == "admin")
+                            {
+                                <a href="javascript:void(0);" class="fright admenubtn poolbullets admenuvideo"><img src="/images/bulletslight.jpg" /></a>
+                                <div class="admenu top0 " style="display:none;">
+                                    <div class="admenutop">
+                                        <img src="/images/backarrow.jpg" class="closearrow" />
+                                    </div>
+                                    <div class="admenucontent">
+                                        <div class="admenuinnercontent">
+                                            <ul class="adul">
+                                                <a href="javascript:void(0);" id="aktivervideo" style="display: @(video.GetValue("wwaktiveret").ParseBoolean() ? "none" : "block")" class="aktivervideo" data-id="@video.Id" data-toggle="modal" data-target="#aktivervideoview"><li>Aktiver</li></a>
+                                                <a href="javascript:void(0);" id="deaktivervideo" style="display: @(video.GetValue("wwaktiveret").ParseBoolean() ? "block" : "none")" class="deaktivervideo" data-id="@video.Id" data-toggle="modal" data-target="#deaktivervideoview"><li>Deaktiver</li></a>
+                                                <a href="@Umbraco.NiceUrl(video.Id)?rediger=true" id="editvideo" class="editvideo"><li>Rediger</li></a>
+                                                <a href="javascript:void(0);" id="deletevideo" class="deletevideo" data-toggle="modal" data-target="#deletevideoview"><li>Slet</li></a>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        @{ 
+
+                            string wwshorttxt = "";
+                            if (video.GetValue("wwshorttxt") != null)
+                            {
+                                wwshorttxt = video.GetValue<string>("wwshorttxt").ToString().Replace("\n", "<br />");
+                            }
+
+                        }
+
+                        <div class="f18 lh26 activetoggle @Umbraco.If(!video.GetValue("wwaktiveret").ParseBoolean(), "deaktiveret")">@wwshorttxt</div>
+                    </div>
+                }
+            </div>
+        </div>       
+    </div>
+</section>
+
+<section class="pt0">
+    <div class="container">
+        <div class="row">
+            <div class="fleft w100 mt80 mb40">
+         @if(Umbraco.Member(currentUser.Id).IsDocumentType("student")){
+            <a href="/login/modtag-sparring/" class="biglinkbtn shadowlight mb15">
+                <div class="col-md-1 col-xs-2">
+                <img src="/media/1141/raket_small.svg" class="mt8"/>
+                </div>
+                <div class="col-md-11 col-xs-10">
+                    <div class="f25 fw700 dark lh32">Få coaching</div>
+                     <div class="dark fw600">Find den coach der passer til din problemstilling</div>
+                </div>
+            </a>
+            <!--
+            <a href="/" class="biglinkbtn shadowlight mb15">
+                <div class="col-md-1">
+                <img src="/media/1141/raket_small.svg" class="mt8"/>
+                </div>
+                <div class="col-md-11">
+                    <div class="f25 fw700 dark  lh32">Få investering</div>
+                     <div class="dark fw600">Find den coach der passer til din problemstilling</div>
+                </div>
+            </a>            
+            <a href="/" class="biglinkbtn shadowlight">
+                <div class="col-md-1">
+                <img src="/media/1141/raket_small.svg" class="mt8"/>
+                </div>
+                <div class="col-md-11">
+                    <div class="f25 fw700 dark  lh32">Hent templates</div>
+                     <div class="dark fw600">Find den coach der passer til din problemstilling</div>
+                </div>
+            </a>
+            -->
+          } 
+          </div>
+        </div>
+    </div>   
+    
+</section>
+@Umbraco.RenderMacro("AdminDeaktiverVideo")
+@Umbraco.RenderMacro("AdminDeleteVideo")

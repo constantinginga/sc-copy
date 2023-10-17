@@ -1,0 +1,615 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Services;
+@using System.Web
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using Umbraco.Web.Security
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Extensions
+
+@{
+    Layout = "Master.cshtml";
+
+
+    var id = HttpContext.Current.Request.QueryString["id"];
+
+    var i = 1;
+
+    var currentUser = Members.GetCurrentMember();
+
+    StartupCentral.Code.Controllers.ForretningsplanController fc = new StartupCentral.Code.Controllers.ForretningsplanController();
+
+    //MembershipHelper membershipHelper = new MembershipHelper(UmbracoContext.Current);
+    MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+    IMember currentMember = null;
+    if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+    {
+        currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+    }
+
+    if (currentMember != null)
+    {
+        <main id="BusinessPlanOverview" class="sc-logged sc-bgb10">
+            <div class="row-container businessplan-container">
+                <div class="bp-header">
+                    <span class="bp-header__subheader">Min Forretningsplan</span>
+                    <h3 class="bp-header__title" id="projektnavn"></h3>
+                </div>
+
+                <div class="bp-content-wrapper">
+                    <aside class="bp-side-container">
+                        <button id="dropButton"
+                                class="bp__dropButton button--icon button--icon-right button--full-width button ">
+                            Menu
+                            <svg id="ChevronDown" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                            viewBox="0 0 32 32">
+                            <path id="Path_86" data-name="Path 86" d="M32,32H0V0H32Z" fill="none" opacity="0.87" />
+                            <path id="Path_87" data-name="Path 87"
+                                d="M19.034,9.388l-5.173,5.173L8.688,9.388a1.329,1.329,0,1,0-1.88,1.88l6.12,6.12a1.328,1.328,0,0,0,1.88,0l6.12-6.12a1.328,1.328,0,0,0,0-1.88,1.356,1.356,0,0,0-1.893,0Z"
+                                transform="translate(2.139 2.999)" fill="#fff" />
+                        </svg>
+                        </button>
+                        <ul class="bp-categories-list">
+                            <li class="bp-categories-list__category is-active">
+                                <div class="bp-category-listitem">
+                                    <a class="bp-category-listitem__link tablinks is-active" onclick="openTab(event, 'Introduktion')" id="introduktiontab">Introduktion</a>
+                                </div>
+                            </li>
+
+                            <li class="bp-categories-list__category bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Idegrundlag')" id="idegrundlagtab">Idegrundlag</a>
+                                </div>
+                            </li>
+
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Malsaetning')" id="malsaetningtab">Målsætning</a>
+                                </div>
+                            </li>
+
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Vaerdier')" id="vaerdiertab">Værdier</a>
+                                </div>
+                            </li>
+
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Team')" id="teamtab">Team og ressourcer</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Produktbeskrivelse')" id="produktbeskrivelsetab">Produktbeskrivelse</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Markedsanalyse')" id="markedsanalysetab">Markedsanalyse</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Okonomi')" id="okonomitab">Økonomi</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Salgsmarkedsforing')" id="salgsmarkedsforingtab">Salgsmarkedsføring</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Juridisk')" id="juridisktab">Juridisk</a>
+                                </div>
+                            </li>
+                        </ul>
+
+                        @*Download Button PDF*@
+                        <!-- 
+                        <div class="bp-actions-container download-pdf" style="display: none;">
+                            <div class="bp-actions">
+                                <button class="bp-actions__button button button--icon button--icon-left button--full-width pdf-download-link" data-id="">
+                                <svg class="material" id="Download-2" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24">
+                                    <g id="Group_32">
+                                        <rect id="Rectangle_13" width="24" height="24" fill="none" />
+                                    </g>
+                                    <g id="Group_33">
+                                        <path id="Path_96"
+                                            d="M16.6,9H15V4a.945.945,0,0,0-1-1H10A.945.945,0,0,0,9,4V9H7.4a.945.945,0,0,0-1,1,.908.908,0,0,0,.3.7l4.6,4.6a.967.967,0,0,0,1.4,0l4.6-4.6a.967.967,0,0,0,0-1.4A.908.908,0,0,0,16.6,9ZM5,19a.945.945,0,0,0,1,1H18a1,1,0,0,0,0-2H6A.945.945,0,0,0,5,19Z"
+                                            fill="#fff" />
+                                    </g>
+                                </svg>
+                                    Download PDF
+                                </button>
+                            </div>
+                        </div>
+                        -->
+
+                        @* View in One Page *@
+                        <div class="bp-actions-container download-pdf" style="display: none;">
+                            <div class="bp-actions">
+                                
+                                <a class="bp-actions__button button button--icon button--icon-left button--full-width" style="font-size: 13px;" href="/login/forretningsplanonepage/?id=@id">
+                                    Gennemgå og download
+                                </a>
+                                
+                            </div>
+                        </div>
+
+                    </aside>
+
+                    <div class="bp-main-container">
+
+                        <!-- Introduction -->
+                        <div class="bp-main tabcontent is-active" id="Introduktion">
+                            <div class="bp-main__content">
+                                <h1 class="headline-1" id="projektnavn"></h1>
+                                <h2>Introduktion</h2>
+                                <p class="bp-main__tag category" id="kategori"></p>
+                                <p class="english" style="display:none;"> This is in english </p>
+                                <h3>Beskrivelse</h3>
+                                <p id="idedesc"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button" style="display:none;">
+                                    Forrige
+                                </button>
+
+                                <button class="button nexttab" onclick="document.getElementById('idegrundlagtab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!--Idegrundlag -->
+                        <div class="bp-main tabcontent" id="Idegrundlag">
+                            <div class="bp-main__content">
+                                <h2>Idegrundlag</h2>
+
+                                <h3>Uddyb idéen og giv læseren fuld adgang til at se hvordan idéen opstod</h3>
+                                <p id="uddyb"></p>
+
+                                <h3>Løser din idé et problem, som endnu ikke bliver løst?</h3>
+                                <p id="loser"></p>
+
+                                <h3>Er din idé en videreudvikling af noget eksisterende?</h3>
+                                <p id="videreudvik"></p>
+
+                                <h3>Fortæl hvor din idé kan bruges</h3>
+                                <p id="brugprod"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('introduktiontab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('malsaetningtab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Malsetning -->
+                        <div class="bp-main tabcontent" id="Malsaetning">
+                            <div class="bp-main__content">
+                                <h2>Malsetning</h2>
+                                <h3>Dine aktiviteter det første år</h3>
+                                <p id="splitaktiviteter"></p>
+
+                                <h3>Dine aktiviteter det tredje år</h3>
+                                <p id="splitaktiviteter3ar"></p>
+
+                                <h3>Dine aktiviteter det femte år</h3>
+                                <p id="splitaktiviteter5ar"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('idegrundlagtab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('vaerdiertab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Verdier -->
+                        <div class="bp-main tabcontent" id="Vaerdier">
+                            <div class="bp-main__content">
+                                <h2>Verdier</h2>
+                                <h3>Beskriv hvorfor virksomheden er vigtig</h3>
+                                <p id="firmimportant"></p>
+
+                                <h3>Hvilke behov opfylder virksomheden og for hvilke kunder</h3>
+                                <p id="firmbehov"></p>
+
+                                <h3 style="display:none" id="firmreachh3">Hvad vil du opnå om 1 mdr., 1 år og 3 år</h3>
+                                <p style="display:none" id="firmreach"></p>
+
+                                <h3>Hvad er de største problemer, og hvordan vil du løse dem?</h3>
+                                <p id="firmissues"></p>
+
+                                <h3>Hvordan er dine værdier?</h3>
+                                <p id="firmvalues"></p>
+                                
+                                <h3>Har du en bæredygtig vinkel, i så fald hvilken?</h3>
+                                <p id="firmvinkel"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('malsaetningtab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('teamtab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Team og Ressourcer -->
+                        <div class="bp-main tabcontent" id="Team">
+                            <div class="bp-main__content">
+                                <h2>Team og Ressourcer</h2>
+                                <h3>Hvem er med i projektet og hvilke roller har de?</h3>
+                                <p id="firmroller"></p>
+
+                                <h3>Hvem tager ansvaret for økonomi, salg/markedsføring og produktudvikling?</h3>
+                                <p id="firmokonomi"></p>
+
+                                <h3>Er der behov for eksterne ressourcer?</h3>
+                                <p id="firmres"></p>
+                                
+                                <h3>Hvilke leverandører har din virksomhed?</h3>
+                                <p id="firmres2"></p>
+
+                                <h3>Hvem er den drivende person og hvem træffer beslutninger?</h3>
+                                <p id="firmdriv"></p>
+
+                                <h3>Hvor mange timer/dage/måneder kan teamet arbejde for projektet?</h3>
+                                <p id="firmvwork"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('vaerdiertab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('produktbeskrivelsetab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Produktbeskrivelse -->
+                        <div class="bp-main tabcontent" id="Produktbeskrivelse">
+                            <div class="bp-main__content">
+                                <h2>Produktbeskrivelse</h2>
+                                <h3>Giv en beskrivelse af produktet - hvad kan det?</h3>
+                                <p id="proddesc"></p>
+
+                                <h3>Er der forskellige versioner?</h3>
+                                <p id="prodvers"></p>
+
+                                <h3>Hvordan fungerer det?</h3>
+                                <p id="prodfunkt"></p>
+
+                                <h3>Hvordan skal det laves og kræves der obligatoriske godkendelser?</h3>
+                                <p id="prodmake"></p>
+
+                                <h3>Hvad mangler, før produktet er klart til salg?</h3>
+                                <p id="prodready"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('teamtab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('markedsanalysetab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Markedsanalyse -->
+                        <div class="bp-main tabcontent" id="Markedsanalyse">
+                            <div class="bp-main__content">
+                                <h2>Markedsanalyse</h2>
+                                <h3>Hvem er kunderne?</h3>
+                                <p id="cuswho"></p>
+
+                                <h3>Hvor mange kunder findes der?</h3>
+                                <p id="cusfind"></p>
+
+                                <h3>Hvordan opfyldes kundens behov nu?</h3>
+                                <p id="cusneeds"></p>
+
+                                <h3>Hvilke konkurrenter er der, og hvordan adskiller dit produkt sig?</h3>
+                                <p id="cuskon"></p>
+
+                                <h3>Hvad er konkurrentens stærke og svage sider?</h3>
+                                <p id="cusstrong"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('produktbeskrivelsetab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('okonomitab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Økonomi -->
+                        <div class="bp-main tabcontent" id="Okonomi">
+                            <div class="bp-main__content">
+                                <h2>Økonomi</h2>
+                                <h3>Hvilke større udgifter skal der afholdes før produktet er klar til salg?</h3>
+                                <p id="prodsale"></p>
+
+                                <h3>Kan virksomheden starte op i de små - hvordan?</h3>
+                                <p id="prodstart"></p>
+
+                                <h3>Er der lavet et budget?</h3>
+                                <p id="filename"></p>
+
+                                <h3>Hvornår i de næste 12 måneder er der udgifter og indtægter?</h3>
+                                <p id="prodfinance"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('markedsanalysetab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('salgsmarkedsforingtab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Salgsmarkedsføring -->
+                        <div class="bp-main tabcontent" id="Salgsmarkedsforing">
+                            <div class="bp-main__content">
+                                <h2>Salgsmarkedsføring</h2>
+                                <h3>Beskriv priserne for produktet</h3>
+                                <p id="prodprice"></p>
+
+                                <h3>Hvordan er priserne udregnet og hvad er overskudsgraden?</h3>
+                                <p id="produdregn"></p>
+
+                                <h3>Hvordan skal salget foregå - og hvem skal stå for det?</h3>
+                                <p id="prodsaleplace"></p>
+
+                                <h3>Hvordan skal kunderne finde ud af at produktet eksisterer?</h3>
+                                <p id="prodeksi"></p>
+
+                                <h3>Hvilke udgifter er der til markedsføring, og hvordan skal det foregå?</h3>
+                                <p id="prodmarkedsf"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('okonomitab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('juridisktab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Juridisk -->
+                        <div class="bp-main tabcontent" id="Juridisk">
+                            <div class="bp-main__content">
+                                <h2>Juridisk</h2>
+                                <h3>Er der en aftale på, hvem der skal investere tid/penge og hvordan ejeforholdet er?</h3>
+                                <p id="juraftale"></p>
+
+                                <h3>Skal leverandører eller andre involveres i projektet - hvis ja, er der en aftale med dem?</h3>
+                                <p id="jurleverand"></p>
+
+                                <h3>Er der kontaktet jurister - og hvem?</h3>
+                                <p id="jurcontact"></p>
+
+                                <h3>Er der behov for CVR nummer og/eller momsregistrering - hvornår?</h3>
+                                <p id="jurcvr"></p>
+
+                                <div id="andetchk" style="display:none;">
+                                    <h3>Har du andet et tilføje?</h3>
+                                    <h4 id="andetheadline"></h4>
+                                    <p id="andet"></p>
+                                </div>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('salgsmarkedsforingtab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " style="display:none;">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    }
+}
+<style>
+    #main-footer {
+        display: none;
+    }
+</style>
+
+
+<script src="~/scripts/jQuery.datalink.js">startupCentral</script>
+<script src="~/scripts/startupcental.js"></script>
+
+<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+<script type="text/javascript">
+
+    var bsp = {}
+
+    $(document).ready(Bind());
+
+    function Bind() {
+        if ($(location).attr('search')) {
+
+            var x = $(location).attr('search');
+            x = x.substr(4, 36);
+
+            $('.pdf-download-link').attr('data-id', x);
+            $('.download-pdf').css('display', 'block');
+
+            startupCentral.requestData('/umbraco/api/forretningsplanApi/getBusinessPlanById?sBusId=' + x,
+                function (response) {
+
+                    if (!response.Success) {
+                        alert("Du har ikke tilladelse til at se denne forretningsplan.");//("You don't have permision for this business plan.")
+                    }
+                    else {
+                        $(bsp).attr(response.Data);
+
+                        if (bsp.BudgetFile != null) {
+                            //$('#filename').text(bsp.BudgetFile);
+                            $('#filename').append("<a href='" + bsp.BudgetFile + "'>Link</a>");
+                        }
+                        else {
+                            $('#filename').text("Ingen fil er vedhæftet");
+                        }
+                        
+                        if (bsp.FirmReach) {
+                            $('#firmreachh3').css('display', 'block');
+                            $('#firmreach').css('display', 'block');
+                        }
+
+                        if (bsp.AndetChk) {
+                            $('#andetchk').css('display', 'block');
+
+                            $(bsp)
+                                .linkBoth("AndetHeadline", "#andetheadline", "text")
+                                .linkBoth("Andet", "#andet", "text");
+                        }
+
+                        $(bsp)
+                            .linkBoth("ProjektNavn", "#projektnavn", "text")
+                            .linkBoth("Kategori", "#kategori", "text")
+                            .linkBoth("IdeDesc", "#idedesc", "text")
+
+                            .linkBoth("Uddyb", "#uddyb", "text")
+                            .linkBoth("Loser", "#loser", "text")
+                            .linkBoth("Videreudvik", "#videreudvik", "text")
+                            .linkBoth("Brugprod", "#brugprod", "text")
+
+                            .linkBoth("Splitaktiviteter", "#splitaktiviteter", "text")
+                            .linkBoth("Splitaktiviteter3ar", "#splitaktiviteter3ar", "text")
+                            .linkBoth("Splitaktiviteter5ar", "#splitaktiviteter5ar", "text")
+
+                            .linkBoth("FirmImportant", "#firmimportant", "text")
+                            .linkBoth("FirmBehov", "#firmbehov", "text")
+                            .linkBoth("FirmReach", "#firmreach", "text")
+                            .linkBoth("FirmIssues", "#firmissues", "text")
+                            .linkBoth("FirmValues", "#firmvalues", "text")
+                            .linkBoth("Firmvinkel", "#firmvinkel", "text")
+
+                            .linkBoth("FirmRoller", "#firmroller", "text")
+                            .linkBoth("FirmOkonomi", "#firmokonomi", "text")
+                            .linkBoth("FirmRes", "#firmres", "text")
+                            .linkBoth("Firmres2", "#firmres2", "text")
+                            .linkBoth("FirmDriv", "#firmdriv", "text")
+                            .linkBoth("FirmVwork", "#firmvwork", "text")
+
+                            .linkBoth("ProdDesc", "#proddesc", "text")
+                            .linkBoth("ProdVers", "#prodvers", "text")
+                            .linkBoth("ProdFunkt", "#prodfunkt", "text")
+                            .linkBoth("ProdMake", "#prodmake", "text")
+                            .linkBoth("ProdReady", "#prodready", "text")
+
+                            .linkBoth("CusWho", "#cuswho", "text")
+                            .linkBoth("CusFind", "#cusfind", "text")
+                            .linkBoth("CusNeeds", "#cusneeds", "text")
+                            .linkBoth("CusKon", "#cuskon", "text")
+                            .linkBoth("CusStrong", "#cusstrong", "text")
+
+                            .linkBoth("ProdSale", "#prodsale", "text")
+                            .linkBoth("ProdStart", "#prodstart", "text")
+                            .linkBoth("ProdFinance", "#prodfinance", "text")
+
+                            .linkBoth("ProdPrice", "#prodprice", "text")
+                            .linkBoth("ProdUdregn", "#produdregn", "text")
+                            .linkBoth("ProdSaleplace", "#prodsaleplace", "text")
+                            .linkBoth("ProdEksi", "#prodeksi", "text")
+                            .linkBoth("ProdMarkedsf", "#prodmarkedsf", "text")
+
+                            .linkBoth("JurAftale", "#juraftale", "text")
+                            .linkBoth("JurLeverand", "#jurleverand", "text")
+                            .linkBoth("JurContact", "#jurcontact", "text")
+                            .linkBoth("JurCvr", "#jurcvr", "text");
+                    }
+                });
+        }
+    }
+
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+        }
+        document.getElementById(tabName).style.display = "flex";
+        evt.currentTarget.className += " is-active";
+    }
+</script>
+
+<script>
+    var acc = document.getElementsByClassName("bp__dropButton");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function () {
+            this.classList.toggle("open");
+            var panel = this.nextElementSibling;
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+            }
+        });
+    }
+</script>
+

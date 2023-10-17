@@ -1,0 +1,10 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+	Layout = "Master.cshtml";
+}
+
+@* the fun starts here *@
+
+
+@{ Html.RenderAction("RenderTitleControls", "SiteLayout");}
+@CurrentPage.GetGridHtml("mainContent", "SC-Grid")

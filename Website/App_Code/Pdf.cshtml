@@ -1,0 +1,118 @@
+@using FergusonMoriyama.Pdf
+@using System.Xml
+
+@helper Bold(XmlNode node) {
+   <fo:inline font-weight="bold">
+       @ParseRichText(node.ChildNodes)
+   </fo:inline>
+}
+
+@helper Italic(XmlNode node) {
+   <fo:inline font-style="italic">
+       @ParseRichText(node.ChildNodes)
+   </fo:inline>
+}
+
+@helper Pargraph(XmlNode node) {
+   <fo:block margin-bottom="0.5cm">
+       @ParseRichText(node.ChildNodes)
+   </fo:block>
+}
+
+@helper Underline(XmlNode node) {
+    <fo:inline text-decoration="underline">
+        @ParseRichText(node.ChildNodes)
+    </fo:inline>
+}
+
+@helper List(XmlNode node) {
+     <fo:list-block margin-bottom="0.5cm">
+        @ParseRichText(node.ChildNodes)
+    </fo:list-block>
+}
+
+@helper Anchor(XmlNode node) {
+    <fo:basic-link color="blue" text-decoration="underline" external-destination="url('@node.Attributes["href"].Value')">
+        @ParseRichText(node.ChildNodes)
+    </fo:basic-link>
+}
+
+@helper Image(XmlNode node) {
+    var docRoot = Umbraco.Core.IO.IOHelper.MapPath("~/");
+    <fo:block>
+        <fo:external-graphic src="@docRoot/@node.Attributes["src"].Value" content-width="9cm"/>
+    </fo:block>
+    @ParseRichText(node.ChildNodes)
+}
+
+@helper ListItem(XmlNode node) {
+    <fo:list-item>
+        <fo:list-item-label>
+            <fo:block>-</fo:block>
+         </fo:list-item-label>
+         <fo:list-item-body>
+              <fo:block margin-left="0.5cm">
+               @ParseRichText(node.ChildNodes)
+            </fo:block>
+        </fo:list-item-body>
+    </fo:list-item>
+}
+
+@helper RenderRichText(object o)
+{
+    @ParseRichText(FoHelper.Instance.GetRichTextNodes(o))
+}
+
+@helper ParseElement(XmlNode node)
+    { 
+        switch (node.Name)
+        {
+            case "p":
+                @Pargraph(node)
+                break;
+            case "strong":
+                @Bold(node)
+                break;
+            case "em":
+                @Italic(node)
+                break;
+            case "a":
+                @Anchor(node)
+                break;
+            case "ol":
+                @List(node)
+                break;
+            case "ul":
+                @List(node)
+                break;
+            case "li":
+                @ListItem(node)
+                break;
+            case "img":
+                @Image(node)
+                break;
+            default:
+                @ParseRichText(node.ChildNodes)
+                break;
+        }
+  }
+
+@helper ParseRichText(XmlNodeList nodes)
+    {
+        foreach (XmlNode node in nodes)
+        {
+            switch (node.NodeType)
+            {
+                case XmlNodeType.Text:
+                    @node.Value
+                    @ParseRichText(node.ChildNodes);
+                    break;
+                case XmlNodeType.Element:
+                    @ParseElement(node);
+                    break;
+                default:
+                    @ParseRichText(node.ChildNodes);
+                    break;
+            }
+        }
+}

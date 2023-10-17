@@ -1,0 +1,220 @@
+﻿
+        @using ContentModels = Umbraco.Web.PublishedContentModels;
+        @{
+        Layout = "Master.cshtml";
+
+        //INTRODUCTION
+        // Ny instans af ForretningsplanController
+        StartupCentral.Code.Controllers.ForretningsplanController fc =
+        new StartupCentral.Code.Controllers.ForretningsplanController();
+
+        // Paring af form felter med felterne i Umbraco.
+        //INTRODUCTION
+        fc.Add("projektnavn", "wwprojektnavn");
+        fc.Add("kategori", "wwkategori");
+        fc.Add("eng", "wweng");
+        fc.Add("idedesc", "wwidedesc");
+
+        //Idegrundlag
+        fc.Add("uddyb", "wwuddyb");
+        fc.Add("loser", "wwloser");
+        fc.Add("videreudvik", "wwvidereudvik");
+        fc.Add("brugprod", "wwbrugprod");
+
+        //Målsætning
+        fc.Add("splitaktiviteter", "wwsplitaktiviteter");
+
+
+
+        if (IsPost)
+        {
+        // Save gemmer i Umbraco på noden af pågældende 'documenttypename'.
+        fc.Save(HttpContext.Current.Request, "forretningsplan");
+
+        // Henter url'en til næste side i guiden.
+        string nextUrl = fc.GetNextPageUrl(Model.Content.Id);
+        if (!string.IsNullOrEmpty(nextUrl)) {
+        HttpContext.Current.Response.Redirect(nextUrl);
+        }
+
+        }
+        else
+        {
+        // Indlæser 'kladde' forretningsplanen.
+        fc.Load("forretningsplan");
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        //INTRODUCTION
+        <section class="startupcentralbackground">
+            <section>
+                <div class="container">
+                    <div class="row">
+
+
+                        @* INTRODUCTION *@
+                        <div class="col-md-12">
+                            <a href="javascript:void(0);" class="visible-xs wizradbtn">Wizard menu</a>
+                            <div class="wizardmenumobile fleft w100" style="display:none;">
+                                @Umbraco.RenderMacro("BlueNavMenu")</div>
+                            <div class="formwrapper shadowlight mt80">
+                                <div class="leftnavi bluebg col-md-3 col-xs-12 hidden-xs">
+                                    @Umbraco.RenderMacro("BlueNavMenu")
+                                </div>
+                                <div class="rightform col-md-8 col-xs-12">
+                                    <form action="" method="post" class="wizardform" name="introduktion"
+                                        id="introduktion">
+                                        @Umbraco.RenderMacro("CurrentFormHeadManchet")
+                                        <div class="form-group">
+                                            <label for="projektnavn">Projektnavn</label>
+                                            <input type="text" class="form-control" id="projektnavn" name="projektnavn"
+                                                @Umbraco.If(!string.IsNullOrEmpty(fc.GetValue("projektnavn")),
+                                                string.Concat("value=\"",
+                                                fc.GetValue("projektnavn"), "\"")) placeholder=" Skriv projektnavn">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="kategori">Vælg den kategori, som passer på din
+                                                forretningsidé</label>
+                                            <select name="kategori" id="kategori" class="form-control">
+                                                <option>Vælg</option>
+                                                @foreach (var opt in Umbraco.Content(1651).Children())
+                                                {
+                                                <option @Umbraco.If(!string.IsNullOrEmpty(fc.GetValue("kategori")) &&
+                                                    opt.Name==fc.GetValue("kategori"), "selected" ) value="@opt.Name">
+                                                    @opt.Name</option>
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <div class="checkbox mb30">
+                                            <label for="eng"><input type="checkbox" name="eng" value="1" id="eng" />I'm
+                                                writing this in english<span></span></label>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="idedesc">Beskriv med få ord din ide (max <span id="charNum"
+                                                    class="fw700 f15"></span> tegn)</label>
+                                            @if (CurrentPage.wwinspriration != "")
+                                            {
+                                            <span class="f14 pull-right "><a href="javascript:void(0);"
+                                                    class="inspicolor" data-toggle="modal" data-target="#inspi1">Brug
+                                                    for inspiration <i class="fa fa-angle-right"
+                                                        aria-hidden="true"></i></a></span>
+                                            }
+                                            <textarea name="idedesc" class="form-control" id="idedesc"
+                                                placeholder="Skriv..." rows="6"
+                                                maxlength="200">@fc.GetValue("idedesc")</textarea>
+                                        </div>
+
+                                        @* Idegrundlag *@
+                                        <div class="form-group">
+                                            <label for="uddyb">Uddyb projektet og giv læseren fuld adgang til at se
+                                                hvordan
+                                                ideen opstod</label>
+                                            @if(CurrentPage.wwinspi1 !=""){
+                                            <span class="f14 pull-right "><a href="javascript:void(0);"
+                                                    class="inspicolor" data-toggle="modal" data-target="#inspi_1">Brug
+                                                    for inspiration <i class="fa fa-angle-right"
+                                                        aria-hidden="true"></i></a></span>
+                                            }
+                                            <textarea name="uddyb" class="form-control" id="uddyb"
+                                                placeholder="Skriv..." rows="6">@fc.GetValue("uddyb")</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="loser">Løser produktet et problem som endnu ikke bliver
+                                                løst?</label>
+                                            @if(CurrentPage.wwinspi2 !=""){
+                                            <span class="f14 pull-right "><a href="javascript:void(0);"
+                                                    class="inspicolor" data-toggle="modal" data-target="#inspi_2">Brug
+                                                    for inspiration <i class="fa fa-angle-right"
+                                                        aria-hidden="true"></i></a></span>
+                                            }
+                                            <textarea name="loser" class="form-control" id="loser"
+                                                placeholder="Skriv..." rows="6">@fc.GetValue("loser")</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="videreudvik">Er produktet en videreudvikling af noget
+                                                eksisterende?</label>
+                                            @if(CurrentPage.wwinspi3 !=""){
+                                            <span class="f14 pull-right "><a href="javascript:void(0);"
+                                                    class="inspicolor" data-toggle="modal" data-target="#inspi_3">Brug
+                                                    for inspiration <i class="fa fa-angle-right"
+                                                        aria-hidden="true"></i></a></span>
+                                            }
+                                            <textarea name="videreudvik" class="form-control" id="videreudvik"
+                                                placeholder="Skriv..." rows="6">@fc.GetValue("videreudvik")</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="brugprod">Fortæl hvor produktet kan bruges.</label>
+                                            @if(CurrentPage.wwinspi4 !=""){
+                                            <span class="f14 pull-right "><a href="javascript:void(0);"
+                                                    class="inspicolor" data-toggle="modal" data-target="#inspi_4">Brug
+                                                    for inspiration <i class="fa fa-angle-right"
+                                                        aria-hidden="true"></i></a></span>
+                                            }
+                                            <textarea name="brugprod" class="form-control" id="brugprod"
+                                                placeholder="Skriv..." rows="6">@fc.GetValue("brugprod")</textarea>
+                                        </div>
+
+                                        @* Malsaetning*@
+                                        <div class="form-group">
+                                            <label for="splitaktiviteter">Del aktiviteter op i 1 år, 3 år og 5 års
+                                                planer</label>
+                                            @if(CurrentPage.wwinspi1 !=""){
+                                            <span class="f14 pull-right "><a href="javascript:void(0);"
+                                                    class="inspicolor" data-toggle="modal" data-target="#inspi_1">Brug
+                                                    for inspiration <i class="fa fa-angle-right"
+                                                        aria-hidden="true"></i></a></span>
+                                            }
+                                            <textarea name="splitaktiviteter" class="form-control" id="splitaktiviteter"
+                                                placeholder="Skriv..."
+                                                rows="6">@fc.GetValue("splitaktiviteter")</textarea>
+                                        </div>
+                                        <div class="form-bottom">
+                                            <div id="autosave" class"pull-left">Gem kladde</div>
+                                            <input type="submit" class="btnlightbg white pull-right" value="Videre">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+
+        }
+
+
+        <div class="modal fade" id="inspi1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="inspimodalcontent">
+                    <button type="button" class="closeinspi" data-dismiss="modal" aria-label="Close"><img
+                            src="/images/close.gif"></button>
+                    <div class="modal-header">
+                        <h4 class="modal-title f25 mb25 fw700 lh26" id="myModalLabel">
+                            Tekst eksemple
+                        </h4>
+                    </div>
+                    <div class="f18 lh26 fw400">
+                        @CurrentPage.wwinspriration
+                    </div>
+                    <div class="mt40 mb40"><a href="#"
+                            class="btn  fw600 light btnlightblue normalbtn col-md-12 f18 lh22" data-dismiss="modal">Tak
+                            for inspiration</a></div>
+                </div>
+            </div>
+        </div>
+        <div class="popup__overlay popup__overlay--full" style="display:none;"></div>

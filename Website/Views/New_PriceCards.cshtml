@@ -1,0 +1,181 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+   
+    var currentNode = Umbraco.AssignedContentItem;
+    var cNodeC = currentNode.Children.Where(x => x.IsVisible());
+    var landingPromoCode = Request.QueryString["landingpromo"];
+
+    var currentUser = Members.GetCurrentMember();
+}
+
+<section class="nfp-prices-section">
+    @if (!Model.Url.ToLower().Contains("priser") && !Model.Url.ToLower().Contains("bliv-medlem") && !Model.Url.ToLower().Contains("prices") && !Model.Url.ToLower().Contains("join-now"))
+    {
+    <h2 class="nfp-prices-section-title">@Umbraco.AssignedContentItem.Value("nfppricestitle")</h2>
+    }
+    
+
+    <div class="nfp-prices-big-container">
+        @{
+            foreach (var card in Umbraco.Content(26278).Children().Where(x => x.IsVisible()))
+            {
+                string pricingCardV = card.Value<string>("pricingCardV");
+                var cardDuration = card.Value<string>("priceCardDuration");
+                bool highlighted = card.Value<bool>("pricingCardHighlighted");
+                bool isMonthly = card.Value<bool>("pricingCardMonthly");
+                bool banner = card.Value<bool>("pricingCardBanner");
+                var cardTitle = card.Name;
+                var cardPrice = card.Value<string>("pricingCardPrice");
+                var cardUnit = card.Value<string>("priceUnitRate");
+                var cardDescription = card.Value<string>("pricingCardDescription");
+                var cardBindingInfo = card.Value<string>("pricingCardBindingInfo");
+                var cardPriceSubtext = card.Value<string>("pricingCardPriceSub");
+
+                string subscriptionType = "";
+                switch (pricingCardV)
+                {
+                    case "1":
+                        subscriptionType = "monthly";
+                        break;
+                    case "3":
+                        subscriptionType = "basic";
+                        break;
+                    case "8":
+                        subscriptionType = "promonthly";
+                        break;
+                    case "12":
+                        subscriptionType = "yearly";
+                        break;
+                    case "16":
+                        subscriptionType = "premium";
+                        break;
+                }
+
+                if (subscriptionType != "yearly")
+                {
+                <div class="nfp-price-card-container">
+
+                    @if (subscriptionType != "premium")
+                    {
+
+                        <div class="@((isMonthly) ? " nfp-price-card-top_basic" : "nfp-price-card-top_pro" )">
+                            <div class="nfp-price-card-top_text">
+                                <h2 class="nfp-price-card-top-title">@cardTitle</h2>
+                                <p class="nfp-price-card-top-price">@cardPrice @cardUnit</p>
+                                @if (subscriptionType == "promonthly" || subscriptionType == "monthly")
+                                {
+                                    var cardPriceNote = card.Value<string>
+                                        ("pricingCardPriceNote");
+                                    <p class="nfp-price-card-top-price_span">@cardPriceNote</p>
+                                }
+                            </div>
+                        </div>
+                        <div class="@((isMonthly) ? " nfp-price-card-text_basic" : "nfp-price-card-text_pro" )">
+                            <ul class="@((isMonthly) ? " nfp-price-card-text_list_basic" : "nfp-price-card-text_list_pro" )">
+                                <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription1")</li>
+                                <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription2")</li>
+                                <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription3")</li>
+                                <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription4")</li>
+                                <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription5")</li>
+                                <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription6")</li>
+                                <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription7")</li>
+                                <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription8")</li>
+                                <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription9")</li>
+                                <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value("nfpPriceDescription10")</li>
+                            </ul>
+                            <button class="@((isMonthly) ? " nfp-price-card-text_button_basic" : "nfp-price-card-text_button_pro" )" value="@cardPrice" onclick="savePlan(@cardPrice, '@subscriptionType', '@landingPromoCode')">@Umbraco.GetDictionaryValue("Choose", "Vælg")</button>
+                            <p class="nfp-price-card-text_info">@cardBindingInfo</p>
+                        </div>
+                    }
+
+                    else
+                    {
+                        <div class="nfp-price-card-top_premium">
+                            <div class="nfp-price-card-top_text">
+                                <h2 class="nfp-price-card-top-title">@cardTitle</h2>
+                                <p class="nfp-price-card-top-price">@cardPrice @cardUnit</p>
+                                @if (subscriptionType == "premium")
+                                {
+                                    var cardPriceNote = card.Value<string>
+                                        ("pricingCardPriceNote");
+                                    <p class="nfp-price-card-top-price_span">@cardPriceNote</p>
+                                }
+                            </div>
+                        </div>
+                        <div class="nfp-price-card-text_premium">
+                            <ul class="nfp-price-card-text_list_premium">
+                                @for (var i = 0; i < 10; i++)
+                                {
+                                <li class="nfp-price-card-text_list_item"> @Umbraco.Content(10838).Value($"nfpPriceDescription{i + 1}")</li>
+                                }
+                            </ul>
+                            <!--<p id="demo" style="justify-content: center; display: flex"></p>-->
+                            <button class="nfp-price-card-text_button_premium" value="@cardPrice" onclick="savePlan(@cardPrice, '@subscriptionType', '@landingPromoCode')">@Umbraco.GetDictionaryValue("Choose", "Vælg")</button>
+                            <p class="nfp-price-card-text_info">@cardBindingInfo</p>
+                        </div>
+                    }
+
+                </div>
+
+                    }
+
+
+
+                }
+            }
+
+</div>
+
+</section>
+
+<script>
+
+    // set payment plan amount and type in session state
+    function savePlan(amount, type, promocode) {
+
+        $.ajax({
+            url: '/umbraco/Surface/RegisterUserDetails/SavePaymentSession',
+            type: 'POST',
+            data: {
+                amount: amount,
+                type: type
+            },
+            success: function (data) {
+                console.log(promocode);
+                window.location.href = (promocode) ? `${'https://www.startupcentral.dk/bliv-medlem/'}?plan=${type}&landingpromo=${promocode}&from=FP` : `${'https://www.startupcentral.dk/bliv-medlem/'}?plan=${type}&from=FP`;
+            }
+        });
+    }
+</script>     
+
+
+<script>
+    
+    //var countDownDate = new Date("Jul 31, 2023 23:59:59").getTime();
+
+    
+    //var x = setInterval(function () {
+
+        
+    //    var now = new Date().getTime();
+
+        
+    //    var distance = countDownDate - now;
+
+        
+    //    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    //    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    //    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    //    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        
+    //    document.getElementById("demo").innerHTML = days + "d " + hours + "h "
+    //        + minutes + "m " + seconds + "s ";
+
+    //    // If the count down is finished, write some text
+    //    if (distance < 0) {
+    //        clearInterval(x);
+    //        document.getElementById("demo").innerHTML = "EXPIRED";
+    //    }
+    //}, 1000);
+</script> 

@@ -1,0 +1,75 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "Master.cshtml";
+
+    //var currentNode = UmbracoContext.Current.PublishedContentRequest.PublishedContent;
+    var currentNode = Umbraco.AssignedContentItem;
+    var asd = currentNode.Level;
+    var adsd = currentNode.Children;
+}
+
+    <div class="content-header toc-header">
+        <div class="row-container centered">
+            <div class="row center-align-columns">
+                <div class="column-container ">
+                    <div class="column">
+                        <h1 style="font-size: 1.8rem; color: #ffffff;">@Model.Value("startupWikiTitle")</h1>
+                        <p>
+                            @Model.Value("startupWikiContent")
+                        </p>
+                    </div>
+                </div>
+                <div class="column-container">
+                    <div class="column content-image">
+                        <img src="/media/2637/wiki-image.png" alt="Startup Wiki, din iværksætter ordbog | Startup Central">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <main id="sc-toc" class="sc-toc">
+        <section>
+            <div class="row-container">
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column centered">
+                            <ul id="alphabet">
+                                @{
+                                    foreach (var child in adsd)
+                                    {
+                                        <li><a href="#@child.Name">@child.Name</a></li>
+                                    }
+                                    
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row-container">
+                <div class="row three-column">
+                    
+                    @{
+                        foreach (var child in adsd)
+                        {
+                            <div class="column-container">
+                                <div class="column toc-list">
+                                    <h2 id="@child.Name">@child.Name</h2>
+
+                                    @{ 
+                                        foreach(var subchild in child.Children)
+                                        {
+                                            <a href=@subchild.Url() class="link">@subchild.Value("articleTitle")</a>
+                                        }
+                                    }
+                                    
+                                </div>
+                            </div>
+                        }
+                    }
+
+                </div>
+            </div>
+        </section>
+    </main>
+

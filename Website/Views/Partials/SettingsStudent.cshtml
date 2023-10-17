@@ -1,0 +1,416 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Code.Class
+@using StartupCentral.Extensions
+@using Core = Umbraco.Core;
+
+@{
+    UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+    var currentUser = Members.GetCurrentMember();
+
+    var _memberService = ApplicationContext.Current.Services.MemberService;
+
+    var member = _memberService.GetById(currentUser.Id);
+    var memberKey = member.Key;
+
+    string wwavatarImageUrl = "";
+    var myAvatarImageUrl = 0;
+
+    if (member.GetValue("wwavatar") != null)
+    {
+        if (member.GetValue<string>("wwavatar").IsNumeric())
+        {
+            myAvatarImageUrl = Convert.ToInt32(member.GetValue<string>("wwavatar"));
+        }
+        else if (!string.IsNullOrEmpty(member.GetValue<string>("wwavatar")))
+        {
+            myAvatarImageUrl = member.GetValue<string>("wwavatar").GetIdByUdi();
+        }
+
+        if (myAvatarImageUrl > 0)
+        {
+            wwavatarImageUrl = Umbraco.Media(myAvatarImageUrl).Url();
+        }
+    }
+
+    if (IsPost)
+    {
+        if (member != null)
+        {
+            if (Request.Form["formaction"] == "infoForm")
+            {
+                string name = Request.Form["settingsName"];
+                string tel = Request.Form["settingsTelephone"];
+                string postn = Request.Form["settingsPostnummer"];
+                string by = Request.Form["settingsBy"];
+                string addr = Request.Form["settingsAddress"];
+
+                if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(tel) && !string.IsNullOrEmpty(postn) && !string.IsNullOrEmpty(by) && !string.IsNullOrEmpty(addr))
+                {
+                    member.Name = name;
+                    member.SetValue("wwname", name);
+                    member.SetValue("wwmobile", tel);
+                    member.SetValue("wwpostnummer", postn);
+                    member.SetValue("wwcity", by);
+                    member.SetValue("wwaddress", addr);
+                }
+
+                if (member.IsDirty())
+                {
+                    bool res = upodiWrapperService.updateCustomerPrivateInfo(member);
+
+                    //if (res)
+                    {
+                        ApplicationContext.Current.Services.MemberService.Save(member);
+                    }
+                }
+
+                if (HttpContext.Current.Request.Files != null && HttpContext.Current.Request.Files.Count > 0)
+                {
+                    IMedia folder = StartupCentral.Code.Controllers.UserController.GetProfileImageFolder(member);
+                    if (folder != null)
+                    {
+                        for (var i = 0; i < HttpContext.Current.Request.Files.Count; i++)
+                        {
+                            if (HttpContext.Current.Request.Files[i].ContentLength > 0)
+                            {
+                                IMedia mediaFile = ApplicationContext.Current.Services.MediaService.CreateMedia(HttpContext.Current.Request.Files[i].FileName, folder, "Image");
+                                System.IO.Stream s = HttpContext.Current.Request.Files[i].InputStream;
+                                //mediaFile.SetValue("umbracoFile", HttpContext.Current.Request.Files[i].FileName, s);                                
+                                mediaFile.SetValue(Core.Composing.Current.Services.ContentTypeBaseServices, "umbracoFile", HttpContext.Current.Request.Files[i].FileName, s);
+                                s.Close();
+                                s = null; //close the stream
+                                ApplicationContext.Current.Services.MediaService.Save(mediaFile);
+
+                                member.SetValue("wwavatar", mediaFile.GetUdi().ToString());
+
+                                //member.SetValue("wwavatar", "umb://media/" + mediaFile.Key);//mediaFile.GetUdi().ToString());
+                                ApplicationContext.Current.Services.MemberService.Save(member);
+                            }
+                        }
+                    }
+                }
+            }
+            else if (Request.Form["formaction"] == "cvrForm")
+            {
+                string cvr = Request.Form["cvr"];
+                string companyName = Request.Form["companyName"];
+                string companyAddress = Request.Form["companyAddress"];
+                string companyZipCode = Request.Form["companyZipCode"];
+                string companyCity = Request.Form["companyCity"];
+                string companyIndustryCode = Request.Form["companyIndustryCode"];
+
+                string companyIndustryDesc = Request.Form["companyIndustryDesc"];
+                string companyStartDate = Request.Form["companyStartDate"];
+                string companyEmployees = Request.Form["companyEmployees"];
+
+                if (!string.IsNullOrEmpty(cvr) && !string.IsNullOrEmpty(companyName) && !string.IsNullOrEmpty(companyAddress) &&
+                    !string.IsNullOrEmpty(companyZipCode) && !string.IsNullOrEmpty(companyCity) && !string.IsNullOrEmpty(companyIndustryCode) &&
+                    !string.IsNullOrEmpty(companyIndustryDesc) && !string.IsNullOrEmpty(companyStartDate))
+                {
+                    member.SetValue("cVR", cvr);
+                    member.SetValue("cVRName", companyName);
+                    member.SetValue("cVRAddress", companyAddress);
+                    member.SetValue("cVRZipCode", companyZipCode);
+                    member.SetValue("cVRCity", companyCity);
+                    member.SetValue("cVRIndustryCode", companyIndustryCode);
+
+                    member.SetValue("cVRIndustryDesc", companyIndustryDesc);
+                    member.SetValue("cVRStartDate", companyStartDate);
+
+                    if (string.IsNullOrEmpty(companyEmployees)) { companyEmployees = "0"; }
+
+                    member.SetValue("cVREmployees", companyEmployees);
+                }
+
+                if (member.IsDirty())
+                {
+                    bool res = true;
+
+                    System.Threading.Tasks.Task.Factory.StartNew(() =>
+                    {
+                        res = upodiWrapperService.updateCustomerCompanyName(member, companyName, cvr);
+                    });
+
+                    if (res)
+                    {
+                        ApplicationContext.Current.Services.MemberService.Save(member);
+                    }
+                }
+            }
+            //Response.Redirect(Request.RawUrl);
+        }
+    }
+}
+
+<main id="AccountSettings" class="sc-logged sc-bgb10">
+    <div class="rail-grid rail-grid--2-column">
+        <h2 class="acc-settings-headline">
+            @member.Name @member.Id /
+            <span id="acc-profile" class="title-tab info-settings is-active">Info indstillinger</span>
+            <span id="acc-pw" class="title-tab account-settings">Brugerindstillinger</span>
+            <span id="acc-company" class="title-tab cvr-settings">Virksomhedsindstillinger</span>
+            <span id="acc-subscription" class="title-tab subscription-settings">Abonnementsindstillinger</span>
+            <span id="acc-invoice" class="title-tab invoices-tab">Faktura</span>
+        </h2>
+
+        <aside class="md-rail">
+            <div class="settings-buttons">
+                <ul class="settings-buttons__list">
+                    <li class="settings-buttons__list-item tablinks is-active" onclick="openTab(event, 'info-settings')">
+                        <button class="settings-button">
+                                <svg id="Settings" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                    viewBox="0 0 32 32">
+                                    <g id="Group_20" data-name="Group 20">
+                                        <path id="Path_60" data-name="Path 60" d="M0,0H32V32H0Z" fill="none" />
+                                    </g>
+                                    <g id="Group_22" data-name="Group 22" transform="translate(2.667 5.333)">
+                                        <g id="Group_21" data-name="Group 21">
+                                            <path id="Path_61" data-name="Path 61"
+                                                d="M13.56,13.027c-.293-.013-.587-.027-.893-.027a17.168,17.168,0,0,0-8.813,2.427A3.9,3.9,0,0,0,2,18.8V21a1.337,1.337,0,0,0,1.333,1.333H14.347A9.284,9.284,0,0,1,12.667,17,9.429,9.429,0,0,1,13.56,13.027Z"
+                                                transform="translate(-2 -1)" fill="#47b2b2" />
+                                            <circle id="Ellipse_2" data-name="Ellipse 2" cx="5.333" cy="5.333" r="5.333"
+                                                transform="translate(5.333)" fill="#47b2b2" />
+                                            <path id="Path_62" data-name="Path 62"
+                                                d="M23.56,17.663a5.784,5.784,0,0,0-.08-.84l1.12-.973a.671.671,0,0,0,.133-.84l-.787-1.36a.651.651,0,0,0-.787-.293l-1.413.48a4.862,4.862,0,0,0-1.44-.84l-.293-1.453a.671.671,0,0,0-.653-.533H17.786a.671.671,0,0,0-.653.533L16.84,13a4.862,4.862,0,0,0-1.44.84l-1.413-.48a.661.661,0,0,0-.787.293l-.787,1.36a.671.671,0,0,0,.133.84l1.12.973a5.784,5.784,0,0,0-.08.84,5.784,5.784,0,0,0,.08.84l-1.12.973a.671.671,0,0,0-.133.84l.787,1.36a.651.651,0,0,0,.787.293l1.413-.48a4.862,4.862,0,0,0,1.44.84l.293,1.453a.671.671,0,0,0,.653.533H19.36a.671.671,0,0,0,.653-.533l.293-1.453a4.862,4.862,0,0,0,1.44-.84l1.413.48a.661.661,0,0,0,.787-.293l.787-1.36a.671.671,0,0,0-.133-.84L23.48,18.5A5.784,5.784,0,0,0,23.56,17.663Zm-5,2.667a2.667,2.667,0,1,1,2.667-2.667A2.675,2.675,0,0,1,18.56,20.33Z"
+                                                transform="translate(1.44 -1.663)" fill="#47b2b2" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            <span>Brugerindstillinger</span>
+                        </button>
+                    </li>
+                    <li class="settings-buttons__list-item tablinks" onclick="openTab(event, 'account-settings')">
+                        <button class="settings-button">
+                                <svg id="Password" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                    viewBox="0 0 32 32">
+                                    <path id="Path_21" data-name="Path 21" d="M0,0H32V32H0Z" fill="none" />
+                                    <path id="Path_22" data-name="Path 22"
+                                        d="M22.667,10.333H21.333V7.667A6.667,6.667,0,1,0,8,7.667v2.667H6.667A2.675,2.675,0,0,0,4,13V26.333A2.675,2.675,0,0,0,6.667,29h16a2.675,2.675,0,0,0,2.667-2.667V13A2.675,2.675,0,0,0,22.667,10.333Zm-8,12a2.667,2.667,0,1,1,2.667-2.667A2.675,2.675,0,0,1,14.667,22.333Zm4.133-12H10.533V7.667a4.133,4.133,0,0,1,8.267,0Z"
+                                        transform="translate(1.333 0.333)" fill="#47b2b2" />
+                                </svg>
+                            <span>Kodeord</span>
+                        </button>
+                    </li>
+                    <li class="settings-buttons__list-item tablinks" onclick="openTab(event, 'cvr-settings')">
+                        <button class="settings-button">
+                                <svg id="Business" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                    viewBox="0 0 32 32">
+                                    <path id="Path_63" data-name="Path 63" d="M0,0H32V32H0Z" fill="none" />
+                                    <path id="Path_64" data-name="Path 64"
+                                        d="M16,8.778V5.889A2.854,2.854,0,0,0,13.2,3H4.8A2.854,2.854,0,0,0,2,5.889V26.111A2.854,2.854,0,0,0,4.8,29H27.2A2.854,2.854,0,0,0,30,26.111V11.667a2.854,2.854,0,0,0-2.8-2.889ZM7.6,26.111H4.8V23.222H7.6Zm0-5.778H4.8V17.444H7.6Zm0-5.778H4.8V11.667H7.6Zm0-5.778H4.8V5.889H7.6Zm5.6,17.333H10.4V23.222h2.8Zm0-5.778H10.4V17.444h2.8Zm0-5.778H10.4V11.667h2.8Zm0-5.778H10.4V5.889h2.8ZM25.8,26.111H16V23.222h2.8V20.333H16V17.444h2.8V14.556H16V11.667h9.8a1.427,1.427,0,0,1,1.4,1.444V24.667A1.427,1.427,0,0,1,25.8,26.111ZM24.4,14.556H21.6v2.889h2.8Zm0,5.778H21.6v2.889h2.8Z"
+                                        transform="translate(0 0)" fill="#47b2b2" />
+                                </svg>
+                            <span>Virksomhedsindstillinger</span>
+                        </button>
+                    </li>
+                    <li class="settings-buttons__list-item tablinks" onclick="openTab(event, 'subscription-settings')">
+                        <button class="settings-button">
+                                <svg id="Subscription" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                    viewBox="0 0 32 32">
+                                    <path id="Path_30" data-name="Path 30" d="M0,0H32V32H0Z" fill="none" />
+                                    <path id="Path_31" data-name="Path 31"
+                                        d="M27,23v1.333A2.675,2.675,0,0,1,24.333,27H5.667A2.666,2.666,0,0,1,3,24.333V5.667A2.666,2.666,0,0,1,5.667,3H24.333A2.675,2.675,0,0,1,27,5.667V7H15a2.666,2.666,0,0,0-2.667,2.667V20.333A2.666,2.666,0,0,0,15,23ZM15,20.333H28.333V9.667H15ZM20.333,17a2,2,0,1,1,2-2A2,2,0,0,1,20.333,17Z"
+                                        transform="translate(1 1)" fill="#47b2b2" />
+                                </svg>
+                            <span>Abonnementsindstillinger</span>
+                        </button>
+                    </li>
+                    <li class="settings-buttons__list-item tablinks" onclick="openTab(event, 'invoices-tab')">
+                        <button class="settings-button">
+                                <svg id="Budget" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                    viewBox="0 0 32 32">
+                                    <path id="Path_1" data-name="Path 1" d="M0,0H32V32H0Z" fill="none" />
+                                    <path id="Path_2" data-name="Path 2"
+                                        d="M17.333,2H6.667A2.663,2.663,0,0,0,4.013,4.667L4,26a2.663,2.663,0,0,0,2.653,2.667H22.667A2.675,2.675,0,0,0,25.333,26V10ZM20,23.333H9.333V20.667H20ZM20,18H9.333V15.333H20Zm-4-6.667V4l7.333,7.333Z"
+                                        transform="translate(1.333 0.667)" fill="#47b2b2" />
+                                </svg>
+                            <span>Faktura</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="lg-rail">
+            <form method="post" id="info-settings" class="delValidate settings-tab is-active" enctype="multipart/form-data">
+                <input hidden="" name="formaction" value="infoForm">
+                <div class="form-container">
+                    <label for="profilepic">Profilbillede</label>
+                    <div class="input-container">
+                        <img class="entity-image-104 entity-image-circle" src="@(!string.IsNullOrEmpty(wwavatarImageUrl) ? wwavatarImageUrl : "/media/1195/startup-central-bruger.jpg")" alt="">
+                        <input id="avatarfile" type="file" name="avatarfile">
+                    </div>
+                </div>
+                <div class="form-container">
+                    <label for="name">Navn</label>
+                    <div class="input-container">
+                        <input id="name" type="text" name="settingsName" autocomplete="off" value="@member.Name" required>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <label for="telephone">Tlf.</label>
+                    <div class="input-container">
+                        <span>+45</span>
+                        <input id="telephone" type="tel" name="settingsTelephone" autocomplete="off" value="@member.GetValue("wwmobile")"
+                               maxlength="8" required>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <label for="address">Postnummer</label>
+                    <div class="input-container">
+                        <input id="postnummer" type="text" name="settingsPostnummer" autocomplete="off" value="@member.GetValue("wwpostnummer")"
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <label for="name">By</label>
+                    <div class="input-container">
+                        <input id="by" type="text" name="settingsBy" autocomplete="off" value="@member.GetValue("wwcity")" required>
+                    </div>
+                </div>
+                <div class="form-container">
+                    <label for="address">Adresse</label>
+                    <div class="input-container">
+                        <input id="address" type="text" name="settingsAddress" autocomplete="off" value="@member.GetValue("wwaddress")" required>
+                    </div>
+                </div>
+
+                <button class="button" type="submit" id="changeinfo">
+                    Opdater
+                </button>
+
+                <p>*Ønsker du at opsige dit medlemskab, skal du sende din opsigelse til info@startupcentral.dk .</p>
+            </form>
+
+            @Html.Partial("SettingsChangePassword", member)
+
+            <form method="post" id="cvr-settings" class="delValidate settings-tab">
+
+                @if (!string.IsNullOrEmpty(member.GetValue<string>("cvr")))
+                {
+                    <div class="cvr-assoc">
+                        <h3 id="12345">
+                            Din bruger er forbundet til dette CVR nr. @member.GetValue("cvr")
+                            <br>
+                            <br>
+                            NB! Informationerne kommer direkte fra Virk. Er de nedenstående informationer forkerte skal du gå ind på Virk og ændre dem,
+                            herefter skal du opdatere dit CVR-nummer ved at trykke på knappen CVR her på siden, på den måde vil de korrekte informationer blive vist.
+                        </h3>
+                    </div>
+                }
+
+                <input hidden="" name="formaction" value="cvrForm">
+                <p>1. Har du en dansk registreret virksomhed, venligst udfyld CVR-nummeret i feltet nedenunder.</p>
+                <div class="form-container">
+                    <label for="cvr">CVR</label>
+                    <div class="input-container">
+                        <input type="text" id="cvrSettings" name="cvr" autocomplete="off" value="@member.GetValue("cvr")" required>
+                        <button class="button button--sm" type="button" id="cvrInfo" value="CVR">CVR</button>
+                    </div>
+                </div>
+                <div class="form-container">
+                    <label for="companyIndustryCode">Branchekode</label>
+                    <input type="text" id="companyIndustryCodeSettings" name="companyIndustryCode" autocomplete="off" value="@member.GetValue("cVRIndustryCode")" required readonly>
+                </div>
+                <div class="form-container">
+                    <label for="companyName">Firmanavn</label>
+                    <input type="text" id="companyNameSettings" name="companyName" autocomplete="off" value="@member.GetValue("cVRName")" required readonly>
+                </div>
+                <div class="form-container">
+                    <label for="companyAddress">Virksomhedsadresse</label>
+                    <input type="text" id="companyAddressSettings" name="companyAddress" autocomplete="off" value="@member.GetValue("cVRAddress")" required readonly>
+                </div>
+                <div class="form-container">
+                    <label for="companyIndustryCode">Postnummer</label>
+                    <input type="text" id="companyZipCodeSettings" name="companyZipCode" autocomplete="off" value="@member.GetValue("cVRZipCode")" required readonly>
+                </div>
+                <div class="form-container">
+                    <label for="companyCity">By</label>
+                    <input type="text" id="companyCitySettings" name="companyCity" autocomplete="off" value="@member.GetValue("cVRCity")" required readonly>
+                </div>
+
+                <div class="form-container">
+                    <label for="companyIndustryDesc">Branche beskrivelse</label>
+                    <input type="text" id="companyIndustryDescSettings" name="companyIndustryDesc" autocomplete="off" value="@member.GetValue("cVRIndustryDesc")" required readonly>
+                </div>
+                <div class="form-container">
+                    <label for="companyStartDate">Stiftelses år</label>
+                    <input type="text" id="companyStartDateSettings" name="companyStartDate" autocomplete="off" value="@member.GetValue("cVRStartDate")" required readonly>
+                </div>
+                <div class="form-container">
+                    <label for="companyEmployees">Ansatte</label>
+                    <input type="text" id="companyEmployeesSettings" name="companyEmployees" autocomplete="off" value="@member.GetValue("cVREmployees")" required readonly>
+                </div>
+
+                <p class="result"></p>
+                <button class="button" type="submit" id="changeCVR" style="display:none;">Opdater</button>
+            </form>
+
+            @{
+                var cust = System.Threading.Tasks.Task.Run(() => upodiWrapperService.GetByAccountNumber(member.Id)).GetAwaiter().GetResult();
+                //var cust = await upodiWrapperService.GetByAccountNumber(member.Id);
+                if (cust == null)
+                {
+                    //cust = upodiWrapperService.GetByAccountNumber(member.Id);
+                    cust = System.Threading.Tasks.Task.Run(() => upodiWrapperService.GetByAccountNumber(member.Id)).GetAwaiter().GetResult();
+                }
+                if (cust != null)
+                {
+                    Guid? custID = cust.ID;
+                    HttpContext.Current.Items.Add("cust.ID", custID);
+                    HttpContext.Current.Items.Add("nextPaymentDate", System.Threading.Tasks.Task.Run(() => upodiWrapperService.GetNextPaymentDate(cust.ID)).GetAwaiter().GetResult());
+                    HttpContext.Current.Items.Add("cardExpiryDate", System.Threading.Tasks.Task.Run(() => upodiWrapperService.GetCardExpiryDate(cust.ID)).GetAwaiter().GetResult());
+                }
+            }
+
+            @if (cust != null)
+            {
+                @Html.Partial("SettingsInvoices", member)
+            }
+            
+            @if (cust != null)
+            {
+                @Html.Partial("SettingsSubscription", member)
+            }
+
+
+        </div>
+    </div>
+
+</main>
+
+
+@*@Html.Partial("MemberInfo", member)*@
+
+
+
+<script>
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks, tabtitles;
+        tabcontent = document.getElementsByClassName("settings-tab");
+
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        tablinks = document.getElementsByClassName("tablinks");
+
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+        }
+
+        tabtitle = document.getElementsByClassName("title-tab");
+        for (i = 0; i < tablinks.length; i++) {
+            tabtitle[i].className = tabtitle[i].className.replace(" is-active", "");
+        }
+
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " is-active";
+
+        var title = document.getElementsByClassName(tabName);
+        title[0].className += " is-active";
+    }
+</script>

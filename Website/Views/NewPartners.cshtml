@@ -1,0 +1,106 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.7/js/swiper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.7/css/swiper.min.css" rel="stylesheet" />
+
+
+<section class="nfp-partners-section">
+    <div class="nfp-partners-title">
+        <h2>@Umbraco.AssignedContentItem.Value("nfpPartnerTitle")</h2>
+    </div>
+    <div class="nfp-partners-bottom-line"></div>
+    <div class="nfp-partners-container">
+        <div class="nfp-partners__carousel splide">
+            <div class="nfp-partners-row splide__slider">
+                <div class="splide__track">
+                    <ul class="nfp-partners-cards splide__list">
+                        <li class="nfp-partner-card splide__slide">
+                            <div class="nfp-partner-card__img">
+                                <a href="https://www.startupcentral.dk/partnere/Lexoforms/">
+                                    <img src="@Umbraco.Media(38312).Url" />
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nfp-partner-card splide__slide">
+                            <div class="nfp-partner-card__img">
+                                <a href="https://www.startupcentral.dk/partnere/littlegiants/">
+                                    <img src="@Umbraco.Media(38313).Url" />
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nfp-partner-card splide__slide">
+                            <div class="nfp-partner-card__img">
+                                <a href="https://www.startupcentral.dk/partnere/SignUp%20Academy/">
+                                    <img src="@Umbraco.Media(38314).Url" />
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nfp-partner-card splide__slide">
+                            <div class="nfp-partner-card__img">
+                                <a href="https://www.startupcentral.dk/partnere/dinero/">
+                                    <img src="@Umbraco.Media(38315).Url" />
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nfp-partner-card splide__slide">
+                            <div class="nfp-partner-card__img">
+                                <a href="https://www.startupcentral.dk/partnere/e-conomic/">
+                                    <img src="@Umbraco.Media(38316).Url" />
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nfp-partner-card splide__slide">
+                            <div class="nfp-partner-card__img">
+                                <a href="https://www.startupcentral.dk/partnere/Worldline/">
+                                    <img src="@Umbraco.Media(38317).Url" />
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="nfp-partners-bottom-line"></div>
+    @*<div class="nfp-partner_btn">
+        <button><a href="https://www.startupcentral.dk/partnere/#All">@Umbraco.GetDictionaryValue("PartnerDeals", "Se alle dine partnertilbud")</a></button>
+    </div>*@
+</section>
+    
+
+    <script src="scripts/splide-4.1.3/dist/js/splide.min.js"></script>
+    <script>
+            var pressSplide = new Splide('.nfp-partners__carousel', {
+                type: 'loop',
+                perPage: 6,
+                perMove: 1,
+                breakpoints: {
+                    1450: {
+                        perPage: 5
+                    },
+                    1250: {
+                        perPage: 4
+                    },
+                    950: {
+                        perPage: 3
+                    },
+                    650: {
+                        perPage: 2
+                    },
+                    450: {
+                        perPage: 1
+                    }
+                },
+                autoplay: false,
+                arrows: false,
+                pagination: false,
+                classes: {
+                    arrows: 'splide__arrows',
+                    arrow: 'splide__arrow',
+                    prev: 'splide__arrow--prev arrow-left',
+                    next: 'splide__arrow--next arrow-right'
+                }
+            });
+            pressSplide.mount();
+        </script>

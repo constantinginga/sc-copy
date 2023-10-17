@@ -1,0 +1,168 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+	Layout = "SC_WebBase.cshtml";
+}
+
+@* the fun starts here *@
+
+<header id="sc-header" class="sc-cover sc-cover-sm" role="banner">
+    <div class="overlay">
+        <div class="sc-container">
+            @{ Html.RenderAction("RenderTitleControls", "SiteLayout");}
+        </div>
+    </div>
+</header>
+
+<div class="sc-spitz--white">
+    <div class="sc-section sc-container sc-spitz">
+        <div class="row ">
+            <div class="col-md-2">
+            @{
+                var typedMediaPickerSection1 = Model.Content.GetPropertyValue<IPublishedContent>("section1Img");
+                if (typedMediaPickerSection1 != null)
+             {
+               <img src="@typedMediaPickerSection1.Url" alt="@typedMediaPickerSection1.GetPropertyValue("alt")" />
+             }
+            }
+            </div>
+            <div class="col-md-10">
+@Umbraco.AssignedContentItem.GetPropertyValue("Section1")
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sc-spitz--blue">
+    <div class="sc-section sc-container sc-spitz">
+        <div class="row ">
+            <div class="col-md-10">
+@Umbraco.AssignedContentItem.GetPropertyValue("Section2")
+            </div>
+            <div class="col-md-2">
+            @{
+                var typedMediaPickerSection2 = Model.Content.GetPropertyValue<IPublishedContent>("section2Img");
+                if (typedMediaPickerSection2 != null)
+             {
+               <img src="@typedMediaPickerSection2.Url" alt="@typedMediaPickerSection2.GetPropertyValue("alt")" />
+             }
+            }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sc-spitz--white">
+    <div class="sc-section sc-container sc-spitz">
+        <div class="row ">
+            <div class="col-md-2">
+            @{
+                var typedMediaPickerSection3 = Model.Content.GetPropertyValue<IPublishedContent>("section3Img");
+                if (typedMediaPickerSection3 != null)
+             {
+               <img src="@typedMediaPickerSection3.Url" alt="@typedMediaPickerSection1.GetPropertyValue("alt")" />
+             }
+            }
+            </div>
+            <div class="col-md-10">
+@Umbraco.AssignedContentItem.GetPropertyValue("Section3")
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*
+<div class="sc-spitz--blue">
+    <div class="sc-section sc-container sc-spitz">
+        <div class="row ">
+            <div class="col-md-10">
+@Umbraco.AssignedContentItem.GetPropertyValue("Section4")
+            </div>
+            <div class="col-md-2">
+                            @{
+                var typedMediaPickerSection4 = Model.Content.GetPropertyValue<IPublishedContent>("section4Img");
+                if (typedMediaPickerSection4 != null)
+             {
+               <img src="@typedMediaPickerSection4.Url" alt="@typedMediaPickerSection4.GetPropertyValue("alt")" />
+             }
+            }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sc-spitz--white">
+    <div class="sc-section sc-container sc-spitz">
+        <div class="row ">
+            <div class="col-md-2">
+            @{
+                var typedMediaPickerSection5 = Model.Content.GetPropertyValue<IPublishedContent>("section5Img");
+                if (typedMediaPickerSection5 != null)
+             {
+               <img src="@typedMediaPickerSection5.Url" alt="@typedMediaPickerSection1.GetPropertyValue("alt")" />
+             }
+            }
+            </div>
+            <div class="col-md-10">
+@Umbraco.AssignedContentItem.GetPropertyValue("Section5")
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sc-spitz--blue">
+    <div class="sc-section sc-container sc-spitz">
+        <div class="row ">
+            <div class="col-md-10">
+@Umbraco.AssignedContentItem.GetPropertyValue("Section6")
+            </div>
+            <div class="col-md-2">
+            @{
+                var typedMediaPickerSection6 = Model.Content.GetPropertyValue<IPublishedContent>("section6Img");
+                if (typedMediaPickerSection6 != null)
+             {
+               <img src="@typedMediaPickerSection6.Url" alt="@typedMediaPickerSection6.GetPropertyValue("alt")" />
+             }
+            }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sc-spitz--white">
+    <div class="sc-section sc-container sc-spitz">
+        <div class="row ">
+            <div class="col-md-2">
+            @{
+                var typedMediaPickerSection7 = Model.Content.GetPropertyValue<IPublishedContent>("section7Img");
+                if (typedMediaPickerSection7 != null)
+             {
+               <img src="@typedMediaPickerSection7.Url" alt="@typedMediaPickerSection1.GetPropertyValue("alt")" />
+             }
+            }
+            </div>
+            <div class="col-md-10">
+@Umbraco.AssignedContentItem.GetPropertyValue("Section7")
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sc-spitz--blue">
+    <div class="sc-section sc-container sc-spitz">
+        <div class="row ">
+            <div class="col-md-10">
+@Umbraco.AssignedContentItem.GetPropertyValue("Section8")
+            </div>
+            <div class="col-md-2">
+            @{
+                var typedMediaPickerSection8 = Model.Content.GetPropertyValue<IPublishedContent>("section8Img");
+                if (typedMediaPickerSection8 != null)
+             {
+               <img src="@typedMediaPickerSection8.Url" alt="@typedMediaPickerSection8.GetPropertyValue("alt")" />
+             }
+            }
+            </div>
+        </div>
+    </div>
+</div>*@

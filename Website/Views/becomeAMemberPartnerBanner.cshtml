@@ -1,0 +1,107 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@{
+
+//var partnerPicture = Umbraco.AssignedContentItem.Value<IPublishedContent>
+//("bmpbImage1");
+}
+
+<section class="bmtp-reviews-section">
+    <div class="bmtp-reviews-title bmtp-reviews-title-partner"><p style="font-family: 'Open Sans', sans-serif;"><b>@Umbraco.AssignedContentItem.Value("bmpbTitle")</b></p></div>
+    <div class="bmtp-reviews-section-container">
+        <div class="swiper swiper2" style="height:270px">
+            <div class="swiper-wrapper">
+
+                @for (var i = 0; i < 4; i++) //4 on local, 8 on production
+                {
+                    var partnerPicture = Umbraco.AssignedContentItem.Value<IPublishedContent>($"bmpbImage{i + 1}");
+
+                    <div class="bmtp-review-card-container swiper-slide">
+                        <div class="bmtp-review-card">
+                            <div class="bmpb-review-card-content">
+                                <div class="bmpb-partner-card-rabat-container">
+                                    <p class="bmpb-partner-card-rabat">@Umbraco.AssignedContentItem.Value($"bmpbRabat{i + 1}")</p>
+                                </div>
+
+                                @*<div class="bmpb-partner-img-container"><img src="@partnerPicture.Url" class="bmpb-partner-img"></div>*@
+                                <div class="bmpb-partner-img-container"><img src="@partnerPicture.Url" class="bmpb-partner-img"></div>
+                                <div class="bmpb-partner-card-type-container"><p>@Umbraco.AssignedContentItem.Value($"bmpbType{i + 1}")</p></div>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="bmtp-arrow-prev2 swiper-button-prev" id="bmtp-arrow-left2"></div>
+        <div class="bmtp-arrow-next2 swiper-button-next" id="bmtp-arrow-right2"></div>
+    </div>
+    <div class="swiper-pagination" id="bmtp-pagination2"></div>
+</section>
+
+
+@*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>*@
+
+<script>
+    const swiper2 = new Swiper('.swiper2', {
+        // Optional parameters
+        direction: 'horizontal',
+        slidesPerView: 4,
+        loop: true,
+        autoplay: true,
+        navigation: {
+            nextEl: '.bmtp-arrow-next2',
+            prevEl: '.bmtp-arrow-prev2',
+        },
+        pagination: {
+            el: '#bmtp-pagination2',
+            clickable: true,
+        },
+
+        breakpoints: {
+            300: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+            },
+            750: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+                //navigation: {
+                //    nextEl: '',
+                //    prevEl: '',
+                //},
+            },
+            1000: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+            },
+            1200: {
+                slidesPerView: 3,
+                spaceBetween: 30,
+            },
+
+            1400: {
+                slidesPerView: 4,
+                spaceBetween: 30,
+            },
+        }
+    });
+</script>
+
+<script>
+    var elem3 = document.getElementById("bmtp-arrow-left2");
+    var elem4 = document.getElementById("bmtp-arrow-right2");
+    let pagi2 = document.querySelector("#bmtp-pagination2")
+    if (window.innerWidth < 1350) {
+
+        elem3.parentNode.removeChild(elem3);
+        elem4.parentNode.removeChild(elem4);
+
+    }
+    if (window.innerWidth >= 1350) {
+
+        pagi2.parentNode.removeChild(pagi2);
+    }
+</script>

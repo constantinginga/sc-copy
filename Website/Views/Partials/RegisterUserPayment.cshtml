@@ -1,0 +1,710 @@
+﻿@model StartupCentral.Models.RegisterUserPayment
+@using StartupCentral.Controllers
+@using System.Threading.Tasks
+
+@{
+
+    var helper = Umbraco.Web.Composing.Current.UmbracoHelper;
+    // Root page (SC_RegisterMember)
+    var node = helper.Content(29767);
+
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+    var currentDate = DateTime.Now;
+    var monthlyPrice = Int32.Parse(Session["PlanAmount"].ToString());
+    var totalPrice = monthlyPrice + monthlyPrice * 0.25;
+
+    IMember member = null;
+
+    if (Request.QueryString["memberkey"] != null)
+    {
+        member = ApplicationContext.Current.Services.MemberService.GetByKey(new Guid(Request.QueryString["memberkey"]));
+    }
+
+    if (member != null)
+    {
+        try
+        {
+            var UpodiWrapperService = new StartupCentral.Code.Class.UpodiWrapperService();
+            UpodiWrapperService.CreateNewCustomer(member.Id, member);
+            if ((string)Session["PlanType"] == "basic")
+            {
+                //UpodiWrapperService.AddSubToBasic(member.Id);
+                Task.Run(() => UpodiWrapperService.AddSubToBasic(member.Id)).GetAwaiter().GetResult();
+            }
+        }
+        catch (Exception e)
+        {
+            //
+        }
+    }
+
+    <script>
+        var userToken = ''
+        @if (member != null)
+        {
+            @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(member), "';"))
+        }
+    </script>
+}
+
+
+<div class="payment-details register-section__main">
+    <div class="form-section">
+        <p class="details-section__h" style="border-top-style: outset; text-align:center; margin-left: 10px;">@node.Value("paymentSectionSubtitle").ToString()</p>
+        @using (Ajax.BeginForm("Submit", "RegisterUserPayment", new AjaxOptions { HttpMethod = "Post" }))
+        {
+            <div class="user-details">
+                <div style="border-style:double; margin: -10px 10px 15px 10px; padding: 20px 10px 25px 15px;">
+                    @Html.ValidationSummary(true)
+                    <div class="form-group">
+                        <label for="confirm-email" style="top:0;">@node.Value("paymentSectionUsernameLabel").ToString() @Session["UserEmail"]</label>
+
+
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:10px;">
+                        <label for="confirm-phone-number">@Session["UserPhone"]</label>
+
+                    </div>
+                    @if (Session["UserCompany"] != null || Session["UserCvr"] != null)
+                    {
+                        <div class="user-details__row">
+                            @if (Session["UserCompany"] != null)
+                            {
+                                <div>
+                                    <label for="confirm-company-name">@node.Value("paymentSectionCompanyLabel").ToString()  @Session["UserCompany"]</label>
+
+                                </div>
+                            }
+                            @if (Session["UserCvr"] != null)
+                            {
+                                <div>
+                                    <label for="confirm-company-name">CVR: @Session["UserCvr"]</label>
+
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div id="checkbox-group" class="checkbox-group" style="margin-left:10px;">
+                    <label class="custom-checkbox">
+                        @Html.CheckBoxFor(t => t.AcceptTerms, new { @id = "tos", name = "tos" })
+                        <span></span>
+                    </label>
+                    @Html.LabelFor(t => t.AcceptTerms)
+                </div>
+                @Html.ValidationMessageFor(t => t.AcceptTerms)
+            </div>
+            <div id="bottom-section-basic" class="button">
+                <a href="@Umbraco.Web.Composing.Current.UmbracoHelper.Content(10838).Url">Tilbage til startside</a>
+            </div>
+            <div id="bottom-section">
+                <button class="btn" id="submit-payment" type="submit">@node.Value("paymentSectionBtn").ToString()</button>
+
+                <div class="accepted-payments">
+                    <p>@node.Value("paymentSectionMethods").ToString()</p>
+                    @*<img src="/media/3059/dankort-logo.svg" alt="Dankort logo"
+                             class="accepted-payments__logo">
+                        <img src="/media/3058/visa-logo.svg" alt="VISA logo"
+                             class="accepted-payments__logo">
+                        <img src="/media/3057/mastercard-logo.svg" alt="MasterCard logo"
+                             class="accepted-payments__logo">*@
+                    <img src="~/media/mt4az5nk/betalingsmuligheder.svg" alt="Betalingsmuligheder" class="accepted-payments__logos" />
+                </div>
+            </div>
+        }
+    </div>
+
+
+    <div class="details-section">
+        <p class="details-section__h">@node.Value("paymentInfoTitle").ToString()</p>
+
+        <div class="solution-details">
+            <p class="solution-details__h">@node.Value("paymentInfoSolutionTitle").ToString()</p>
+            <div class="solution-details__group">
+                <p>@node.Value("paymentInfoMembership").ToString()</p>
+                <p class="amount @Session["PlanType"].ToString()">@monthlyPrice</p>
+            </div>
+            @*<div class="solution-details__group">
+                    <p>@node.Value("paymentInfoTax").ToString()</p>
+                    <p class="amount moms-amount @Session["PlanType"].ToString()">@(monthlyPrice * 0.25)</p>
+                </div>*@
+            <div class="solution-details__group">
+                <p>@node.Value("paymentInfoCreation").ToString()</p>
+                <p class="oprettelse-amount">0</p>
+            </div>
+            <div class="solution-details__group">
+                <p>@node.Value("paymentInfoDiscount").ToString()</p>
+                <p class="amount discount-amount @Session["PlanType"].ToString()">0</p>
+            </div>
+        </div>
+        <div class="solution-summary" id="solution-summary">
+            @*<div class="solution-summary__content">
+                    @switch (@Session["PlanType"].ToString())
+                    {
+                        case "monthly":
+                            <p>@node.Value("paymentInfoMonth").ToString()</p>
+                            break;
+                        case "quarterly":
+                            <p>@node.Value("paymentInfoQuarter").ToString()</p>
+                            break;
+                        case "yearly":
+                            <p>@node.Value("paymentInfoYear").ToString()</p>
+                            break;
+                    }
+                    <i class="arrow"></i>
+                    <p class="amount @Session["PlanType"].ToString()">@totalPrice</p>
+                </div>*@
+            <div class="solution-summary__content">
+                @*<p id="promo-duration"></p>*@
+            </div>
+        </div>
+        <div class="solution-duration" id="solution-duration">
+            <div class="solution-duration__content">
+                <p>@node.Value("paymentInfoPayNow").ToString()</p>
+                <p>@node.Value("paymentInfoTitle").ToString()</p>
+                <div id="period">
+                    @{
+                        var dateTo = new DateTime();
+                        var fromDate = currentDate.ToString("dd. MMM yyyy");
+                        switch (Session["PlanType"])
+                        {
+                            case "monthly":
+                            case "promonthly":
+                                dateTo = @currentDate.AddMonths(1);
+                                break;
+                            case "quarterly":
+                                dateTo = @currentDate.AddMonths(3);
+                                break;
+                            case "yearly":
+                            case "premium":
+                                dateTo = @currentDate.AddYears(1);
+                                break;
+                        }
+
+                        //if (currentDate.Day > 15)
+                        //{
+                        //    dateTo = dateTo.AddMonths(1);
+                        //}
+
+                        <span id="from-date">@fromDate</span>
+                        // var lastDay = DateTime.DaysInMonth(dateTo.Year, dateTo.Month);
+                        <span id="to-date">@(new DateTime(dateTo.Year, dateTo.Month, dateTo.Day).ToString("dd. MMM yyyy"))</span>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="promocode-section" id="promocode-section" style="border-bottom: @(string.IsNullOrEmpty(node.Value("paymentSectionSubtextH").ToString()) && string.IsNullOrEmpty(node.Value("paymentSectionSubtextT").ToString())  ? "none" : "2px solid #cecece")">
+            <p>@node.Value("paymentInfoPromoTitle").ToString()</p>
+            <p>@node.Value("paymentInfoPromoDesc").ToString()</p>
+            <input type="text" name="promo-code" id="promo-code" placeholder="@node.Value("paymentInfoPromoPlaceholder").ToString()">
+            <div class="promocode-section__btns">
+                <button id="promo-code-submit">@node.Value("paymentInfoPromoApply").ToString()</button>
+                <button id="promo-code-cancel">@node.Value("paymentInfoPromoRemove").ToString()</button>
+            </div>
+
+            <p class="promocode-section__msg"></p>
+        </div>
+
+        @if (!string.IsNullOrEmpty(node.Value("paymentSectionSubtextH").ToString()) || !string.IsNullOrEmpty(node.Value("paymentSectionSubtextT").ToString()))
+        {
+            @*<div class="info-section">
+                    <p class="info-section__h">@node.Value("paymentSectionSubtextH")</p>
+                    @node.Value("paymentSectionSubtextT")
+                </div>*@
+        }
+    </div>
+
+    <div class="loading-modal">
+        <div class="modal-content">
+            <div class="modal-content__loading">
+                <p>@node.Value("loadingModalH")</p>
+                @node.Value("loadingModalText")
+                <div class="modal-content-loader"></div>
+            </div>
+            <div class="modal-content__done is-disabled">
+                <p>@node.Value("loadingModalHFinished")</p>
+                @node.Value("loadingModalTextFinished")
+            </div>
+        </div>
+    </div>
+
+    @*<form id="payment-form">
+            <div id="payment-element">
+                <!-- Elements will create form elements here -->
+            </div>
+            <button id="submit">Submit</button>
+            <div id="error-message">
+                <!-- Display error message to your customers here -->
+            </div>
+        </form>*@
+</div>
+
+<script src="https://sdk.paylike.io/10.js"></script>
+<script src="~/scripts/startupcental.js"></script>
+<script>
+
+                            let normalAmount = @Session["PlanAmount"];
+                            let planType = "@Session["PlanType"]";
+                            // adding tax
+                            normalAmount += normalAmount * 0.25;
+                            // discounted amount starts off as normal amount
+                            let dAmount = normalAmount;
+                            let dInterval, dCount = 0;
+                            let currentPromocode = "";
+                             /*let currentPromocode = "StartupCentral-2020";*/
+                            let newsletter = '@Request.QueryString["newsletter"]';
+
+    let bottomSection = document.getElementById("bottom-section");
+    let checkbox = document.getElementById("checkbox-group");
+    let solSummary = document.getElementById("solution-summary");
+    let solDuration = document.getElementById("solution-duration");
+    let promoSection = document.getElementById("promocode-section");
+    let basicButton = document.getElementById("bottom-section-basic");
+
+    $(document).ready(ContactSync());
+    $(document).ready(HidingPayment());
+
+    $('.custom-checkbox, label[for="AcceptTerms"]').on('click', function () {
+        $("#tos").prop('checked', !($("#tos").is(':checked')));
+    });
+
+    $(document).ready(function () {
+        $("input[name=AcceptTerms]")[1].remove();
+    });
+
+    // convert month to digit
+    let subscriptionPeriod = -1;
+        switch ('@Session["PlanType"]') {
+            case "monthly":
+                subscriptionPeriod = 1;
+                break;
+            case "quarterly":
+                subscriptionPeriod = 3;
+                break;
+            case "promonthly":
+                subscriptionPeriod = 8;
+                break;
+            case "yearly":
+                subscriptionPeriod = 12;
+                break;
+            case "premium":
+                subscriptionPeriod = 16;
+        }
+
+    $(document).ready(function () {
+        if ('@Request.QueryString["landingpromo"]') {
+            submitPromocode('@Request.QueryString["landingpromo"]');
+        }
+    });
+
+    $(document).on('submit', '.form-section > form', function (event) {
+        event.preventDefault();
+    });
+
+    $("#tos").change(function () {
+        if (this.checked && $(".checkbox-group").hasClass("tos-error")) $(".checkbox-group").removeClass("tos-error");
+    });
+
+    $('.user-details > .checkbox-group > label[for="AcceptTerms"]').on('click', function () {
+        if ($("#tos")[0].checked && $(".checkbox-group").hasClass("tos-error")) $(".checkbox-group").removeClass("tos-error");
+    });
+
+    function getCookieValue(cookieName) {
+                                const cookieString = document.cookie;
+                                const cookies = cookieString.split('; ');
+
+
+
+                                for (let i = 0; i < cookies.length; i++) {
+                                    const cookie = cookies[i].split('=');
+                                    const name = decodeURIComponent(cookie[0]);
+                                    const value = decodeURIComponent(cookie[1]);
+
+
+
+                                    if (name === cookieName) {
+                                        return value;
+                                    }
+                                }
+
+                                return null;
+                            }
+
+    $("#submit-payment").click(function () {
+
+        if (!$("#tos")[0].checked) {
+            $(".checkbox-group").addClass("tos-error");
+            return;
+        } else {
+            $(".checkbox-group").removeClass("tos-error");
+        }
+
+        var paylike = Paylike({ key: '@System.Configuration.ConfigurationManager.AppSettings["StartupCentral.Paylike.PublicKey"]' });
+        //const paylike = Paylike({ key: '18284b56-b984-403c-abe5-863d6bcb97e1' });
+        paylike.pay(
+                    {
+                        //test: true,
+                        unplanned: { merchant: true },
+                    },
+                    (err, result) => {
+                        if (err) return console.log(err)
+                        $.ajax({
+                        type: "POST",
+                        url: location.origin + "/umbraco/api/upodiapi/savepaymentmethod",
+                        data: {
+                            UserId: '@Request.QueryString["memberkey"]',
+                            Token: result.transaction.id,
+                            PromoKode: currentPromocode,
+                            SubscriptionType: subscriptionPeriod
+                        },
+                        success: function (data) {
+                               if (newsletter == 'True') {
+                        startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_sync', {},
+                        function (data) {
+                            if (data) {
+                                if (data.Success) {
+                                    console.log('Contact_sync contact Synced');
+                                }
+                            }
+                        });
+                    } else {
+                        startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_sync_nomarketingmember', {},
+                        function (data) {
+                            if (data) {
+                                if (data.Success) {
+                                    console.log('Contact_sync_nomarketingmember contact Synced');
+                                }
+                            }
+                        });
+                    }
+
+                    //window.location.href = "@Umbraco.Web.Composing.Current.UmbracoHelper.Content(28685).Url";
+					                    localStorage.setItem("currentPromo", currentPromocode);
+                    localStorage.setItem("MemberKey", '@Request.QueryString["memberkey"]');
+                    localStorage.setItem("TotalAmount", '@Session["PlanAmount"]');
+                    localStorage.setItem("pricevariable", '@Session["PlanType"]');
+                    const asclid = localStorage.getItem("asclid");
+
+                     if (asclid != null) {
+                            $.ajax({
+                                url: `https://www.aservice.cloud/trc/mastertag/conv?asclid=${asclid}&cur=DKK&amount=${localStorage.getItem('TotalAmount')}&order_id=${localStorage.getItem('MemberKey')}&pricevariable=${localStorage.getItem('pricevariable')}`,
+                                type: "get", //send it through get method
+
+                                success: function (response) {
+                                    console.log(response)
+                                },
+                                error: function (xhr) {
+                                    console.log(xhr)
+                                }
+                            });
+                        }
+
+                        // Retrieve the values of the "paid" and "pacid" cookies
+                            const paidCookie = getCookieValue('paid');
+                            const pacidCookie = getCookieValue('pacid');
+
+                            let programID;
+
+                            if (localStorage.getItem('pricevariable').toLowerCase() === 'promonthly') {
+                                programID = '10576';
+                            }
+                            else if (localStorage.getItem('pricevariable').toLowerCase() === 'premium') {
+                                programID = '10561';
+                            }
+
+                            if (paidCookie != null && pacidCookie != null)  {
+                                $.ajax({
+                                    url: `https://www.partner-ads.com/dk/leadtracks2s.php?programid=${programID}&type=lead&partnerid=${paidCookie}&pacid=${pacidCookie}&orderreid=${localStorage.getItem('MemberKey')}&varienummer=x&antal=1&omprsalg=${localStorage.getItem('TotalAmount')}`,
+                                    type: "get", //send it through get method
+
+                                    success: function (response) {
+                                        console.log(response)
+                                    },
+                                    error: function (xhr) {
+                                        console.log(xhr)
+                                    }
+                                });
+                            }
+
+                    const makeInfluence = JSON.parse(localStorage.getItem("makeInfluence"));
+                    if (makeInfluence != null) {
+                        window.location.href = `@Umbraco.Web.Composing.Current.UmbracoHelper.Content(28685).Url?_miid=${makeInfluence.id}&utm_source=${makeInfluence.source}&utm_medium=${makeInfluence.medium}`;
+                    }
+                    else {
+                        window.location.href = "@Umbraco.Web.Composing.Current.UmbracoHelper.Content(28685).Url";
+                    }
+                        }
+                    });
+                        console.log(result.transaction.id);
+                    }
+        )
+
+        @*paylike.popup({
+            title: 'Add card',
+            description: 'Please enter your card details',
+            test: {}
+        }, function (err, r) {
+            console.log("After payment: ");
+            console.log(r);
+            $.ajax({
+                type: "POST",
+                url: location.origin + "/umbraco/api/upodiapi/savepaymentmethod",
+                data: {
+                    UserId: '@Request.QueryString["memberkey"]',
+                    Token: r.card.id,
+                    PromoKode: currentPromocode,
+                    SubscriptionType: subscriptionPeriod
+                },
+                success: function (data) {
+
+                    if (newsletter == 'True') {
+                        startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_sync', {},
+                        function (data) {
+                            if (data) {
+                                if (data.Success) {
+                                    console.log('Contact_sync contact Synced');
+                                }
+                            }
+                        });
+                    } else {
+                        startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_sync_nomarketingmember', {},
+                        function (data) {
+                            if (data) {
+                                if (data.Success) {
+                                    console.log('Contact_sync_nomarketingmember contact Synced');
+                                }
+                            }
+                        });
+                    }
+
+                    ndow.location.href = "@Umbraco.Web.Composing.Current.UmbracoHelper.Content(28685).Url";
+					                    localStorage.setItem("currentPromo", currentPromocode);
+                    localStorage.setItem("MemberKey", '@Request.QueryString["memberkey"]');
+                    localStorage.setItem("TotalAmount", '@Session["PlanAmount"]');
+                    const makeInfluence = JSON.parse(localStorage.getItem("makeInfluence"));
+                    if (makeInfluence != null) {
+                        window.location.href = `@Umbraco.Web.Composing.Current.UmbracoHelper.Content(28685).Url?_miid=${makeInfluence.id}&utm_source=${makeInfluence.source}&utm_medium=${makeInfluence.medium}`;
+                    }
+                    else {
+                        window.location.href = "@Umbraco.Web.Composing.Current.UmbracoHelper.Content(28685).Url";
+                    }
+                }
+            });
+        });*@
+});
+
+    $("#promo-code-submit").click(function () {
+        submitPromocode(null);
+    });
+
+    function submitPromocode(promo) {
+        let promocode = (!promo) ? $("#promo-code").val().trim() : promo;
+    if (!promocode || promocode === '') return;
+    $(".loading-modal").css("display", "flex");
+    $(".promocode-section__msg").css("color", "red");
+    $(".solution-summary__content > #promo-duration").css("margin-top", "0");
+    let discountAmount = $(".solution-details__group > .discount-amount");
+    let newMonthlyPrice = @monthlyPrice;
+        $("#promo-code-submit").prop("disabled", true);
+        $(".confirm-payment__modal").css("display", "flex");
+        $.ajax({
+            url: '/umbraco/Surface/RegisterUserPayment/ApplyPromocode',
+            type: 'POST',
+            data: {
+                promocode: promocode
+            },
+            success: function (msg) {
+                currentPromocode = promocode;
+                // check if promocode is valid/invalid
+                if (typeof msg === 'string') {
+                    currentPromocode = "StartupCentral-2020";
+                    $(".promocode-section__msg").text(msg);
+                    discountAmount.text("0");
+                    newMonthlyPrice = @monthlyPrice;
+                    $(".solution-summary__content > #promo-duration").html("");
+                } else {
+                    discountAmount.text(roundToTwo(msg["Item1"] * @monthlyPrice));
+                    newMonthlyPrice = roundToTwo(parseInt(@monthlyPrice - discountAmount.text()));
+                    dInterval = msg["Item3"].toLowerCase();
+                    dCount = parseInt(msg["Item2"]);
+                    dAmount = newMonthlyPrice;
+                    dAmount += dAmount * 0.25;
+                    $(".promocode-section__msg").css("color", "green");
+                    $(".promocode-section__msg").html("Rabatkoden er aktiveret");
+                    let pcDuration = "";
+
+                    let afterPrice = ('@Session["PlanType"]' === 'monthly') ? 'md.' : ('@Session["PlanType"]' === 'quarterly') ? 'kvt.' : '';
+
+                    switch (msg["Item3"].toLowerCase()) {
+                        case "months":
+                            pcDuration = "måneder";
+                            break;
+                        case "years":
+                            pcDuration = "år";
+                            break;
+                        case "days":
+                            pcDuration = "dage";
+                            break;
+                    }
+                    $(".solution-summary__content > #promo-duration").html(`Rabatten gælder i ${msg["Item2"]} ${pcDuration} og <span>${@monthlyPrice + @monthlyPrice * 0.25}</span> kr. ${afterPrice} efterfølgende.`);
+                    $(".solution-summary__content > #promo-duration").css("margin-top", "1rem");
+                }
+
+                // recalculate total price
+                $(".solution-summary__content > .amount").text(newMonthlyPrice + newMonthlyPrice * 0.25);
+                $(".loading-modal").css("display", "none");
+            },
+            complete: function (msg) {
+                $("#promo-code-submit").prop("disabled", false);
+                $(".confirm-payment__modal").css("display", "none");
+            }
+        });
+    }
+
+    $("#promo-code-cancel").click(function () {
+        $(".promocode-section__msg").html("&nbsp;");
+        $("#promo-code").val(null);
+        $(".solution-details__group > .discount-amount").text("0");
+        $(".solution-summary__content > .amount").text(@monthlyPrice + @monthlyPrice * 0.25);
+        $(".solution-summary__content > #promo-duration").html("");
+        currentPromocode = "StartupCentral-2020";
+        dAmount = normalAmount;
+    });
+
+    function roundToTwo(num) {
+        return +(Math.round(num + "e+2") + "e-2");
+    }
+
+    function ContactSync() {
+        if (newsletter == 'True') {
+            startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_fejletsignup', {},
+                        function (data) {
+                            if (data) {
+                                if (data.Success) {
+                                            console.log('Contact_fejletsignup contact Synced.');
+                                        }
+                                    }
+                                });
+                            } else {
+                                startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_fejletsignup_nomarketing', {},
+                function (data) {
+                                    if (data) {
+                                        if (data.Success) {
+                                            console.log('Contact_fejletsignup_nomarketing contact Synced.');
+                                        }
+                                    }
+                                });
+        }
+        if (planType == 'basic') {
+            startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_sync_basic', {},
+                function (data) {
+                    if (data) {
+                        if (data.Success) {
+                            console.log('Contact_sync_basic contact Synced');
+                        }
+                    }
+                });
+        }
+    }
+
+    function HidingPayment() {
+        if (planType == 'basic') {
+            bottomSection.style.display = "none";
+            checkbox.style.display = "none";
+            solSummary.style.display = "none";
+            solDuration.style.display = "none";
+            promoSection.style.display = "none";
+            basicButton.style.display = "block";
+        } else {
+            basicButton.style.display = "none";
+    }
+    }
+
+
+</script>
+
+@*<script src="https://js.stripe.com/v3/"></script>
+    <script>
+        (async () => {
+            const stripe = Stripe('pk_test_51N0K9zK8e0NlDNu7w7hccs8mvJcVoRCycmXcMMKnpat0dkCeHkoyeGeYNy1r20XWf0KHEy9JgOIH9wWajfl1qHeY005jPIhXB4');
+            // const response = await fetch('http://localhost:1111/umbraco/api/stripeapi/Get');
+
+            // Get the client secret from the response
+            $.get("/umbraco/api/stripeapi/Get", function (data) {
+                const jsonResult = JSON.parse(data.Message);
+                const clientSecret = jsonResult.client_secret;
+
+                const options = {
+                    clientSecret: clientSecret,
+                    // Fully customizable with appearance API.
+                    appearance: {/*...*/ },
+                };
+
+                // Set up Stripe.js and Elements to use in checkout form, passing the client secret obtained in step 3
+                const elements = stripe.elements(options);
+
+                // Create and mount the Payment Element
+                const paymentElement = elements.create('payment');
+                paymentElement.mount('#payment-element');
+
+
+                const form = document.getElementById('payment-form');
+
+                form.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+
+                    await stripe.confirmSetup({
+                        //`Elements` instance that was used to create the Payment Element
+                        elements,
+                        confirmParams: {
+                            return_url: 'https://example.com/account/payments/setup-complete',
+                        },
+                        redirect: 'if_required'
+                    })
+                        .then(function (result) {
+                        console.log("result", result);
+                        if (result.error) {
+                            // Display error.message in your UI.
+                            console.log("error", result.error);
+                            const messageContainer = document.querySelector('#error-message');
+                            messageContainer.textContent = error.message;
+                            return;
+                            }
+
+                        // Get Stripe Customer from api
+                        $.get("/umbraco/api/stripeapi/GetCustomer/" + result.setupIntent.id)
+                            .then(function (data) {
+                            var jsonResult1 = JSON.parse(data.Message);
+
+                                // Save Stripe Customer to Upodiapi
+                                $.ajax({
+                                    type: "POST",
+                                    url: location.origin + "/umbraco/api/upodiapi/savepaymentmethod",
+                                    data: {
+                                        UserId: '@Request.QueryString["memberkey"]',
+                                        Token: jsonResult1,
+                                        PromoKode: currentPromocode,
+                                        SubscriptionType: 12
+                                    },
+                                    success: function (data) {
+                                        if (data.Success) {
+                                            console.log("success2", data);
+                                            window.location.href = "/umbraco/surface/checkout/checkoutcomplete";
+                                        } else {
+                                            console.log("error");
+                                        }
+                                    },
+                                    error: function (data) {
+                                        console.log("error");
+                                    }
+
+                                });
+                            });
+                    });
+                });
+            });
+        })();
+    </script>*@

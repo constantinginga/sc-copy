@@ -1,0 +1,160 @@
+@using FergusonMoriyama.Pdf
+
+@helper Start() {
+    <!-- Start Root -->
+	@Html.Raw("<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" xmlns:ibex=\"http://www.xmlpdf.com/2003/ibex/Format\">")
+    <!-- End Root -->
+}
+
+@helper End()
+{
+    <!-- Start Close Root -->
+	@Html.Raw("</fo:root>")
+    <!-- End Close Root -->
+}
+
+@helper Secure() {
+    <!-- Start Security -->
+    <ibex:security deny-print="true" deny-extract="true" deny-modify="true" />
+    <!-- End Security -->
+}
+
+@helper Secure(string user, string password) {
+    <!-- Start Security -->
+    <ibex:security deny-print="true" deny-extract="true" deny-modify="true" user-password="@user" owner-password="@password"/>
+    <!-- End Security -->
+}
+
+@helper MetaData(string title)
+{
+	<!-- Start Properties -->
+    <ibex:properties
+	    title="@title"
+	    creator="PDF Creator for Umbraco" />
+    <!-- End Properties -->
+}
+
+@helper MetaData(string title, string author)
+{
+    <!-- Start Properties -->
+    <ibex:properties
+	    title="@title" 
+	    author="@author"
+	    creator="PDF Creator for Umbraco" />
+
+    <!-- End Properties -->
+}
+
+@helper MetaData(string title, string author, string subject, string keywords, string creator)
+{
+	<!-- Start Properties -->
+
+    <ibex:properties
+	    title="@title" 
+	    author="@author"
+	    subject="@subject"
+	    keywords="@keywords" 
+	    creator="@creator" />
+
+    <!-- End Properties -->
+}
+
+@helper LayoutTwoColumnA4() {
+    
+    <!-- Start Layout -->
+
+    <fo:layout-master-set>
+        <fo:simple-page-master 
+            master-name="master" 
+            page-width="210mm"
+            page-height="297mm" 
+            margin-top="1cm" 
+            margin-bottom="1cm"
+            margin-left="1cm" 
+            margin-right="1cm">
+    
+	        <fo:region-body margin-top="1.5cm" margin-bottom="1.5cm" column-count="2" column-gap="0.5cm"/>
+
+	        <fo:region-before region-name="header" extent="3cm"/>
+            <fo:region-after region-name="footer" extent="1.5cm"/>
+
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+    
+    <!-- End Layout -->
+}
+
+@helper StartBody()
+{
+    @Html.Raw("<fo:page-sequence master-reference=\"master\">")
+}
+
+@helper Footer(string text) {
+    
+    @Footer(text, "#aaaaaa", "8pt")
+}
+
+@helper Footer(string text, string color, string fontSize) {
+   
+    <!-- Start Footer -->
+    <fo:static-content flow-name="footer">
+        <fo:block font-size="@fontSize" color="@color">
+            <fo:block text-align-last="justify">
+                @text
+                <fo:leader leader-pattern="space"/>
+                Page <fo:page-number/> of <fo:page-number-citation ref-id="last-page"/>
+            </fo:block>
+        </fo:block>
+    </fo:static-content>
+
+    <!-- End Footer --> 
+}
+
+@helper EndBody()
+    {
+    @Html.Raw("</fo:page-sequence>")
+}
+
+@helper PagerBlock()
+    {
+    <!-- Start Pager Block -->
+    <!-- Put this inside the closing of the main body flow -->
+
+        <fo:block id="last-page" keep-together.within-page="auto"></fo:block>
+
+    <!-- End Pager Block -->
+}
+
+@helper Block(string text)
+{
+    @Block(text, "Arial", "10pt", "#000000")
+}
+
+@helper Block(string text, string font, string size)
+{
+    @Block(text, font, size, "#000000")
+}
+
+@helper Block(string text, string font, string size, string color)
+{
+    <fo:block>
+	    <fo:inline font-family="@font" font-size="@size" color="@color">
+		    @text
+	    </fo:inline>
+    </fo:block>
+}
+
+@helper StartArea(string name)
+    {
+    if (name == "body")
+    {
+        name = "xsl-region-body";
+    }
+    
+    @Html.Raw("<fo:flow flow-name=\""+name+"\">")
+}
+
+@helper EndArea()
+    {
+    @Html.Raw("</fo:flow>")
+}

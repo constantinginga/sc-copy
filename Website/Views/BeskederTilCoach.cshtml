@@ -1,0 +1,348 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Extensions
+@{
+    Layout = "Master.cshtml";
+
+    var currentUser = Members.GetCurrentMember();
+
+    Umbraco.Web.UmbracoHelper helper = Umbraco; 
+
+    string myAvatarImageUrl = "/images/smalldefaultavatar.jpg";
+    
+    
+    
+   try
+    {
+        if (currentUser.Value("wwavatar") != null)
+        {
+            if (currentUser.Value<string>("wwavatar").IsNumeric())
+            {
+                myAvatarImageUrl = string.Concat(helper.Media(currentUser.Value<int>("wwavatar")).Url, "?height=48&width=48&cropmode=crop");
+            }
+            else if (currentUser.Value<string>("wwavatar").Contains("umb://"))
+            {
+                myAvatarImageUrl = string.Concat(helper.Media(currentUser.Value<string>("wwavatar").GetIdByUdi()).Url, "?height=48&width=48&cropmode=crop");
+            }
+        }
+
+    }
+    catch (Exception)
+    {
+        myAvatarImageUrl = "/images/smalldefaultavatar.jpg";
+    }
+    
+
+}
+    <section class="startupcentralbackground">
+        <section class="mt80">
+            <div class="container whitecontainer">
+                <div class="row ">
+                    <div class="col-md-4">
+                        <div class="bigheadline uppercase f80 f50mob mb20 fw700 dark">@Page.wwoverskrift</div>
+                        <div class="headlinetxt f16 fw700 lh24">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    @Html.Raw(@Page.bodyText)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt40">
+                        <a href="javascript:void(0);" class="fleft mb20 btnlightbg white" id="showmessages" style="display:none;">Se beskeder</a>
+                        <div id="MessagesPlace">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+@*<section>
+    <img src="@Page.wwbgimg.Url" id="cloudbg" />
+</section>*@
+
+
+<script type="text/javascript">
+    $(document).ready(GetRecipients);
+
+    function GetRecipients()
+    {
+        startupCentral.requestData('/umbraco/api/beskedapi/GetRecipients',
+            function (response) {
+                var messagesPlace = $("#MessagesPlace");
+                messagesPlace.html("");
+                if (response.Data.length == 0) {
+                    messagesPlace.html(" <div>Du har ingen beskeder.</div>");
+                }
+                for (var i = 0; i < response.Data.length; i++) {
+                    var data = response.Data[i];
+                    var Recipients =
+                        "<div class='messagebox' data-id='" + data.Id + "' id='messagebox" + data.Id + "'>" +
+                        "<div class='shadowbox shadowlight' data-id='" + data.Id + "' onclick='showMes(this)'>" +
+                        "<div class='col-md-1 col-sm-2 col-xs-3 text-center'>" +
+                        "<img src='" + data.Avatar + "?height=48&amp;width=48&amp;cropmode=crop' alt='" + data.Name + "'>" +
+                        "</div>" +
+                        "<div class='col-md-2 col-sm-2 col-xs-6'>" +
+                        data.Name +
+                        "</div>" +
+                        "</div>" +
+                        "<div class='showfullmessagesline' style='display: none;'>" +
+                        "</div>" +
+                        "</div>";
+                    messagesPlace.append(Recipients);
+                    GetMessages(data);
+                }
+            });
+
+    }
+
+    function GetMessages(Recipient) {
+        startupCentral.requestData('/umbraco/api/beskedapi/GeMessages?fromMemberId=' + Recipient.Id,
+            function (response) {
+                var messagesBox = $("#messagebox" + Recipient.Id).find(".showfullmessagesline");
+                messagesBox.html("");
+                var allowedToSend = true;
+                for (var i = 0; i < response.Data.length; i++) {
+                    var mes = response.Data[i];
+                    var Attachment = "";
+                    var PitchAttatchment = "";
+                    if (mes.Attachment) {
+                        Attachment = "<a href='"+mes.Attachment+"' class='mb20 btnlightbg white'>Læs forretningsplan</a>";
+                    }
+                    if (mes.PitchAttatchment) {
+                        PitchAttatchment = "<a href='" + mes.PitchAttatchment + "' class='mb20 btnlightbg white'>Læs pitch deck</a>";
+                    }
+                        var mesHtml = "<div class='shadowbox shadowlight' style='display: block; padding-top: 20px;'>" +
+                            "<div class='col-md-1 col-sm-2 col-xs-3 text-center'>" +
+                            "<img src='" + mes.FromUser.Avatar + "?height=48&amp;width=48&amp;cropmode=crop' alt='" + mes.FromUser.Name + "'>" +
+                            "</div>" +
+                            "<div class='col-md-2 col-sm-2 col-xs-6'>" +
+                            "<div class='fleft mr5'>" +
+                            "<span class='fleft fw700 w100'><small>Sendt til:</small><br>" + mes.FromUser.Name + "</span>" +
+                            "<span class='small fw400'>Student</span>" +
+                            "</div>" +
+                            "</div>" +
+                            "<div class='col-md-3'>" + mes.Body + "</div>" +
+                            "<div class='col-md-3'>" +
+                            "<small style='float: right;'>Sendt: " + mes.CreateDate + " </small><br>" +
+                            "</div>" +
+                            "<div class='col-md-3 col-sm-3 text-center'>" +
+                            "<div class='pull-right'>" + Attachment +
+                            "</div>" +
+                            "<div class='pull-right'>" + PitchAttatchment +
+                            "</div>" +
+                            "</div>" +
+                            "</div>";
+                        allowedToSend = mes.ToUser.UserType !== "investor";
+                    messagesBox.append(mesHtml);
+                }
+                $("#messagebox" + Recipient.Id).attr("data-allowed", allowedToSend);
+                addNewMess(messagesBox, Recipient);
+                });
+        }
+
+    function addNewMess(messagesBox, Recipient) {
+            var newMes = "<div class='shadowbox shadowlight investorsvarContainer p25' style='display: block; padding-top: 20px;'>" +
+                "<div class='row'>" +
+                "<div class='col-md-1 col-sm-2 col-xs-3 text-center'>" +
+                "<img src='@myAvatarImageUrl' alt=''>" +
+                "</div>" +
+                "<div class='col-md-3 col-sm-3 col-xs-6'>" +
+                "<div class='fleft mr5 '>" +
+                "<span class='fleft fw700 w100'>@currentUser.Name<span class='dustedblue f10 fw400 ml15'>@TimeZoneInfo.ConvertTime(DateTime.Now,TimeZoneInfo.FindSystemTimeZoneById("Romance Standard Time")).ToString("dd. MMM yyyy")</span></span>" +
+                "<span class='small fw400'>Student</span>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "<div class='row'>" +
+                "<div class='col-md-6 col-sm-9 col-md-offset-3'>" +
+                "<form action='' name='newmessage' id='' class='fleft w100' style='display:block;' method='post' novalidate='novalidate'>" +
+                "<div class='form-group'>" +
+                "<div class='fleft w100 checkbox mb20'>"+
+                "<div class='fleft mr15 mb10 mt10'>"+
+                "<label for='Afvisning'><input data-type='investorsvar' onclick='investorsvarCheck(this)' type='checkbox' value='2156' name='Afvisning' id='Afvisning'>Afvisning<span></span></label>"+
+                "</div>"+
+                "<div class='fleft mr15 mb10 mt10'>"+
+                "<label for='Accept'><input data-type='investorsvar' onclick='investorsvarCheck(this)' type='checkbox' value='2157' name='Accept' id='Accept'>Accept<span></span></label>"+
+                "</div>"+
+                "</div>" +
+                "<input type='text' id='txtEmne' name='emne' class='form-control mb20' placeholder='Emne'>" + 
+                "<p data-react='notallowedtosend' style='display: none;'>Du kan ikke sende flere beskeder pt. - afventer svar fra investor</p>" +
+                "<label data-react='allowedtosend'>Ny besked</label>" +
+                "<textarea row=8 data-react='allowedtosend' class='form-control' placeholder='Skriv din uddybbende besked her' id='txtSvar'></textarea>" +
+                "</div>" +
+                "<input type='button' value='Send beskeden' onclick='SendMes(this,"+Recipient.Id+")' data-react='allowedtosend' class='coachbutton'>" +
+                "</form>" +
+                "</div>" +
+                "</div>" +
+                "</div>";
+            messagesBox.append(newMes);
+        }
+
+    function showMes(_this) {
+        var _this = $(_this);
+        var messagebox = $(_this).parent()
+        $('.messagebox').removeClass('active');
+        messagebox.addClass('active');
+        checkAllowed();
+        $(".messagebox").hide();
+        messagebox.show();
+        messagebox.find(".newsmessagewrapper").show();
+        /*var currentConversationId = $(_this).attr('data-conversationid');
+        $(".messagebox").each(function (idx, obj) {
+            if ($(obj).attr('data-conversationid') !== currentConversationId) {
+                    $(obj).hide();
+                }
+        });*/
+
+        if (!$(_this).is(':visible')) {
+            $(_this).show();
+        }
+        //$(_this).find("div.shadowbox").css({ "display": "block", "padding-top": "20px" });
+
+        $(".teasermessage", _this).hide();
+        $(".fullBodyText", _this).show();
+
+        $(_this).find(".showallmessage").show();
+        $(_this).parent().find(".showfullmessagesline").show()
+        $("a#showmessages").show();
+        $(_this).find(".talkname").show();
+
+        var dataId = $(_this).attr('data-id');
+        if (dataId) {
+            startupCentral.messages.markAsRead(dataId);
+        }
+
+        $('.messagebox.active #btnSendMessageTo').val('Send beskeden til ' + $(_this).attr('data-name'));
+        $('#frmFromCoach').show();
+    }
+
+    function SendMes(_this, toMember ) {
+        var besked = $(_this).parents('form').first().find('#txtSvar').val();
+        var txtEmne = $(_this).parents('form').first().find('#txtEmne').val();
+        startupCentral.messages.send(toMember, txtEmne, besked, function (data) {
+            GetRecipients();
+        });
+    }
+
+    function investorsvarCheck(_this) {
+        var messageBox = $('.messagebox.active');
+        var _this = $(_this)
+        console.log($(_this, messageBox).attr("id"));
+        console.log($(_this, messageBox).is(':checked'));
+
+
+        if ($(_this, messageBox).attr("id") === "Accept") { //&& !$('#Afvisning',messageBox).is(':checked')){
+            if ($(_this, messageBox).is(':checked')) {
+                $('#Afvisning', messageBox).prop('checked', false);
+                $('#Accept', messageBox).prop('checked', true);
+            } else {
+                $('#Afvisning', messageBox).prop('checked', false);
+                $('#Accept', messageBox).prop('checked', false);
+            }
+        }
+
+        if ($(_this, messageBox).attr("id") === "Afvisning") { //&& !$('#Accept',messageBox).is(':checked')){
+           if($(_this ,messageBox).is(':checked')){
+                $('#Afvisning',messageBox).prop('checked', true);
+                $('#Accept',messageBox).prop('checked', false);
+           }else{
+               $('#Afvisning',messageBox).prop('checked', false);
+                $('#Accept',messageBox).prop('checked', false);
+           }
+       }
+
+
+        if ($(_this ,messageBox).is(':checked')) {
+            getInvestorSvar(event);
+            event.stopPropagation();
+        }
+        event.stopPropagation();
+    }
+
+</script>
+
+<script>
+
+    var isDirty = false;
+
+    $('input[data-type=investorsvar]').on('click', function (e) {
+        var messageBox = $('.messagebox.active');
+
+        console.log($(this,messageBox).attr("id"));
+        console.log($(this,messageBox).is(':checked'));
+
+
+       if($(this,messageBox).attr("id") ==="Accept" && !$('#Afvisning',messageBox).is(':checked')){
+           if($(this,messageBox).is(':checked')){
+                $('#Afvisning',messageBox).prop('checked', false);
+                $('#Accept',messageBox).prop('checked', true);
+           }else{
+               $('#Afvisning',messageBox).prop('checked', false);
+                $('#Accept',messageBox).prop('checked', false);
+           }
+       }
+
+       if($(this,messageBox).attr("id") ==="Afvisning" && !$('#Accept',messageBox).is(':checked')){
+           if($(this,messageBox).is(':checked')){
+                $('#Afvisning',messageBox).prop('checked', true);
+                $('#Accept',messageBox).prop('checked', false);
+           }else{
+               $('#Afvisning',messageBox).prop('checked', false);
+                $('#Accept',messageBox).prop('checked', false);
+           }
+       }
+
+
+        if ($(this,messageBox).is(':checked')) {
+            getInvestorSvar(e);
+            e.stopPropagation();
+        }
+         e.stopPropagation();
+    });
+
+    $('#student').on('change', function (e) {
+        if (isDirty === false) {
+            getInvestorSvar(e);
+            e.stopPropagation();
+        }
+         e.stopPropagation();
+    });
+
+    $('#txtEmne').on('keydown', function (e) {
+        isDirty = true;
+        e.stopPropagation();
+    });
+
+    $('#txtSvar').on('keydown', function (e) {
+        isDirty = true;
+        e.stopPropagation();
+    });
+
+
+    function getInvestorSvar(e) {
+        
+        var messageBox = $('.messagebox.active');
+
+        console.log( $('input[data-type=investorsvar]',messageBox));
+        var svarId = $('input[data-type=investorsvar]:checked',messageBox).val();
+        var studentId = $('.messagebox.active').attr('data-id');
+        
+        if (svarId !== null) {
+            startupCentral.requestData('/umbraco/api/beskedapi/getinvestorsvar?id=' + svarId + '&modtagerid=' + studentId, function (data) {
+                if (data !== null) {
+                    $('#txtEmne',messageBox).val(data.Overskrift);
+                    $('#txtSvar',messageBox).val(data.StandardSvar);
+                }
+            });
+        }
+
+        e.stopPropagation();
+    } 
+
+</script>
+
+
+
+
+

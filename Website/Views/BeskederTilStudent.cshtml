@@ -1,0 +1,418 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Extensions
+@using Umbraco.Web.Security
+@{
+    //Layout = null;
+    Layout = "Master.cshtml";
+
+    MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+    IMember member = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+
+    <script>
+        var userToken = ''
+        @if (member != null)
+        {
+            @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(member), "';"))
+        }
+    </script>
+}
+
+
+<div id="messaging" class="sc-logged sc-bgb10">
+    <div class="row-container msg-messaging-container">
+
+        <aside class="md-rail is-active" id="msg-md-rail">
+            <div class="msg-conversations-container">
+
+                <div class="msg-conversations-container__header">
+                    <div class="msg-conversations-container__title-row">
+                        <h1>Se beskeder</h1>
+                    </div>
+                </div>
+
+                <ul class="msg-conversations-container__conversation-list" id="inbox">
+                </ul>
+            </div>
+        </aside>
+
+        <div class="feed-rail" id="msg-feed-rail">
+            <div class="msg-thread">
+
+                <div class="msg-title-bar shared-title-bar">
+                    <div class="shared-title-bar__title msg-title-bar__title-bar-title ">
+                        <button id="back-button" class="msg-title-bar__back-button button button--text">
+                                <svg id="BackArrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24">
+                                    <path id="Path_88" data-name="Path 88" d="M0,0H24V24H0Z" fill="none" />
+                                    <path id="Path_89" data-name="Path 89"
+                                        d="M19,11H7.83l4.88-4.88a1.008,1.008,0,0,0,0-1.42,1,1,0,0,0-1.41,0L4.71,11.29a1,1,0,0,0,0,1.41l6.59,6.59a1,1,0,0,0,1.41-1.41L7.83,13H19a1,1,0,0,0,0-2Z"
+                                        fill="#182848" />
+                                </svg>
+                        </button>
+                        <a class="msg-thread__link-to-profile">
+                            <dl class="msg-entity-information">
+                                <dt class="msg-entity-information__entity-title-wrapper">
+                                    <h2 class="msg-entity-information__entity-title" id="nameofreciever"></h2>
+                                </dt>
+                                <dd class="msg-entity-information__entity-info">
+
+                                </dd>
+                            </dl>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="msg-s-message-list-container setidq" style="white-space: pre-line;">
+                    <div class="msg-s-message-list">
+                        <ul class="msg-s-message-list-content">
+                        </ul>
+                    </div>
+                </div>
+
+                <form class="msg-form" action="" name="newmessage" id="" method="post" novalidate="novalidate">
+                    <div class="msg-form__msg-content-container">
+                        <textarea class="msg-form__contenteditable" id="message" name="user-message" data-react="allowedtosend" role="textbox" aria-multiline="true" placeholder='Skriv din uddybbende besked her'></textarea>
+                    </div>
+                    <div class="msg-form__footer">
+                        <div class="msg-form__actions msg-form__actions-left">
+                            <p id="emptyMsg" class="emptyMsg" style="display: none; color: red;">Kan ikke sende en tom besked</p>
+                            @*<div class="msg-form__upload-attachment">
+            <button id="attachment-trigger" class="fa-icon-button">
+                <svg id="Attachment" xmlns="http://www.w3.org/2000/svg" width="24.166"
+                    height="24" viewBox="0 0 24.166 24">
+                    <path id="Path_90" data-name="Path 90" d="M0,0H24V24H0Z" fill="none" />
+                    <path id="Path_91" data-name="Path 91"
+                        d="M17.75,16H7.17a4.116,4.116,0,0,1-4.15-3.61A4,4,0,0,1,7,8H19.36a2.6,2.6,0,0,1,2.63,2.24A2.5,2.5,0,0,1,19.5,13H9a1,1,0,0,1,0-2h8.75a.75.75,0,0,0,0-1.5H9.14a2.6,2.6,0,0,0-2.63,2.24A2.5,2.5,0,0,0,9,14.5H19.33a4.116,4.116,0,0,0,4.15-3.61A3.993,3.993,0,0,0,19.5,6.5H7.23a5.659,5.659,0,0,0-5.71,4.96A5.505,5.505,0,0,0,7,17.5H17.75a.75.75,0,0,0,0-1.5Z"
+                        transform="translate(-4.824 12.352) rotate(-45)"
+                        fill="rgba(24,40,72,0.5)" />
+                </svg>
+                <span>Attach document</span>
+            </button>
+        </div>*@
+                        </div>
+                        <div class="msg-form__actions msg-form__actions-right">
+                            <button type="button" class="button" data-react='allowedtosend' id="btnsendmsg">Send beskeden</button>
+                            <a id='sendingBlock' style='display: none;'>Sender din besked, vent venligst ...</a>                            
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <aside class="sm-rail">
+        </aside>
+    </div>
+</div>
+
+<style>
+    #main-footer {
+        display: none;
+    }
+</style>
+
+<script>
+    //const input_raw = document.getElementById('message');
+    //const btn = document.getElementById('btnsendmsg');
+
+    //document.getElementById('btnsendmsg').disabled = true;  
+    //document.getElementById('message').addEventListener('keyup', e => {
+    //    if ( e.target.value.trim() === "") {
+    //        document.getElementById('btnsendmsg').disabled = true;
+    //    }
+    //    else {
+    //        document.getElementById('btnsendmsg').disabled = false;
+    //    }
+    //});   
+
+</script>
+
+<script>
+    $("#msg-md-rail").click(function () {
+        var myElement = document.getElementById("msg-feed-rail");
+        myElement.className += " is-active";
+        var h = document.getElementById("msg-md-rail");
+        h.classList.remove("is-active");
+    });
+
+
+
+    $("#back-button").click(function () {
+        var myElement = document.getElementById("msg-feed-rail");
+        myElement.classList.remove("is-active");
+        var h = document.getElementById("msg-md-rail");
+        h.className += " is-active";
+    });
+</script>
+
+<script src="~/scripts/startupcental.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(GetRecipients);
+
+    var lpId;
+    var tOut;
+
+    function GetRecipients()
+    {
+        startupCentral.requestData('/umbraco/api/beskedapi/GetRecipients',
+            function (response) {
+                var messagesPlace = $("#inbox");
+                messagesPlace.html("");
+                if (response.Data.length == 0) {
+                    messagesPlace.html("Du har ingen beskeder. Vælg en coach, for at kunne sende en besked.");
+                }
+
+                for (var i = 0; i < response.Data.length; i++) {
+                    var active = "";
+                    var data = response.Data[i];
+
+                    GetLatestMsg(data);
+
+                    if (i == 0) {
+                        lpId = data.Id;
+                        active = "active";
+                        GetMessages(data.Id, data.Name);
+                    }
+
+                    var Recipients =
+                        "<li class='msg-conversation-listitem msg-conversation-container__conversation-item' data-id='" + data.Id + "'>" +
+                            "<div class='msg-conversation-card'>" +
+                                "<a class='"+ active +" msg-conversation-listitem__link' id='activediv" + data.Id + "'>" +
+                                    "<div class='msg-selectable-entity'>" +
+                                        "<div class='msg-selectable-entity__entity'>" +
+                                            "<img src='" + data.Avatar + "' alt='" + data.Name + "'>" +
+                                        "</div>" +
+                                    "</div>" +
+
+                                    "<div class='msg-conversation-card__content'>" +
+                                        "<div class='msg-conversation-card__rows'>" +
+                                            "<div class='msg-conversation-card__row msg-conversation-card__title-row'>" +
+                                                "<h3 class='msg-conversation-card__participant-names'>" +
+                                                    data.Name +
+                                                "</h3>" +
+                                                "<time class='msg-conversation-card__time-stamp' id='timestamp"+ data.Id +"'>" +
+                                                "</time>"+
+                                            "</div>" +
+
+                                            "<div class='msg-conversation-card__row msg-conversation-card__body-row'>" +
+                                                "<div class='msg-conversation-card__messsage-snippet-container' id='latestmsgholder" + data.Id + "'>" +
+                                                    "<p class='msg-conversation-listitem__message-snippet msg-conversation-card__message-snippet'>" +
+                                                    "<span class='msg-conversation-card__message-snippet-body'>" +
+
+                                                    "</span>" +
+                                                    "</p>" +
+                                                "</div>" +
+                                            "</div>" +
+                                        "</div>" +
+                                    "</div>" +
+                                "</a>" +
+                            "</div>" +
+                        "</li >";
+
+                    messagesPlace.append(Recipients);
+
+                    $('#activediv' + data.Id).removeAttr('onclick');
+                    $('#activediv' + data.Id).attr("onClick", "openChat(this, " + data.Id + ", \"" + data.Name + "\")");
+                }
+            });
+        //tOutW(lpId);
+    }
+
+    //function tOutW(lpId) {
+    //    if (p == true) {
+    //        GetMessages(lpId);
+    //    } else {
+    //        tOut = setTimeout(GetMessages(lpId), 250);
+    //    }
+    //}
+
+    function GetMessages(Recipient, RecipientName) {
+
+        startupCentral.requestData('/umbraco/api/beskedapi/GeMessages?fromMemberId=' + Recipient,
+            function (response) {
+                var messagesBox = $(".msg-s-message-list-content");
+                messagesBox.html("");
+
+                $("#nameofreciever").text(RecipientName);
+
+                var allowedToSend = true;
+
+                for (var i = 0; i < response.Data.length; i++) {
+                    var mes = response.Data[i];
+
+                    var Attachment = "";
+                    if (mes.Attachment) {
+                        var gid = mes.Attachment;
+                        gid = gid.replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, "$1-$2-$3-$4-$5");
+                        Attachment =
+                            "<div class='msg-s-event-bubble__button'> " +
+                                "<a href='/login/forretningsplan-oversigt/?id=" + gid + "' class='button button--cta'>Læs forretningsplan</a>" +
+                            "</div>";
+                    }
+                    var PitchAttatchment = "";
+                    if (mes.PitchAttatchment) {
+                        var gid = mes.PitchAttatchment;
+                        gid = gid.replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, "$1-$2-$3-$4-$5");
+                        PitchAttatchment =
+                            "<div class='msg-s-event-bubble__button'> " +
+                            "<a href='/login/pitch-deck-oversigt/?id=" + gid + "' class='button button--cta'>Læs pitch deck</a>" +
+                            "</div>";
+                    }
+
+                    var sentorrecieved;
+                    var seenClass = "";
+
+                    if (i == (response.Data.length - 1)) {
+                        if (mes.Read) {
+                            seenClass =
+                                "<div class='msg-s-event-seen'>" +
+                                "<span class='msg-s-sevent-seen__message'>Set<svg id='CheckMark' xmlns='http://www.w3.org/2000/svg' width='24'" +
+                                                "height='24' viewBox='0 0 24 24'>" +
+                                                "<path id='Path_94' data-name='Path 94' d='M0,0H24V24H0Z' fill='none' />" +
+                                                "<path id='Path_95' data-name='Path 95'" +
+													"d='M9,16.17,5.53,12.7a1,1,0,1,0-1.41,1.41L8.3,18.29a1,1,0,0,0,1.41,0L20.29,7.71A1,1,0,0,0,18.88,6.3Z" +
+                                                    "transform='translate(0 0)' fill='rgba(24,40,72,0.25)' />" +
+												"</svg>" +
+								"</span>" +
+                                "</div>";
+                        }
+                    }
+
+                    if (mes.FromUser.Id == @member.Id) {
+                        sentorrecieved = "sent";
+                    }
+                    else {
+                        sentorrecieved = "received"
+                    }
+
+                    var mesHtml =
+                        "<li class='msg-s-message-list__event msg-s-message-list__event--" + sentorrecieved +"'>" +
+                            "<div class='msg-s-event-listitem'>" +
+                                "<a class='msg-s-event-listitem__link'>" +
+                                    "<img src='" + mes.FromUser.Avatar + "' alt='" + mes.FromUser.Name + "' class='msg-s-event-listitem__profile-picture'>" +
+                                "</a>" +
+                            "</div>" +
+                            "<div class='msg-s-event-bubble'>" +
+                                "<div class='msg-s-event-bubble__meta'>" +
+                                    "<a class='msg-s-event-bubble__proifle-link'>" +
+                                        "<span class='msg-s-event-bubble__name'>" + mes.FromUser.Name + "</span>" +
+                                    "</a>" +
+                                    "<time class='msg-s-event-bubble__timestamp'>" + mes.CreateDate + "</time>" +
+                                "</div>" +
+
+                                "<p class='msg-s-event-bubble__body'>" +
+                                    mes.Body +
+                                    Attachment +
+                                    PitchAttatchment +
+                                "</p>" +
+                            "</div>" +
+                            seenClass +
+                        "</li>";
+
+                    allowedToSend = mes.ToUser.UserType !== "investor";
+                    messagesBox.append(mesHtml);
+                }
+
+
+                $('.setidq').attr("id", "messagebox" + Recipient);
+                $("#messagebox" + Recipient).attr("data-user", Recipient);
+                $('.msg-form').attr('id', `msg-form-${Recipient}`);
+                $('.msg-form').attr("data-allowed", allowedToSend);
+                $('#btnsendmsg').removeAttr('onclick');
+                $('#btnsendmsg').attr('onClick', 'SendMes(this,' + Recipient +')');
+
+                const scrollable = document.querySelector('.msg-s-message-list-container');
+                scrollable.scrollTo(0, scrollable.scrollHeight);
+
+
+            });
+
+       // clearTimeout(tOut);
+    }
+
+    function GetLatestMsg(Recipient) {
+        startupCentral.requestData('/umbraco/api/beskedapi/GetLatestMsgFromConversation?fromMemberId=' + Recipient.Id,
+            function (response) {
+
+                var curr_d = new Date();
+                var d = new Date(response.Data.CreateDate);
+                var msgBody = response.Data.Body;
+                
+                if (msgBody == "") {
+                    msgBody = "Attachment";
+                }
+                
+                var timestamp = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear();
+
+                if (curr_d.getDate() == d.getDate() && curr_d.getMonth() == d.getMonth() && curr_d.getFullYear() == d.getFullYear()) {
+                    timestamp = d.getHours() + ":" + d.getMinutes();
+                }
+                else if (curr_d.getFullYear() == d.getFullYear()){
+                    timestamp = d.getDate() + "-" + (d.getMonth() + 1);
+                }
+                
+                if (!response.Data.Read) {
+                    if (response.Data.ToUser == '@member.Key') {
+                        $('#activediv' + Recipient.Id).addClass('unread');
+                    }             
+                }
+
+                $("#timestamp" + Recipient.Id).text(timestamp);
+                $("#latestmsgholder" + Recipient.Id + " span").text(msgBody);
+            });
+    }
+
+    function SendMes(_this, toMember) {
+
+        $('#btnsendmsg').hide();
+        $('a#sendingBlock').show();
+
+        var message = $('#message').val();
+        if (message.replace(/^\s+|\s+$/g, "").length !== 0) {
+            $('#emptyMsg').hide();
+            startupCentral.postRequestData('/umbraco/api/beskedapi/SendBesked',
+                {
+                    toMemberId: toMember,
+                    emne: '',
+                    besked: message
+                },
+                function (data) {
+                    if (data) {
+                        if (data.Success) {
+                            $('a#sendingBlock').hide();
+                            $('#btnsendmsg').show();
+
+                            $('#message').val('');
+
+                            GetRecipients();
+                        }
+                    }
+                });
+
+        } else {
+            $('#btnsendmsg').show();
+            $('#emptyMsg').show();
+            $('a#sendingBlock').hide();
+        }
+
+        //startupCentral.messages.send(toMember, '', message, function (data) {
+        //    GetRecipients();
+        //});
+    }
+
+    function openChat(_this, fromUser, fromUserName) {
+
+        for (const a of document.querySelectorAll("a.active")) {
+            a.classList.remove("active");
+        }
+
+        $('#activediv' + fromUser).addClass('active');
+
+        GetMessages(fromUser, fromUserName);
+    }
+
+</script>
+
+
+

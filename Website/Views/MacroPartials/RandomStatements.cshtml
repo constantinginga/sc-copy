@@ -1,0 +1,21 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@{
+<section class="pb0">
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+             <div class="statementwrapper fleft w100">
+                 @foreach(var statement in Umbraco.Content(1828).Children().Random(1)){
+                    <div class="statementxt ">
+                        <i class="fa fa-quote-left f45 mb10" aria-hidden="true"></i>
+                        <span class="fleft fw700 f22 lh24 mb20"> @statement.wwstatement</span>
+                        <div class="statementname fw700 f14">@statement.wwtolby</div>
+                    <div class="statementtitle f12">@statement.wwtitel, @statement.wwby</div>
+                </div>
+                }
+            </div>
+        </div>
+     </div>
+</div>
+</section>
+}

@@ -1,0 +1,27 @@
+﻿<div class="modal" id="BusinessPlanSentError">
+    <div class="modal-popup">
+        <div class="modal-popup__header modal-popup__header--danger">
+            <div class="modal-popup__image">
+                <img src="/media/1148/raket_dialogbox.svg" alt="">
+            </div>
+            <h2 class="modal-popup__header-text" id="myModalLabel">{{subject}}</h2>
+        </div>
+        <div class="modal-popup__body">
+            <p>{{message}}</p>
+            <div class="inline-elements">
+                <button class="button button button--danger" id="proveIngen">Prøve igen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#proveIngen').click(function () {
+            var modal = $('#BusinessPlanSentError');
+
+            modal.removeClass('is-displayed');
+            $('body').removeClass('scrollLock');
+        });
+    });
+</script>

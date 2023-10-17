@@ -1,0 +1,35 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+@{
+			 
+var root = CurrentPage.AncestorOrSelf(1).Children().OrderBy("sortorder");
+foreach (var item in root)
+ {
+   if (item.umbracoNaviHide == true)
+   {
+   }
+	 else if (item.Children.Count() == 0 || item.hidechildren == true || item.DocumentTypeAlias == "nyhedsoversigt")
+   {
+   <li><a href="@item.Url">@item.Name</a></li>  
+   }
+   else
+   {
+	 if (item.Children.Count() > 0)
+    {
+   <li class="dropdown">
+   <a href="javascript:void(0);" >@item.Name &nbsp;<i class="fa fa-angle-down"></i></a>
+   <ul class="dropdown-menu">
+        @foreach (var item2 in item.Children)
+        {
+	     if(item2.umbracoNaviHide != true){
+             <li><a href="@item2.Url">@item2.Name</a></li>
+	   }  
+   }
+  </ul>
+  </li>
+   }
+   }
+ }
+
+ 
+}

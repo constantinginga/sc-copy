@@ -1,0 +1,89 @@
+
+
+
+
+
+
+
+
+
+
+
+
+/**umb_name:h1*/
+h1{}
+
+/**umb_name:h2*/
+h2{}
+
+/**umb_name:h3*/
+h3{}
+
+/**umb_name:Paragraph*/
+p{}
+
+/**umb_name:Accordion*/
+Accordion{.sc-container button.accordion {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  width: 100%;
+  background-color: whitesmoke;
+  border: none;
+  outline: none;
+  padding: 15px 20px;
+  font-size: 18px;
+}
+
+.sc-container button.accordion:hover {
+  background-color: #ddd;
+}
+
+.sc-container button.accordion::after {
+  content: '\f067';
+  font-family: "fontawesome";
+  font-size: 1rem;
+  float: right;
+}
+
+.sc-container button.accordion.is-open::after {
+  content: '\f068';
+}
+
+.sc-container .accordion-content {
+  padding: 0px 20px;
+  border-left: 1px solid whitesmoke;
+  border-right: 1px solid whitesmoke;
+  max-height: 0;
+  overflow: hidden;
+  -webkit-transition: max-height .2s ease-in-out;
+  transition: max-height .2s ease-in-out;
+}}
+
+.sc-container button.accordion:hover {
+  background-color: #ddd;
+}
+
+.sc-container button.accordion::after {
+  content: '\f067';
+  font-family: "fontawesome";
+  font-size: 1rem;
+  float: right;
+}
+
+.sc-container button.accordion.is-open::after {
+  content: '\f068';
+}
+
+.sc-container .accordion-content {
+  padding: 0px 20px;
+  border-left: 1px solid whitesmoke;
+  border-right: 1px solid whitesmoke;
+  max-height: 0;
+  overflow: hidden;
+  -webkit-transition: max-height .2s ease-in-out;
+  transition: max-height .2s ease-in-out;
+}}

@@ -1,0 +1,57 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{ Html.RenderAction("RenderTTTArrow", "SiteLayout");}
+@{
+    var frontPage = Umbraco.Content(10838);
+
+    var culture = "da-DK";
+    var en = Request.Path.Split('/')[1].ToLowerInvariant() == "en";
+    if (en) // Manual handling of /en/coaches/Name
+    {
+        culture = "en-US";
+        System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(culture);
+        System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(culture);
+    }
+}
+
+
+
+<div id="sc-newsletter" class="sc-newsletter ">
+
+    <div class="row-container card">
+        <h2>@frontPage.Value("newslettersSubscriptionTitle", culture)</h2>
+        <p class="lead" id="newslettersSubscriptionDescription">@frontPage.Value("newslettersSubscriptionDescription", culture)</p>
+        <p class="lead" id="newslettersSubscriptionResult" style="display:none;">@frontPage.Value("newslettersSubscriptionResult", culture)</p>
+
+        <form id="newsletterform">
+            <div class="newsletter-signup">
+                <input type="text" class="form-control" id="name" name="name" placeholder="@frontPage.Value("yourName", culture)" required>
+                <input type="email" class="form-control" id="email" name="email" placeholder="@frontPage.Value("yourEmail", culture)" required>
+                <button class="button button--lg outlined-btn" type="submit" id="submitButtonNewsletters">@frontPage.Value("subscribe", culture)</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+
+    $("form#newsletterform").submit(function (event) {
+        $.ajax({
+            type: "POST",
+            url: '/umbraco/api/ActivecampaignApi/Contact_sync_lead?' + $("#newsletterform").serialize(),
+            //data: $("#newsletterform").serialize(),
+            success: function (data) {
+                //alert(data);
+
+                $('.newsletter-signup').hide();
+                $('#newslettersSubscriptionDescription').hide();
+                $('#newslettersSubscriptionResult').show();
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+
+        event.preventDefault();
+    });
+</script>

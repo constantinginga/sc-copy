@@ -1,0 +1,255 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Extensions
+@using Umbraco.Web.Security
+@using ContentModels = Umbraco.Web.PublishedContentModels;
+
+@{
+    Layout = "Master.cshtml";
+
+    MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+    IMember member = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+
+    <script>
+        var userToken = ''
+        @if (member != null)
+        {
+            @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(member), "';"))
+        }
+    </script>
+}
+
+
+<div id="sc-opgaver-admin">
+    @Html.Partial("AdminNavigation")
+
+    <main class="sc-main-opgaver">
+        <div class="sc-main-opgaver__main">
+
+            <div class="export-btn-container">
+                <p id="gangeNumber">Formen har været brugt <span id="times-used"></span> gange.</p>
+                <button id="export-btn" onclick="exportData()">Eksport</button>
+            </div>
+
+            <div class="table-container">
+                <table class="opgaver-table" id="formulart">
+                    <tbody>
+                        <tr>
+                            @*<th class="sort-down">Dato</th>*@
+                            <th>Dato</th>
+                            <th>CVR</th>
+                            <th>Branche</th>
+                            <th>Navn</th>
+                            <th>Email</th>
+                            <th>Tlf.</th>
+                            <th>Noter</th>
+                            <th>Kontaktet</th>
+                            <th>Active Campaign</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="~/scripts/startupcental.js?v=3"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+@*<script src="~/scripts/adminOpgaver.js"></script>*@
+
+<script type="text/javascript">
+    $(document).ready(PreLoad());
+
+    function PreLoad() {
+        var table, newRows;
+
+        $('#formulart tr').not(function () { return !!$(this).has('th').length; }).remove();
+
+        $.ajax({
+            url: '/umbraco/api/FormularLogger/GetFormulars',
+            type: 'get',
+            contentType: false,
+            processData: false,
+            success: function (response, status) {
+                if (response) {
+                    if (response.Success) {
+                        var count = response.Data.length;
+
+                        if (count > 0) {
+                            $("#gangeNumber").show();
+                            $("#times-used").text(count);
+    
+                            $("#export-btn").show();
+                        } else {
+                            $("#gangeNumber").hide();
+                            
+                            $("#export-btn").hide();
+                        }
+                        
+                        for (var i = 0; i < response.Data.length; i++) {
+
+                            var data = response.Data[i];
+                            var createDate = moment(data.CreateDate).format('MM/DD/YY h:mm a');
+
+                            if (data.CVRNumber != null) {
+                                data.CVRNumber = "<a target='_blank' href='https://datacvr.virk.dk/data/visninger?soeg=" + data.CVRNumber + "&oprettet=null&ophoert=null&branche=&type=undefined&language=da' >" + data.CVRNumber + "</a>";
+                            } else {
+                                data.CVRNumber = "Ingen cvr.";
+                            }
+
+                            if (data.Read == false) {
+                                data.Read = "class='opgaver-table__new-row'";
+                            } else {
+                                data.Read = "";
+                            }
+
+                            var markup =
+                                "<tr id='" + data.Id + "' " + data.Read + ">" +
+                                "<td>" + createDate + "</td>" +
+                                "<td>" + data.CVRNumber + "</td>" +
+                                "<td>" + checkNullable(data.Industry) + "</td>" +
+                                "<td>" + data.Name + "</td>" +
+                                "<td>" + data.Email + "</td>" +  
+                                "<td>" + data.PhoneNumber + "</td>" +
+                                "<td>" + checkNullable(data.Notes) + "</td>" +
+                                "<td><input type='checkbox' name='Contacted' onclick='overriteCheckbox(this)' data-key='" + data.Id  + "' value='" + data.Contacted + "' " + checkCheckbox(data.Contacted) + "></td>" +
+                                "<td><input type='checkbox' name='MailFlow' onclick='overriteCheckbox(this)' " + disableCheckbox(data.MailFlow) + " data-key='" + data.Id + "' value='" + data.MailFlow + "'" + checkCheckbox(data.MailFlow) + "></td>" +
+                                "<tr>";
+
+                            $("#formulart tr:last").after(markup);
+                            $('#formulart tr:last').remove();                
+                        }
+
+                        table = document.querySelector('.opgaver-table');
+                        newRows = document.querySelectorAll('.opgaver-table__new-row');
+
+                        if (newRows) {
+                            newRows.forEach(row => {
+                                if (row.classList.contains('opgaver-table__new-row')) {
+                                    row.addEventListener('click', () => {
+                                        $.ajax({
+                                            url: '/umbraco/api/FormularLogger/MarkRead?formularKey=' + row.id,
+                                            type: 'post',
+                                            success: function (response, status) {
+                                                if (response) {
+                                                    if (response.Success) {
+                                                        row.classList.remove('opgaver-table__new-row');
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    });
+                                }             
+                            });
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function disableCheckbox(targetValue) {
+        if (targetValue) {
+            return "disabled";
+        } else {
+            return "";
+        }
+    }
+
+    function checkCheckbox(targetValue) {
+        if (targetValue) {
+            return "checked";
+        } else {
+            return "";
+        }
+    }
+
+    function checkNullable(targetvalue) {
+        if (targetvalue == null) {
+            return "Igen.";
+        } else {
+            return targetvalue;
+        }
+    }
+
+    function overriteCheckbox(target) {
+        if (target.checked) {
+            $(target).attr('value', 'true')
+        } else {
+            $(target).attr('value', 'false')
+        }
+
+        var tState = $(target).attr('value');
+        var tName = $(target).attr('name');
+        var tKey = $(target).attr('data-key');
+
+        $.ajax({
+            url: '/umbraco/api/FormularLogger/OverriteCheckbox?propertyName=' + tName + '&recordKey=' + tKey + '&state=' + tState,
+            type: 'post',
+            success: function (response) {
+                if (response) {
+                    if (response.Success && tName == "MailFlow" && tState) {
+                        $(target).attr('disabled', $(target).is(':checked'));       
+                    }
+                }
+            }
+        });
+    }
+
+    function exportData() {
+        var table = document.getElementById("formulart");
+        var rows = [];
+
+        if (table.rows.length > 1) {
+            for (var i = 0, row; row = table.rows[i]; i++) {
+                column1 = row.cells[0].innerText;
+                column2 = row.cells[1].innerText;
+                column3 = row.cells[2].innerText;
+                column4 = row.cells[3].innerText;
+                column5 = row.cells[4].innerText;
+                column6 = row.cells[5].innerText;
+                column7 = row.cells[6].innerText;
+                column8 = row.cells[7].innerText;
+                column9 = row.cells[8].innerText;
+
+                rows.push(
+                    [
+                        column1,
+                        column2,
+                        column3,
+                        column4,
+                        column5,
+                        column6,
+                        column7,
+                        column8,
+                        column9
+                    ]
+                );
+
+            }
+            csvContent = "data:text/csv;charset=utf-8,";
+
+            rows.forEach(function (rowArray) {
+                row = rowArray.join(",");
+                csvContent += row + "\r\n";
+            });
+
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Formular_List.csv");
+            document.body.appendChild(link);
+
+            link.click();
+        } else {
+            alert("Table is empty.")
+        }
+        
+    }
+</script>
+
+<style>
+    #main-footer {
+        display: none;
+    }
+</style>

@@ -1,0 +1,307 @@
+﻿@using Umbraco.Web.Security
+@using System.Web
+@using System.Web.Security
+@using StartupCentral.Code.Class
+
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = null;
+    var currentUser = Members.GetCurrentMember();
+
+}
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    @Umbraco.RenderMacro("Robots")
+    @Umbraco.RenderMacro("deviceicons")
+    @Umbraco.RenderMacro("META")
+    @Umbraco.RenderMacro("facebookpixel")
+    <title>@Umbraco.RenderMacro("SideTitel")</title>
+    <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,600,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="/css/custom.css?ver=1.4" rel="stylesheet">
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.form/3.50/jquery.form.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/App_Plugins/TeaCommerce/Assets/Scripts/tea-commerce.min.js"></script>
+    <script type="text/javascript">
+        _storeId = 1;
+    </script>
+    
+    @*Test Push 1*@
+
+    @{
+
+        bool isCallbackFromMobilePay = false;
+
+        IMember currentMember = null;
+        string errorMessage = string.Empty;
+        string username = "";
+        string fullname = "";
+        string mobileno = "";
+        string promokode = "";
+
+        MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+        if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+        {
+            currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+        }
+
+        <script>
+        /* StartupCentral global variables */
+
+        var userToken = ''
+        @if (currentMember != null)
+        {
+            @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(currentMember), "';"))
+        }
+        </script>
+
+        if (IsPost)
+        {
+            if (!string.IsNullOrEmpty(Request.Form["username"]))
+            {
+                username = Request.Form["username"];
+
+                StartupCentral.Code.Model.ValidationResponse response = StartupCentral.Code.Class.Emailing.ValidateEmail(username);
+                if (!response.IsValid)
+                {
+                    errorMessage = response.Message;
+                }
+
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["name"]))
+            {
+                fullname = Request.Form["name"];
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["phone"]))
+            {
+                mobileno = Request.Form["phone"];
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["promokode"]))
+            {
+                promokode = Request.Form["promokode"];
+            }
+
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                if (!string.IsNullOrEmpty(fullname))
+                {
+
+                    IMember member = ApplicationContext.Current.Services.MemberService.CreateMemberWithIdentity(username, username, fullname, "student");
+                    if (member != null)
+                    {
+
+                        member.SetValue("wwmobile", mobileno);
+                        member.SetValue("wwMobilePayAbonnementsDato", null);
+
+                        member.SetValue("wwname", fullname);
+                        member.SetValue("wwemail", username);
+                        member.IsApproved = false;
+
+                        ApplicationContext.Current.Services.MemberService.Save(member);
+                        ApplicationContext.Current.Services.MemberService.AssignRole(username, "student");
+
+                        var password = Passwords.GenerateNewPassword();
+                        ApplicationContext.Current.Services.MemberService.SavePassword(member, password);
+                        //Emailing.SendCreationEmail(member, password);
+
+                        currentMember = member;
+
+                        Response.Redirect(string.Concat(
+                            Umbraco.NiceUrl(Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["StartupCentral.MobilePay.Id"])), 
+                            "?memberkey=", member.Key, "&promokode=", promokode), 
+                            true);
+                        return;
+                    }
+                }
+                else
+                {
+                    errorMessage = "Navn skal udfyldes.";
+                }
+            }
+
+        }
+        else
+        {
+
+            if (Request.QueryString["callback"] != null)
+            {
+                if (!string.IsNullOrEmpty(Request.QueryString["memberkey"]))
+                {
+
+                    currentMember = ApplicationContext.Current.Services.MemberService.GetByKey(new Guid(Request.QueryString["memberkey"]));
+                    isCallbackFromMobilePay = true;
+
+                }
+            }
+
+        }
+
+
+        }
+
+
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-117081036-1']);
+        _gaq.push(['_trackPageview']);
+        (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+   
+
+    <!-- Facebook Pixel Code -->
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '295247367997820');
+        fbq('track', 'PageView');
+    </script>
+    <noscript>
+        <img height="1" width="1" style="display:none"
+             src="https://www.facebook.com/tr?id=295247367997820&ev=PageView&noscript=1" />
+    </noscript>
+    <!-- End Facebook Pixel Code -->
+<!-- Start of Evolution360 script -->
+	<script src="https://app.evolution360.com/JavascriptClick/Tracker?cid=1712190"></script>
+<!-- End of Evolution360 script -->
+</head>
+    <!-- DEV -->
+<body>
+    <div id="main">
+        <div id="top">
+            <div id="logo">
+                <a href="/">
+                    <img src="/images/bluelogo.png" width="200px" class="img-responsive" />
+                </a>
+            </div>
+        </div>
+
+        <section class="flexdesk">
+            <div class="container"  style="padding-top: 40px;">
+                <div class="row">
+
+                    @{
+
+                        if (isCallbackFromMobilePay == false)
+                        {
+                            <div class="col-md-6">
+                                <div class="sectionheadline uppercase mb60 f60 fw700 lh60 blue">@Page.wwoverskrift</div>
+                                <div class="fleft w100 f18  lh24 mb20 signuptxt">@Page.bodyText</div>
+                            </div>
+                            <div class="col-md-1 hidden-xs"></div>
+                            <div class="col-md-5 pul-right">
+
+                                <div class="first">
+                                    <div class="sectionheadline uppercase mb60 f60 fw700 lh60 blue">@Page.wwheadlineformular</div>
+                                    <div class="fleft w100 f18  lh24 mb20">
+                                        <form method="post" id="loginForm">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-md-12 col-sm-12">
+                                                    <input type="text" id="name" name="name" required placeholder="Dit navn *" value="@fullname" />
+                                                </div>
+                                                <div class="col-xs-12 col-md-12 col-sm-12">
+                                                    <input type="email" id="username" name="username" required placeholder="Din e-mail *" value="@username" />
+                                                </div>
+                                                <div class="col-xs-12 col-md-12  col-sm-12" style="display: flex;">
+                                                    
+                                                    <span class="mt15 mr5">+45</span>
+                                                    <input type="text" id="phone" name="phone" required placeholder="Dit mobilnummer *" maxlength="8" @mobileno />
+                                                </div>
+
+                                                <div class="col-xs-12 col-md-12 col-sm-12">
+                                                    <input type="text" id="promokode" name="promokode" placeholder="Din promo kode" value="@username" />
+                                                </div>
+
+                                            </div>
+                                            @if (!string.IsNullOrEmpty(errorMessage))
+                                            {
+                                                <div class="">
+                                                    @errorMessage
+                                                </div>
+                                            }
+
+
+                                            <div class="row">
+                                                <div class="col-sm-12 text-right">
+                                                    <input type="submit" id="submit" name="submit" class="btn dark" value="Opret" />
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+
+
+                            <script src="~/scripts/startupcentral.mobilepay.js?v=4"></script>
+
+                            <input type="hidden" id="memberKey" value="@currentMember.Key" />
+                            <div class="col-md-6">
+                                <div class="sectionheadline uppercase mb60 f60 fw700 lh60 blue">@Page.wwoverskrift</div>
+                                <div class="fleft w100 f18  lh24 mb20 signuptxt mobilepay-waiting"><img src="/images/loading.gif" style="width: 80px;" />Afventer svar fra MobilePay</div>
+                            </div>
+                            <div class="col-md-1 hidden-xs"></div>
+
+                            <div class="col-md-12">
+
+
+
+                                <div class="second" style="display:none;">
+                                    <div class="sectionheadline uppercase mb60 f60 fw700 lh60 blue">@Page.wwheadlineformularsuccess</div>
+                                    <div class="fleft w100 f16  lh22 mb20 signuptxt">@Page.wwsuccesstxt</div>
+                                </div>
+
+                                <div class="third" style="display:none;">
+                                    <div class="sectionheadline uppercase mb60 f60 fw700 lh60 blue">@Page.wwheadlineformularfejl</div>
+                                    <div class="fleft w100 f16  lh22 mb20 signuptxt">@Html.Raw(CurrentPage.wwfejltxt.ToString().Replace("{{memberkey}}", currentMember.Key.ToString()))</div>
+                                </div>
+
+
+                            </div>
+
+                        }
+
+                    }
+                </div>
+            </div>
+
+
+            <img src="@Page.wwbgimg.Url" id="cloudbg" />
+        </section>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/scripts/custom.js"></script>
+    <script src="https://momentjs.com/downloads/moment-with-locales.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet" type='text/css'>
+    <script src="~/scripts/startupcental.js?v=3"></script>
+    <!-- Start of Evolution360 script -->
+	<script src="https://app.evolution360.com/JavascriptClick/Tracker?cid=1712190"></script>
+    <!-- End of Evolution360 script -->
+
+</body>
+</html>
+

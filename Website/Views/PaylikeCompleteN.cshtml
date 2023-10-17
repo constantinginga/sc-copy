@@ -1,0 +1,98 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@{
+    Layout = "MasterNoIndex.cshtml";
+}
+
+<main id="sc-welcome">
+    <div class="row-container">
+        <div class="row">
+            <div class="column-container">
+                <div class="column centered">
+                    <h1 class="headline-2">Velkommen til Startup Central!</h1>
+                    <h3>Du er nu en del af fremtidens succesfulde iværksættere og selvstændige</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row center-align-columns">
+            <div class="column-container column-7">
+                <div class="column">
+                    <h2>
+                        Din bruger er oprettet og du kan nu logge ind på din profil
+                    </h2>
+                    <h3>Kom i gang med alle dine fordele nu</h3>
+                    <p>
+                        Ræk ud til coaches, som kan give dig sparring på alt inden for jura, salg, marketing, økonomi og meget mere.
+                    </p>
+                    <p>
+                        Få store rabatter på alt det du har brug for, det kunne være brandstofkort fra Circle K, regnskabsprogram fra Dinero & e-conomic, hjemmeside fra one.com & Dandomain eller forsikring fra Tryg.
+                    </p>
+                    <p>
+                        Få skabt overblik og gør det nemt at være iværksætter med skabeloner og guides på momsindberetning, kørselsfradrag, økonomibudget og meget mere.
+                    </p>
+                    <p>
+                        Alt den viden du efterspørger er samlet ét sted.
+                    </p>
+
+                    <div class="inline-elements">
+                        <a href="/login/" class="button button--lg button--cta">Log ind nu</a>
+                    </div>
+
+                    <h2>
+                        Startup Lounge
+                    </h2>
+
+                    <p>
+                        Startup Lounge er Startup Centrals online iværksætternetværk, som du nu har adgang til. Her vil du møde ligesindede, erhvervsdrivende og folk med interesse for iværksætteri.
+                    </p>
+                    <p>
+                        Der er fokus på videndeling med et iværksætter fagligt omdrejningspunkt, men med en uformel tone. Du vil her få mulighed for at stille alle de spørgsmål, du må have om din virksomhedsrejse.
+                    </p>
+                    <p>
+                        Vi og vores coaches er aktive i netværket og kender medlemmernes forskellige kompetencer, så
+                        vi kan sætte jer i kontakt med hinanden. På den måde får du vedvarende relationer.
+                        Vi opfordrer dig til at lave et opslag i netværket, omhandlende dig og din virksomhed, på
+                        den måde vil de øvrige medlemmer få en idé om hvem du og din virksomhed er, og hvordan de
+                        bedst kan hjælpe dig.
+                     </p>
+                    <p>
+                        Download Startup Lounge her:
+                    </p>
+                    <p><a href="https://apps.apple.com/dk/app/startup-central-lounge/id1638888731?l=da">iOS</a></p>
+                    <p><a href="https://play.google.com/store/apps/details?id=com.companyname.scsome.mobileapp">Android</a></p>
+                    <p>
+                        Eller anmod om medlemskab på <a href="https://www.facebook.com/groups/startup.lounge/" target=”_blank”>Startup Lounge</a> Facebookgruppe.
+                    </p>
+                    <p>
+                        Har du nogle spørgsmål, så <a href="/kontakt/" target=”_blank”>kontakt os</a>.
+                    </p>
+                </div>
+            </div>
+            <div class="column-container">
+                <div class="column">
+                    @*<img src="@Umbraco.Media(40155).Url">*@  @*Local host img id: 40155 ; production img id: 40408 *@
+                </div>
+            </div>
+        </div>
+    </div>
+    <img id="pixel-tracking" src="">
+</main>
+
+<script>
+    $('#pixel-tracking').attr('src', `https://system.makeinfluence.com/p?bid=75c5f954-2841-4454-b77b-edfe44b3b9ed&value=${localStorage.getItem("TotalAmount")}&uid=${localStorage.getItem("MemberKey")}&promotion_code=${localStorage.getItem("CurrentPromo")}`);
+</script>
+
+<script>
+    atag('track', 'conversion', {
+        order_id: localStorage.getItem('MemberKey'),
+        amount: localStorage.getItem('TotalAmount'),
+        cur: 'DKK',
+        pricevariable: localStorage.getItem('pricevariable')
+    });
+</script>
+    
+    <style>
+        #sc-navbar-logged, #sc-navbar-main, #sc-newsletter, #main-footer {
+            display: none;
+        }
+    </style>

@@ -1,0 +1,52 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+
+    <section class="sc-home-cases">
+        <div class="container">
+            <div class="title-box">
+                <h2 class="headline-2">Hvad siger vores medlemmer? </h2>
+                <h2>Er du i tvivl om startup central er noget for dig?</h2>
+                <p class="lead">Så læs med her!</p>
+            </div>
+
+            <div class="cases-container">
+
+                @foreach (var sCase in Umbraco.Content(25745).Children().Where(x=>x.IsVisible()).OrderByDescending(x=>x.CreateDate).Take(2))
+                {
+                    var membersPicture = sCase.Value<Image>("membersPicture");
+                    var membersQuote = sCase.Value("membersQuote");
+                    var companyName = sCase.Value("memberCompanyName");
+
+                    <div class="case-card">
+                        <a href="/cases/@sCase.UrlName">
+                            <div class="case-body">
+
+                                @if (membersPicture != null)
+                                {
+                                    <div class="case-img">
+                                        <img src="@membersPicture.Url" alt="">
+                                    </div>
+                                }
+
+                                <div class="case-text">
+                                    <div class="case-text-name">
+                                        <p>@sCase.Name</p>
+                                    </div>
+                                    <div class="case-text-quote">
+                                        <p>@membersQuote</p>
+                                    </div>
+                                    <div class="case-text-position">
+                                        <p>@companyName</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+
+            <div class="read-more-box">
+                <a href="/cases/" class="read-more">Se alle vores cases</a>
+            </div>
+        </div>
+    </section>

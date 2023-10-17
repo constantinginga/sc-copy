@@ -1,0 +1,74 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+Layout = "Master.cshtml";
+}
+
+@* the fun starts here *@
+
+@{ Html.RenderAction("RenderTitleControls", "SiteLayout");}
+
+<main class="sc-guest-team">
+    <section>
+        <div class="row-container">
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered">
+                        <h2 class="headline-2">
+                            @Model.Value("teamTitle")
+                        </h2>
+                        <p>@Model.Value("teamSubtitle")</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="column-container">
+                    @{ var teamImage = Model.Value<IPublishedContent>("teamImage");}
+                    
+                    @if (teamImage != null)
+                    {
+                        <img loading="lazy" src="@teamImage.Url()" alt="Det stolte team bag Startup Central." />
+                    }
+                    
+                </div>
+            </div>
+        </div>
+        <div class="row-container">
+            <div class="row">
+                <div class="column-container">
+                    <div class="employee-cards-grid">
+                        @foreach (var employee in Umbraco.Content(27510).Children().Where(x=>x.IsVisible()))
+                        {
+                            var empPhp = employee.Value<Image>("employeePicture");
+                            var empName = employee.Value("employeeName");
+                            var empPosition = employee.Value("employeePosition");
+                            var empEmail = employee.Value("employeeEmail");
+                            var altText = empName + " - " + empPosition + " | Startup Central";
+                            var empNum = employee.Value("employeeNumber");
+
+                            <div class="employee-card">
+                                @if (empPhp != null)
+                                {
+                                <div class="employee-card__image">
+                                    <img loading="lazy" class="entity-image-circle entity-image-192" src="@empPhp.Url" alt="@altText">
+                                </div>
+                                }
+                                <h3 class="employee-card__name">
+                                    @empName
+                                </h3>
+                                <span class="employee-card__title">
+                                    @empPosition
+                                </span>
+                                <a href="mailto:@empEmail" class="employee-card__email link">
+                                    @empEmail
+                                </a>
+                                <span class="employee-card__number">
+                                    @empNum
+                                </span>
+                            </div>
+                            }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

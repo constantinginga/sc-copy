@@ -1,0 +1,337 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using ContentModels = Umbraco.Web.PublishedContentModels;
+@using umbraco.cms.businesslogic.member
+@using Umbraco.Core.Services;
+@using System.Web
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using umbraco.NodeFactory;
+@using StartupCentral.Extensions;
+@using StartupCentral.Code.Class;
+
+@{
+
+    var currentUser = Members.GetCurrentMember();
+
+
+    if (HttpContext.Current.Request.HttpMethod == "POST")
+    {
+
+        if (Request.Form["student"] != "" && Request.Form["emne"] != "")
+        {
+
+
+
+            var currentmemberfolder = 0;
+            var exist = false;
+            var _mediaService = ApplicationContext.Current.Services.MediaService;
+
+            var _memberService = ApplicationContext.Current.Services.MemberService;
+
+            var _contentService = ApplicationContext.Current.Services.ContentService;
+
+            var student = Umbraco.Member(Request.Form["student"]);
+
+            //foreach (var item in Umbraco.Content(1606).Children())
+            //{
+            //    if (item.Name == student.Email)
+            //    {
+            //        exist = true;
+            //        currentmemberfolder = item.Id;
+            //        break;
+            //    }
+            //}
+            //if (exist != true)
+            //{
+            //    var content = _contentService.CreateContent(student.Email, 1606, "enkeltstudent");
+            //    content.SetValue("memberId", student.Id);
+            //    _contentService.SaveAndPublish(content);
+
+            //    var contentmail = _contentService.CreateContent(Request.Form["emne"], content.Id, "mail");
+            //    contentmail.SetValue("besked", Request.Form["besked"]);
+            //    contentmail.SetValue("afsenderid", currentUser.Id);
+
+            //    _contentService.SaveAndPublish(contentmail);
+
+
+            //}
+            //else
+            //{
+
+            var beskederRootFolder = ApplicationContext.Services.ContentService.GetById(Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["StartupCentral.Beskeder.RootFolder.Id"]));
+            if (beskederRootFolder != null && student != null)
+            {
+                var contentmail = ApplicationContext.Services.ContentService.CreateContentWithIdentity(Request.Form["emne"], beskederRootFolder, "besked");
+                IMember stud = ApplicationContext.Services.MemberService.GetById(student.Id);
+                IMember investorMember = ApplicationContext.Services.MemberService.GetById(currentUser.Id);
+
+                if (contentmail != null && stud != null)
+                {
+                    contentmail.SetValue("wwto", string.Concat("umb://member/", stud.Key.ToString().Replace("-", "")));
+                    contentmail.SetValue("wwfrom", string.Concat("umb://member/", currentUser.GetKey().ToString().Replace("-", "")));
+                    contentmail.SetValue("wwsubject", Request.Form["emne"].ToString());
+                    contentmail.SetValue("wwbody", Request.Form["besked"].ToString());
+                    ApplicationContext.Services.ContentService.SaveAndPublishWithStatus(contentmail);
+                    Emailing.SendNewMessageNotification(investorMember, stud);
+                }
+
+                //}
+            }
+        }
+    }
+}
+
+
+@{
+    var investor = Umbraco.Member(currentUser);
+    var unreadfiles = false;
+    var svaret = false;
+    var i = 0;
+
+
+    // Henter alle beskeder.
+    List<Node> beskeder = StartupCentral.Helpers.Nodes.GetAllNodesByType(Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["StartupCentral.Beskeder.RootFolder.Id"]), "besked");
+    List<IMember> notRepliedStudentsList = new List<IMember>();
+
+    <div class="">
+        <h3 class="col-md-12 mt60 mb20">Følgende student(er) har sendt dig et projekt</h3>
+        @if (beskeder != null)
+        {
+            // Gennemløber beskeder til current user.
+            foreach (var besked in beskeder.Where(itm => Convert.ToString(itm.GetProperty("wwto").Value) == "umb://member/" + currentUser.GetKey().ToString().Replace("-", "") || itm.GetProperty("wwto").Value == currentUser.Id.ToString()))
+            {
+
+                IMember wwfrom = null;
+                if (!string.IsNullOrEmpty(besked.GetProperty("wwto").Value))
+                {
+
+                    if (besked.GetProperty("wwto").Value.IsNumeric())
+                    {
+                        wwfrom = ApplicationContext.Services.MemberService.GetById(Convert.ToInt32(besked.GetProperty("wwfrom").Value));
+
+                    }
+                    else
+                    {
+                        wwfrom = ApplicationContext.Services.MemberService.GetById(besked.GetProperty("wwfrom").Value.GetIdByUdi());
+                    }
+                }
+
+
+                <div class="biglinkbtn shadowlight uploadpage mb40">
+                    <div class="col-md-12 pl60">
+                        <div class="row">
+                            @if (wwfrom != null)
+                            {
+                                <div class="col-md-9 f30 mb40">Student: @wwfrom.GetValue("wwname")</div>
+
+                                <div class="col-md-3">@*<img src="/images/bullets.jpg" class="img-responsive"/>*@</div>
+                                <div>
+                                    @*@foreach (var student in Umbraco.Content(1606).Children())
+                                        {
+                                            if (student.memberid == Umbraco.Media(item.Parent.Id).memberid)
+                                            {
+                                                foreach (var mail in student.Children())
+                                                {
+                                                    if (mail.afsenderid == currentUser.Id.ToString())
+                                                    {
+                                                        svaret = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }*@
+
+                                    @if (besked.GetProperty("wwanswered").Value.ParseBoolean())
+                                    {
+                                        <span style="color:green;">Eleven er besvaret<br /></span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:red;">Eleven er IKKE besvaret<br /></span>
+
+
+                                        notRepliedStudentsList.Add(wwfrom);
+
+                                        if (besked.GetProperty("wwread").Value.ParseBoolean())
+                                        {
+                                            <span>Læst</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Forretningsplanen er ikke læst endnu<br /></span>
+                                        }
+
+                                    }
+
+
+                                    <div class="col-md-12">
+
+                                        @{
+                                            Umbraco.Core.Models.IContent wwattachments = null;
+                                            if (besked.GetProperty("wwattachments") != null)
+                                            {
+                                                if (!string.IsNullOrEmpty(besked.GetProperty("wwattachments").Value))
+                                                {
+                                                    var files = besked.GetProperty("wwattachments").Value.Split(';');
+                                                    if (files != null)
+                                                    {
+                                                        foreach (var f in files)
+                                                        {
+                                                            wwattachments = ApplicationContext.Services.ContentService.GetById(f.GetIdByUdi());
+                                                            if (wwattachments != null)
+                                                            {
+                                                                <div class="f20 fw400 mb0">Læs forretningsplanen: <a href="@Umbraco.Content(wwattachments.Id).Url"><span class="fw600">@Umbraco.Content(wwattachments.Id).wwprojektnavn <i class="fa fa-folder" aria-hidden="true"></i></span></a></div>
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            @*@foreach (var subkat in item.Children)
+                                                {
+                                                    <div class="col-md-2 f18 "><span class="dustedblue mr20">@subkat.Name</span></div>
+                                                    foreach (var media in subkat.Children)
+                                                    {
+                                                        <div class="col-md-9">
+                                                            <div class="fileline fleft w100 mb20">
+                                                                <a href="@media.Url" target="_blank" class="filelink dark mt20 f18 mb10">@media.Name <i class="fa fa-file-text-o" aria-hidden="true"></i></a>
+                                                                <form action="/markasread" method="post" class="markform">
+                                                                    <input type="hidden" name="mediaid" value="@media.Id">
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                        <br>
+                                                        if (Umbraco.Media(media.Id).isread == false)
+                                                        {
+                                                            unreadfiles = true;
+                                                            i++;
+                                                        }
+                                                    }
+                                                }*@
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        @*@if (unreadfiles == true)
+                                            {
+                                                <span style="color:red;">Ulæste filer (@i)</span>
+                                            }
+                                            else
+                                            {
+                                                <span style="color:green;">Ingen ulæste filer</span>
+                                            }*@
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    if (notRepliedStudentsList != null && notRepliedStudentsList.Count > 0)
+    {
+
+        <div class="col-md-12">
+            <a href="javascript:void(0);" class="fleft btnlightbg white mb40" id="sendmessagebtn">Send et svar til en student</a>
+        </div>
+
+        <div class="biglinkbtn shadowlight uploadpage mb40" id="sendmessageform" style="display:none;">
+            <div class="col-md-12 pl60 pr60">
+                <div class="row">
+                    <h1>Send svar til en elev</h1>
+                    <form action="" method="post">
+                        <select id="studenter" name="student" class="form-control mb10">
+                            <option value="0">Vælg student</option>
+                            @foreach (var item in notRepliedStudentsList)
+                            {
+                                <option value="@item.Id">@item.GetValue("wwname")</option>
+                            }
+                        </select>
+                        <div class="fleft w100 checkbox mb20">
+                            @foreach (var stdsvar in Umbraco.Content(2009).Children())
+                            {
+                                <div class="fleft mr15 mb10 mt10">
+                                    <label for="@stdsvar.wwoverskrift"><input data-type="investorsvar" type="checkbox" value="@stdsvar.Id" name="@stdsvar.wwoverskrift" id="@stdsvar.wwoverskrift">@stdsvar.wwoverskrift<span></span></label>
+                                </div>
+                            }
+                        </div>
+                        <input type="text" id="txtEmne" name="emne" class="form-control mb20" placeholder="Emne">
+                        <textarea id="txtSvar" style="resize:vertical;" name="besked" rows="8" class="form-control mb20" placeholder="Skriv din besked">
+                        </textarea>
+
+                        <input type="submit" class="btnlightbg white" value="Send beskeden">
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<script>
+
+    var isDirty = false;
+
+    $('input[data-type=investorsvar]').on('click', function () {
+        if ($(this).is(':checked')) {
+            getInvestorSvar();
+        }
+    });
+
+    $('#student').on('change', function () {
+        if (isDirty === false) {
+            getInvestorSvar();
+        }
+    });
+
+    $('#txtEmne').on('keydown', function () {
+        isDirty = true;
+    });
+
+    $('#txtSvar').on('keydown', function () {
+        isDirty = true;
+    });
+
+
+    function getInvestorSvar() {
+        var svarId = $('input[data-type=investorsvar]:checked').val();
+        var studentId = $('#studenter option:selected').val();
+
+        if (svarId !== null) {
+            startupCentral.requestData('/umbraco/api/beskedapi/getinvestorsvar?id=' + svarId + '&modtagerid=' + studentId, function (data) {
+                if (data !== null) {
+
+                    console.log(data);
+
+                    $('#txtEmne').val(data.Overskrift);
+                    $('#txtSvar').val(data.StandardSvar);
+                }
+            });
+        }
+    }
+
+</script>
+
+
+@*<script>
+        $(document).ready(function () {
+            $(".filelink").click(function (e) {
+                var url = "/markasread";
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: $(this).next(".markform").serialize(),
+                    success: function (data) {
+                        location.reload();
+                    }
+                });
+            });
+        });
+    </script>*@

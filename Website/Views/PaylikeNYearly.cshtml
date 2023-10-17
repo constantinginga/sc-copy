@@ -1,0 +1,241 @@
+﻿@using StartupCentral.Code.Class;
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@{ 
+    Layout = "MasterNoIndex.cshtml";
+
+    IMember member = null;
+
+    if (Request.QueryString["memberkey"] != null)
+    {
+        member = ApplicationContext.Current.Services.MemberService.GetByKey(new Guid(Request.QueryString["memberkey"]));
+    }
+
+    if (member != null)
+    {
+        UpodiWrapperService UpodiWrapperService = new StartupCentral.Code.Class.UpodiWrapperService();
+        Guid Guid = UpodiWrapperService.CreateNewCustomers(member.Id, member);
+        string PromoKode = Request.QueryString["promokode"];
+    }
+
+    <script>
+        var userToken = ''
+        @if (member != null)
+        {
+            @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(member), "';"))
+        }
+    </script> 
+}
+
+<main id="sc-payment">
+    <section>
+        <div class="row-container">
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered" style="height:auto">
+                        <h2 class="headline-2">@Model.Value("title")</h2>
+                        <h3>@Model.Value("subtitle")</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered" style="height:auto">
+                        <div class="price-card-container">
+                            
+                            @*
+                        <div class="price-card">
+                            <h3 class="price-card__title">
+                                1 Måned
+                            </h3>
+                            <h2 class="price-card__price">
+                                149
+                            </h2>
+                            <p class="price-card__description">
+                                For dig, der vil afprøve medlemskabet inden du foretager dig større binding.
+                            </p>
+
+                            <span class="price-card__subtext">
+                                Binding på løbende måned
+                                plus en måned.
+                            </span>
+
+
+                        </div>
+                        <div class="price-card">
+                            <h3 class="price-card__title">
+                                3 Måned
+                            </h3>
+                            <h2 class="price-card__price">
+                                134
+                            </h2>
+                            <p class="price-card__description">
+                                For dig, der godt kan lide at følge med i dine betalinger, men samtidig få en
+                                god
+                                pris.
+                            </p>
+                            <span class="price-card__subtext">Ingen binding.</span>
+
+                        </div>
+                            *@
+                                                        <div class="price-card disabled">
+                            <h3 class="price-card__title">
+                                1 Måned
+                            </h3>
+                            <h2 class="price-card__price">
+                                149
+                            </h2>
+                            <p class="price-card__description">
+                                For dig, der vil afprøve medlemskabet inden du foretager dig større binding.
+                            </p>
+
+                            <span class="price-card__subtext">
+                                Binding på løbende måned
+                                plus en måned.
+                            </span>
+
+
+                        </div>
+                        <div class="price-card disabled">
+                            <h3 class="price-card__title">
+                                3 Måned
+                            </h3>
+                            <h2 class="price-card__price">
+                                134
+                            </h2>
+                            <p class="price-card__description">
+                                For dig, der godt kan lide at følge med i dine betalinger, men samtidig få en
+                                god
+                                pris.
+                            </p>
+                            <span class="price-card__subtext">Ingen binding.</span>
+
+                        </div>
+                            <div class="price-card price-card--promo">
+                                <div class="price-card__banner">
+                                    <p>Mest populære</p>
+                                </div>
+                                <h3 class="price-card__title">1 År</h3>
+                                <h2 class="price-card__price">124</h2>
+                                <p class="price-card__description">For dig, der vil have betalingen ud af verden og samtidig spare penge.</p>
+                                <span class="price-card__subtext">Ingen binding</span>
+                                <button onclick="GFG_click(this.value, 1488)" value="12" class="button button--full-width button--cta">Vælg abonnement</button>
+                            </div>
+                            
+                        </div>
+                        <p>*Alle priser er eksklusiv moms</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column-container column-7">
+                    <div class="column">
+                        <p><strong>@Model.Value("bodyTitle")</strong></p>
+                        <p>
+                            @Model.Value("description")
+                        </p>
+                    </div>
+                </div>
+                <div class="column-container">
+                    <div class="column">
+                        <img class="content-image" src="/media/2409/payment.svg" alt="Payment">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://sdk.paylike.io/6.js"></script>
+<script src="~/scripts/startupcental.js"></script>
+
+<script>
+    var con = @Request.QueryString["concentletters"];
+
+    $(document).ready(ContactSync());
+    
+    function GFG_click(clicked) {
+        var con = @Request.QueryString["concentletters"];
+        var paylike = Paylike('@System.Configuration.ConfigurationManager.AppSettings["StartupCentral.Paylike.PublicKey"]', { style: false });
+        paylike.popup({
+            title: 'Add card',
+            description: 'Please enter your card details',
+        }, function (err, r) {
+            $.ajax({
+                type: "POST",
+                url: location.origin + "/umbraco/api/upodiapi/savepaymentmethod",
+                data: {
+                    UserId: '@Request.QueryString["memberkey"]',
+                    Token: r.card.id,
+                    PromoKode: '@Request.QueryString["promokode"]',
+                    SubscriptionType: clicked
+                },
+                success: function (data) {
+                    if (data.Success) {
+                            fbq('track', 'Purchase', {
+                            value: '116,20',
+                            currency: 'DKK',
+                            });
+                            
+                        if (con == true) {
+                            startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_sync', {},
+                            function (data) {
+                                if (data) {
+                                    if (data.Success) {
+                                        console.log(data.Message);
+                                        window.location.href = "/betaling/gennemfort/";
+                                    }
+                                }
+                            });
+                        } else {
+                            startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_sync_nomarketingmember', {},
+                            function (data) {
+                                if (data) {
+                                    if (data.Success) {
+                                        console.log('Contact Synced');
+                                    }
+                                }
+                            });
+                        }
+
+                    window.location.href = "/betaling/gennemfort/";
+                    }
+                    
+                    
+                }
+            });
+        });
+    }
+
+    function ContactSync() {
+        if (con == true) {
+            startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_fejletsignup', {},
+            function (data) {
+                if (data) {
+                    if (data.Success) {
+                        GFG_click(12);
+                        console.log('Contact Synced.');
+                    }
+                }
+            });
+        } else {
+            startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_fejletsignup_nomarketing', {},
+            function (data) {
+                if (data) {
+                    if (data.Success) {
+                        GFG_click(12);
+                        console.log('Contact Synced.');
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+<style>
+    #sc-navbar-logged, #sc-navbar-main, #sc-newsletter, #main-footer {
+        display: none;
+    }
+</style>

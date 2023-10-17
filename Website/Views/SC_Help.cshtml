@@ -1,0 +1,167 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "SC_WebBase.cshtml";
+}
+
+<section class="header-big">
+    <div class="container">
+        <div class="title-box">
+            <h2 class="headline-2">@Umbraco.AssignedContentItem.Value("title")</h2>
+            <p>@Umbraco.AssignedContentItem.Value("subTitle")</p>
+        </div>
+    </div>
+</section>
+
+<main id="sc-weoffer" class="sc-weoffer">
+    <section class="sc-weoffer-conditions container-big">
+        <div class="container card">
+            <div class="title-box">
+                <h2 class="headline-2">@Umbraco.AssignedContentItem.Value("helpSectionTitle")</h2>
+                <p>@Umbraco.AssignedContentItem.Value("helpSectionDescription")</p>
+            </div>
+
+            <div class="text-container">
+                <div class="text-box">
+                    <img src="/media/2169/fordelspris2.svg" alt="fordelspris">
+                    <h3>@Umbraco.AssignedContentItem.Value("helpTitle1")</h3>
+                    <p>@Umbraco.AssignedContentItem.Value("helpDescription1")</p>
+                </div>
+
+                <div class="text-box">
+                    <img src="/media/2171/sparring2.svg" alt="sparring">
+                    <h3>@Umbraco.AssignedContentItem.Value("helpTitle2")</h3>
+                    <p>@Umbraco.AssignedContentItem.Value("helpDescription2")</p>
+                </div>
+
+                <div class="text-box">
+                    <img src="/media/2170/netvaerk2.svg" alt="">
+                    <h3>@Umbraco.AssignedContentItem.Value("helpTitle3")</h3>
+                    <p>@Umbraco.AssignedContentItem.Value("helpDescription3")</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="sc-weoffer-cost">
+        <div class="container">
+            <div class="title-box">
+                <h2 class="headline-2">@Umbraco.AssignedContentItem.Value("priceTitleMain")</h2>
+            </div>
+            <div class="text-container">
+                <div class="text-box">
+                    <h3>@Umbraco.AssignedContentItem.Value("priceTitle1")</h3>
+                    <p>@Umbraco.AssignedContentItem.Value("priceDescription1")</p>
+                </div>
+                <div class="text-box">
+                    <h3>@Umbraco.AssignedContentItem.Value("priceTitle2")</h3>
+                    <p>@Umbraco.AssignedContentItem.Value("priceDescription2")</p>
+                </div>
+                <div class="text-box">
+                    <h3>@Umbraco.AssignedContentItem.Value("priceTitle3")</h3>
+                    <p>@Umbraco.AssignedContentItem.Value("priceDescription3")</p>
+                </div>
+            </div>
+            <div class="price-box">
+                <h2 class="headline-2">@Umbraco.AssignedContentItem.Value("price")</h2>
+                <p>@Umbraco.AssignedContentItem.Value("aboveLine")</p>
+                <hr />
+                <p>Læs vores <a href="/brugerbetingelser-for-startup-centrals-portal/">brugerbetingelser</a> her.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="sc-weoffer-help">
+        <div class="container card">
+            <div class="help-container">
+                <div class="column-container">
+                    <div class="help centered">
+                        <div class="image-container">
+                            <span class="image">
+                                <img src="/media/1674/hjaelp-hinanden.svg" alt="Help">
+                            </span>
+                        </div>
+                        <h3>@Umbraco.AssignedContentItem.Value("Picture1")</h3>
+                    </div>
+                </div>
+                <div class="column-container">
+                    <div class="help centered">
+                        <div class="image-container">
+                            <span class="image">
+                                <img src="/media/1670/vores-community2.svg" alt="Help">
+                            </span>
+                        </div>
+                        <h3>@Umbraco.AssignedContentItem.Value("Picture2")</h3>
+                    </div>
+                </div>
+                <div class="column-container">
+                    <div class="help centered">
+                        <div class="image-container">
+                            <span class="image">
+                                <img src="/media/1671/support.svg" alt="Help">
+                            </span>
+                        </div>
+                        <h3>@Umbraco.AssignedContentItem.Value("Picture3")</h3>
+                    </div>
+                </div>
+                <div class="column-container">
+                    <div class="help centered">
+                        <div class="image-container">
+                            <span class="image">
+                                <img src="/media/1682/coaching.svg" alt="Help">
+                            </span>
+                        </div>
+                        <h3>@Umbraco.AssignedContentItem.Value("Picture4")</h3>
+                    </div>
+                </div>
+                <div class="column-container">
+                    <div class="help centered">
+                        <div class="image-container">
+                            <span class="image">
+                                <img src="/media/1679/partnere.svg" alt="Help">
+                            </span>
+                        </div>
+                        <h3>@Umbraco.AssignedContentItem.Value("Picture5")</h3>
+                    </div>
+                </div>
+                <div class="column-container">
+                    <div class="help centered">
+                        <div class="image-container">
+                            <span class="image">
+                                <img src="/media/1669/forbedring.svg" alt="Help">
+                            </span>
+                        </div>
+                        <h3>@Umbraco.AssignedContentItem.Value("Picture6")</h3>
+                    </div>
+                </div>
+                <div class="column-container">
+                    <div class="help centered">
+                        <div class="image-container">
+                            <span class="image">
+                                <img src="/media/1677/hurtig-vaekst.svg" alt="Help">
+                            </span>
+                        </div>
+                        <h3>@Umbraco.AssignedContentItem.Value("Picture7")</h3>
+                    </div>
+                </div>
+
+                <div class="column-container">
+                    <div class="help centered">
+                        <div class="image-container">
+                            <span class="image">
+                                <img src="/media/1672/kompetence-udvikling.svg" alt="Help">
+                            </span>
+                        </div>
+                        <h3>@Umbraco.AssignedContentItem.Value("Picture8")</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+@*@Html.Partial("~/Views/Partials/SC_About/_AboutHeader.cshtml")
+    @Html.Partial("~/Views/Partials/SC_Help/_HelpSection1.cshtml")
+        @Html.Partial("~/Views/Partials/SC_Help/_HelpSection2.cshtml")
+            @Html.Partial("~/Views/Partials/SC_Help/_HelpSection3.cshtml")
+                @Html.Partial("~/Views/Partials/SC_Help/_HelpSection4.cshtml")
+                @Html.Partial("~/Views/Partials/Sitelayout/_SpinWheel.cshtml")*@

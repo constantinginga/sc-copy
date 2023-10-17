@@ -1,0 +1,114 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@using Umbraco.Web.Composing;
+
+@{ 
+    var postCount = 1;
+
+    var pageSize = 9;
+    var page = 1; int.TryParse(Request.QueryString["page"], out page);
+    var items = Model.Children().Where(x => x.IsDocumentType("BlogItem")).OrderByDescending(x => x.CreateDate);
+    var totalPages = (int)Math.Ceiling((double)items.Count() / (double)pageSize);
+
+    if (page > totalPages)
+    {
+        page = totalPages;
+    }
+    else if (page < 1)
+    {
+        page = 1;
+    }
+
+    //var blogItems = Umbraco.ContentAtRoot().FirstOrDefault(x=>x.Name.ToLowerInvariant() == "blog").Children("blogItem").Where(x => x.IsVisible()).OrderByDescending(x => x.CreateDate).Skip(1);
+    var blogItems = Umbraco.Content(24024).Children().Where(x => x.IsVisible()).OrderByDescending(x => x.CreateDate).Skip(1);
+    //var categories = Umbraco.ContentAtRoot().First(x=>x.Name == "blogCategoriesMain").Children().Where(x => x.IsVisible());
+    var categories = Umbraco.Content(24200).Children.Where(x => x.IsVisible());
+}
+
+
+<section class="blog-cards-container">
+    @foreach (var item in blogItems.Skip((page - 1) * pageSize).Take(pageSize))
+    {       
+        var typedMediaPickerSingle = item.Value<IPublishedContent>("bImage");
+        var date = (item.Value<DateTime>("datePublished").ToString("dd-MM-yyyy"));
+        var cardColor = item.Value("cardColorPicker");
+        var blogTitle = item.Value("blogTitle");
+        var blogExcerpt = item.Value("excerpt");
+        var blogAuthorName = item.Value("authorName");
+        IPublishedContent categoryContentPicker = item.Value<IPublishedContent>("blogCategory");
+        var altText = blogTitle + " | Startup Central";
+
+        <article class="blog-card">
+            <div class="blog-card__content">
+                <figure class="blog-card__image">
+                    <a href=@item.Url>
+                        <img src=@typedMediaPickerSingle.Url() alt="@altText">
+                    </a>
+                </figure>
+                <div class="blog-card__body">
+                    <p class="blog-card__author">
+                        <a>@blogAuthorName</a>
+                    </p>
+                    <h3 class="blog-card__title">
+                        <a href=@item.Url>@blogTitle</a>
+                    </h3>
+                    <p class="blog-card__description">
+                        <a href=@item.Url>
+                            @blogExcerpt
+                        </a>
+                    </p>
+                    <div class="blog-card__meta">
+                        <div class="blog-card__tag">
+                            <a href=@categoryContentPicker.Url>@categoryContentPicker.Name</a>
+                        </div>
+                        <time class="blog-card__date">@date</time>
+                    </div>
+                </div>
+            </div>
+        </article>
+    }
+</section>
+
+
+<section class="blog-pagination">
+    <div class="pagination-list">
+        @if (page > 1)
+        {
+            <div class="pagination-list__item">
+                <a href="?page=@(page-1)">                        
+                    <svg id="Chevron_Left" data-name="Chevron Left" xmlns="http://www.w3.org/2000/svg" width="24"
+                            height="24" viewBox="0 0 24 24">
+                            <path id="Path_78" data-name="Path 78" d="M0,0H24V24H0Z" fill="none" />
+                            <path id="Path_79" data-name="Path 79"
+                                d="M14.71,6.71a1,1,0,0,0-1.41,0L8.71,11.3a1,1,0,0,0,0,1.41L13.3,17.3a1,1,0,0,0,1.41-1.41L10.83,12l3.88-3.88A1,1,0,0,0,14.71,6.71Z"
+                                fill="#182848" />
+                    </svg>
+                </a>
+             </div>
+        }
+
+        @for (int p = 1; p < totalPages + 1; p++)
+        {
+            var active = (p == page) ? "pagination-list__item--active" : string.Empty;
+
+            <div class="pagination-list__item @active">
+                <a href="?page=@p">@p</a>
+            </div>
+        }
+
+        @if (page < totalPages)
+        {
+             <div class="pagination-list__item">
+                <a href="?page=@(page+1)">
+                    <svg id="Chevron_Right" data-name="Chevron Right" xmlns="http://www.w3.org/2000/svg" width="24"
+                            height="24" viewBox="0 0 24 24">
+                            <path id="Path_80" data-name="Path 80" d="M0,0H24V24H0Z" fill="none" />
+                            <path id="Path_81" data-name="Path 81"
+                                d="M9.29,6.71a1,1,0,0,0,0,1.41L13.17,12,9.29,15.88a1,1,0,1,0,1.41,1.41l4.59-4.59a1,1,0,0,0,0-1.41L10.7,6.7A1,1,0,0,0,9.29,6.71Z"
+                                fill="#182848" />
+                    </svg>
+                </a>
+            </div>
+        }  
+    </div>
+</section>

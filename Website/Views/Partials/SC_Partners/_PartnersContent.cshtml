@@ -1,0 +1,58 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Security
+@using StartupCentral.Extensions
+
+@{
+    int i = 1;
+    int mediaItemId = 0;
+    IEnumerable<IMember> pList = ApplicationContext.Current.Services.MemberService.GetMembersByMemberType("partner");
+    var currentUser = Members.GetCurrentMember();
+}
+
+<div id="sc-partners-main" class="sc-section">
+    <div class="sc-container">
+        <div class="row">
+
+            @if (pList.Count() > 0)
+            {
+                foreach (var partner in pList.Where(itm => itm.GetValue<bool>("wwunavailable") == false).OrderBy(itm => itm.Name))
+                {
+
+                    if (partner.GetValue<string>("wwpartnerAvatar").IsNumeric())
+                    {
+                        mediaItemId = Convert.ToInt32(partner.GetValue<string>("wwpartnerAvatar"));
+                    }
+                    else if (!string.IsNullOrEmpty(partner.GetValue<string>("wwpartnerAvatar")))
+                    {
+                        mediaItemId = partner.GetValue<string>("wwpartnerAvatar").GetIdByUdi();
+                    }
+
+
+                    <div class="col-md-4 d-flex align-items-stretch">
+                    
+                            <div class="card">
+                                @if (mediaItemId > 0)
+                                {
+                                    <img src="@Umbraco.Media(mediaItemId).Url()" class="card-img-top" />
+                                }
+
+                                <div class="card-body d-flex flex-column">
+                                    <h3 class="card-text">@partner.GetValue("wwshorttext")</h3>
+                                    <p class="card-text">@partner.GetValue("wwaboveTilbud")</p>
+                                    <p class="card-text"><strong>@partner.GetValue("wwOffer")</strong></p>
+                                    <a href=@partner.GetValue("wwreadMoreBtnLink") class="btn btn-block mt-auto">LÆS MERE</a>
+                                </div>
+                            </div>
+                  
+                    </div>
+
+                    i++;
+                }
+            }
+
+        </div>
+    </div>
+</div>
+
+

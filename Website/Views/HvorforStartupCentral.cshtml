@@ -1,0 +1,316 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+	Layout = "Master.cshtml";
+}
+
+
+@{
+    var currentUser = Members.GetCurrentMember();
+}
+@* the fun starts here *@
+
+    <div class="content-header">
+        <div class="row-container centered">
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered">
+                        <h1 class="headline-1">
+                            @Model.Value("derfor1")
+                        </h1>
+                        <p class="lead">
+                            @Model.Value("derfor2")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img class="content-header__image" src="/media/2375/header400px.svg" alt="StartupCentralHeader">
+    </div>
+
+    <main id="sc-guest-hvorforsuc" class="sc-guest-hvorforsuc">
+        <section>
+            <div class="row-container">
+                <div class="row center-align-columns">
+                    <div class="column-container">
+                        <div class="column content-column">
+                            <h3 class="headline-3">@Model.Value("hvorforStartupCentralTitle")</h3>
+                            @Model.Value("hvorforStartupCentralDesc")                            
+                        </div>
+                    </div>
+                    <div class="column-container">
+                        <div class="column content-image">
+                            <img src="/media/2438/launch.svg" alt="Startup Central tilbyder ét samlet sted, hvor du kan finde alt hvad en selvstændig skal bruge." class="content-image">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="row-container">
+                <div class="row centered">
+                    <div class="column-container">
+                        <div class="column centered">
+                            <h2 class="headline-2">@Model.Value("derfor")</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="row three-column centered">
+                    <div class="column-container">
+                        <div class="column blurb centered">
+                            <div class="icon-container">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+                                    <g id="Network_1_" transform="translate(0 -386.8)">
+                                        <rect id="Rectangle_7_1_" width="48" height="48" transform="translate(0 386.8)"
+                                            fill="none" />
+                                        <g id="Group_12_1_" transform="translate(8.55 395.35)">
+                                            <g id="Group_34" data-name="Group 34" transform="translate(0 18)">
+                                                <path id="Path_99" data-name="Path 99"
+                                                    d="M17.4,399.75l-1.95,9.15v.6H8.25a2.629,2.629,0,0,1-2.55-2.55v-1.5a7.8,7.8,0,0,1,4.5-7.05,38,38,0,0,1,5.4-1.8Z"
+                                                    transform="translate(-5.7 -396.45)" fill="#182848" />
+                                                <path id="Path_100" data-name="Path 100"
+                                                    d="M30.25,405.2v1.65a2.528,2.528,0,0,1-2.55,2.55H20.5v-.6l-.3-1.2-1.8-7.8,1.8-3.3c.3,0,.6.15.9.15a42.167,42.167,0,0,1,4.65,1.5A7.7,7.7,0,0,1,30.25,405.2Z"
+                                                    transform="translate(0.65 -396.5)" fill="#182848" />
+                                            </g>
+                                            <path id="Path_101" data-name="Path 101"
+                                                d="M18.6,384.5a7.8,7.8,0,1,1-7.8,7.8,7.747,7.747,0,0,1,7.8-7.8Z"
+                                                transform="translate(-3.15 -384.5)" fill="#182848" />
+                                            <path id="Path_102" data-name="Path 102"
+                                                d="M18.05,399.95l1.95,9v.75H14v-.75l1.95-9L14,396.2h6Z"
+                                                transform="translate(-1.55 -378.65)" fill="#182848" />
+                                        </g>
+                                        <path id="Path_103" data-name="Path 103"
+                                            d="M21.1,404.65V417.4h-.6v-.6l-.3-1.2-1.8-7.8,1.8-3.3A1.9,1.9,0,0,1,21.1,404.65Z"
+                                            transform="translate(9.2 8.85)" fill="#182848" />
+                                    </g>
+                                </svg>
+
+
+                            </div>
+                            <h3 class="headline-3">@Model.Value("oneOnOneSparing")</h3>
+                            <p class="lead">
+                                @Model.Value("oneOnOneSparingDescription")
+                            </p>
+                        </div>
+                    </div>
+                    <div class="column-container">
+                        <div class="column blurb centered">
+                            <div class="icon-container">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+                                    <g id="Group_43" data-name="Group 43" transform="translate(0 -367.6)">
+                                        <g id="Budget_5_" transform="translate(0 367.6)">
+                                            <path id="Path_1_5_" d="M-301-252.4h48v48h-48Z"
+                                                transform="translate(301 252.4)" fill="none" />
+                                        </g>
+                                        <g id="Group_42" data-name="Group 42" transform="translate(4.5 379.9)">
+                                            <path id="Path_115" data-name="Path 115"
+                                                d="M7.5,378.4H4.35A1.344,1.344,0,0,0,3,379.75v12.9A1.344,1.344,0,0,0,4.35,394h1.2a3.329,3.329,0,0,0,3.3-3.3V379.75A1.344,1.344,0,0,0,7.5,378.4ZM6,392.05a1,1,0,0,1-1.05-.9,1.05,1.05,0,0,1,2.1,0A1.287,1.287,0,0,1,6,392.05Z"
+                                                transform="translate(-3 -374.5)" fill="#182848" />
+                                            <path id="Path_116" data-name="Path 116"
+                                                d="M29.6,378.4H26.45a1.344,1.344,0,0,0-1.35,1.35V390.7a3.329,3.329,0,0,0,3.3,3.3h1.35a1.344,1.344,0,0,0,1.35-1.35v-12.9A1.6,1.6,0,0,0,29.6,378.4ZM29,391.3a.8.8,0,0,1-.75.75.993.993,0,0,1-1.2-1.2c.15-.45.45-.75.75-.75A.993.993,0,0,1,29,391.3Z"
+                                                transform="translate(8.05 -374.5)" fill="#182848" />
+                                            <path id="Path_117" data-name="Path 117"
+                                                d="M29.769,379.85V390.8c0,.3-.3.3-.45.15h0l-8.55-7.05a.281.281,0,0,1,0-.45l1.35-1.2a.955.955,0,0,0-1.35-1.35l-4.8,4.5h0a2.53,2.53,0,0,1-3.45-.15,2.408,2.408,0,0,1,.15-3.45h0l6-5.55a1.833,1.833,0,0,1,1.35-.45h5.25a1.629,1.629,0,0,1,1.35.6l3.3,3.3C29.769,379.7,29.769,379.7,29.769,379.85Z"
+                                                transform="translate(1.431 -375.8)" fill="#182848" />
+                                            <path id="Path_118" data-name="Path 118"
+                                                d="M30.1,395.3l-.6.75a2.083,2.083,0,0,1-1.5.75,1.7,1.7,0,0,1-1.2-.45.456.456,0,0,0-.6,0l-1.65,1.95a2.325,2.325,0,0,1-3.15.3l-1.05-.9h0a3.829,3.829,0,0,1-5.4.6h0L9.4,393.5c-.15,0-.15-.15-.3-.15H8.65a.4.4,0,0,1-.45-.45V379.85c0-.15,0-.15.15-.3l3.15-3.15a2.234,2.234,0,0,1,1.35-.6H16.9a.421.421,0,0,1,.3.75L13,380.3a4.354,4.354,0,0,0,5.85,6.45l1.5-1.35a.456.456,0,0,1,.6,0l8.85,7.2A1.783,1.783,0,0,1,30.1,395.3Z"
+                                                transform="translate(-0.4 -375.8)" fill="#182848" />
+                                        </g>
+                                    </g>
+                                </svg>
+
+                            </div>
+                            <h3 class="headline-3">@Model.Value("kontanteFordele")</h3>
+                            <p class="lead">
+                                @Model.Value("kontanteFordeleDescription")
+                            </p>
+                        </div>
+                    </div>
+                    <div class="column-container">
+                        <div class="column blurb centered">
+                            <div class="icon-container">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+                                    <g id="Group_47" data-name="Group 47" transform="translate(0 -223.6)">
+                                        <g id="Budget_6_" transform="translate(0 223.6)">
+                                            <path id="Path_1_6_" d="M-301-396.4h48v48h-48Z"
+                                                transform="translate(301 396.4)" fill="none" />
+                                        </g>
+                                        <g id="Group_46" data-name="Group 46" transform="translate(7.05 232.057)">
+                                            <path id="Path_124" data-name="Path 124"
+                                                d="M13.629,232.481a3.869,3.869,0,0,1-4.65,4.65,4.006,4.006,0,0,1-3.15-3.15,3.915,3.915,0,0,1,4.65-4.65A4.006,4.006,0,0,1,13.629,232.481Z"
+                                                transform="translate(-4.18 -229.238)" fill="#182848" />
+                                            <path id="Path_125" data-name="Path 125"
+                                                d="M11.3,242.35a2.563,2.563,0,0,0,0,3.9l3.15,3v6.3a1.65,1.65,0,0,1-3.3,0V249.4a.65.65,0,0,0-.6-.3.779.779,0,0,0-.6.3v6.15a1.65,1.65,0,0,1-3.3,0V247.3a1.986,1.986,0,0,1-1.95-1.95v-6a4.033,4.033,0,0,1,4.05-4.05h3.9a4.252,4.252,0,0,1,3.75,2.55c-.15.15-.3.15-.3.3Z"
+                                                transform="translate(-4.7 -226.207)" fill="#182848" />
+                                            <path id="Path_126" data-name="Path 126"
+                                                d="M24.6,242.35a2.563,2.563,0,0,1,0,3.9l-3.15,3v6.3a1.65,1.65,0,0,0,3.3,0V249.4a.65.65,0,0,1,.6-.3.779.779,0,0,1,.6.3v6.15a1.65,1.65,0,0,0,3.3,0V247.3a1.986,1.986,0,0,0,1.95-1.95v-6a4.033,4.033,0,0,0-4.05-4.05h-3.9a4.252,4.252,0,0,0-3.75,2.55c.15.15.3.15.3.3Z"
+                                                transform="translate(2.7 -226.207)" fill="#182848" />
+                                            <path id="Path_127" data-name="Path 127"
+                                                d="M29.025,243.55l-4.5,4.2a.551.551,0,0,1-.45.15.709.709,0,0,1-.75-.75V244.9h-7.95v2.25c0,.15,0,.45-.15.45a.725.725,0,0,1-1.05,0l-4.5-4.2a.725.725,0,0,1,0-1.05l4.5-4.2a.551.551,0,0,1,.45-.15.709.709,0,0,1,.75.75V241h7.95v-2.25c0-.15,0-.45.15-.45a.725.725,0,0,1,1.05,0l4.5,4.2A.725.725,0,0,1,29.025,243.55Z"
+                                                transform="translate(-2.325 -224.857)" fill="#182848" />
+                                            <path id="Path_128" data-name="Path 128"
+                                                d="M28.73,232.481a3.869,3.869,0,0,1-4.65,4.65,4.006,4.006,0,0,1-3.15-3.15,3.915,3.915,0,0,1,4.65-4.65A4.006,4.006,0,0,1,28.73,232.481Z"
+                                                transform="translate(3.371 -229.238)" fill="#182848" />
+                                        </g>
+                                    </g>
+                                </svg>
+
+                            </div>
+                            <h3 class="headline-3">@Model.Value("eksklusivtNetwork")</h3>
+                            <p class="lead">
+                                @Model.Value("eksklusivtNetworkDescription")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="row-container">
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column centered">
+                            <h2 class="headline-2">Startup Central tools</h2>
+                            <h2>@Model.Value("toolsSomOverblik")</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row-container reversing-columns-rail">
+                <div class="row reversing-column center-align-columns">
+                    <div class="column-container">
+                        <h3 class="headline-3">@Model.Value("forretnngsplanTitle")</h3>
+                        <p class="lead">
+                            @Model.Value("forretningsplan")
+                        </p>
+                        <div class="inline-elements">
+                            @if (User.Identity.IsAuthenticated && Umbraco.Member(currentUser.Id).IsDocumentType("student"))
+                            {
+                                @*/forretningsplan/*@
+                                <a href="@Umbraco.Content(27550).Url" class="button button--lg">@Umbraco.GetDictionaryValue("ReadMoreAboutTheBusinessplan", "Læs mere om forretningsplanen")</a>
+                            }
+                            else
+                            {
+                                @*/forretningsplan/*@
+                                <a href="@Umbraco.Content(27550).Url" class="button button--lg">@Umbraco.GetDictionaryValue("ReadMoreAboutTheBusinessplan", "Læs mere om forretningsplanen")</a>
+                                @*/bliv-medlem/*@
+                                <a href="@Umbraco.Content(29767).Url" class="button button--lg button--cta">@Umbraco.GetDictionaryValue("BecomeAMember", "Bliv Medlem")</a>
+                            }
+                        </div>
+                    </div>
+                    <div class="column-container column-6">
+                        <div class="column">
+                            <img class="content-image" src="/media/2394/successfactors.svg" alt="En forretningsplan danner grundfundamentet for din virksomhed.">
+                        </div>
+                    </div>
+                </div>
+                <div class="row reversing-column center-align-columns">
+                    <div class="column-container">
+                        <h3 class="headline-3">@Model.Value("budgetTitle")</h3>
+                        <p class="lead">
+                            @Model.Value("budget")
+                        </p>
+                        <div class="inline-elements">
+
+
+                            @if (User.Identity.IsAuthenticated && Umbraco.Member(currentUser.Id).IsDocumentType("student"))
+                            {
+                                <a href="@Umbraco.Content(27555).Url" class="button button--lg">@Umbraco.GetDictionaryValue("ReadMoreAboutBudgets", "Læs mere om budgetter")</a>
+                            }
+
+                            else
+                            {
+                                <a href="@Umbraco.Content(27555).Url" class="button button--lg">@Umbraco.GetDictionaryValue("ReadMoreAboutBudgets", "Læs mere om budgetter")</a>
+                                @*/bliv-medlem/*@
+                                <a href="" class="button button--lg button--cta">@Umbraco.GetDictionaryValue("BecomeAMember", "Bliv Medlem")</a>
+                            }
+                        </div>
+                    </div>
+                    <div class="column-container column-6">
+                        <div class="column">
+                            <img class="content-image" src="/media/2396/budget-skabelon.svg" alt="Budgetskabeloner giver indsigt og overblik over din virksomheds økonomi.">
+                        </div>
+                    </div>
+                </div>
+                <div class="row reversing-column center-align-columns">
+                    <div class="column-container">
+                        <h3 class="headline-3">Pitch deck</h3>
+                        <p class="lead">@Model.Value("pitchDeck")</p>
+                        <div class="inline-elements">
+                            @if (User.Identity.IsAuthenticated && Umbraco.Member(currentUser.Id).IsDocumentType("student"))
+                            {
+                                <a href="@Umbraco.Content(30002).Url" class="button button--lg">@Umbraco.GetDictionaryValue("ReadMoreAboutPitchDecks", "Læs mere om pitch decks")</a>
+                            }
+                            else
+                            {
+                                <a href="@Umbraco.Content(30002).Url" class="button button--lg">@Umbraco.GetDictionaryValue("ReadMoreAboutPitchDecks", "Læs mere om pitch decks")</a>
+                                @*/bliv-medlem/*@
+                                <a href="@Umbraco.Content(29767).Url" class="button button--lg button--cta">@Umbraco.GetDictionaryValue("BecomeAMember", "Bliv Medlem")</a>
+                            }
+                        </div>
+                    </div>
+                    <div class="column-container column-6">
+                        <div class="column">
+                            <img class="content-image" src="/media/2400/businessplan.svg" alt="Brug dit pitch deck til præsentationer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="row-container">
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column centered">
+                            <h2 class="headline-2">
+                                @Model.Value("besparelse")                                
+                            </h2>
+                            <h2>
+                                @Model.Value("harRegnet")                                
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column content-column">
+                            <div class="bp-box">
+                                @Model.Value("besparelsesTabel")                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column content-column">
+                            @Model.Value("underTabellen")
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column content-column centered">
+                            @if (User.Identity.IsAuthenticated && Umbraco.Member(currentUser.Id).IsDocumentType("student"))
+                            {
+                            }
+                            else
+                            {
+                                <p>@Model.Value("ingenGrundTilAtVente")</p>
+                                @*/bliv-medlem/*@
+                                <a href="@Umbraco.Content(29767).Url" class="button button--lg button--cta">@Umbraco.GetDictionaryValue("BecomeAMember", "Bliv Medlem")</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>

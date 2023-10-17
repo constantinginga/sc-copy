@@ -1,0 +1,438 @@
+#sc-minside {
+    background-color: $sc-soft;
+}
+
+.aside-container {
+    aside.user-profile {
+        margin-top: $nav-sm;
+        padding: 0;
+
+        .column-container {
+            margin-top: 0;
+            background-color: $sc-white;
+            @include boxshadow;
+
+            .profile-header {
+                position: relative;
+                @include flex(row);
+                padding: 1.5rem 0;
+                align-content: space-between;
+                // border: 1px solid red;
+
+                .header-image {
+                    img {
+                        width: 10rem;
+                        height: 10rem;
+                        border-radius: 50%;
+                    }
+                }
+
+                .header-text {
+                    margin: auto;
+
+                    h2 {}
+                }
+
+                .settings-button {
+                    position: absolute;
+                    width: fit-content;
+                    margin: 0;
+                    bottom: 1rem;
+                    left: 6.75rem;
+                    padding: .75rem;
+                    border-radius: 50%;
+                    display: flex;
+
+                    i {
+                        font-size: 2rem;
+                    }
+
+                    span {
+                        display: none;
+                    }
+                }
+
+            }
+
+            .profile-body {
+                display: none;
+            }
+        }
+    }
+
+    .container-small {
+        margin-top: 1rem;
+
+        section.sc-minside-welcome {
+            padding-top: 0;
+            padding-bottom: 0;
+            padding: 2.5rem;
+            background-color: $sc-white;
+            border: 1px solid $sc-border;
+            margin-bottom: 2.5rem;
+
+            .headline-2 {
+                @include sc-title-line;
+            }
+
+            .quick-actions-container {
+                @include flex(row);
+                flex-wrap: wrap;
+                justify-content: space-evenly;
+                margin-top: 1rem;
+
+                .actions-body {
+                    padding: 1rem;
+                    flex: 0 0 50%;
+                    @include transition(.2s);
+
+                    &:hover {
+                        transform: translateY(2%);
+
+                        .action {
+                            background-color: $sc-light;
+                        }
+                    }
+
+                    .action {
+                        @include flex(column);
+                        color: $sc-primary;
+                        background-color: $sc-white;
+                        @include transition(.2s);
+
+                        i {
+                            font-size: 2.5rem;
+                            margin-bottom: .5rem;
+                        }
+                    }
+                }
+            }
+        }
+
+        section.sc-minside-informations {
+            padding-top: 2.5rem;
+            padding-bottom: 0;
+            padding: 2.5rem;
+            background-color: $sc-white;
+            border: 1px solid $sc-border;
+            margin-bottom: 2.5rem;
+
+            .headline-2 {
+                @include sc-title-line;
+            }
+
+            .info-container {
+                padding-top: 2.5rem;
+
+                .info-titles {
+                    @include flex(row);
+                    justify-content: space-around;
+                    // border-bottom: 1px solid $sc-primary;
+
+
+                    button {
+                        cursor: pointer;
+                        border: none;
+                        background: none;
+                        flex: 0 0 33.33333333333%;
+                        border-bottom: 1px solid $sc-primary;
+                        padding: 1rem;
+
+                        &:nth-child(2) {
+                            border-left: 1px solid $sc-primary;
+                            border-right: 1px solid $sc-primary;
+                        }
+
+                        &:hover {
+                            background-color: $sc-light;
+                        }
+                    }
+
+                    .active {
+                        width: 50%;
+                        border-bottom: 3px solid $sc-primary;
+                    }
+                }
+
+                .info-box {
+                    margin: 1.5rem 0;
+
+                    &.news {
+                        // display: none;
+
+                        .news-box {
+                            @include flex(row);
+                            background-color: $sc-white;
+                            text-align: left;
+                            @include boxshadow;
+                            border-radius: 1rem;
+                            color: $sc-primary;
+                            padding: 1rem;
+                            margin-bottom: 1.5rem;
+                            @include transition(0.1s);
+
+                            &:hover {
+                                transform: translateY(-2%);
+
+                                .news-box-text {
+                                    text-decoration: underline;
+                                }
+                            }
+
+                            &-img {
+                                flex: 0 0 35%;
+                                margin: auto;
+
+                                img {
+                                    height: 11rem;
+                                    object-fit: cover;
+                                    border-radius: .5rem;
+                                }
+                            }
+
+                            &-text {
+                                margin-left: 1rem;
+                                height: 13rem;
+                                overflow: hidden;
+                            }
+                        }
+                    }
+
+                    &.tips {
+                        .tips-box {
+                            display: flex;
+                            flex-direction: column;
+                            padding: 0;
+                            overflow: hidden;
+
+                            .tip-link {
+                                display: flex;
+                                justify-content: space-between;
+                                color: $sc-primary;
+                                border-bottom: 1px solid #e6e7e8;
+                                padding: 1rem;
+                                @include transition(0.2s);
+
+                                &:last-child {
+                                    border-bottom: none;
+                                }
+
+                                &:hover {
+                                    background-color: $sc-overlay-dark;
+
+                                    span {
+                                        text-decoration: underline;
+                                    }
+                                }
+
+                                i {
+                                    font-size: 2.5rem;
+                                }
+                            }
+                        }
+                    }
+
+                    &.invoices {
+                        .invoice {
+                            cursor: pointer;
+                            width: 100%;
+                            @include flex(row);
+                            padding: 1rem;
+                            justify-content: space-between;
+                            color: $sc-primary;
+                            border: 1px solid #e6e7e8;
+                            margin-bottom: 1.5rem;
+                            @include transition(0.2s);
+                            align-items: center;
+
+                            &:hover {
+                                background-color: $sc-overlay-dark;
+                            }
+                        }
+
+
+
+                        i {
+                            font-size: 2.5rem;
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+
+@include media-md {
+    .aside-container {
+        aside.user-profile {
+            padding: 0 1rem;
+        }
+
+        .container-small {
+            section.sc-minside-welcome {
+                .quick-actions-container {
+                    .actions-body {
+                        flex: 0 0 25%;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-lg {
+    .aside-container {
+        aside.user-profile {
+            margin-top: $nav-lg;
+            padding: 0;
+
+            .column-container {
+                margin-top: 3rem;
+                border: 1px solid $sc-border;
+                border-bottom-left-radius: 1rem;
+                border-bottom-right-radius: 1rem;
+
+                .profile-header {
+                    @include flex(column);
+                    padding: 2.5rem 0;
+
+                    .header-image {
+                        img {
+                            width: 15rem;
+                            height: 15rem;
+                            border-radius: 50%;
+                        }
+                    }
+
+                    .settings-button {
+                        position: relative;
+                        bottom: 0;
+                        left: 0;
+                        padding: 0.2rem .7rem;
+                        border-radius: .5rem;
+                        align-items: center;
+                        margin: .5rem auto;
+
+                        i {
+                            font-size: 1.4rem;
+                        }
+
+                        span {
+                            display: block;
+                            margin-left: .5rem;
+                            font-size: 1.4rem;
+                        }
+                    }
+
+                }
+
+                .profile-body {
+                    @include flex(column);
+                    padding: 1rem;
+
+                    h3 {
+                        &::after {
+                            content: '';
+                            display: block;
+                            background: $sc-accent;
+                            width: 15rem;
+                            height: 3px;
+                            border-radius: 5px;
+                        }
+                    }
+
+                    .user-info {
+                        li {
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: space-between;
+                            padding: 1rem 0;
+
+                            .info {
+                                font-size: 1.4rem;
+                                color: $sc-gray;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .container-small {
+            margin-top: 120px;
+            // background-color: $sc-white;
+            // border: 1px solid $sc-border;
+
+            section.sc-minside-welcome {
+                padding: 2.5rem;
+                background-color: $sc-white;
+                border: 1px solid $sc-border;
+                margin-bottom: 2.5rem;
+            }
+
+            section.sc-minside-informations {
+                padding: 2.5rem;
+                background-color: $sc-white;
+                border: 1px solid $sc-border;
+
+                .info-container {
+                    .info-box {
+                        margin: 1.5rem 0;
+
+                        &.news {
+                            .news-box {
+
+                                &-img {
+                                    flex: 0 0 25%;
+                                    margin: auto 0;
+
+                                    img {
+                                        height: 13rem;
+                                        object-fit: cover;
+                                        border-radius: .5rem;
+                                    }
+                                }
+
+                                &-text {
+                                    margin-left: 1rem;
+                                    height: 14rem;
+                                    overflow: hidden;
+                                }
+                            }
+                        }
+
+                        &.tips {}
+
+                        &.invoices {
+                            .invoice {
+                                cursor: pointer;
+                                width: 100%;
+                                @include flex(row);
+                                padding: 1rem;
+                                justify-content: space-between;
+                                color: $sc-primary;
+                                border: 1px solid #e6e7e8;
+                                margin-bottom: 1rem;
+                                @include transition(0.2s);
+                                align-items: center;
+
+                                &:hover {
+                                    background-color: $sc-overlay-dark;
+                                }
+                            }
+
+
+
+                            i {
+                                font-size: 2.5rem;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}

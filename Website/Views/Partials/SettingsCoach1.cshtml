@@ -1,0 +1,311 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Code.Class
+@using StartupCentral.Extensions
+@using Core = Umbraco.Core;
+
+@{
+    UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+    var currentUser = Members.GetCurrentMember();
+
+    var _memberService = ApplicationContext.Current.Services.MemberService;
+
+    var member = _memberService.GetById(currentUser.Id);
+    var memberKey = member.Key;
+
+    string wwavatarImageUrl = "";
+    var myAvatarImageUrl = 0;
+
+    if (member.GetValue("wwavatar") != null)
+    {
+      if (member.GetValue<string>("wwavatar").IsNumeric())
+      {
+        myAvatarImageUrl = Convert.ToInt32(member.GetValue<string>("wwavatar"));
+      }
+      else if (!string.IsNullOrEmpty(member.GetValue<string>("wwavatar")))
+      {
+        myAvatarImageUrl = member.GetValue<string>("wwavatar").GetIdByUdi();
+      }
+
+      if (myAvatarImageUrl > 0)
+      {
+        wwavatarImageUrl = Umbraco.Media(myAvatarImageUrl).Url();
+      }
+    }
+
+    var modified = "Please update and translate it on\nhttps://www.startupcentral.dk/coaches/"+member.GetValue<string>("urlProfile");
+
+    if (IsPost)
+    {
+      if (member != null)
+      {
+        if (Request.Form["formaction"] == "infoForm")
+        {
+          string kortText = Request.Form["cardintro"];
+          string introduction = Request.Form["coach-intro"];
+          string description = Request.Form["coach-description"];
+
+          if (!string.IsNullOrEmpty(kortText))
+          {
+            if (member.HasProperty("wwshorttxt"))
+            {
+              if (!String.Equals(@member.GetValue("wwshorttxt"), kortText))
+              {
+                modified += "\n\n\n * New 'wwshorttxt' value:\n" + kortText;
+                member.SetValue("wwshorttxt", kortText);
+              }
+            }
+          }
+
+          if (!string.IsNullOrEmpty(introduction))
+          {
+            if (member.HasProperty("introduction"))
+            {
+              var mIntroduction = member.GetValue<string>("introduction");
+              if (!String.Equals(mIntroduction, introduction))
+              {
+                modified += "\n\n\n * New 'introduction' value:\n" + introduction;
+                member.SetValue("introduction", introduction);
+              }
+            }
+          }
+
+          if (!string.IsNullOrEmpty(description))
+          {
+            if (member.HasProperty("description"))
+            {
+              var mDescription = member.GetValue<string>("description");
+              if (!String.Equals(mDescription, description))
+              {
+                modified += "\n\n\n * New 'description' value:\n" + description;
+                member.SetValue("description", description);
+              }
+            }
+          }
+
+          if (member.IsDirty())
+          {
+            ApplicationContext.Current.Services.MemberService.Save(member);
+            try
+            {
+              Emailing.SendMail("vh@startupcentral.dk", "Coach updated: " + member.Name, modified, false);
+            }
+            catch
+            { // ignore
+            }
+          }
+        }
+
+        if (HttpContext.Current.Request.Files != null && HttpContext.Current.Request.Files.Count > 0)
+        {
+          IMedia folder = StartupCentral.Code.Controllers.UserController.GetProfileImageFolder(member);
+          if (folder != null)
+          {
+            for (var i = 0; i < HttpContext.Current.Request.Files.Count; i++)
+            {
+              if (HttpContext.Current.Request.Files[i].ContentLength > 0)
+              {
+                IMedia mediaFile = ApplicationContext.Current.Services.MediaService.CreateMedia(HttpContext.Current.Request.Files[i].FileName, folder, "Image");
+                System.IO.Stream s = HttpContext.Current.Request.Files[i].InputStream;
+                mediaFile.SetValue(Core.Composing.Current.Services.ContentTypeBaseServices, "umbracoFile", HttpContext.Current.Request.Files[i].FileName, s);
+                s.Close();
+                s = null; //close the stream
+                ApplicationContext.Current.Services.MediaService.Save(mediaFile);
+
+                member.SetValue("wwavatar", mediaFile.GetUdi().ToString());
+
+                //member.SetValue("wwavatar", "umb://media/" + mediaFile.Key);//mediaFile.GetUdi().ToString());
+                ApplicationContext.Current.Services.MemberService.Save(member);
+              }
+            }
+          }
+        }
+      }
+    }
+        }
+      }
+
+
+
+<main id="AccountSettings" class="sc-logged sc-bgb10">
+    <div class="rail-grid rail-grid--2-column">
+        <h2 class="acc-settings-headline">
+            @member.Name /
+            <span id="acc-profile" class="title-tab info-settings is-active">Info indstillinger</span>
+            <span id="acc-pw" class="title-tab account-settings">Brugerindstillinger</span>
+        </h2>
+
+        <aside class="md-rail">
+            <div class="settings-buttons">
+                <ul class="settings-buttons__list">
+                    <li class="settings-buttons__list-item tablinks is-active" onclick="openTab(event, 'info-settings')">
+                        <button class="settings-button">
+                            <svg id="Settings" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                 viewBox="0 0 32 32">
+                                <g id="Group_20" data-name="Group 20">
+                                    <path id="Path_60" data-name="Path 60" d="M0,0H32V32H0Z" fill="none" />
+                                </g>
+                                <g id="Group_22" data-name="Group 22" transform="translate(2.667 5.333)">
+                                    <g id="Group_21" data-name="Group 21">
+                                        <path id="Path_61" data-name="Path 61"
+                                              d="M13.56,13.027c-.293-.013-.587-.027-.893-.027a17.168,17.168,0,0,0-8.813,2.427A3.9,3.9,0,0,0,2,18.8V21a1.337,1.337,0,0,0,1.333,1.333H14.347A9.284,9.284,0,0,1,12.667,17,9.429,9.429,0,0,1,13.56,13.027Z"
+                                              transform="translate(-2 -1)" fill="#182848" />
+                                        <circle id="Ellipse_2" data-name="Ellipse 2" cx="5.333" cy="5.333" r="5.333"
+                                                transform="translate(5.333)" fill="#182848" />
+                                        <path id="Path_62" data-name="Path 62"
+                                              d="M23.56,17.663a5.784,5.784,0,0,0-.08-.84l1.12-.973a.671.671,0,0,0,.133-.84l-.787-1.36a.651.651,0,0,0-.787-.293l-1.413.48a4.862,4.862,0,0,0-1.44-.84l-.293-1.453a.671.671,0,0,0-.653-.533H17.786a.671.671,0,0,0-.653.533L16.84,13a4.862,4.862,0,0,0-1.44.84l-1.413-.48a.661.661,0,0,0-.787.293l-.787,1.36a.671.671,0,0,0,.133.84l1.12.973a5.784,5.784,0,0,0-.08.84,5.784,5.784,0,0,0,.08.84l-1.12.973a.671.671,0,0,0-.133.84l.787,1.36a.651.651,0,0,0,.787.293l1.413-.48a4.862,4.862,0,0,0,1.44.84l.293,1.453a.671.671,0,0,0,.653.533H19.36a.671.671,0,0,0,.653-.533l.293-1.453a4.862,4.862,0,0,0,1.44-.84l1.413.48a.661.661,0,0,0,.787-.293l.787-1.36a.671.671,0,0,0-.133-.84L23.48,18.5A5.784,5.784,0,0,0,23.56,17.663Zm-5,2.667a2.667,2.667,0,1,1,2.667-2.667A2.675,2.675,0,0,1,18.56,20.33Z"
+                                              transform="translate(1.44 -1.663)" fill="#182848" />
+                                    </g>
+                                </g>
+                            </svg>
+                            <span>Brugerindstillinger</span>
+                        </button>
+                    </li>
+                    <li class="settings-buttons__list-item tablinks" onclick="openTab(event, 'account-settings')">
+                        <button class="settings-button">
+                            <svg id="Password" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                 viewBox="0 0 32 32">
+                                <path id="Path_21" data-name="Path 21" d="M0,0H32V32H0Z" fill="none" />
+                                <path id="Path_22" data-name="Path 22"
+                                      d="M22.667,10.333H21.333V7.667A6.667,6.667,0,1,0,8,7.667v2.667H6.667A2.675,2.675,0,0,0,4,13V26.333A2.675,2.675,0,0,0,6.667,29h16a2.675,2.675,0,0,0,2.667-2.667V13A2.675,2.675,0,0,0,22.667,10.333Zm-8,12a2.667,2.667,0,1,1,2.667-2.667A2.675,2.675,0,0,1,14.667,22.333Zm4.133-12H10.533V7.667a4.133,4.133,0,0,1,8.267,0Z"
+                                      transform="translate(1.333 0.333)" fill="#182848" />
+                            </svg>
+                            <span>Kodeord</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="lg-rail">
+            <form method="post" id="info-settings" class="delValidate settings-tab is-active" enctype="multipart/form-data">
+                <input hidden="" name="formaction" value="infoForm">
+                <div class="form-container">
+                    <label for="profilepic">Profilbillede</label>
+                    <div class="input-container">
+                        <img class="entity-image-104 entity-image-circle" src="@(!string.IsNullOrEmpty(wwavatarImageUrl) ? wwavatarImageUrl : "/media/1195/startup-central-bruger.jpg")" alt="">
+                        <input id="avatarfile" type="file" name="avatarfile">
+                    </div>
+                </div>
+
+
+                @{
+                    var introductionMember = member.GetValue<string>("introduction");
+                    var descriptionMember = member.GetValue<string>("description");
+                }
+                <div class="form-container">
+                    <label for="cardintro">Kompetencer</label>
+                    <div class="input-container">
+                        <input type="text" id="coach-profession" name="cardintro" autocomplete="off" maxlength="30" value="@member.GetValue("wwshorttxt")" required />
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <label for="coach-intro">Hvad kan jeg hjælpe dig med?</label>
+                    <div class="input-container">
+                        <textarea name="coach-intro" class="form-control" id="coach-intro" placeholder="Skriv..." rows="1" required>@Html.StripHtml(introductionMember)</textarea>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <label for="coach-description">Min profil</label>
+                    <div class="input-container">
+                        <textarea name="coach-description" class="form-control" id="coach-description" placeholder="Skriv..." rows="1" required>@Html.StripHtml(descriptionMember)</textarea>
+                    </div>
+                </div>
+
+                <button class="button" type="submit" id="changeinfo">
+                    Opdater
+                </button>
+            </form>
+
+            @Html.Partial("SettingsChangePassword", member)
+
+        </div>
+    </div>
+
+</main>
+
+
+
+<script>
+    function openTab(evt, tabName) {
+      var i, tabcontent, tablinks, tabtitles;
+      tabcontent = document.getElementsByClassName("settings-tab");
+
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+
+      tablinks = document.getElementsByClassName("tablinks");
+
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+      }
+
+      tabtitle = document.getElementsByClassName("title-tab");
+      for (i = 0; i < tablinks.length; i++) {
+        tabtitle[i].className = tabtitle[i].className.replace(" is-active", "");
+      }
+
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " is-active";
+
+      var title = document.getElementsByClassName(tabName);
+      title[0].className += " is-active";
+    }
+</script>
+
+@*<div class="container">
+        <section class="sc-settings">
+
+            <div class="settings-header">
+                <div class="header-tab active" data-id="account-settings">
+                    <button><i class="fab fa-500px" aria-hidden="true"></i>Bruger Indstillinger</button>
+                </div>
+                <div class="header-tab" data-id="info-settings">
+                    <button><i class="fab fa-500px" aria-hidden="true"></i>Coach Info</button>
+                </div>
+            </div>
+
+            @Html.Partial("SettingsChangePassword", member)
+
+            <div class="settings-main info-settings" id="info-settings">
+                <form method="post" id="infoForm" class="delValidate">
+                    <input hidden name="formaction" value="infoForm" />
+                    <div class="form-box-container">
+                        <div class="form-container">
+                            <label for="firstname" class="label-name">
+                                <span class="content-name">Coach Field</span>
+                            </label>
+                            <div class="input-container">
+                                <input type="text" id="coach-profession" name="cardintro" autocomplete="off" maxlength="30" required />
+                                <span>
+                                    <i class="fas fa-user-graduate"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-container">
+                            <label for="address" class="label-name">
+                                <span class="content-name">Coach Intro</span>
+                            </label>
+                            <textarea name="coach-intro" class="form-control" id="coach-intro" placeholder="Skriv..." rows="1"></textarea>
+                        </div>
+
+                        <div class="form-container">
+                            <label for="address" class="label-name">
+                                <span class="content-name">Coach Description</span>
+                            </label>
+                            <textarea name="coach-description" class="form-control" id="coach-description" placeholder="Skriv..." rows="1"></textarea>
+                        </div>
+
+                        <div class="settings-button">
+                            <button type="submit" class="button" id="changeinfo">Opdater</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+        </section>
+    </div>*@

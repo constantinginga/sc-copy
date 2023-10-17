@@ -1,0 +1,256 @@
+﻿@using StartupCentral.Extensions
+@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@{
+    int i = 1;
+   IEnumerable<IMember> coachesList = ApplicationContext.Current.Services.MemberService.GetMembersByMemberType("coach1");
+    var currentUser = Members.GetCurrentMember();
+}
+
+<section class="pt0 pb0">
+    <div class="row">
+
+        @foreach (var busa in coachesList.Where(itm => itm.GetValue<bool>("wwunavailable") == false))
+        {
+            int mediaItemId = 0;
+            if (busa.GetValue<string>("wwavatar").IsNumeric())
+            {
+                mediaItemId = Convert.ToInt32(busa.GetValue<string>("wwavatar"));
+            }
+            else if (!string.IsNullOrEmpty(busa.GetValue<string>("wwavatar")))
+            {
+                mediaItemId = busa.GetValue<string>("wwavatar").GetIdByUdi();
+            }
+            List<int> tagsId = busa.GetValue<string>("wwtags").UdiCSVToIntList();
+
+            <div class="col-md-12 busainfo_@i busainfoclose" style="display:none;">
+                <div class=" pad0 flex mb15 hidden-xs">
+                    <div class="col-md-5 pr0 eqcol" style="background-color: rgba(24, 52, 66, 1);margin-left:-3px;">
+                        <div class="businessangelscontent white">
+                            <div class="fw600 f12 mb30">Business angel @i</div>
+                            <div class="fw600 f25 mb20">@busa.GetValue("wwname")</div>
+                            <div class="f16 mb40 lh24 fleft">
+                                <div class="col-md-8">
+                                    <div class="row mb40">
+                                        @busa.GetValue("wwshorttxt")
+                                    </div>
+                                    <div class="row">
+                                        @Html.Raw(busa.GetValue("bodyText"))
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tags fleft w100">
+                                @if (tagsId != null)
+                                {
+                                    foreach (int tag in tagsId)
+                                    {
+					if(Umbraco.Content(tag)!=null) 
+                                        {
+                                            <div class="tag fleft fw600 f12 mr10">@Umbraco.Content(tag).Name</div>
+
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7 pl0 eqcol pad0">
+                        <a href="javascript:void(0);"><div class="baclose"><img src="/images/close.gif"></div></a>
+                        @if (mediaItemId > 0)
+                        {
+                            <img src="@Umbraco.Media(mediaItemId).GetCropUrl("coach")" class="img-responsive eqcol" />
+                        }
+                    </div>
+                </div>
+            </div>
+            i++;
+        }
+        @{
+            i = 1;
+        }
+    </div>
+    <div class="row">
+        @foreach (var busa in coachesList.Where(itm => itm.GetValue<bool>("wwunavailable") == false))
+        {
+            int mediaItemId = 0;
+            if (busa.GetValue<string>("wwavatar").IsNumeric())
+            {
+                mediaItemId = Convert.ToInt32(busa.GetValue<string>("wwavatar"));
+            }
+            else if (!string.IsNullOrEmpty(busa.GetValue<string>("wwavatar")))
+            {
+                mediaItemId = busa.GetValue<string>("wwavatar").GetIdByUdi();
+            }
+            List<int> tagsId = busa.GetValue<string>("wwtags").UdiCSVToIntList();
+
+            <div class="col-md-6 pad0 flex mb15 hidden-xs showba busangelsbox hideba_@i">
+                <div class="col-md-5 pr0 eqcol" style="background-color: rgba(24, 52, 66, 1);margin-left:-3px;">
+                    <div class="businessangelscontent white">
+                        <div class="fw600 f12 mb10">Coach</div>
+                        <div class="fw600 f22 mb20">@busa.GetValue("wwname")</div>
+                        <div class="f14 mb30 lh24 fleft">
+                            <div class="col-md-8">
+                                <div class="row">
+                                    @if(busa.GetValue("wwshorttxt") != null){
+                                    @Umbraco.Truncate(busa.GetValue("wwshorttxt").ToString(),90)
+                                    }else{
+                                    @busa.GetValue("wwshorttxt")
+                                    }
+                                   <span><a href="javascript:void(0);" class="openba_@i lightdark">...</a></span>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    @if (User.Identity.IsAuthenticated && Umbraco.Member(currentUser.Id).IsDocumentType("student"))
+                                    {
+                                        <a href="javascript:void(0);" class="btn mt10 whover fw400 light btnlightblue normalbtn opensend_@i" id="opensend_@i" data-toggle="modal" data-target="#sendview_@i">Send besked/forretningsplan</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tags fleft w100">
+                            @if (tagsId != null)
+                            {
+                                foreach (int tag in tagsId)
+                                {
+                                
+					if(Umbraco.Content(tag)!=null) 
+                                        {
+                                            <div class="tag fleft fw600 f12 mr10">@Umbraco.Content(tag).Name</div>
+
+                                        }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7 pl0 eqcol">
+                    @if (mediaItemId > 0)
+                    {
+                        <img src="@Umbraco.Media(mediaItemId).GetCropUrl("coach")" class="img-responsive eqcol" />
+                    }
+                </div>
+            </div>
+
+            <div class="modal fade sendview" id="sendview_@i" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><img src="/images/close.gif"></button>
+                        <div class="modal-header text-center">
+                            @if (mediaItemId > 0)
+                            {
+                                <img src="@Umbraco.Media(mediaItemId).GetCropUrl("businessangelspopup")" class="img-responsive center-block mb25 mt40 round" />
+                            }
+                            <h4 class="modal-title f25 mb5  uppercase fw700 lh26" id="myModalLabel">@busa.GetValue("wwname")</h4>
+                            <div class="mb10">Coach</div>
+                        </div>
+                        <div class="modal-body text-center lh22 mb20">
+                            Du er ved at sende din forretningsplan til @busa.GetValue("wwname").
+                            <br />
+                            Vi ønsker dig alt mulig held og lykke.
+                        </div>
+                        <form action="" method="post" data-id="@busa.Id">
+                            <select id="sendplantoinvestor" name="sendplantoinvestor" class="form-control mb20">
+                                <option value="">Vælg din forretningsplan</option>
+                                @foreach (var planer in Umbraco.Content(1606).Children())
+                                {
+                                    if (User.Identity.IsAuthenticated && currentUser.Id.ToString() == planer.memberid)
+                                    {
+                                        foreach (var plan in planer.Children("forretningsplan").Where("wwcompleted == true"))
+                                        {
+                                            <option value="@plan.Id">@plan.wwprojektnavn</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                            <div class="form-group">
+                                <label for="coachmessage">Tilføj en besked</label>
+                                <textarea class="form-control coachmessage" name="coachmessage" id="coachmessage" row="8" placeholder="Jeg håber du kan hjælpe mig, specielt omkring punktet økonomi er jeg lidt udfordret"></textarea>
+                            </div>
+                            <input type="button" value="Send" class="btnlightbg white w100 sendplantoinvestor" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 pad0 mb15 visible-xs">
+                <div class="col-md-7 pl0">
+                    @if (mediaItemId > 0)
+                    {
+                        <img src="@Umbraco.Media(mediaItemId).GetCropUrl("businessangels")" class="img-responsive" />
+                    }
+                </div>
+                <div class="col-md-5 pr0" style="background-color: rgba(24, 52, 66, 1);">
+                    <div class="businessangelscontent white mb15" style="background-color: rgba(24, 52, 66, 1);">
+                        @*<div class="fw600 f12 mb30">Coach</div>*@
+                        <div class="fw600 f25 mb20">@busa.GetValue("wwname")
+                            <div class="col-md-8">
+                                <div class="row">
+                                    @if (User.Identity.IsAuthenticated && Umbraco.Member(currentUser.Id).IsDocumentType("student"))
+                                    {
+                                        <a href="javascript:void(0);" class="btnmobile mt10 whover fw400 light btnlightblue normalbtn opensend_@i" id="opensend_@i" data-toggle="modal" data-target="#sendview_@i">Send besked/forretningsplan</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="f16 mb40 lh24 fleft">
+                            <div class="col-md-8">
+                                <div class="row">
+                                    @if(busa.GetValue("wwshorttxt") != null){
+                                    @Umbraco.Truncate(busa.GetValue("wwshorttxt").ToString(),100)
+                                    }else{
+                                    @busa.GetValue("wwshorttxt")
+                                    }
+                                   <span><a href="javascript:void(0);" class="openbusmob_@i lightdark">...</a></span>
+                                </div>
+                                <div class="row showbusainfomob_@i" style="display:none;">
+                                    @Html.Raw(busa.GetValue("bodyText"))
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tags fleft w100">
+                            @if (tagsId != null)
+                            {
+                                foreach (int tag in tagsId)
+                                {
+					if(Umbraco.Content(tag)!=null) 
+                                        {
+                                            <div class="tag fleft fw600 f12 mr10">@Umbraco.Content(tag).Name</div>
+
+
+                                        }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <script>
+    $( document ).ready(function() {
+    $( ".openba_@(i)" ).click(function() {
+        $( ".busainfoclose" ).hide( "slow" );
+        $( ".showba" ).show( "slow" );
+
+            $( ".busainfo_@(i)" ).show( "slow" );
+            $( ".hideba_@(i)" ).hide( "slow" );
+            $('html, body').animate({
+                scrollTop: parseInt($(".busainfo_@(i)").offset().top)
+            }, 2000);
+            }
+        );
+         $( ".baclose" ).click(function() {
+             $( ".busainfoclose" ).hide( "slow" );
+             $( ".showba" ).show( "slow" );
+         });
+
+         $( ".openbusmob_@i" ).click(function() {
+            $( ".showbusainfomob_@i" ).toggle();
+        });
+    });
+            </script>
+            i++;
+        }
+    </div>
+</section>
+
+<script src="~/scripts/startupcentral.student.js?v=3"></script>

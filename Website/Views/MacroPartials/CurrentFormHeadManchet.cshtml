@@ -1,0 +1,20 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+@{
+
+    <div class="fleft w100 fw700 dark f60 mb20 f20mob">
+        @if(CurrentPage.wwoverskrift !="")
+        {
+            @Page.wwoverskrift
+        }
+        else
+        {
+            @Page.Name  
+        }
+    </div>
+    
+	<div class="fleft w100 fw400 dark f18 f20mob mb40 lh26">
+	   @Page.wwmanchet
+	</div>
+
+}

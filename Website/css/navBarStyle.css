@@ -1,0 +1,149 @@
+.navBarReset {
+	newstyles !importnant;
+}
+
+html,
+body {
+    width: 100% !importnant;
+    height: 100vh !importnant;
+    background-color: rgb(233, 233, 233) !importnant;
+    font-family: 'Poppins', sans-serif !importnant;
+    color: rgb(15, 35, 90) !importnant;
+	font-size: 2rem !importnant;
+}
+
+.navbar.fixed-top ul, .navbar.fixed-top ol{
+	width: auto;
+}
+
+.navbar 
+{  
+	background-color: rgba(29,43,83, .3);
+	transition: all 0.4s;
+}
+
+.navbar .nav-link 
+{
+    color: #fff;
+	font-size:16px;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus 
+{
+    color: #fff;
+    text-decoration: none;
+}
+
+.navbar .navbar-brand 
+{
+    color: #fff;
+	
+}
+
+.navbar-nav{
+align-items:center;
+}
+
+.nav-item{
+
+	padding-right:1rem;}
+
+
+
+/* Change navbar styling on scroll */
+.navbar.active {
+    
+    background: linear-gradient(248deg, rgba(0, 52, 80, 1) 0%, rgba(29, 43, 83, 1) 100%);
+    box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar.active .nav-link 
+{
+    color: #ccc;
+}
+
+.navbar.active .nav-link:hover,
+.navbar.active .nav-link:focus 
+{
+    color: #fff;
+    text-decoration: none;
+}
+
+.navbar.active .navbar-brand 
+{
+    color: #fff;
+}
+
+.navbar .navbar-toggler
+{
+	 color: #fff;
+}
+
+@media (max-width: 991.98px) {
+	.navbar
+	{
+
+		background: linear-gradient(248deg, rgba(0, 52, 80, 1) 0%, rgba(29, 43, 83, 1) 100%);
+	}
+
+	.navbar .navbar-brand, .navbar .nav-link 
+	{
+		color: #fff;
+	}
+	.navbar .dropdown-menu
+	{
+		background:transparent;
+		border-style:none;
+	}
+	.navbar .dropdown-menu .dropdown-item
+	{
+		background:transparent;
+		color:#ccc;
+	}
+	.navbar .dropdown-menu .dropdown-item:hover
+	{
+		color:#fff;
+	}
+	.nav-item{padding-right:1rem;align-self: flex-start;}
+
+}
+.messages
+{
+	background: #33ccff;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    position: relative;
+    margin-top: -3px;
+    float: right;
+    font-size: 11px;
+    text-align: center;
+    padding-top: 2px;
+}
+
+
+.navbar .foretningsplan-nav 
+{
+	border: 1px solid #33ccff;
+	padding: 5px;
+	border-radius: 5px;
+}
+
+.navbar .foretningsplan-nav a 
+{
+	color: #33ccff;
+}
+
+
+.forretningsplan{
+	color:#33ccff;
+	border: 1px solid #33ccff;
+	border-radius: 5px;
+padding: 5px 10px;
+}
+
+button#logoutbutton{
+margin:0;
+	font-size:12px;
+}

@@ -1,0 +1,234 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Code.Class
+
+@{ 
+    Layout = "MasterNoIndex.cshtml";
+
+    var currentDate = DateTime.Now.Year;
+    var redi = Umbraco.AssignedContentItem.Value("referenceToPayment");
+
+    IMember currentMember = null;
+    string errorMessage = string.Empty;
+    string username = "";
+    string email = "";
+    string password = "";
+    string mobilenumber = "";
+    string promocode = "";
+    string concent = "false";
+
+    UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+
+    var promocodeField = Umbraco.AssignedContentItem.Value("promocodeField");
+    if(!string.IsNullOrEmpty(Request.Params["promocode"]))
+    {
+        promocodeField = Request.Params["promocode"];
+    }
+
+    if (IsPost)
+    {
+        if (!string.IsNullOrEmpty(Request.Form["email"]))
+        {
+            if (!string.IsNullOrEmpty(Request.Form["promocode"]))
+            {
+                promocode = Request.Form["promocode"];
+                var isValidPromocode = System.Threading.Tasks.Task.Run(() => upodiWrapperService.ValidateDiscountCode(promocode)).GetAwaiter().GetResult();
+                if (!isValidPromocode) //
+                {
+                    errorMessage = "Promokoden er forkert eller ikke længere tilgængelig";
+                }
+            }
+
+            email = Request.Form["email"];
+            StartupCentral.Code.Model.ValidationResponse response = StartupCentral.Code.Class.Emailing.ValidateEmail(email);
+
+            if (!response.IsValid)
+            {
+                errorMessage = response.Message;
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["username"]))
+            {
+                username = Request.Form["username"];
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["password"]))
+            {
+                password = Request.Form["password"];
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["mobilenumber"]))
+            {
+                mobilenumber = Request.Form["mobilenumber"];
+            }
+
+            if (Request.Form["conc"] != null)
+            {
+                var res = Request.Form["conc"];
+
+                if (res == "on")
+                {
+                    concent = "true";
+                }
+
+            }
+
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                IMember member = ApplicationContext.Current.Services.MemberService.CreateMemberWithIdentity(email, email, username, "student");
+                if (member != null)
+                {
+
+                    member.SetValue("wwmobile", mobilenumber);
+                    member.SetValue("wwMobilePayAbonnementsDato", null);
+
+                    member.SetValue("wwname", username);
+                    member.SetValue("wwemail", email);
+                    member.IsApproved = false;
+
+                    ApplicationContext.Current.Services.MemberService.Save(member);
+                    ApplicationContext.Current.Services.MemberService.AssignRole(email, "student");
+                    ApplicationContext.Current.Services.MemberService.SavePassword(member, password);
+
+                    //Emailing.SendApprovvalEmail(member,password,true);
+                    //Emailing.SendCreationEmail(member, password);
+
+                    currentMember = member;
+
+                    Response.Redirect(string.Concat(redi, "?memberkey=", member.Key, "&promokode=", promocode, "&concentletters=", concent), true);
+                    return;
+                }
+            }
+
+        }
+    }
+}
+
+    <div class="content-header">
+        <div class="row-container centered">
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered">
+                        <h2 class="headline-1">
+                            @Umbraco.AssignedContentItem.Value("title")
+                        </h2>
+                        <p class="lead">
+                            @Umbraco.AssignedContentItem.Value("subtitle")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img class="content-header__image" src="/media/2375/header400px.svg" alt="">
+    </div>
+
+    <main id="sc-entrepreneur">
+        <section>
+            <div class="row-container">
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column centered">
+                            <h2 class="headline-2">@Umbraco.AssignedContentItem.Value("specialOfferTitle")</h2>
+                            <p class="lead">@Umbraco.AssignedContentItem.Value("specialOfferDescription")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row-container">
+                <div class="row">
+                        <div class="column-container centered column-6">
+                            <div class="column centered">
+                    <form method="post" id="registrationForm">
+                        <input hidden name="formaction" value="registration" />
+                                <h2 class="headline-2">Tilmeld dig herunder</h2>
+
+                                @if (!string.IsNullOrEmpty(errorMessage))
+                                {
+                                    <p class="text-center">
+                                        <font color="red">@errorMessage</font>
+                                    </p>
+                                    <br />
+                                }
+
+                                <div class="form-container">
+                                    <label for="firstname">Navn / Virksomhedsnavn</label>
+                                    <input type="text" name="username" autocomplete="on" required>
+                                </div>
+                                <div class="form-container">
+                                    <label for="email">Email</label>
+                                    <input type="email" name="email" autocomplete="on" required>
+                                </div>
+                                <div class="form-container">
+                                    <label for="pasword">Kodeord</label>
+                                    <input type="password" id="pass" name="password" minlength="6" required>
+                                </div>
+
+                                <div class="form-container">
+                                    <label for="telephone">Telefonnummer</label>
+                                    <div class="input-container">
+                                        <span>+45</span>
+                                        <input type="tel" id="telephone" name="mobilenumber" minlength="8" autocomplete="on"
+                                               maxlength="8" required>
+                                    </div>
+                                </div>
+                                <div class="form-container" style="display:@Umbraco.If(Umbraco.AssignedContentItem.Value<bool>("hidePromocodeField"),"none","")">
+                                    <label for="promocode">Promokode</label>
+                                    <input type="text" name="promocode" required value="@promocodeField">
+                                </div>
+
+                                <div class="form-container">
+                                    <label class="checkbox">
+                                        <span>Jeg har læst, og accepterer Startup Centrals <a class="link" href="/brugerbetingelser/" target="_blank">brugerbetingelser</a>.</span>
+                                        <input type="checkbox" id="brug" name="brug" class="checkbox" required>
+                                        <span class="checkmark"></span>
+                                    </label>
+                
+                                    <label class="checkbox">
+                                        <span>Ja tak, jeg vil gerne modtage relevante informationer om mit medlemskab, mine fordele og iværksætterviden.</span>
+                                        <input type="checkbox" id="conc" name="conc" class="checkbox">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                
+                                <button class="button button--full-width button--lg" type="submit">Tilmeld og fortsæt</button>
+                                <p>Har du allerede en bruger? <a href="/login/">Klik her</a> </p>
+
+                    </form>
+                            </div>
+                        </div>
+
+                    <div class="column-container">
+                        <div class="column centered">
+                            <h2 class="headline-2">Brug for vejledning?</h2>
+                            <p class="lead" style="margin:auto;">
+                                Er du i tvivl om Startup Central kan skabe en unik merværdi for dig og din virksomhed, 
+                                så tøv ikke med at kontakt os. 
+                                Samtalen er uforpligtende og helt gratis.
+                            </p>
+                            <img style="margin-bottom: auto;" class="content-image" src="/media/2143/undraw_contact_us_15o2-1-1.svg" alt="">
+                            <a href="/kontakt/" style="margin-bottom: 20px;" class="button button--lg button--full-width">Kontakt os</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="row-container">
+                <div class="row">
+                    <div class="column-container">
+                        <div class="column centered">
+                            <h2 class="headline-2">@Umbraco.AssignedContentItem.Value("bellowFormsTitle")</h2>
+                            @Umbraco.AssignedContentItem.Value("bellowFormsDescription")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <style>
+        #sc-navbar-logged, #sc-navbar-main, #sc-newsletter, #main-footer {
+            display: none;
+        }
+    </style>

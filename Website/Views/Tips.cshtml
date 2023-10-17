@@ -1,0 +1,202 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "SC_WebBase.cshtml";
+
+    var section1 = Umbraco.AssignedContentItem.Value("section1");
+    var typedMediaPickerSection1 = Umbraco.AssignedContentItem.Value<IPublishedContent>("section1Img");
+
+    var section2 = Umbraco.AssignedContentItem.Value("section2");
+    var typedMediaPickerSection2 = Umbraco.AssignedContentItem.Value<IPublishedContent>("section2Img");
+
+    var section3 = Umbraco.AssignedContentItem.Value("section3");
+    var typedMediaPickerSection3 = Umbraco.AssignedContentItem.Value<IPublishedContent>("section3Img");
+
+    var section4 = Umbraco.AssignedContentItem.Value("section4");
+    var typedMediaPickerSection4 = Umbraco.AssignedContentItem.Value<IPublishedContent>("section4Img");
+
+    var section5 = Umbraco.AssignedContentItem.Value("section5");
+    var typedMediaPickerSection5 = Umbraco.AssignedContentItem.Value<IPublishedContent>("section5Img");
+
+    var section6 = Umbraco.AssignedContentItem.Value("section6");
+    var typedMediaPickerSection6 = Umbraco.AssignedContentItem.Value<IPublishedContent>("section6Img");
+
+    var section7 = Umbraco.AssignedContentItem.Value("section7");
+    var typedMediaPickerSection7 = Umbraco.AssignedContentItem.Value<IPublishedContent>("section7Img");
+
+    var section8 = Umbraco.AssignedContentItem.Value("section8");
+    var typedMediaPickerSection8 = Umbraco.AssignedContentItem.Value<IPublishedContent>("section8Img");
+
+    }
+
+    <section class="header-big">
+        <div class="container">
+            <div class="title-box">
+                <h2>@Umbraco.AssignedContentItem.Value("title")</h2>
+                <p class="lead">@Umbraco.AssignedContentItem.Value("subTitle")</p>
+            </div>
+        </div>
+    </section>
+
+    <main id="sc-tips" class="sc-tips">
+
+        @if (section1.ToString() != string.Empty)
+        {
+            <section class="tips-intro container">
+                <div class="tip-row card">
+                    <div class="tips-textbox">
+                        <h2 class="headline-2">Introduktion</h2>
+                        <p class="lead">@Umbraco.AssignedContentItem.Value("section1")</p>
+                    </div>
+
+                    <div class="tips-image">
+                        @{
+                            if (typedMediaPickerSection1 != null)
+                            {
+                                <img src="@typedMediaPickerSection1.Url" alt="@typedMediaPickerSection1.Value("alt")" />
+                            }
+                        }
+                    </div>
+                </div>
+            </section>
+        }
+
+        @if (section2.ToString() != string.Empty)
+        {
+            <section class="tips-section container-big">
+                <div class="container tips-container">
+                    <div class="tips-textbox">
+                        <p class="lead">@Umbraco.AssignedContentItem.Value("section2")</p>
+                    </div>
+                    <div class="tips-image">
+                        @{
+                            if (typedMediaPickerSection2 != null)
+                            {
+                                <img src="@typedMediaPickerSection2.Url" alt="@typedMediaPickerSection2.Value("alt")" />
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="tlb-b"></div>
+            </section>
+        }
+
+        @if (section3.ToString() != string.Empty)
+        {
+            <section class="tips-section container-big">
+                <div class="container tips-container">
+                    <div class="tips-textbox">
+                        <p class="lead">@Umbraco.AssignedContentItem.Value("section3")</p>
+                    </div>
+                    <div class="tips-image">
+                        @{
+                            if (typedMediaPickerSection3 != null)
+                            {
+                                <img src="@typedMediaPickerSection3.Url" alt="@typedMediaPickerSection3.Value("alt")" />
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="tlb-w"></div>
+            </section>
+        }
+
+        @if (section4.ToString() != string.Empty)
+        {
+            <section class="tips-section container-big">
+                <div class="container tips-container">
+                    <div class="tips-textbox">
+                        <p class="lead">@Umbraco.AssignedContentItem.Value("section4")</p>
+                    </div>
+                    <div class="tips-image">
+                        @{
+                            if (typedMediaPickerSection4 != null)
+                            {
+                                <img src="@typedMediaPickerSection4.Url" alt="@typedMediaPickerSection4.Value("alt")" />
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="trb-b"></div>
+            </section>
+        }
+
+        @if (section5.ToString() != string.Empty)
+        {
+            <section class="tips-section container-big">
+                <div class="container tips-container">
+                    <div class="tips-textbox">
+                        <p class="lead">@Umbraco.AssignedContentItem.Value("section5")</p>
+                    </div>
+                    <div class="tips-image">
+                        @{
+                            if (typedMediaPickerSection5 != null)
+                            {
+                                <img src="@typedMediaPickerSection5.Url" alt="@typedMediaPickerSection5.Value("alt")" />
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="trb-w"></div>
+            </section>
+        }
+
+        @if (section6.ToString() != string.Empty)
+        {
+            <section class="tips-section container-big">
+                <div class="container tips-container">
+                    <div class="tips-textbox">
+                        <p class="lead"> @Umbraco.AssignedContentItem.Value("section6") </p>
+                    </div>
+                    <div class="tips-image">
+                        @{
+                            if (typedMediaPickerSection6 != null)
+                            {
+                                <img src="@typedMediaPickerSection6.Url" alt="@typedMediaPickerSection6.Value("alt")" />
+                            }
+                        }
+                    </div>
+                </div>
+            </section>
+        }
+
+        @if (section7.ToString()!=string.Empty)
+        {
+            <section class="tips-section container-big">
+                <div class="container tips-container">
+                    <div class="tips-textbox">
+                        <p class="lead">@Umbraco.AssignedContentItem.Value("section7")</p>
+                    </div>
+                    <div class="tips-image">
+                        @{
+                            if (typedMediaPickerSection7 != null)
+                            {
+                                <img src="@typedMediaPickerSection7.Url" alt="@typedMediaPickerSection7.Value("alt")" />
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="trb-w"></div>
+            </section>
+        }
+
+        @if (section8.ToString() != string.Empty)
+        {
+            <section class="tips-section container-big">
+                <div class="container tips-container">
+                    <div class="tips-textbox">
+                        <p class="lead">@Umbraco.AssignedContentItem.Value("section8")</p>
+                    </div>
+                    <div class="tips-image">
+                        @{
+                            if (typedMediaPickerSection8 != null)
+                            {
+                                <img src="@typedMediaPickerSection8.Url" alt="@typedMediaPickerSection8.Value("alt")" />
+                            }
+                        }
+                    </div>
+                </div>
+            </section>
+        }
+
+    </main>
+

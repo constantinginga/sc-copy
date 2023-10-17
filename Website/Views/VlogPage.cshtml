@@ -1,0 +1,161 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "Master.cshtml";
+
+    //var currentNode = UmbracoContext.Current.PublishedContentRequest.PublishedContent;
+    var currentNode = Umbraco.AssignedContentItem;
+    var cNodeC = currentNode.Children.OrderByDescending(x=>x.CreateDate);
+
+    List<List<IPublishedContent>> cNodeC2 = currentNode.Children.OrderByDescending(x => x.CreateDate).GroupBy(p => p.CreateDate.Month).Select(g => g.ToList()).ToList();
+
+    var driverParentNode = Umbraco.Content(28254);
+    var vlogTags = driverParentNode.Descendants().OrderBy(n => n.Name);
+}
+
+<main class="sc-guest-vlogs sc-logged sc-bgb10">
+
+    <div class="rail-grid rail-grid--2-column">
+        <div class="md-rail">
+            <div class="entity-search-box">
+                <div class="entity-search">
+                    <div class="form-container multi-check" id="filters">
+                        <label class="checkbox">
+                            <span>@Umbraco.GetDictionaryValue("Categories", "Kategorier")</span>
+                        </label>
+
+                        @foreach (var tag in vlogTags)
+                        {
+                            <label class="checkbox">
+                                <span>@tag.Name</span>
+                                <input type="checkbox" value="@tag.Value("tagurl")" name="eng" class="checkbox" checked>
+                                <span class="checkmark"></span>
+                            </label>
+                        }
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="lg-rail discover-entity-container">
+            <h1>@Model.Value("vlogPageTitle")</h1>
+            <p>@Model.Value("vlogPageSubtitle")</p>
+
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <p><a href="@(Umbraco.Content(11655).Url + "?NodeId=" + Umbraco.Content(28272).Id)" class="button button--lg">@Umbraco.GetDictionaryValue("Login", "Log ind") @Umbraco.GetDictionaryValue("toWatchThem", "for at se dem")</a></p>
+            }
+            @{
+                foreach (var list in cNodeC2)
+                {
+                    var p = 0;
+
+                    foreach (var child in list)
+                    {
+                        if (p == 0)
+                        {
+                            <div class="seperator">
+                                <h3>@child.CreateDate.ToString("MMMM") - @child.CreateDate.Year</h3>
+                            </div>
+                        }
+
+                        string yKey = "https://img.youtube.com/vi/" + child.Value("VlogLinkS") + "/maxresdefault.jpg";
+                        IPublishedContent categoryContentPicker = child.Value<IPublishedContent>("VlogCategory");
+
+                        <div class="vlogs-container @categoryContentPicker.Value("tagurl")">
+                            <div class="vlog">
+                                <div class="vlog-video @Umbraco.If(User.Identity.IsAuthenticated,"","unavailable")" style="flex: 1">
+                                    @if (!User.Identity.IsAuthenticated){
+                                        <div class="warning-msg">
+                                            <p class="warning-msg__p">@Umbraco.GetDictionaryValue("NoVideoForGuests", "Videoen er ikke tilgængelig for gæster")</p>
+                                            @*/bliv-medlem/*@
+                                            <button onclick="location.href='@Umbraco.Content(29767).Url'" class="button warning-msg__btn">@Umbraco.GetDictionaryValue("BecomeAMember", "Bliv medlem")</button>
+                                        </div>
+                                    }
+                                    <a class="videomodal" data-source="@child.Value("VlogLinkS")">
+                                        <img src=@yKey style="max-height: none">
+                                    </a>
+                                </div>
+                                <div class="vlog-info" style="flex: 2">
+                                    <div class="vlog-info__text">
+
+                                        <h3>@child.Name</h3>
+                                        <p>@child.Value("VlogDescription")</p>
+                                    </div>
+                                    <div class="vlog-info__meta">
+                                        <div class="vlog-info__meta-left">
+                                            <div class="vlog-info__category">
+                                                <svg xmlns="https://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24"
+                                                     width="20px" fill="#182848">
+                                                    <path d="M0 0h24v24H0V0z" fill="none" />
+                                                    <path d="M2.53 19.65l1.34.56v-9.03l-2.43 5.86c-.41 1.02.08 2.19 1.09 2.61zm19.5-3.7L17.07 3.98c-.31-.75-1.04-1.21-1.81-1.23-.26 0-.53.04-.79.15L7.1 5.95c-.75.31-1.21 1.03-1.23 1.8-.01.27.04.54.15.8l4.96 11.97c.31.76 1.05 1.22 1.83 1.23.26 0 .52-.05.77-.15l7.36-3.05c1.02-.42 1.51-1.59 1.09-2.6zM7.88 8.75c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-2 11c0 1.1.9 2 2 2h1.45l-3.45-8.34v6.34z" />
+                                                </svg>
+                                                <span>@categoryContentPicker.Name</span>
+                                            </div>
+                                        </div>
+                                        <div class="vlog-info__meta-right">
+                                            <div class="vlog-info__published">
+                                                <span>@child.CreateDate</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        p++;
+                    }
+                }
+            }
+
+        </div>
+    </div>
+</main>
+
+<div class="modal" id="videoholder">
+    <div class="modal-popup modal-popup--video">
+        <div class="modal-popup__video-body">
+            <div class="modal-video">
+                <iframe id="modalyoutubeplayer" width="560" height="315" src=""
+                        title="YouTube video player" frameborder="0" preload="none">
+                </iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <script>
+        $(document).ready(function () {
+            $(document).click(function (e) {
+                if (!$(e.target).closest('.modal-popup--video').length && $('#videoholder').hasClass('is-displayed') && e.target.tagName.toLowerCase() != 'img') {
+                    $('#modalyoutubeplayer').attr('src', '');
+                    $('#videoholder').removeClass('is-displayed');
+                    $('body').removeClass('scroll-lock');
+                }
+            });
+
+            $('.videomodal').click(function () {
+                var modal = $('#videoholder');
+                var source = $(this).attr('data-source');
+
+                var fullsrc = 'https://www.youtube.com/embed/' + source + '?fs=0';
+                modal.find('#modalyoutubeplayer').attr('src', fullsrc);
+
+                modal.addClass('is-displayed');
+
+                $('body').addClass('scroll-lock');
+            });
+
+            $("#filters :checkbox").click(function () {
+                $(".vlogs-container").hide();
+                $("#filters :checkbox:checked").each(function () {
+                    $("." + $(this).val()).show();
+                });
+            });
+        });
+    </script>
+}

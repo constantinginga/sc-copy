@@ -1,0 +1,26 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+<section class="sc-home-landing">
+    
+        <!-- // CHRISTMAS SNOWFLAKES
+        <i class="far fa-snowflake"></i>
+        CHRISTMAS SNOWFLAKES -->
+    
+    <div class="container">
+        <div class="landing-text">
+            <h1 class="headline-1">@Umbraco.AssignedContentItem.Value("headerAboveTitle")</h1>
+            <h2 class="headline-2">@Umbraco.AssignedContentItem.Value("homeTitle")</h2>
+            <p class="lead"> @Umbraco.AssignedContentItem.Value("homeSubtitle")</p>
+        </div>
+        <div class="landing-buttons">
+            <a href=@Umbraco.AssignedContentItem.Value("HomeButtonLLink") class="button-left">@Umbraco.AssignedContentItem.Value("homeButtonLeft")</a>
+            <a href=@Umbraco.AssignedContentItem.Value("homeButtonRLink") class="button-right">@Umbraco.AssignedContentItem.Value("homeButtonRight")</a>
+        </div>
+    </div>
+
+    <div class="container-big">
+        <div class="landing-img">
+            <img src="/media/2034/cards.png" alt="">
+        </div>
+    </div>
+</section>

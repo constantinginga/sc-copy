@@ -1,0 +1,25 @@
+﻿    <div class="ttt-button" id="return-to-top">
+        <button class="tothetop">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
+                <path d="M0 0h24v24H0V0z" fill="none" />
+                <path
+                    d="M13 19V7.83l4.88 4.88c.39.39 1.03.39 1.42 0 .39-.39.39-1.02 0-1.41l-6.59-6.59c-.39-.39-1.02-.39-1.41 0l-6.6 6.58c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L11 7.83V19c0 .55.45 1 1 1s1-.45 1-1z" />
+            </svg>
+        </button>
+    </div>
+
+<script>
+        // ===== Scroll to Top ====
+        $(window).scroll(function () {
+            if ($(this).scrollTop() >= 450) { // If page is scrolled more than 50px
+                $('#return-to-top').fadeIn(450); // Fade in the arrow
+            } else {
+                $('#return-to-top').fadeOut(450); // Else fade out the arrow
+            }
+        });
+        $('#return-to-top').click(function () { // When arrow is clicked
+            $('body,html').animate({
+                scrollTop: 0 // Scroll to top of body
+            }, 500);
+        });
+</script>

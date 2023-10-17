@@ -1,0 +1,149 @@
+section.sc-faq-questions {
+    margin-top: -$nav-sm;
+
+    .headline-2 {
+        @include sc-title-text-side;
+    }
+
+    .questions-container {
+        .questions {
+            border-bottom: 1px solid $sc-border;
+
+            .question {
+                max-width: unset;
+                @include flex(row);
+                justify-content: space-between;
+                padding: 2.5rem 0;
+                cursor: pointer;
+                // border: 1px solid red;
+                margin: 0;
+
+                i {
+                    font-size: 2rem;
+                }
+
+                .dropdown-arrow {
+                    background: none;
+                    border: none;
+                    padding: 1rem 1.5rem;
+                    @include transition(0.3s);
+                }
+            }
+
+            .open {
+                .dropdown-arrow {
+                    transform: rotate(135deg);
+                }
+            }
+
+            .answer {
+                p {
+                    margin: 0 4rem 4rem;
+                }
+
+                max-height: 0;
+                overflow: hidden;
+                @include transition(.3s);
+            }
+
+        }
+    }
+}
+
+section.sc-faq-cards {
+    padding-top: 0;
+
+    .categories {
+        @include flex(column);
+        justify-content: space-around;
+        flex-wrap: wrap;
+        // background-color: $sc-primary;
+        border-radius: .5rem;
+        padding: 1rem;
+
+        .top {
+            @include flex(row);
+            margin: auto;
+        }
+
+        .bottom {
+            @include flex(row);
+            margin: auto;
+
+        }
+
+        button.category {
+            cursor: pointer;
+            text-align: center;
+            margin: .5rem .5rem;
+            padding: .55rem 1.5rem;
+            border-radius: 2.5rem;
+
+            color: $sc-primary;
+            background: $sc-white;
+            font-family: $font-primary;
+            border: 1px solid $sc-primary;
+
+            @include transition(.2s);
+
+            &:focus,
+            &:hover {
+                background: $sc-primary;
+                color: $sc-white;
+            }
+        }
+    }
+
+    .cards-container {
+        .faqcard-body {
+            width: 350px;
+            margin-left: auto;
+            margin-right: auto;
+
+            .faqcard {
+                margin: 5rem 0;
+
+                &-question {}
+
+                &-answer {
+                    margin: 2.5rem 0;
+                }
+
+                .tags {
+                    display: none;
+                    margin: 2.5rem 0;
+                }
+
+                &-link {
+                    @include btn;
+
+                    a {
+                        color: $sc-white;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-md {
+    section.sc-faq-cards {
+        .categories {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .cards-container {
+            @include flex(row);
+            flex-wrap: wrap;
+        }
+    }
+}
+
+@include media-lg {
+    section.sc-faq-questions {
+        margin-top: -$nav-lg;
+    }
+
+    section.sc-faq-cards {}
+}

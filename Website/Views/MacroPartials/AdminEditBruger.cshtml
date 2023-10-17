@@ -1,0 +1,326 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using umbraco.cms.businesslogic.member
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+@using System.Web
+@using StartupCentral.Extensions
+
+@{
+    var currentUser = Members.GetCurrentMember();
+    var memberid = HttpContext.Current.Response.Cookies["memberid"].ToString();
+
+    if (IsPost)
+    {
+
+        if (Request["submit"] != null)
+        {
+            if (Request["submit"] == "Opdater")
+            {
+                string memberkey = Request.Form["memberkey"];
+                if (!string.IsNullOrEmpty(memberkey))
+                {
+
+                    string name = Request.Form["name"];
+                    string username = Request.Form["username"];
+                    string mobil = Request.Form["mobil"];
+
+                    string changepasswordone = Request["changepasswordone"];
+                    string changepasswordrepeat = Request["changepasswordrepeat"];
+
+
+                    string shorttxt = HttpContext.Current.Request.Form["shorttxt"];
+                    string desc = HttpContext.Current.Request.Form["desc"];
+                    string tags = HttpContext.Current.Request.Form["tags"];
+                    bool unavailable = HttpContext.Current.Request.Form["unavailable"].ParseBoolean();
+                    System.DateTime? datefrom = null;
+                    System.DateTime? dateTo = null;
+
+                    IMember member = ApplicationContext.Current.Services.MemberService.GetByKey(new Guid(memberkey));
+                    if (member != null)
+                    {
+                        IMedia mediaFolder = StartupCentral.Code.Controllers.UserController.GetProfileImageFolder(member);
+
+                        if (!string.IsNullOrEmpty(name))
+                        {
+                            member.Name = name;
+                            member.SetValue("wwname", name);
+                        }
+
+                        if (!string.IsNullOrEmpty(username))
+                        {
+                            member.Email = username;
+                            member.SetValue("wwemail", username);
+
+                            // Hvis e-mail ændres, så følger mediafolderens navn med.
+                            mediaFolder.Name = username;
+                            ApplicationContext.Current.Services.MediaService.Save(mediaFolder);
+                        }
+
+                        if (member.HasProperty("wwmobile"))
+                        {
+                            if (mobil != null)
+                            {
+                                member.SetValue("wwmobile", mobil);
+                            }
+                        }
+
+                        // Tags
+                        if (member.HasProperty("wwtags") && !string.IsNullOrEmpty(tags))
+                        {
+                            int[] idlist = tags.CsvToInt();
+                            if (idlist.Length > 0)
+                            {
+
+                                System.Text.StringBuilder tagBuilder = new System.Text.StringBuilder();
+
+                                foreach (int tagid in idlist)
+                                {
+                                    Umbraco.Core.Models.IContent tagContent = ApplicationContext.Current.Services.ContentService.GetById(tagid);
+                                    if (tagContent != null)
+                                    {
+                                        tagBuilder.Append(string.Concat("umb://document/", tagContent.Key.ToString().Replace("-", string.Empty), Umbraco.If(tagid != idlist[idlist.Length - 1], ",")));
+                                    }
+                                }
+
+                                member.SetValue("wwtags", tagBuilder.ToString());
+
+                            }
+                        }
+
+
+                        // Short description
+                        if (!string.IsNullOrEmpty(shorttxt))
+                        {
+                            if (member.HasProperty("wwshorttxt"))
+                            {
+                                member.SetValue("wwshorttxt", shorttxt);
+                            }
+                        }
+
+                        // Description / bodyText
+                        if (!string.IsNullOrEmpty(desc))
+                        {
+                            if (member.HasProperty("bodyText"))
+                            {
+                                member.SetValue("bodyText", desc);
+                            }
+                        }
+
+
+                        if (member.HasProperty("wwavatar") && HttpContext.Current.Request.Files["avatar"].ContentLength > 0)
+                        {
+                            IMedia mediaFile = ApplicationContext.Current.Services.MediaService.CreateMedia(HttpContext.Current.Request.Files["avatar"].FileName, mediaFolder, "Image");
+                            System.IO.Stream avatarStream = HttpContext.Current.Request.Files["avatar"].InputStream;
+                            mediaFile.SetValue("umbracoFile", HttpContext.Current.Request.Files["avatar"].FileName, avatarStream);
+                            avatarStream.Close();
+                            ApplicationContext.Current.Services.MediaService.Save(mediaFile);
+                            member.SetValue("wwavatar", mediaFile.Id);
+                        }
+
+                        if (member.HasProperty("wwnda") && HttpContext.Current.Request.Files["nda"].ContentLength > 0)
+                        {
+                            IMedia mediaFile = ApplicationContext.Current.Services.MediaService.CreateMedia(HttpContext.Current.Request.Files["nda"].FileName, mediaFolder, "File");
+                            System.IO.Stream ndaStream = HttpContext.Current.Request.Files["nda"].InputStream;
+                            mediaFile.SetValue("umbracoFile", HttpContext.Current.Request.Files["nda"].FileName, ndaStream);
+                            ndaStream.Close();
+                            ApplicationContext.Current.Services.MediaService.Save(mediaFile);
+                            member.SetValue("wwnda", mediaFile.Id);
+
+                        }
+
+                        if (member.HasProperty("wwcv") && HttpContext.Current.Request.Files["cv"].ContentLength > 0)
+                        {
+                            IMedia mediaFile = ApplicationContext.Current.Services.MediaService.CreateMedia(HttpContext.Current.Request.Files["cv"].FileName, mediaFolder, "File");
+                            System.IO.Stream cvStream = HttpContext.Current.Request.Files["cv"].InputStream;
+                            mediaFile.SetValue("umbracoFile", HttpContext.Current.Request.Files["cv"].FileName, cvStream);
+                            cvStream.Close();
+                            ApplicationContext.Current.Services.MediaService.Save(mediaFile);
+                            member.SetValue("wwcv", mediaFile.Id);
+                        }
+
+
+                        // Unavailable
+                        if (member.HasProperty("wwunavailable"))
+                        {
+                            member.SetValue("wwunavailable", unavailable);
+                        }
+
+                        try
+                        {
+                            datefrom = System.Convert.ToDateTime(HttpContext.Current.Request.Form["datefrom"]);
+                            dateTo = System.Convert.ToDateTime(HttpContext.Current.Request.Form["dateto"]);
+                        }
+                        catch (System.Exception)
+                        {
+                        }
+
+                        // datefrom
+                        if (member.HasProperty("wwbooketfra") && datefrom != null)
+                        {
+                            member.SetValue("wwbooketfra", datefrom.Value);
+                        }
+
+                        // dateTo
+                        if (member.HasProperty("wwbookettil") && dateTo != null)
+                        {
+                            member.SetValue("wwbookettil", dateTo.Value);
+                        }
+
+
+
+
+
+                        ApplicationContext.Current.Services.MemberService.Save(member, true);
+
+                        if (!string.IsNullOrEmpty(changepasswordone) && changepasswordone == changepasswordrepeat)
+                        {
+                            ApplicationContext.Current.Services.MemberService.SavePassword(member, changepasswordone);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    <div class="modal fade editbrugerview" id="editbrugerview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><img src="/images/close.gif"></button>
+                <div class="modal-header text-center">
+                    <img src="/media/1148/raket_dialogbox.svg" name="profileImage" class="img-responsive center-block mb25 mt40" />
+                    <h4 class="modal-title f25 mb25  uppercase fw700 lh26" id="myModalLabel">
+                        Du er ved at redigere:<br />
+                        <span class="lblEditingMemberName"></span>
+                    </h4>
+                </div>
+                <div class="modal-body text-center">
+                    <form action="" method="post" name="edituser" id="edituser" enctype="multipart/form-data" formnovalidate="formnovalidate">
+                        <div class="row">
+                            <div class="radio fleft w100 mb30">
+                                <div class="col-md-6 text-left">
+
+                                    <span class="studenterblue badge">Student</span>
+                                    <span class="investordusted badge">Investor</span>
+                                    <span class="teacheryellow badge">Underviser</span>
+                                    <span class="adminred badge">Admin</span>
+                                    <span class="coachdark badge">Coach</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-sm-12">
+                                <label for="avatarfile" class="fleft ml5 f18 mb15">Skift billede</label>
+                                <input type="file" class="mb30 ml5" name="avatar" id="avatarfile">
+                            </div>
+                            <div class="col-xs-12 col-md-12 col-sm-12">
+                                <input type="text" id="editusername" name="name" value="" placeholder="Navn" />
+                            </div>
+                            <div class="col-xs-12 col-md-12  col-sm-12">
+                                <input type="email" id="edituserusername" name="username" value="" placeholder="E-mail" />
+                            </div>
+                            <div class="col-xs-12 col-md-12 col-sm-12" data-type="mobile-field">
+                                <input type="text" id="editusermobil" name="mobil" class="inputfield" value="" placeholder="Mobilnummer" />
+                            </div>
+                            <div class="col-md-12">
+                                <a href="javascript:void(0)" class="fleft w100 mt20 changepassword dark f18 ml5 text-left mb20">Skift adgangskode <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i></a>
+                            </div>
+                            <div id="changepassword" style="display:none;">
+                                <div class="col-md-12">
+                                    <input id="changepasswordone" name="changepasswordone" placeholder="Ny adgangskode" class="whitebg inputfield" type="password"><i class="fa fa-eye seepassword" onclick="if (changepasswordone.type == 'text') changepasswordone.type = 'password';else changepasswordone.type = 'text';" aria-hidden="true"></i>
+                                    <input id="changepasswordrepeat" name="changepasswordrepeat" placeholder="Gentag den nye adgangskode" class="whitebg inputfield" type="password"><i class="fa fa-eye seepassword" onclick="if (changepasswordrepeat.type == 'text') changepasswordrepeat.type = 'password';else changepasswordrepeat.type = 'text';" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        @* if Coach or Investor is clicked *@
+                                <div id="extracoachinvestor" style="display: none;">
+                                    @*<div class="col-xs-12 col-md-12 col-sm-12 mb20">
+                                        <span class="fleft w100 text-left mb10">Upload billede</span>
+                                        <input type="file" id="avatar" name="avatar" />
+                                    </div>*@
+                                    <div class="col-xs-12 col-md-12 col-sm-12 mb20">
+                                        <span class="fleft w100 text-left mb10">Upload NDA</span>
+                                        <input type="file" id="nda" name="nda" /><br />
+                                        <small class="fleft w100 text-left"><a href="#" target="_blank" name="currentNDA" style="display:none;"><i class="fa fa-file" aria-hidden="true"></i> Åbn nuværende NDA...</a></small>
+                                    </div>
+                                    <div class="col-xs-12 col-md-12 col-sm-12 mb20">
+                                        <span class="fleft w100 text-left mb10">Upload CV</span>
+                                        <input type="file" id="cv" name="cv" /><br />
+                                        <small class="fleft w100 text-left"><a href="#" target="_blank" name="currentCV" style="display:none;"><i class="fa fa-file" aria-hidden="true"></i> Åbn nuværende CV...</a></small>
+                                    </div>
+                                    <div class="col-sm-12 ">
+                                        <textarea class="form-control" name="shorttxt" rows="20" placeholder="Indtast kort beskrivelse. Bruges i oversigten"></textarea>
+                                    </div>
+                                    <div class="col-sm-12 ">
+                                        <textarea class="form-control" name="desc" rows="40" placeholder="Indtast profil beskrivelse"></textarea>
+                                    </div>
+                                    <div class="col-sm-12 mb20">
+                                        <label for="kategori" class="mb10 fleft w100 text-left fw700">Tilknyt områder, som passer på vedkommende</label>
+                                        <div class="checkbox mb30">
+                                            @{
+                                                foreach (var opt in Umbraco.Content(1651).Children())
+                                                {
+                                                    <div class="fleft mr15 mb10 mt10">
+                                                        <label for="f_@opt.Id">
+                                                        <input type="checkbox" value="@opt.Id" class="tagid"  name="tags" id="f_@opt.Id">@opt.Name<span></span></label>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 mb20">
+                                        <div class="checkbox w100 mb10">
+                                            @{
+                                                bool wwunavailable = (bool)Umbraco.Member(currentUser.Id).wwunavailable;
+                                            }
+
+                                            <label for="unavailable_1" class="fleft w100 text-left fw700"><input type="checkbox" value="1" name="unavailable" id="unavailable_1" @Umbraco.If(wwunavailable, "checked") />Vedkommende er ikke tilgængelig<span></span></label>
+                                        </div>
+                                        <div class="daterange" style="display:@(wwunavailable ? "block" : "none");">
+                                            <div class="fleft w100 mt10 mb20 text-left">Hvis det er i en periode kan du vælge det her</div>
+                                            <div class="form-group">
+                                                <label class="fleft w100 text-left">Fra den:</label>
+                                                <input type="date" name="datefrom" class="inputfield whitebg" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="fleft w100 text-left">Til den:</label>
+                                                <input type="date" class="inputfield whitebg" name="dateto" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+                        <div class="row">
+                            <div class="col-sm-12 text-right">
+                                <input type="hidden" name="memberkey" id="editusermemberkey" value="" />
+                                <input type="submit" id="btnSaveUser" name="submit" class="btn dark" value="Opdater" data-invoke="edituser" />
+                            </div>
+                        </div>
+                    </form>
+                    <div class="saveusersuccesstxt f18 lh26" style="display:none;">
+                        Brugeren blev opdateret.<br /><br />
+                    </div>
+                    <div class="saveusererrortxt f18 lh26" style="display:none;">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popup__overlay popup__overlay--full" style="display:none;"></div>
+    <script src="~/scripts/startupcentral.admin.js?v=3"></script>
+    
+
+    
+}

@@ -1,0 +1,24 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Umbraco.Core.Models.Member>
+@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+@{
+    var currentUser = Members.GetCurrentMember();
+
+    var ctaCaption = Model.MacroParameters["ctaCaption"].ToString();
+    var ctaNewWindow = Model.MacroParameters["ctaNewWindow"].ToString() == "1" ? "_blank" : null;
+}
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        if (Umbraco.Member(currentUser.Id).IsDocumentType("student"))
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        <a href="@Umbraco.Content(29767).Url" target="@ctaNewWindow" class="button button--lg button--cta" style="margin: auto;">@ctaCaption</a>
+                    }
+
+
+

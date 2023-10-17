@@ -1,0 +1,263 @@
+// Imports
+@import url('https://fonts.googleapis.com/css?family=Comic+Neue|Montserrat|Open+Sans|Oswald|Playfair+Display|Poppins|Raleway|Roboto&display=swap');
+//Variables
+$nav-sm: 75px;
+$nav-lg: 90px;
+
+
+//Fonts
+$font-primary: 'Poppins', sans-serif;
+$font-secondary: 'Montserrat', sans-serif;
+////////////////////////////////////////////////////////////////////////
+$font-poppins: 'Poppins', sans-serif;
+$font-roboto: 'Roboto', sans-serif;
+$font-opensans: 'Open Sans', sans-serif;
+$font-raleway: 'Raleway', sans-serif;
+$font-playfair: 'Playfair Display', serif;
+$font-oswald: 'Oswald', sans-serif;
+$font-montserrat: 'Montserrat', sans-serif;
+$font-comicneue: 'Comic Neue', cursive;
+
+$font-weights: ( //
+"regular":400, "medium":500, "bold":700);
+
+@function weight($weight-name) {
+    @return map-get($font-weights, $weight-name);
+}
+
+
+
+
+
+
+
+
+
+
+//////////Colors//////////
+
+//Main Colors
+$sc-primary: #162644;
+$sc-secondary: #23749C;
+$sc-fontcolor: #424767;
+$sc-accent: #30C1F3;
+
+//Material Colors
+$sc-tertiary: #ff7f66;
+$sc-danger: #ff4545;
+$sc-warning: #f5b759;
+$sc-success: #10ab7c;
+$sc-info: #1e90ff;
+$sc-purple: #9d5de0;
+
+//Black & White
+$sc-white: #FFFFFF;
+$sc-light: #EAEAEA;
+$sc-gray: #A0A0A0;
+$sc-darkgray: #6c7378;
+$sc-dark: #2B2B2B;
+$sc-black: #111111;
+
+$sc-soft: #f5f9fe;
+$sc-border: #e6e7e8;
+
+//Overlays
+$sc-overlay: rgba(255, 255, 255, .1);
+$sc-overlay-dark: rgba(0, 0, 0, .1);
+
+
+
+
+
+
+
+
+
+
+//////////Mixins//////////
+
+//Title Texts
+@mixin sc-title-text {
+    font-weight: bold;
+    line-height: 1.3;
+    text-align: center;
+    @include sc-title-line;
+    padding: 1rem 0;
+}
+
+@mixin sc-underline {
+    text-align: center;
+
+    a {
+        border-bottom: 3px solid $sc-accent;
+        font-weight: weight(medium);
+        @include transition(0.2s);
+
+        &:hover {
+            color: $sc-accent;
+        }
+    }
+}
+
+@mixin sc-title-line {
+    &::after {
+        content: '';
+        display: block;
+        bottom: 0;
+        background: $sc-accent;
+        width: 15rem;
+        height: 3px;
+        border-radius: 5px;
+        margin: 5px auto 0;
+        transition: width .5s ease-out;
+    }
+}
+
+@mixin sc-title-text-side {
+    font-weight: bold;
+    line-height: 1.3;
+    // text-align: center;
+    padding-bottom: 1.5rem;
+
+    &::after {
+        content: '';
+        display: block;
+        bottom: 0;
+        background: $sc-accent;
+        width: 10rem;
+        height: 3px;
+        border-radius: 5px;
+        transition: width .5s ease-out;
+    }
+}
+
+@mixin logo($circle, $logo) {
+    display: grid;
+    width: $circle;
+    height: $circle;
+    border-radius: 10rem;
+    align-content: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+
+    i {
+        color: $sc-primary;
+        font-size: $logo;
+    }
+}
+
+@mixin flex($direction) {
+    display: flex;
+    flex-direction: $direction;
+    // flex-wrap: wrap;
+    // min-width: 100%;
+}
+
+@mixin boxshadow {
+    // border: 1px solid $sc-overlay-dark;
+    box-shadow: 0 4px 24px 0 rgba(22, 38, 68, .1), 0 10px 30px 0 rgba(22, 38, 68, .1);
+}
+
+//Buttons
+@mixin btn {
+    cursor: pointer;
+    text-align: center;
+    margin-top: 1rem;
+    padding: .55rem 1.5rem;
+    border-radius: .5rem;
+    color: $sc-white;
+    background: $sc-primary;
+    font-family: $font-primary;
+    border: 1px solid $sc-primary;
+
+    @include transition(.2s);
+
+    &:hover,
+    &:focus {
+        background: $sc-secondary;
+        border-color: $sc-secondary;
+    }
+}
+
+@mixin btn-white {
+    @include btn;
+    color: $sc-primary;
+    background: $sc-white;
+    font-family: $font-primary;
+    border: 1px solid $sc-white;
+
+    &:hover,
+    &:focus {
+        color: $sc-white;
+        background: $sc-primary;
+        border-color: $sc-white;
+    }
+}
+
+@mixin btn-white-outline {
+    @include btn-white;
+    color: $sc-white;
+    background: none;
+
+    &:hover,
+    &:focus {
+        color: $sc-black;
+        background: $sc-white;
+    }
+}
+
+@mixin cta-btn {
+    cursor: pointer;
+    text-align: center;
+    margin: auto;
+    padding: 1rem 2rem;
+    border-radius: .5rem;
+    color: $sc-white;
+    background: $sc-accent;
+    font-family: $font-primary;
+    border: 1px solid $sc-accent;
+    font-size: 2.2rem;
+    @include transition(.2s);
+
+    &:hover,
+    &:focus {
+        background: $sc-secondary;
+        border-color: $sc-secondary;
+    }
+}
+
+
+
+//Transitions
+//Add a value for example [.2s]
+@mixin transition($transition) {
+    -moz-transition: all $transition ease-in-out;
+    -o-transition: all $transition ease-in-out;
+    -webkit-transition: all $transition ease-in-out;
+    -ms-transition: all $transition ease-in-out;
+    transition: all $transition ease-in-out;
+}
+
+@mixin transition-up {
+    transform: translateY(130%);
+    transition: all .2s ease-in-out;
+}
+
+//////////Media Queries//////////
+@mixin media-md {
+    @media screen and (min-width: 767px) {
+        @content;
+    }
+}
+
+@mixin media-lg {
+    @media screen and (min-width: 1023px) {
+        @content;
+    }
+}
+
+@mixin media-xl {
+    @media screen and (min-width: 1400px) {
+        @content;
+    }
+}

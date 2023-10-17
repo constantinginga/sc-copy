@@ -1,0 +1,70 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using Umbraco.Core.Services;
+@using System.Web
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Extensions
+
+@{
+    var studentid = Convert.ToInt32(Umbraco.Content(CurrentPage.Parent.Id).memberid);
+    IMember student = ApplicationContext.Current.Services.MemberService.GetById(studentid);
+
+    @*<div id="formtop">
+            <div class="col-md-5 nopad">
+                <div class="prodname ml70 f18 fw700">
+                    @if (student.GetValue("wwavatar") != null)
+                    {
+                        if (student.GetValue<string>("wwavatar").Contains("umb://"))
+                        {
+                            <img src="@Umbraco.Media(student.GetValue<string>("wwavatar").GetIdByUdi()).GetCropUrl("poolavatar")" class="img-responsive border50 mr10 svgcrop" />
+                        }
+                        else if (student.GetValue<string>("wwavatar").IsNumeric())
+                        {
+                            <img src="@Umbraco.Media(student.GetValue<int>("wwavatar")).GetCropUrl("poolavatar")" class="img-responsive border50 mr10 svgcrop" />
+                        }
+
+                    }
+                    else
+                    {
+                        <img src="/images/smalldefaultavatar.jpg" alt="" />
+                    }
+                    @student.Name
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="prodname f18 fw700 mt15">@Page.wwprojektnavn</div>
+                <div class="prodtag lh26 f12">@Page.wwkategori</div>
+            </div>
+        </div>*@
+
+
+    <div class="bpo-header">
+        <div class="header-user">
+            @if (student.GetValue("wwavatar") != null)
+            {
+                if (student.GetValue<string>("wwavatar").Contains("umb://"))
+                {
+                    <img src="@Umbraco.Media(student.GetValue<string>("wwavatar").GetIdByUdi()).GetCropUrl("poolavatar")" alt="@student.Name" />
+                }
+                else if (student.GetValue<string>("wwavatar").IsNumeric())
+                {
+                    <img src="@Umbraco.Media(student.GetValue<int>("wwavatar")).GetCropUrl("poolavatar")" alt="@student.Name" />
+                }
+
+            }
+            else
+            {
+                <img src="/images/smalldefaultavatar.jpg" alt="@student.Name" />
+            }
+            <h3>@student.Name</h3>
+        </div>
+        <div class="header-project">
+            <h3>@Page.wwprojektnavn</h3>
+            <span>@Page.wwkategori</span>
+        </div>
+    </div>
+
+}

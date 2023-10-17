@@ -1,0 +1,171 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Composing
+@using Umbraco.Web.Security
+@using Umbraco.Core.Models.Membership
+@using StartupCentral.Models
+@using StartupCentral.Code.Class
+@using StartupCentral.Extensions
+
+
+@{
+    Layout = "Master.cshtml";
+    var registerUserPayment = new RegisterUserPayment();
+    var registerUserDetails = new RegisterUserDetails();
+    var currentDate = DateTime.Now;
+
+    var user = Members.CurrentUserName;
+    var services = Current.Services.MemberService;
+    var servicesResult = services.GetByUsername(user);
+
+    // redirect if URL query doesn't match the Session item
+    if (Request.QueryString["plan"] != null)
+    {
+        if (Session["PlanType"] == null)
+        {
+            Response.Redirect(Request.Url.AbsolutePath);
+        }
+    }
+}
+
+<main id="sc-register-page">
+
+    <div class="become-member-banner">
+        <div class="become-member-banner_big-container">
+            <div class="become-member-banner_quotes-container">
+                <svg class="become-member-banner_svg" width="150px" height="150px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <g id="Editor" transform="translate(-672.000000, -144.000000)" fill-rule="nonzero">
+                            <g id="quote_right_fill" transform="translate(672.000000, 144.000000)">
+                                <path d="M24,0 L24,24 L0,24 L0,0 L24,0 Z M12.5934901,23.257841 L12.5819402,23.2595131 L12.5108777,23.2950439 L12.4918791,23.2987469 L12.4918791,23.2987469 L12.4767152,23.2950439 L12.4056548,23.2595131 C12.3958229,23.2563662 12.3870493,23.2590235 12.3821421,23.2649074 L12.3780323,23.275831 L12.360941,23.7031097 L12.3658947,23.7234994 L12.3769048,23.7357139 L12.4804777,23.8096931 L12.4953491,23.8136134 L12.4953491,23.8136134 L12.5071152,23.8096931 L12.6106902,23.7357139 L12.6232938,23.7196733 L12.6232938,23.7196733 L12.6266527,23.7031097 L12.609561,23.275831 C12.6075724,23.2657013 12.6010112,23.2592993 12.5934901,23.257841 L12.5934901,23.257841 Z M12.8583906,23.1452862 L12.8445485,23.1473072 L12.6598443,23.2396597 L12.6498822,23.2499052 L12.6498822,23.2499052 L12.6471943,23.2611114 L12.6650943,23.6906389 L12.6699349,23.7034178 L12.6699349,23.7034178 L12.678386,23.7104931 L12.8793402,23.8032389 C12.8914285,23.8068999 12.9022333,23.8029875 12.9078286,23.7952264 L12.9118235,23.7811639 L12.8776777,23.1665331 C12.8752882,23.1545897 12.8674102,23.1470016 12.8583906,23.1452862 L12.8583906,23.1452862 Z M12.1430473,23.1473072 C12.1332178,23.1423925 12.1221763,23.1452606 12.1156365,23.1525954 L12.1099173,23.1665331 L12.0757714,23.7811639 C12.0751323,23.7926639 12.0828099,23.8018602 12.0926481,23.8045676 L12.108256,23.8032389 L12.3092106,23.7104931 L12.3186497,23.7024347 L12.3186497,23.7024347 L12.3225043,23.6906389 L12.340401,23.2611114 L12.337245,23.2485176 L12.337245,23.2485176 L12.3277531,23.2396597 L12.1430473,23.1473072 Z" id="MingCute" fill-rule="nonzero">
+
+                                </path>
+                                <path d="M16.5,6 C18.4137,6 19.9686,7.5358 19.9995,9.44208 C20.0897,10.3071 20.0766,11.5831 19.492,13.0563 C18.8945,14.5618 17.7276,16.2042 15.6,17.7999 C15.1582,18.1313 14.5314,18.0418 14.2,17.5999 C13.8686,17.1581 13.9582,16.5313 14.4,16.1999 C15.964,15.027 16.8609,13.8865 17.3729,12.8903 C17.0938,12.9619 16.8014,13 16.5,13 C14.567,13 13,11.433 13,9.5 C13,7.567 14.567,6 16.5,6 Z M7.5,6 C9.41366,6 10.9686,7.5358 10.9995,9.44209 C11.0897,10.3071 11.0766,11.5831 10.492,13.0563 C9.89452,14.5618 8.72758,16.2042 6.59999,17.7999 C6.15816,18.1313 5.53136,18.0418 5.19999,17.5999 C4.86861,17.1581 4.95815,16.5313 5.39998,16.1999 C6.96395,15.027 7.86093,13.8865 8.37288,12.8903 C8.09385,12.9619 7.80137,13 7.5,13 C5.567,13 4,11.433 4,9.5 C4,7.567 5.567,6 7.5,6 Z" id="形状" fill="#a09ff7">
+                                </path>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+            <h2 class="become-member-banner_title">Iværksættere får som<br /> medlem store rabatter</h2>
+            <div class="become-member-banner_image"><img src="@Umbraco.Media(40148).Url" alt="Partner Picture" style="" /></div> @*Local host img id: 40148; production img id: *@
+            <div class="become-member-banner_paragraph">
+                <p>Anders Fogh</p>
+                <p>Danmarks iværksætterminister</p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    @if (string.IsNullOrEmpty(Request.QueryString["from"]) && string.IsNullOrEmpty(Request.QueryString["memberkey"]))
+    {
+        @Html.Partial("~/Views/becomeAMemberTrustpilot.cshtml")
+        @Html.Partial("~/Views/RegisterUserPlanPriceCards.cshtml")
+        @Html.Partial("~/Views/becomeAMemberPartnerBanner.cshtml")
+        @Html.Partial("~/Views/becomeAMemberCoachBanner.cshtml")
+    }
+
+
+    <div class="create-account register-section-expanded register-section-current"
+         @if (string.IsNullOrEmpty(Request.QueryString["from"]) && string.IsNullOrEmpty(Request.QueryString["memberkey"])) { @: style="display: none; scroll-margin-top: 125px"
+         } @*(string.IsNullOrEmpty(Request.QueryString["plan"]) && string.IsNullOrEmpty(Request.QueryString["memberkey"])) ? "register-section-expanded register-section-current" : "register-section-completed"*@
+         @(!string.IsNullOrEmpty(Request.QueryString["plan"]) && string.IsNullOrEmpty(Request.QueryString["memberkey"]) ? "register-section-current" : null) " id="create-account">
+
+        <div class="section-link">
+            <div class="register-section__header">
+                <h2>@Umbraco.AssignedContentItem.Value("detailsSectionTitle")</h2>
+                <svg class="checkbox_tick" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                     width="70.369px" height="50.369px" viewBox="0 0 78.369 78.369" style="enable-background:new 0 0 78.369 78.369;"
+                     xml:space="preserve">
+                <g>
+                <path d="M78.049,19.015L29.458,67.606c-0.428,0.428-1.121,0.428-1.548,0L0.32,40.015c-0.427-0.426-0.427-1.119,0-1.547l6.704-6.704
+		                    c0.428-0.427,1.121-0.427,1.548,0l20.113,20.112l41.113-41.113c0.429-0.427,1.12-0.427,1.548,0l6.703,6.704
+		                    C78.477,17.894,78.477,18.586,78.049,19.015z" fill="#68bebf" />
+                 </g> 
+            </div>
+        </div>
+        @if (string.IsNullOrEmpty(Request.QueryString["plan"]) && string.IsNullOrEmpty(Request.QueryString["memberkey"]))
+        {
+            @Html.Partial("~/Views/Partials/RegisterUserDetails.cshtml", registerUserDetails)
+        }
+        else if (!string.IsNullOrEmpty(Request.QueryString["plan"]) && string.IsNullOrEmpty(Request.QueryString["memberkey"]))
+        {
+            @Html.Partial("~/Views/Partials/RegisterUserDetails.cshtml", registerUserDetails)
+        }
+    </div>
+
+    <div class="confirm-payment register-section-expanded @((!string.IsNullOrEmpty(Request.QueryString["memberkey"])) ? "register-section-current" : null)" id="confirm-payment">
+        @*<div class="section-link">
+                <div class="register-section__header">
+                    <h2>@Umbraco.AssignedContentItem.Value("paymentSectionTitle")</h2>
+                    <svg class="checkbox_tick" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                         width="70.369px" height="50.369px" viewBox="0 0 78.369 78.369" style="enable-background:new 0 0 78.369 78.369;"
+                         xml:space="preserve">
+                    <g>
+                    <path d="M78.049,19.015L29.458,67.606c-0.428,0.428-1.121,0.428-1.548,0L0.32,40.015c-0.427-0.426-0.427-1.119,0-1.547l6.704-6.704
+                                c0.428-0.427,1.121-0.427,1.548,0l20.113,20.112l41.113-41.113c0.429-0.427,1.12-0.427,1.548,0l6.703,6.704
+                                C78.477,17.894,78.477,18.586,78.049,19.015z" fill="#68bebf" />
+                     </g>
+                </div>
+            </div>*@
+        @if (!string.IsNullOrEmpty(Request.QueryString["plan"]) && !string.IsNullOrEmpty(Request.QueryString["memberkey"]))
+        {
+            @Html.Partial("~/Views/Partials/RegisterUserPayment.cshtml", registerUserPayment)
+        }
+    </div>
+
+    @*<div class="contact-section">
+            <p>@Umbraco.AssignedContentItem.Value("contactSectionText")</p>
+            <a href="/kontakt/" target="_blank" class="button">@Umbraco.GetDictionaryValue("ContactUs", "Kontakt os")</a>
+        </div>*@
+</main>
+
+<script>
+    $(document).ready(function () {
+        $("#sc-newsletter").css("background-color", "#f1f2f4");
+    });
+
+    $("#sc-newsletter").css("background-color", "red");
+    $("#choose-plan, #create-account, #confirm-payment").on('click', function (e) {
+        const sections = document.querySelectorAll(".register-section-completed, .register-section-expanded");
+        let index = findSectionIndex(sections, e.currentTarget);
+        let currentUrl = window.location.href.split("?")[0];
+        if ($(e.currentTarget).hasClass('register-section-completed')) {
+            $.post("/umbraco/Surface/RegisterUserDetails/ExtendTab", { tab: index }, function () {
+            }).done(function (data) {
+                if (typeof data == "boolean") return;
+                window.location.replace(currentUrl + data);
+            });
+        } else {
+            if (index === -1) return;
+            // if user on current link already
+            if ($(".register-section-current").is($(sections[index]))) return;
+            if (index === 0 || (index !== 0 && $(sections[index - 1]).hasClass("register-section-completed")) ||
+                index == 1 && '@Session["PlanType"]' != null ||
+                index == 2 && '@Session["memberkey"]' != null) {
+                $.post("/umbraco/Surface/RegisterUserDetails/ExtendTab", { tab: index }, function () {
+                }).done(function (data) {
+                    if (typeof data == "boolean") return;
+                    window.location.replace(currentUrl + data);
+                });
+            }
+        }
+    });
+
+    function findSectionIndex(sections, target) {
+
+        for (let i = 0; i < sections.length; i++) {
+            if ($(sections[i]).is(target)) return i;
+        }
+
+        return -1;
+    }
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+

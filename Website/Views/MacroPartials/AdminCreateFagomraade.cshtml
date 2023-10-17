@@ -1,0 +1,44 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+
+@{
+    var currentUser = Members.GetCurrentMember();
+
+    <div class="modal fade opretfagomraadeview" id="opretfagomraadeview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><img src="/images/close.gif"></button>
+                <div class="modal-header text-center">
+                    <img src="/media/1148/raket_dialogbox.svg" class="img-responsive center-block mb25 mt40" />
+                    <h4 class="modal-title f25 mb25  uppercase fw700 lh26" id="myModalLabel">Skriv navnet på det nye fagområde</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <form action="" method="post" name="createfagomraade" id="opretfagomraadeform">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-sm-12">
+                                <input type="text" id="name" name="name" placeholder="Navn på fagområde" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 text-right">
+                                <input type="button" id="submit" name="submit" class="btn dark" value="Opret" data-invoke="createfagomraade"/>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="successtxt f18 lh26" style="display:none;">
+                        Fagområdet blev oprettet.
+                    </div>
+                    <div class="errortxt f18 lh26" style="display:none;">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="~/scripts/startupcentral.admin.js?v=3"></script>
+}

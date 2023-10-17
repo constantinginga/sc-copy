@@ -1,0 +1,116 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@{ 
+    var BlogsNode = Umbraco.Content(24024);
+}
+
+<aside class="blog-features__sidebar">
+    <div class="entity-search">
+        <div class="form-container">
+            <input type="search" id="searchbox" oninput="liveSearch()" blog-search placeholder="@Umbraco.GetDictionaryValue("Search", "Søg") ..." />
+        </div>
+    </div>
+    <section class="blog-features__list">
+        <h3 class="blog-features__heading">
+            <svg class="material" id="Star" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                 viewBox="0 0 32 32">
+                <path id="Path_72" data-name="Path 72" d="M0,0H32V32H0Z" fill="none" />
+                <path id="Path_73" data-name="Path 73"
+                      d="M15.092,22.1l6.893,4.16a.669.669,0,0,0,1-.72L21.159,17.7l6.08-5.267a.671.671,0,0,0-.387-1.173l-8.013-.68L15.706,3.192a.664.664,0,0,0-1.227,0l-3.133,7.387-8.013.68a.668.668,0,0,0-.373,1.173L9.039,17.7l-1.827,7.84a.669.669,0,0,0,1,.72Z"
+                      transform="translate(0.908 0.927)" fill="#ff4a59" />
+            </svg>
+            <span>Mest læste</span>
+        </h3>
+
+        @{
+            var topPicks = BlogsNode.Value<IEnumerable<IPublishedContent>>("topPicks");
+
+            foreach (var tPicks in topPicks)
+            {
+                var fImage = tPicks.Value<IPublishedContent>("bImage");
+                var date = (tPicks.Value<DateTime>("datePublished").ToString("dd-MM-yyyy"));
+                var blogTitle = tPicks.Value("blogTitle");
+                IPublishedContent categoryContentPicker = tPicks.Value<IPublishedContent>("blogCategory");
+
+                <article class="blog-card blog-card--small">
+                    <div class="blog-card__content">
+                        <figure class="blog-card__image">
+                            <a href=@tPicks.Url>
+                                @{
+                                    var altText = blogTitle + " | Startup Central";
+                                }
+                                <img src=@(fImage==null ? "" : fImage.Url()) alt="@altText">
+                            </a>
+                        </figure>
+                        <div class="blog-card__body">
+                            <h3 class="blog-card__title">
+                                <a href=@tPicks.Url>
+                                    @blogTitle
+                                </a>
+                            </h3>
+                            <div class="blog-card__meta">
+                                <div class="blog-card__tag"><a href=@categoryContentPicker.Url>@categoryContentPicker.Name</a></div>
+                                <time class="blog-card__date">@date</time>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            }
+        }
+
+    </section>
+
+    <section class="blog-features__list">
+        <h3 class="blog-features__heading">
+            <svg class="material" id="Flag" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                 viewBox="0 0 32 32">
+                <path id="Path_74" data-name="Path 74" d="M0,0H32V32H0Z" fill="none" />
+                <path id="Path_75" data-name="Path 75"
+                      d="M17.533,6.667l-.32-1.6A1.33,1.33,0,0,0,15.907,4H6.333A1.337,1.337,0,0,0,5,5.333v20a1.333,1.333,0,0,0,2.667,0v-8h7.467l.32,1.6A1.317,1.317,0,0,0,16.76,20h6.907A1.337,1.337,0,0,0,25,18.667V8a1.337,1.337,0,0,0-1.333-1.333Z"
+                      transform="translate(1.667 1.333)" fill="#ff4a59" />
+            </svg>
+            <span>Vores favoritter</span>
+        </h3>
+
+        @{
+            var featuredPosts = BlogsNode.Value<IEnumerable<IPublishedContent>>("featuredStory");
+
+            foreach (var featuredPost in featuredPosts)
+            {
+                var fImage = featuredPost.Value<IPublishedContent>("bImage");
+                var blogTitle = featuredPost.Value("blogTitle");
+                var date = (featuredPost.Value<DateTime>("datePublished").ToString("dd-MM-yyyy"));
+                IPublishedContent categoryContentPicker = featuredPost.Value<IPublishedContent>("blogCategory");
+
+                <article class="blog-card blog-card--small">
+                    <div class="blog-card__content">
+                        <figure class="blog-card__image">
+                            <a href=@featuredPost.Url>
+                                @{
+                                    var altText = blogTitle + " | Startup Central";
+                                }
+                                <img src=@(fImage==null ? "" : fImage.Url()) alt="@altText">
+                            </a>
+                        </figure>
+                        <div class="blog-card__body">
+                            <h3 class="blog-card__title">
+                                <a href=@featuredPost.Url>
+                                    @blogTitle
+                                </a>
+                            </h3>
+                            <div class="blog-card__meta">
+                                <div class="blog-card__tag">
+                                    <a href=@categoryContentPicker.Url>@categoryContentPicker.Name</a>
+                                </div>
+                                <time class="blog-card__date">@date</time>
+                            </div>
+                        </div>
+
+                    </div>
+                </article>
+
+            }
+        }
+
+    </section>
+</aside>

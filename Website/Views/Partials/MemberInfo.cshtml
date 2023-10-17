@@ -1,0 +1,532 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Umbraco.Core.Models.Member>
+@using StartupCentral.Code.Class
+@using StartupCentral.Extensions
+
+@{
+    var memberKey = Model.Key;
+    var userRole = Model.ContentTypeAlias;
+
+    var name = Model.Name;
+    var email = Model.Email;
+
+    var companyName = string.Empty;
+    var zip = string.Empty;
+    var city = string.Empty;
+    var address = string.Empty;
+    var phone = string.Empty;
+
+    var cvr = string.Empty;
+    var kontaktPerson = string.Empty;
+
+    string wwavatarImageUrl = "";
+    var myAvatarImageUrl = 0;
+
+    var currentUser = Members.GetCurrentMember();
+    var _memberService = ApplicationContext.Current.Services.MemberService;
+    var member = _memberService.GetById(currentUser.Id);
+
+    var roles = Roles.GetRolesForUser(member.Username);
+
+    // Get access to ContentService
+    var contentService = Services.ContentService;
+
+
+    //get the root content of coache info which is coaches content to handel coach with student account
+    int root = 0;
+
+    Object coachAsStudent = null;
+    bool studentView = false;
+
+    if (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains))
+    {
+
+        root = Umbraco.Content(10840).Children().FirstOrDefault(x => x.Name.Equals(member.Name)).Id;
+        var content = contentService.GetById(root); // ID of coach page content
+
+        //is student checkbox in coach info together with last switch date to track coaches with student account 
+        coachAsStudent = content.GetValue("isStudent");
+        studentView = Convert.ToBoolean(coachAsStudent);
+        var lastSwitch = content.GetValue("lastSwitchDate");
+        //check if last switch was more than a week ago so the popup will appear 
+        if (coachAsStudent == null || lastSwitch == null || ((DateTime.Now - Convert.ToDateTime(lastSwitch)).TotalDays > 7))
+        {
+                       
+                        content.SetValue("lastSwitchDate", DateTime.Now);
+                        contentService.Save(content);
+                        <div class="modal" id="coach-as-student-view">
+                            <!-- The Modal -->
+                            <div class="modal-popup modal-popup--coach">
+
+                                <!-- Modal content -->
+                                <div class="modal-popup__header">
+                                    <h2 class="modal-popup__header-text">Vælg din profil:</h2>
+                                </div>
+                                <div class="modal-popup__body">
+                                    <p>Hvilken profil vil du logges ind med? (du kan altid skifte profil)</p>
+                                </div>
+                                <div class="modal-popup__body">
+                                    <button type="button" class="button button--danger" id="studentBtnView">Medlem</button>
+                                    <button type="button" class="button" id="coachBtnView">Coach</button>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    }
+                }
+
+
+    try
+    {
+        if (userRole == "student" || userRole == "coach1")
+        {
+            if (Model.GetValue("wwavatar") != null)
+            {
+                if (Model.GetValue<string>("wwavatar").IsNumeric())
+                {
+                    myAvatarImageUrl = Convert.ToInt32(Model.GetValue<string>("wwavatar"));
+                }
+                else if (!string.IsNullOrEmpty(Model.GetValue<string>("wwavatar")))
+                {
+                    myAvatarImageUrl = Model.GetValue<string>("wwavatar").GetIdByUdi();
+                }
+            }
+        }
+        else if (userRole == "partner")
+        {
+            if (Model.GetValue("wwpartnerAvatar") != null)
+            {
+                if (Model.GetValue<string>("wwpartnerAvatar").IsNumeric())
+                {
+                    myAvatarImageUrl = Convert.ToInt32(Model.GetValue<string>("wwpartnerAvatar"));
+                }
+                else if (!string.IsNullOrEmpty(Model.GetValue<string>("wwpartnerAvatar")))
+                {
+                    myAvatarImageUrl = Model.GetValue<string>("wwpartnerAvatar").GetIdByUdi();
+                }
+            }
+        }
+
+        if (myAvatarImageUrl > 0)
+        {
+            wwavatarImageUrl = Umbraco.Media(myAvatarImageUrl).Url();
+        }
+    }
+    catch (Exception)
+    {
+
+    }
+
+    if (userRole == "student")
+    {
+        companyName = Model.GetValue<string>("cVRName");
+        zip = Model.GetValue<string>("wwpostnummer");
+        city = Model.GetValue<string>("wwcity");
+        address = Model.GetValue<string>("wwaddress");
+        phone = Model.GetValue<string>("wwmobile");
+    }
+    else if (userRole == "partner")
+    {
+        cvr = Model.GetValue<string>("wwcvr");
+        kontaktPerson = Model.GetValue<string>("wwcontactPerson");
+        phone = Model.GetValue<string>("wwMobile");
+    }
+}
+
+@*<aside class="user-profile ">
+        <div class="column-container">
+            <div class="profile-header centered">
+
+                <div class="header-image">
+                    <img id="blah" src="@(!string.IsNullOrEmpty(wwavatarImageUrl) ? wwavatarImageUrl : "/media/1195/startup-central-bruger.jpg")" />
+                </div>
+
+                <a href="/login/indstillinger/" class="button settings-button"><i class="fas fa-cog"></i><span>Indstillinger</span></a>
+
+                @Umbraco.RenderMacro("Loginstatus")
+
+
+
+                <div class="header-text ">
+                    <h2>Hej @name</h2>
+                    <p class="lead">Vi er mere end glade for at se, at du er tilbage!</p>
+                </div>
+            </div>
+
+            <div class="profile-body">
+                <h3>Brugeroplysninger</h3>
+                <ul class="user-info">
+                    <li id="id"><span>ID</span><span class="info">@Model.Id</span></li>
+                    <li id="name"><span>Navn</span><span class="info">@name</span></li>
+                    @if (userRole == "student")
+                    {
+                        <li id="zip"><span>Postnummer</span><span class="info">@zip</span></li>
+                        <li id="city"><span>By</span><span class="info">@city</span></li>
+                        <li id="address"><span>Adresse</span><span class="info">@address</span></li>
+                        <li id="phone"><span>Tlf.</span><span class="info">@phone</span></li>
+                        <li id="companyName"><span>Firmanavn</span><span class="info">@companyName</span></li>
+                    }
+                    else if (userRole == "partner")
+                    {
+                        <li id="cvr"><span>CVR</span><span class="info">@cvr</span></li>
+                        <li id="kontaktPerson"><span>Kontakt Person</span><span class="info">@kontaktPerson</span></li>
+                        <li id="phone"><span>Tlf.</span><span class="info">@phone</span></li>
+                    }
+                    <li id="email"><span>Email</span><span class="info">@email</span></li>
+                </ul>
+            </div>
+        </div>
+    </aside>*@
+
+<!-- Profile Container -->
+<aside class="sm-rail">
+    <div class="entity-profile-container">
+        <div class="entity-profile">
+            <a class="entity-profile__link">
+                <img class="entity-profile__profile-picture entity-image-circle entity-image-72"
+                     src="@(!string.IsNullOrEmpty(wwavatarImageUrl) ? wwavatarImageUrl : @Umbraco.Media(32440).Url)" alt="Profile Picture Missing">
+                <h3 class="entity-profile__profile-name">
+                    @name
+                </h3>
+            </a>
+            <h5 class="entity-profile__profile-phone">
+                Tlf. +45 @phone <a href="@Umbraco.Content(25640).Url" class="entity-profile__profile-phone-btn">@Umbraco.GetDictionaryValue("Update", "Opdater")</a>
+            </h5>
+
+            <div class="entity-profile__headline">
+                @if (userRole == "student" || (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains) && coachAsStudent != null && studentView))
+                {
+                    <p>
+                        <span>
+                            Hvor er det dejligt at se at du bruger alle dine fordele.
+                            Du er på vej til succes!
+                        </span>
+                    </p>
+                    <p>
+                        Er du det mindste i tvivl, så ring til os.
+                        <br>
+                        Tlf. +45 29 29 01 13
+                    </p>
+                }
+                else if (userRole == "coach1")
+                {
+                    <p>
+                        <span>
+                            Skønt at have dig med ombord!
+                        </span>
+                    </p>
+                    <p>
+                        Du gør en kæmpe forskel for vores medlemmer med din relevante sparring.
+                    </p>
+                }
+                else if (userRole == "partner")
+                {
+                    <p>
+                        <span>
+                            Skønt at have dig med ombord!
+                        </span>
+                    </p>
+                    <p>
+                        Du gør en kæmpe forskel for vores medlemmer med dit tilbud til dem.
+                    </p>
+                }
+
+
+            </div>
+            @if (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains))
+            {
+                <div id="ProfileCheck" style="margin-bottom:25px;">
+                    @if (coachAsStudent != null && !studentView)
+                    {
+                        <br />
+                        <h4 id="role-text">Du er blevet logget ind som coach.</h4>
+                        <p id="switchTo-text">
+                            Skift til medlem profilen:
+                        </p>
+                    }
+                    else
+                    {
+                        <br />
+                        <h4 id="role-text">Du er blevet logget ind som medlem.</h4>
+                        <p id="switchTo-text">
+                            Skift tilbage til coach profilen:
+                        </p>
+
+                    }
+                    <input type="checkbox" id="memberProfileCheck" checked="@studentView">
+                    <label for="memberProfileCheck" id="profile-label">
+                        <div id="tick_mark"></div>
+                    </label>
+                </div>
+            }
+        </div>
+    </div>
+    <div>
+        <div class="entity-profile-container">
+            <div>
+                <h4 style="padding-left: 1rem;">Invite a friend</h4>
+                <form id="invitefriendform">
+                    <input type="hidden" id="userId" value="@member.Id" />
+                    <div class="input-container" style="display: flex; flex-direction: column">
+                        <input class="invitation" id="invitation" placeholder="Email" type="email" name="InviteAFriend" autocomplete="off">
+                        <button class="invite_button" id="invite_button" style="margin: 1rem; width: 70px; height: 25px; padding: 0.2rem;" data-userId="@currentUser.Id" type="submit" id="invite">Invite</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="loading-modal">
+        <div class="modal-content">
+            <div class="modal-content__loading">
+                <p>Vent Venligst</p>
+                
+                <div class="modal-content-loader"></div>
+            </div>-->
+            @*<div class="modal-content__done is-disabled">
+                <p>@node.Value("loadingModalHFinished")</p>
+                @node.Value("loadingModalTextFinished")
+            </div>*@
+        <!--</div>
+    </div>-->
+
+    @*@Html.Partial("InviteAFriend")*@
+
+    @if (userRole == "student")
+    {
+        var unsubDate = DateTime.MinValue;
+        if (Model.GetValue("unsubscribeDate") != null)
+        {
+            unsubDate = Model.GetValue<DateTime>("unsubscribeDate");
+        }
+
+        if (unsubDate >= DateTime.Now)
+        {
+            <div class="sm-rail-container card card--warning" style="text-align: center;">
+                <span>Dit medlemskab udløber d.:</span>
+                <span style="font-size: 1.25em;">@unsubDate.Date.ToShortDateString()</span>
+            </div>
+        }
+        else
+        {
+            <!-- TrustBox widget - Review Collector -->
+            <div class="trustpilot-widget" data-locale="da-DK" data-template-id="56278e9abfbbba0bdcd568bc" data-businessunit-id="5bf6a8c5f13cca00015104ed" data-style-height="52px" data-style-width="100%">
+                <a href="https://dk.trustpilot.com/review/startupcentral.dk" target="_blank" rel="noopener">Trustpilot</a>
+            </div>
+            <!-- End TrustBox widget -->
+
+        }
+    }
+</aside>
+<p id="rootInt" style="display:none">@root</p>
+
+<style>
+    #memberProfileCheck {
+        display: none;
+    }
+
+    #profile-label {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background-color: #f72414;
+        transform: translateY(-50%);
+        border-radius: 50%;
+        box-shadow: 0 7px 10px #ffbeb8;
+        cursor: pointer;
+        transition: 0.2s ease transform, 0.2s ease background-color, 0.2s ease box-shadow;
+        margin-left: -25px;
+        margin-top: 15px;
+        /*        overflow: hidden;
+        z-index: 1;*/
+    }
+
+        #profile-label:before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            right: 0;
+            left: 0;
+            width: 30px;
+            height: 30px;
+            margin: 0 auto;
+            background-color: #fff;
+            transform: translateY(-50%);
+            border-radius: 50%;
+            box-shadow: inset 0 7px 10px #ffbeb8;
+            transition: 0.2s ease width, 0.2s ease height;
+        }
+
+        #profile-label:hover:before {
+            width: 10px;
+            height: 10px;
+            box-shadow: inset 0 7px 10px #ff9d96;
+        }
+
+        #profile-label:active {
+            transform: translateY(-50%) scale(0.9);
+        }
+
+    #tick_mark {
+        position: absolute;
+        width: 27px;
+        height: 30px;
+        margin: 0 auto;
+        margin-left: 8px;
+        transform: rotateZ(-40deg);
+    }
+
+        #tick_mark:before,
+        #tick_mark:after {
+            content: "";
+            position: absolute;
+            background-color: #fff;
+            border-radius: 2px;
+            opacity: 0;
+            transition: 0.2s ease transform, 0.2s ease opacity;
+        }
+
+        #tick_mark:before {
+            left: 0;
+            bottom: 0;
+            width: 5px;
+            height: 17px;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.23);
+            transform: translateY(-68px);
+        }
+
+        #tick_mark:after {
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 5px;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.23);
+            transform: translateX(78px);
+        }
+
+    #memberProfileCheck:checked + #profile-label {
+        background-color: #07d410;
+        box-shadow: 0 7px 10px #92ff97;
+    }
+
+        #memberProfileCheck:checked + #profile-label:before {
+            width: 0;
+            height: 0;
+        }
+
+        #memberProfileCheck:checked + #profile-label #tick_mark:before,
+        #memberProfileCheck:checked + #profile-label #tick_mark:after {
+            transform: translate(0);
+            opacity: 1;
+        }
+
+    #coach-as-student-view {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        justify-content: center;
+    }
+</style>
+<script type='text/javascript'>
+
+    $(document).ready(function () {
+        // Get the modal
+        var modal = document.getElementById('coach-as-student-view'); 
+        var root = $('#rootInt').html();
+
+        // Get the <span> element that closes the modal
+        //var span = document.getElementsByClassName("close")[0]; display: flex; top: 50%; left: 50%; transform: translate(-50%, -50%); justify-content: center; 
+
+
+        modal.style.display = "flex";
+
+        $('#studentBtnView').click(function () {
+            //var modal = $('#sendview');
+            $.post("/umbraco/api/MemberApi/ChangeCoachAsStudent?res=true&contentId=" + root);
+
+            modal.style.display = "none";
+            window.location.reload();
+        });
+        $('#coachBtnView').click(function () {
+            $.post("/umbraco/api/MemberApi/ChangeCoachAsStudent?res=false&contentId=" + root);
+
+            modal.style.display = "none";
+            window.location.reload();
+        });
+
+        //// When the user clicks on <span> (x), close the modal
+        //span.onclick = function () {
+        //    modal.style.display = "none";
+        //}
+
+        //// When the user clicks anywhere outside of the modal, close it
+        //window.onclick = function (event) {
+        //    if (event.target == modal) {
+        //        modal.style.display = "none";
+        //    }
+        //}
+    });
+
+
+
+    $('#memberProfileCheck').click(
+        function () {
+            var root = $('#rootInt').html();
+            if (memberProfileCheck.checked == true) {
+
+                $.post("/umbraco/api/MemberApi/ChangeCoachAsStudent?res=true&contentId=" + root);
+            } else {
+
+                $.post("/umbraco/api/MemberApi/ChangeCoachAsStudent?res=false&contentId=" + root);
+            }
+            window.location.reload();
+        });
+
+
+</script>
+
+@*<script>
+
+
+    $("form#invitefriendform").submit(function (event) {
+    var email = $('.invitation').val();
+        //$(".loading-modal").css("display", "flex");
+    console.log(email);
+        $.ajax({
+            type: "GET",
+            url: '/umbraco/api/MemberApi/SendFriendInvitation?' + `friendEmail=${email}`,
+            success: function (data) {
+                //alert(data);
+                //$(".loading-modal").css("display", "none");
+                $('.invitation').val(''); // Clear the input field
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+        event.preventDefault();
+
+    });
+</script>*@
+
+<script>
+    $("form#invitefriendform").submit(function (event) {
+        var email = $('.invitation').val();
+        var userId = $('#userId').val(); // Retrieve the userId value
+        console.log(email);
+        console.log(userId);
+        $.ajax({
+            type: "GET",
+            url: '/umbraco/api/MemberApi/SendFriendInvitation',
+            data: { friendEmail: email, userId: userId }, // Pass the userId as a parameter
+            success: function (data) {
+                $('.invitation').val(''); // Clear the input field
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+        event.preventDefault();
+    });
+
+</script>

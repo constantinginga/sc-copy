@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using PdfHelper
+@{
+    Layout = null;
+    Response.ContentType = "text/xsl";
+    Response.AppendHeader("X-Pdf-Render", "true");
+	
+	// -- Uncomment this to force the browser to download the PDF.
+    // Response.AppendHeader("X-Pdf-Force-Download","darren.pdf");
+}
+  @PdfHelper.Start()
+  
+    @PdfHelper.MetaData(@CurrentPage.Name, "Darren Ferguson")
+    @PdfHelper.LayoutTwoColumnA4()
+    
+     @* For ecnryption and password protection there is a:
+       PdfHelper.Secure() and PdfHelper.Secure("userPass", "ownerPass") helper *@ 
+     
+    @PdfHelper.StartBody()
+    
+       @PdfHelper.StartArea("header")
+          @PdfHelper.Block(@CurrentPage.Name, "Arial", "23pt", "#3399ff")
+       @PdfHelper.EndArea()
+            
+       @PdfHelper.Footer(@CurrentPage.Name + " written by " + @CurrentPage.WriterName + " - " + @DateTime.Now)
+
+       @PdfHelper.StartArea("body")
+
+          @Pdf.RenderRichText(@CurrentPage.BodyText)
+        
+          @PdfHelper.PagerBlock()
+            
+       @PdfHelper.EndArea()
+          
+    @PdfHelper.EndBody()
+  
+   @PdfHelper.End()

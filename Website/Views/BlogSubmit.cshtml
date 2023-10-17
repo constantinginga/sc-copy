@@ -1,0 +1,171 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "Master.cshtml";
+    var currentUser = Members.GetCurrentMember();
+
+    var _memberService = ApplicationContext.Current.Services.MemberService;
+
+    var member = _memberService.GetById(currentUser.Id);
+    var memberKey = member.Key;
+
+    DateTime today = DateTime.Now;
+    DateTime avaliable = today.AddDays(14);
+}
+
+    <main id="sc-submitblog" class="sc-logged sc-bgb10">
+        <div class="rail-grid rail-grid--3-column">
+
+            <!-- Profile Container -->
+            @Html.Partial("MemberInfo", member)
+
+            <div id="main-feed" class="feed-rail">
+                <div class="feed-rail-container">
+                    <form action="post" enctype="multipart/form-data" name="form">
+
+                        <div class="form-container">
+                            <label for="emailaddress">E-mail adresse</label>
+                            <input id="emailSender" class="inactive" type="email" name="emailaddress" value="@member.Email" required readonly>
+                        </div>
+
+                        <div class="form-container">
+                            <label for="website">Hjemmeside</label>
+                            <input type="url" name="website" autocomplete="on" placeholder="https://www.example.dk/">
+                        </div>
+
+                        <div class="title-and-date">
+                            <div class="form-container">
+                                <label for="title">Blog titel</label>
+                                <input type="text" name="title" autocomplete="on" required>
+                            </div>
+                            <div class="form-container">
+                                <label for="publishdate" id="startdate">
+                                    Udgivelses dato
+                                    <div class="label">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#182848"
+                                             width="24px" height="24px">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 11c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1zm1 4h-2v-2h2v2z" />
+                                        </svg>
+                                        <span>Mindst 2 uger forud</span>
+                                    </div>
+                                </label>
+                                <input type="date" id="publishdate" name="publishdate" min="@avaliable.ToString("yyyy-MM-dd")" onkeydown="return false" required>
+                            </div>
+                        </div>
+
+                        <div class="name-pos-cat">
+                            <div class="form-container">
+                                <label for="authorname">Forfatters navn</label>
+                                <input type="text" name="authorname" autocomplete="on" value="@member.Name" required>
+                            </div>
+                            <div class="form-container">
+                                <label for="authorposition">Forfatters position</label>
+                                <input type="text" name="authorposition" autocomplete="on" required>
+                            </div>
+                        </div>
+                        <div class="form-container">
+                            <label for="kategori">Kategori</label>
+                            <select name="kategori" id="kategori" class="form-control valid" required>
+                                @{
+                                    var categories = Umbraco.Content(10838).FirstChild("blogCategoriesMain").Children();
+
+                                    <option value="">Vælg</option>
+
+                                    foreach (var category in categories)
+                                    {
+                                        <option value="@category.Name">@category.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-container">
+                            <label class="checkbox">
+                                <span>
+                                    Kun medlemmer skal have adgang til blogindlægget
+                                </span>
+                                <input type="checkbox" id="eng" name="eng" class="checkbox">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+
+                        <div class="form-container">
+                            <div class="input-container">
+                                <img id="blogPicturePreview" src="">
+                            </div>
+                            <label for="blogpic">Blog billede</label>
+                            <input id="blogPicture" type="file" accept=".png,.jpg" required>
+                        </div>
+
+                        <div class="form-container">
+                            <label for="blogpic">Upload din blog her</label>
+                            <div class="input-container">
+                                <input id="blogArticle" type="file" accept=".odt,.doc,.docx,.pages" required>
+                            </div>
+                        </div>
+                        
+                        <button id="submitbtn" type="submit" class="button">Upload</button>
+                    </form>
+                </div>
+            </div>
+
+            <aside class="md-rail">
+                <div class="rail-extra-module-container">
+                    <h3>@Umbraco.AssignedContentItem.Value("instructionsTitle")</h3>
+                    @Umbraco.AssignedContentItem.Value("instructionsDetails")
+                </div>
+            </aside>
+        </div>
+    </main>
+
+
+<script>
+    $("#blogPicture").change(function () {
+        readURL(this);
+    });
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#blogPicturePreview').attr('src', e.target.result);
+                //$('#blogPicturePreview').hide();
+                $('#blogPicturePrevigw').fadeIn(650);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("form").submit(function (event) {
+        $("[id=submitbtn]").hide();
+
+        var formData = new FormData($(this)[0]);
+        formData.append('filePicture', $('#blogPicture')[0].files[0]);
+        formData.append('fileBlog', $('#blogArticle')[0].files[0]);
+
+        $.ajax({
+            url: '/umbraco/api/UserApi/SubmitBlog',
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (result) {              
+                if (result.Success) {
+                    $('#blogPicturePreview').attr('src', '');
+                    form.reset();
+                    $("[id=submitbtn]").show();
+                    showModalMessage('BusinessPlanSent.html', 'Blogindlægget er uploadet.', 'Tak.');
+                    console.log(result.Message);
+                } else {
+                    $("[id=submitbtn]").show();
+                    console.log(result.Message);
+                    showModalMessage('BusinessPlanSentError.html', 'Der opstod et problem.', 'Kontakt os.');
+                }
+            },
+            beforeSend: function (xhr, settings) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + userToken);
+            }
+        });
+
+        return false;
+    });
+</script>

@@ -1,0 +1,204 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage<ContentModels.LandingPage>
+@using System.Web
+@using System.Web.Security
+@using StartupCentral.Extensions
+@using Umbraco.Core.Models;
+
+@{
+    /**/
+
+    Layout = "Master.cshtml";
+    var currentUser = Members.GetCurrentMember();
+    var i = 1;
+}
+
+@{
+
+    <div class="darkbg w100">
+        <div class="forsideimg">
+            <div class="fimg">
+                <div class="overlay"></div>
+                <img src="@CurrentPage.wwimg.Url" class="img-responsive hidden-xs hidden-sm hidden-md" />
+            </div>
+            <div class="imgcontent vertical-center hidden-xs hidden-sm hidden-md">
+                <div class="container">
+                    <div class="row text-center">
+                        <div class="col-md-12">
+                            <div class="smallheadline mb20 f60 white">@CurrentPage.wwsmallheadline</div>
+                                       
+                        </div>
+                        <div class="col-md-12">
+                            <h1 class="bigheadline uppercase f60 fw700 white">@CurrentPage.wwbigheadline</h1>
+<a href="@CurrentPage.wwlinkleft" class="btn landingbutton btn-light btn-lg f40 fw700" role="button" aria-pressed="true">START DIN DRØM HER</a>
+                            <div class="row">
+                                <div class="col-md-offset-1 col-md-10">
+                                    <div class="white txt f18  lh24 mb20 mt40">@CurrentPage.wwbottomheadline</div>
+
+                                </div>
+                            </div>
+                            
+                        </div>
+                               
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt20 text-center">
+            <h2>Danmarks førende fordelsklub!</h2>
+                        <p class="landing-paragraph" id="pris">For 149,-om måneden!</p>
+    </div>
+
+    @*
+    <div class="dark" w100">
+    
+        <div class="forsideimg">
+            <div class="fimg">
+                <div class="overlay"></div>
+                <img src="@CurrentPage.wwimg.Url" class="img-responsive" />
+            </div>
+        </div>
+    </div>
+    <div class="container">
+            <h2 class="text-center">Danmarks førende fordelsklub!</h2>
+    </div>
+           <div class="imgcontent vertical-center hidden-xs hidden-sm">
+            <div class="container">
+                    <div class="row text-center">
+                        <div class="col-md-12">
+                            <div class="smallheadline mb20 f14 Black">@CurrentPage.wwsmallheadline</div>
+                        </div>
+                        <div class="col-md-12">
+                            <h1 class="bigheadline uppercase f60 fw700 white">@CurrentPage.wwbigheadline</h1>
+                            <div class="row">
+                                <div class="col-md-offset-1 col-md-10">
+                                    <div class="white txt f18  lh24 mb20 mt40">@CurrentPage.wwbottomheadline</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="pb0 visible-xs visible-sm">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="smallheadline mb20 f14 dark">@CurrentPage.wwsmallheadline</div>
+                </div>
+                <div class="col-md-7">
+                    <div class="bigheadline uppercase f60 mb40 fw700 dark">@CurrentPage.wwbigheadline</div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="dark txt f18  lh24 mb40 ">@CurrentPage.wwbottomheadline</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>*@
+
+    <section class="landing-tiles pt40">
+        <a href="@CurrentPage.wwlinkleft" class="landing-tile col-sm-6" style="background-image: url(@CurrentPage.wwimgleft.Url);">
+            <div class="landing-tile-overlay"></div>
+            <div class="landing-tile-content text-center">
+                <h2 class="white landing-tile-title">
+                    @CurrentPage.wwbigtextleft
+                </h2>
+                <div class="btn fw600 light btnlightblue normalbtn">@CurrentPage.wwactiontextleft</div>
+            </div>
+        </a>
+
+        <a href="@CurrentPage.wwlinkright" class="landing-tile col-sm-6" style="background-image: url(@CurrentPage.wwimgright.Url);">
+            <div class="landing-tile-overlay"></div>
+            <div class="landing-tile-content text-center">
+                <h2 class="white landing-tile-title">
+                    @CurrentPage.wwbigtextright
+                </h2>
+                <div class="btn fw600 light btnlightblue normalbtn">@CurrentPage.wwactiontextright</div>
+            </div>
+        </a>
+    </section>
+
+
+    <section class="landing-video pb0">
+        <div class="container">
+            <div class="landing-video-container mb20">
+                <div class="row">
+                    <div class="col-md-offset-2 col-md-8">
+                        <div class="video-wrapper">
+                            <iframe width="560" height="349" src="@CurrentPage.wwyoutubeid" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h2 class="landing-video-title text-center mb20">@CurrentPage.wwoverskrift</h2>
+            <div class="landing-video-description text-center txt f18 lh24">
+                @CurrentPage.wwshorttxt
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="pt0 pb0">
+        <div class="container">
+            <h2 class="mb40 text-center">@CurrentPage.wwcoachtitle</h2>
+            <div class="landing-coach-description text-center txt f18 lh24">
+                @CurrentPage.wwsmallDescription
+            </div>
+            @Umbraco.RenderMacro("CoachesOverviewCarousel")
+        </div>
+    </section>
+    
+    Umbraco.Core.Models.IContent content = ApplicationContext.Current.Services.ContentService.GetById(Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["StartupCentral.Samarbejdspartnere.RootFolder.Id"]));
+
+    <section class="landing-benifits pt40">
+
+        <div class="container">
+            <h2 class="mb40 text-center">@CurrentPage.wwbenefitstitle</h2>
+
+            <div class="landing-benifits-list">
+                @foreach (var samarb in content.Children())
+                {
+
+                    <div class="col-md-4 landing-benifits-item">
+                        <a href="@Umbraco.NiceUrl(samarb.Id)" class="fleft">
+                            <div class="poolwrapper shadowlight whitebg fleft mb30">
+                                <div class="poolwrappercontent">
+                                    <div class="fleft w100 mb20">
+                                        <div class="fleft fw600 w100 mb20 f12  mr5">
+                                            @samarb.GetValue("wwkategori")
+                                        </div>
+                                        <div class="fleft w100 f28 fw700 mb15">
+                                            @samarb.GetValue("wwfirmanavn")
+                                            <img src="@Umbraco.TypedMedia(samarb.GetValue("wwlogo")).Url" class="partnerlogolist" />                                            
+                                        </div>
+                                        <div class="fleft min180 f18 fw400 lh34 lh22 mb15">
+                                            @samarb.GetValue("wwindledning")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </section>
+
+    @*<section class="landing-contacts pt0" id="landingContacts">
+        <div class="container">
+            <h2 class="mb40 text-center">
+                @CurrentPage.wwcontactstitle
+            </h2>
+            <div class="txt f18 lh24">
+                @CurrentPage.wwcontactstext
+            </div>
+        </div>
+    </section>*@
+
+}

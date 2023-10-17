@@ -1,0 +1,14 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+<div id="sc-history" class="sc-section ">
+    <div class="sc-container">
+        <div class="row">
+            <div class="col-12 text-center sc-heading sc-heading-black">
+                <h2>@Umbraco.AssignedContentItem.Value("historyTitle")</h2>
+                <p>@Umbraco.AssignedContentItem.Value("historySubtitle")</p>
+            </div>
+        </div>
+        <div class="row">
+            <p>@Umbraco.AssignedContentItem.Value("historyText")</p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,224 @@
+﻿@model StartupCentral.Models.RegisterUserDetails
+@using StartupCentral.Controllers
+@using Umbraco.Web
+@using Umbraco.Core
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+
+
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    var helper = Umbraco.Web.Composing.Current.UmbracoHelper;
+    // Root page (SC_RegisterMember)
+    var node = helper.Content(29767);
+
+    if (Session["UserEmail"] != null)
+    {
+        Model.Email = Session["UserEmail"].ToString();
+    }
+
+    if (Session["UserPassword"] != null)
+    {
+        Model.Password = Session["UserPassword"].ToString();
+    }
+
+    if (Session["UserPhone"] != null)
+    {
+        Model.PhoneNumber = Session["UserPhone"].ToString();
+    }
+
+    if (Session["UserCompany"] != null)
+    {
+        Model.UserName = Session["UserCompany"].ToString();
+    }
+
+    if (Session["UserCvr"] != null)
+    {
+        Model.Cvr = Session["UserCvr"].ToString();
+    }
+
+    if (Session["UserNewsletter"] != null)
+    {
+        Boolean myBool;
+        if (Boolean.TryParse(Session["UserNewsletter"].ToString(), out myBool))
+        {
+            Model.Newsletter = myBool;
+        }
+    }
+}
+<div class="account-details register-section__main">
+    @using (Ajax.BeginForm("Submit", "RegisterUserDetails", new AjaxOptions { HttpMethod = "Post" }))
+    {
+        @Html.ValidationSummary(true)
+        <p>@node.Value("detailsSectionInfo")</p>
+        <div class="form-group">
+            @Html.LabelFor(e => e.Email)
+            @Html.TextBoxFor(e => e.Email, new { @id = "register-email", @placeholder = "E-mail*", @type = "email" })
+            @Html.ValidationMessageFor(e => e.Email)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(p => p.Password)
+            @{
+                var passwordPlaceholder = Html.LabelFor(p => p.PasswordLabel).ToString();
+                var first = passwordPlaceholder.IndexOf(">");
+                var last = passwordPlaceholder.LastIndexOf("<");
+                passwordPlaceholder = passwordPlaceholder.Substring(first + 1, last - first - 1);
+            }
+            @Html.TextBoxFor(p => p.Password, new { @id = "register-password", @placeholder = passwordPlaceholder, @type = "password", @minLength = 6 })
+            @Html.ValidationMessageFor(p => p.Password)
+        </div>
+        <div class="form-group">
+            <div class="form-group__phoneno">
+                @*<label>+45</label>*@
+                @{
+                    var phoneNoPlaceholder = Html.LabelFor(p => p.PhoneNumber).ToString();
+                    first = phoneNoPlaceholder.IndexOf(">");
+                    last = phoneNoPlaceholder.LastIndexOf("<");
+                    phoneNoPlaceholder = phoneNoPlaceholder.Substring(first + 1, last - first - 1);
+                }
+                @Html.TextBoxFor(p => p.PhoneNumber, new { @id = "register-phone-number", @placeholder = phoneNoPlaceholder, @type = "tel" })
+            </div>
+            @Html.ValidationMessageFor(p => p.PhoneNumber)
+        </div>
+        @*<div class="form-group">
+                <input type="tel" id="phone">
+            </div>*@
+        <div class="form-row" id="form-address">
+            <div>
+                @Html.LabelFor(m => m.AddressLine)
+                @Html.TextBoxFor(m => m.AddressLine, new { @id = "register-address", @placeholder = "Adresse", @type = "text" })
+                <div>@Html.ValidationMessageFor(e => e.AddressLine)</div>
+            </div>
+            <div>
+                @Html.LabelFor(m => m.City)
+                @Html.TextBoxFor(m => m.City, new { @id = "register-city", @placeholder = "By", @type = "text" })
+                <div>@Html.ValidationMessageFor(e => e.City)</div>
+            </div>
+            <div>
+                @Html.LabelFor(m => m.ZipCode)
+                @Html.TextBoxFor(m => m.ZipCode, new { @id = "register-zip", @placeholder = "Postnummer", @type = "number" })
+                <div>@Html.ValidationMessageFor(e => e.ZipCode)</div>
+            </div>
+        </div>
+        <div class="form-row" id="form-cvr">
+            <div>
+                @Html.LabelFor(c => c.UserName)
+                @{
+                    var usernamePlaceholder = Html.LabelFor(u => u.UserNameLabel).ToString();
+                    first = usernamePlaceholder.IndexOf(">");
+                    last = usernamePlaceholder.LastIndexOf("<");
+                    usernamePlaceholder = usernamePlaceholder.Substring(first + 1, last - first - 1);
+                }
+                @Html.TextBoxFor(c => c.UserName, new { @id = "register-company-name", @placeholder = usernamePlaceholder, @type = "text" })
+            </div>
+            <div>
+                @Html.TextBoxFor(c => c.Cvr, new { @id = "register-cvr", @placeholder = "CVR", @type = "number", @maxLength = 13 })
+            </div>
+        </div>
+        <div class="checkbox-group">
+            <div class="custom-checkbox">
+                @Html.CheckBoxFor(n => n.Newsletter, new { @id = "receive-emails" })
+                <span></span>
+            </div>
+            @Html.LabelFor(n => n.Newsletter, new { @id = "newsletter-label" })
+        </div>
+        <div class="user-policy">
+            <p>Ved fortsættelses accepterer du vores <a href="https://www.startupcentral.dk/brugerbetingelser/" class="sc-footer__item-link">Brugerbetingelser</a>, <a href="https://www.startupcentral.dk/privatlivspolitik/" class="sc-footer__item-link">Privatlivspolitik</a> og <a href="https://www.startupcentral.dk/cookiepolitik/" class="sc-footer__item-link">Cookiepolitik</a>.</p>
+        </div>
+        <button type="submit" class="button button--cta" id="create-user-btn" onclick="saveUserDetails()">@node.Value("detailsSectionBtn")</button>
+    }
+
+    <div class="loading-modal">
+        <div class="modal-content">
+            <div class="modal-content__loading">
+                <p>@node.Value("loadingModalH")</p>
+                @node.Value("loadingModalText")
+                <div class="modal-content-loader"></div>
+            </div>
+            <div class="modal-content__done is-disabled">
+                <p>@node.Value("loadingModalHFinished")</p>
+                @node.Value("loadingModalTextFinished")
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/scripts/intl-tel-input-18.1.0/build/js/intlTelInput.js"></script>
+<script src="~/scripts/intl-tel-input-18.1.0/build/js/utils.js"></script>
+<script>
+    var input = document.querySelector("#register-phone-number");
+
+    const iti = window.intlTelInput(input, {
+        utilsScript: "utils.js",
+        initialCountry: "dk",
+        preferredCountries: ["dk"],
+        separateDialCode: true
+    });
+    // set user details in session state
+    function saveUserDetails() {
+
+        $.ajax({
+            url: '/umbraco/Surface/RegisterUserDetails/SaveUserSession',
+            type: 'POST',
+            data: {
+                email: $("#register-email").val(),
+                password: $("#register-password").val(),
+                phone: iti.getNumber(),
+                username: $("#register-company-name").val(),
+                cvr: $("#register-cvr").val(),
+                landingpromo: '@Request.QueryString["landingpromo"]'
+            },
+            success: function (data) {
+                // console.log("went through");
+            }
+        });
+    }
+
+    $("#create-user-btn").on('click', function (e) {
+        if ($("#register-email").val() !== '' && $("#register-password").val() !== '' && $("#register-phone-number").val() !== '' && $("#register-address").val() !== '' && $("#register-city").val() !== '' && $("#register-zip").val() !== '')
+            $(".loading-modal").css("display", "flex");
+    });
+
+    //$("#register-cvr").on('input', function () {
+    //    if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);
+    //});
+
+    $('.custom-checkbox, label[for="Newsletter"]').on('click', function () {
+        $("#receive-emails").prop('checked', !($("#receive-emails").is(':checked')));
+    });
+
+    $(document).ready(function () {
+        $("input[name=Newsletter]")[1].remove();
+    });
+</script>
+
+<script>
+
+    let error = document.querySelectorAll('.field-validation-error');
+    let formAddress = document.getElementById('form-address');
+    let formCvr = document.getElementById('form-cvr');
+    let address = document.getElementById('register-address');
+    let city = document.getElementById('register-city');
+    let zip = document.getElementById('register-zip');
+
+    $("#create-user-btn").on('click', function () {
+        if (!$("#register-address-error").length || !$("#register-city-error").length || !$("#register-zip-error").length) {
+            $(formAddress).css("marginBottom", "1rem") && $(formAddress).css("alignItems", "flex-start");
+        }
+
+    });
+
+</script>
+
+
+<!-- Meta Pixel Code -->
+<!--<script>
+    var registration_button = document.getElementById("create-use-btn");
+    registration_button.addEventListener(
+        'click',
+        function () {
+            fbq('track', 'CompleteRegistration');
+</script>-->

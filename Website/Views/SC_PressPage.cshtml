@@ -1,0 +1,253 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "Master.cshtml";
+
+    //var selection = Model.Content.Site().FirstChild("pressPageControls").Children().Where(x => x.IsVisible()).OrderByDescending(x => x.Value("pressDate"));
+    var selection = Umbraco.Content(24256/*//TODO:Verify-"pressPageControls"*/).Children().Where(x => x.IsVisible()).OrderByDescending(x => x.Value("pressDate"));
+
+
+        var pageSize = 6;
+        var page = 1;
+        int.TryParse(Request.QueryString["page"], out page);
+        var totalItems = selection.Count();
+        var totalPages = (int)Math.Ceiling((double)totalItems / (double)pageSize);
+
+        if (page > totalPages)
+        {
+            page = totalPages;
+        }
+        else if (page < 1)
+        {
+            page = 1;
+        }
+
+        var paginatedItems = selection.OrderByDescending(x => x.Value("pressDate")).Skip((page - 1) * pageSize).Take(pageSize);
+
+        }
+
+    <div class="content-header">
+        <div class="row-container centered">
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered">
+                        <h1 class="headline-1">
+                            @Umbraco.AssignedContentItem.Value("title")
+                        </h2>
+                        <p class="lead">
+                            @Umbraco.AssignedContentItem.Value("subTitle")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img loading="lazy" class="content-header__image" src="/media/2375/header400px.svg" alt="StartupCentralHeader">
+    </div>
+
+    <main id="sc-press-page" class="sc-guest sc-bgb10">
+        <div class="rail-grid rail-grid--2-column" style="display:flex; flex-wrap:wrap-reverse">
+            <div class="lg-rail press-cards-feed">
+                <div class="press-cards-container" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr))">
+
+                    @foreach (var item in paginatedItems)
+                    {
+                        var articleImage = item.Value<IPublishedContent>("pressImage");
+                        var articleUrl = item.Value<string>("pressURL");
+                        var articleTitle = item.Value<string>("pressTitle");
+                        var articleDes = item.Value<string>("pressDescription");
+                        var articleDate = item.Value("pressDate");
+                        var altText = articleTitle + " | Startup Central";
+                        string aDate = string.Empty;
+
+
+                        if (articleDate != null)
+                        {
+                            aDate = ((DateTime)articleDate).ToString("dd/MM/yyyy");
+                        }
+
+
+                        <article class="blog-card">
+                            <div class="blog-card__content">
+                                <figure class="blog-card__image">
+                                    <a href="@articleUrl">
+                                        <img loading="lazy" src="@articleImage.GetCropUrl("pressArticlePicture")" alt="@altText">
+                                    </a>
+                                </figure>
+                                <div class="blog-card__body">
+
+                                    <h3 class="blog-card__title">
+                                        <a href="@articleUrl">
+                                            @articleTitle
+                                        </a>
+                                    </h3>
+                                    <p class="blog-card__description">
+                                        <a href="@articleUrl">
+                                            @articleDes
+                                        </a>
+                                    </p>
+                                    <div class="blog-card__meta">
+                                        <time class="blog-card__date">@aDate</time>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    }
+
+                </div>
+            </div>
+
+
+
+            <aside class="md-rail">
+                @*<div class="press-contact">
+
+                    @{ var pressPartnerMediaItem = Model.Value<IPublishedContent>("pressPartnerImage"); //Model.Content.Value<IPublishedContent>("pressPartnerImage");}
+                    }
+
+                    <div class="press-contact__media">
+                        <h3>@Model.Value("pressPartnerTitle")</h3>
+
+                        @if (pressPartnerMediaItem != null)
+                        {
+                            <img loading="lazy" src="@pressPartnerMediaItem.Url" alt="">
+                        }
+
+                        <p>
+                            @Model.Value("pressPartnerDescription")
+                        </p>
+                        <a href="@Model.Value("pressPartnerURL")" class="button">@Model.Value("pressPartnerButton")</a>
+                    </div>
+                </div>*@
+
+                <div class="press-contact">
+                    <h3>@Model.Value("infoTitle")</h3>
+                    <p>
+                        @Model.Value("infoDescription2")
+                        <div class="column centered">
+                            <a href="/media/2511/suc-logos.zip" class="link">Download filerne her</a>
+                            <div class="column centered">
+                                <a class="link" href="/media/2512/anders-images.zip">Download billederne af Anders her</a>
+                            </div>
+                        </div>
+                    </p>
+                </div>
+
+                <div class="press-contact">
+
+                    @{ var memberMediaItem = Model.Value<IPublishedContent>("memberImage");//Model.Content.Value<IPublishedContent>("memberImage");
+                    }
+
+                    <h3>@Model.Value("requestTitle")</h3>
+                    <div class="contact-box">
+                        <div class="contact-box__image">
+                            @if (memberMediaItem != null)
+                            {
+                                <img loading="lazy" class="entity-image-72 entity-image-circle" src=@memberMediaItem.Url alt="" />
+                            }
+                        </div>
+                        <div class="contact-box__info">
+                            <p><strong>@Model.Value("memberName")</strong></p>
+                            <p>@Model.Value("memberPosition")</p>
+                            <p>tel: <a href="tel:@Model.Value("memberTel")">+45-@Model.Value("memberTel")</a></p>
+                            <a class="link" href="mailto: @Model.Value("memberEmail")">@Model.Value("memberEmail")</a>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+
+        </div>
+
+
+        @*<div class="press-pagination">
+        <div class="press-pagination-list">
+
+            @if (page > 1)
+            {
+                <div class="press-pagination-list__item">
+                    <a href="?page=@(page - 1)">
+                        <svg id="Chevron_Left" data-name="Chevron Left" xmlns="http://www.w3.org/2000/svg" width="24"
+                             height="24" viewBox="0 0 24 24">
+                            <path id="Path_78" data-name="Path 78" d="M0,0H24V24H0Z" fill="none" />
+                            <path id="Path_79" data-name="Path 79"
+                                  d="M14.71,6.71a1,1,0,0,0-1.41,0L8.71,11.3a1,1,0,0,0,0,1.41L13.3,17.3a1,1,0,0,0,1.41-1.41L10.83,12l3.88-3.88A1,1,0,0,0,14.71,6.71Z"
+                                  fill="#182848" />
+                        </svg>
+                    </a>
+                </div>
+            }
+            @for (int p = 1; p < totalPages + 1; p++)
+            {
+                var active = (p == page) ? "press-pagination-list__item--active" : string.Empty;
+
+                <div class="pagination-list__item @active">
+                    <a href="?page=@p">@p</a>
+                </div>
+            }
+
+            @if (page < totalPages)
+            {
+
+                <div class="press-pagination-list__item">
+                    <a href="?page=@(page + 1)">
+                        <svg id="Chevron_Right" data-name="Chevron Right" xmlns="http://www.w3.org/2000/svg" width="24"
+                             height="24" viewBox="0 0 24 24">
+                            <path id="Path_80" data-name="Path 80" d="M0,0H24V24H0Z" fill="none" />
+                            <path id="Path_81" data-name="Path 81"
+                                  d="M9.29,6.71a1,1,0,0,0,0,1.41L13.17,12,9.29,15.88a1,1,0,1,0,1.41,1.41l4.59-4.59a1,1,0,0,0,0-1.41L10.7,6.7A1,1,0,0,0,9.29,6.71Z"
+                                  fill="#182848" />
+                        </svg>
+                    </a>
+                </div>
+
+            }
+        </div>
+
+            </div>*@
+
+        <div class="press-pagination">
+            <div class="press-pagination-list">
+                @if (page > 1)
+                {
+                    <div class="press-pagination-list__item">
+                        <a href="?page=@(page-1)">
+                            <svg id="Chevron_Left" data-name="Chevron Left" xmlns="http://www.w3.org/2000/svg" width="24"
+                                 height="24" viewBox="0 0 24 24">
+                                <path id="Path_78" data-name="Path 78" d="M0,0H24V24H0Z" fill="none" />
+                                <path id="Path_79" data-name="Path 79"
+                                      d="M14.71,6.71a1,1,0,0,0-1.41,0L8.71,11.3a1,1,0,0,0,0,1.41L13.3,17.3a1,1,0,0,0,1.41-1.41L10.83,12l3.88-3.88A1,1,0,0,0,14.71,6.71Z"
+                                      fill="#182848" />
+                            </svg>
+                        </a>
+                    </div>
+                }
+
+                @for (int p = 1; p < totalPages + 1; p++)
+                {
+                    var active = (p == page) ? "press-pagination-list__item--active" : string.Empty;
+
+                    <div class="press-pagination-list__item @active">
+                        <a href="?page=@p">@p</a>
+                    </div>
+                }
+
+                @if (page < totalPages)
+                {
+                    <div class="press-pagination-list__item">
+                        <a href="?page=@(page+1)">
+                            <svg id="Chevron_Right" data-name="Chevron Right" xmlns="http://www.w3.org/2000/svg" width="24"
+                                 height="24" viewBox="0 0 24 24">
+                                <path id="Path_80" data-name="Path 80" d="M0,0H24V24H0Z" fill="none" />
+                                <path id="Path_81" data-name="Path 81"
+                                      d="M9.29,6.71a1,1,0,0,0,0,1.41L13.17,12,9.29,15.88a1,1,0,1,0,1.41,1.41l4.59-4.59a1,1,0,0,0,0-1.41L10.7,6.7A1,1,0,0,0,9.29,6.71Z"
+                                      fill="#182848" />
+                            </svg>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+        
+    </main>
+

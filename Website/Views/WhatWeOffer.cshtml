@@ -1,0 +1,63 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+
+<section class="offers-section">
+    <h2 class="offers-title">@Umbraco.AssignedContentItem.Value("nfpofferstitle")</h2>
+    <div class="offers-big-container">
+
+        <div class="offers-card-container">
+            <a href="@Umbraco.Content(10842).Url">
+                <div class="offer-card-picture">
+                    <img src="@Umbraco.Media(38714).Url" alt="Partner deals">
+                </div>
+                <div class="offer-card-text">
+                    <h2 class="offer-card-text_title">@Umbraco.AssignedContentItem.Value("nfpOfferTitle_3")</h2>
+                    <p class="offer-card-text_paragraph">@Umbraco.AssignedContentItem.Value("nfpOfferText_3")</p>
+                    <div class="offer-card-text_button"><a href="@Umbraco.Content(10842).Url">@Umbraco.GetDictionaryValue("ReadMore", "Læs mere")</a></div>
+                </div>
+            </a>
+        </div>
+
+        <div class="offers-card-container">
+            <a href="@Umbraco.Content(10840).Url">
+                <div class="offer-card-picture">
+                    <img src="@Umbraco.Media(38713).Url" alt="Coaches Image">
+                </div>
+                <div class="offer-card-text">
+                    <h2 class="offer-card-text_title">@Umbraco.AssignedContentItem.Value("nfpOfferTitle_2")</h2>
+                    <p class="offer-card-text_paragraph">@Umbraco.AssignedContentItem.Value("nfpOfferText_2")</p>
+                    <div class="offer-card-text_button"><a href="@Umbraco.Content(10840).Url">@Umbraco.GetDictionaryValue("ReadMore", "Læs mere")</a></div>
+                </div>
+            </a>
+        </div>
+
+
+        <div class="offers-card-container">
+            <a href="https://www.startupcentral.dk/lounge">
+                <div class="offer-card-picture">
+                    <img src="@Umbraco.Media(38712).Url" alt="Network Image">
+                </div>
+                <div class="offer-card-text">
+                    <h2 class="offer-card-text_title">@Umbraco.AssignedContentItem.Value("nfpOfferTitle_1")</h2>
+                    <p class="offer-card-text_paragraph">@Umbraco.AssignedContentItem.Value("nfpOfferText_1")</p>
+                    <div class="offer-card-text_button"><a href="https://www.startupcentral.dk/lounge">@Umbraco.GetDictionaryValue("ReadMore", "Læs mere")</a></div>
+                </div>
+            </a>
+        </div>
+
+        <div class="offers-card-container">
+            <a href="@Umbraco.Content(38742).Url">
+                <div class="offer-card-picture">
+                    <img src="@Umbraco.Media(39536).Url" alt="Tools">
+                </div>
+                <div class="offer-card-text">
+                    <h2 class="offer-card-text_title">@Umbraco.AssignedContentItem.Value("nfpOfferTitle_4")</h2>
+                    <p class="offer-card-text_paragraph">@Umbraco.AssignedContentItem.Value("nfpOfferText_4")</p>
+                    <div class="offer-card-text_button"><a href="@Umbraco.Content(38742).Url">@Umbraco.GetDictionaryValue("ReadMore", "Læs mere")</a></div>
+                </div>
+            </a>
+        </div>
+
+
+    </div>
+</section>

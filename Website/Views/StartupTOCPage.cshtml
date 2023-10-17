@@ -1,0 +1,146 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "Master.cshtml";
+}
+
+<main id="sc-toc-page" class="sc-toc-page">
+    <section style="margin-top: 5rem;">
+        <div class="row-container centered">
+            <div class="row" style="margin-bottom: 0">
+                <div class="column-container">
+                    <div class="column content-column centered content-image">
+                        <h1 style="margin-bottom: 1rem; font-size: 1.8rem" class="headline-1">
+                            @Model.Value("articleTitle")
+                        </h1>
+                        <img class="" style="width: 100%;max-width: 500px;" src="/media/2636/wikiartcile-image.png" alt="Startup Wiki, din iværksætter ordbog | Startup Central">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row-container">
+            <div class="row">
+                <div class="column-container">
+                    <div class="column content-column">
+                        @Html.GetGridHtml(Model, "articleContent")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-container shareable">
+                <a href="@Umbraco.Content(28010).Url" class="back-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#182848" width="20" height="20">
+                        <path d="M0 0h24v24H0V0z" fill="none" />
+                        <path
+                            d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" />
+                    </svg>
+                    <span>
+                        @Umbraco.GetDictionaryValue("GoBackToTheMainmenu", "Gå tilbage til hovedmenu")
+                    </span>
+                </a>
+            <div class="shareable-content">
+                <a href=""  target="_blank" id="facebook-btn" class="shareable-content__button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <g id="Group_101" data-name="Group 101" transform="translate(-54.3 -1426.8)">
+                            <path id="Path_209" data-name="Path 209"
+                                  d="M72.5,1437.3v3h4.4l-.8,4.7H72.3v10.1H67.4v-10H63.3v-4.7h4.1v-3.6c0-4.1,2.4-6.3,6.2-6.3a27.03,27.03,0,0,1,3.6.3v4H75.1A2.249,2.249,0,0,0,72.5,1437.3Z"
+                                  fill="#182848" />
+                            <g id="Budget_15_" transform="translate(301 620)">
+                                <path id="Path_1_9_" d="M-246.7,806.8h32v32h-32Z" fill="none" />
+                            </g>
+                        </g>
+                    </svg>
+                </a>
+                <a href="" target="_blank" id="linkedin-btn" class="shareable-content__button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <g id="Group_103" data-name="Group 103" transform="translate(-54.3 -1479.2)">
+                            <g id="Group_102" data-name="Group 102">
+                                <path id="Path_210" data-name="Path 210"
+                                      d="M58,1485.8a3,3,0,0,1,6,0,3.075,3.075,0,0,1-3,3A2.946,2.946,0,0,1,58,1485.8Z"
+                                      fill="#182848" />
+                                <path id="Path_211" data-name="Path 211" d="M58.4,1491h5.2l-.2,16.3h-5Z"
+                                      fill="#182848" />
+                                <path id="Path_212" data-name="Path 212"
+                                      d="M71.8,1507.5h-5v-16.3h4.8v2.2a5.389,5.389,0,0,1,4.8-2.6c5.2,0,6.1,3.3,6.1,7.8v8.7h-5v-8c0-1.9,0-4.3-2.6-4.3s-3.2,2-3.2,4.3l.1,8.2Z"
+                                      fill="#182848" />
+                            </g>
+                            <g id="Budget_17_" transform="translate(301 620)">
+                                <path id="Path_1_15_" d="M-246.7,859.2h32v32h-32Z" fill="none" />
+                            </g>
+                        </g>
+                    </svg>
+                </a>
+                <a id="copyurltoclipboard" class="shareable-content__button">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 0 24 24" width="28px"
+                         fill="#182848">
+                        <path d="M0 0h24v24H0V0z" fill="none" />
+                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z" />
+                    </svg>
+                    <span id="copy-text">
+                        @Umbraco.GetDictionaryValue("CopyToClipboard", "Kopier til udklipsholder")
+                    </span>
+                </a>
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+
+
+@*
+    WhatsApp:
+    https://wa.me/?text=[post-title] [post-url]
+    Facebook:
+    https://www.facebook.com/sharer.php?u=[post-url]
+    Twitter:
+    https://twitter.com/share?url=[post-url]&text=[post-title]
+    Pinterest:
+    https://pinterest.com/pin/create/bookmarklet/?media=[post-img]&url=[post-url]&is_video=[is_video]&description=[post-title]
+    LinkedIn:
+    https://www.linkedin.com/shareArticle?url=[post-url]&title=[post-title]
+
+*@
+
+<script>
+    const facebookBtn = document.querySelector("#facebook-btn");
+    const linkedinBtn = document.querySelector("#linkedin-btn");
+
+    $("#copyurltoclipboard").click(function () {
+        var $temp = $("<input>");
+        var $url = $(location).attr('href');
+
+        $("body").append($temp);
+        $temp.val($url).select();
+        document.execCommand("copy");
+        $temp.remove();
+
+        $("#copy-text").show();
+        setTimeout(() => {
+            $("#copy-text").hide();
+        }, 1500);
+    });
+
+    function init() {
+        let postUrl = encodeURI(document.location.href);
+        let postTitle = $(document).attr('title');
+
+        facebookBtn.setAttribute(
+            "href",
+            `https://www.facebook.com/sharer.php?u=${postUrl}`
+        );
+
+        linkedinBtn.setAttribute(
+            "href",
+            `https://www.linkedin.com/shareArticle?url=${postUrl}&title=${postTitle}`
+        );
+    }
+
+    init();
+    
+</script>
+

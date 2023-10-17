@@ -1,0 +1,32 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.SC_Home>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Extensions
+@using StartupCentral.Controllers
+
+@{
+    Layout = "Master.cshtml";
+}
+
+@{ Html.RenderAction("RenderTTTArrow", "SiteLayout");}
+@if (!User.Identity.IsAuthenticated)
+{
+
+    @Html.Partial("~/Views/Hero.cshtml")
+    @Html.Partial("~/Views/Section_separator.cshtml")
+    @Html.Partial("~/Views/WhatWeOffer.cshtml")
+    @*@Html.Partial("~/Views/StatisticsInfo.cshtml")*@
+    @Html.Partial("~/Views/SponsoredBanner.cshtml")
+    @Html.Partial("~/Views/New_PriceCards.cshtml")
+    @*@Html.Partial("~/Views/LoungeSection.cshtml")*@
+    @*@Html.Partial("~/Views/MemberReviews.cshtml")*@
+    @*@Html.Partial("~/Views/InPress.cshtml")*@
+    @*@Html.Partial("~/Views/New_FAQ.cshtml") *@
+    @*@Html.Partial("~/Views/NewPartners.cshtml") *@
+    @*@Html.Partial("~/Views/NewNewsletter.cshtml") *@
+}
+else
+{
+    string link = "/login/min-side/";
+    Response.Redirect(link);
+}

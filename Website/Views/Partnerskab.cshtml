@@ -1,0 +1,167 @@
+﻿@using RestSharp
+@using System.IO
+@using System.Security.Cryptography.X509Certificates;
+@using StartupCentral.Code.Model.MobilePay;
+@using StartupCentral.Code.Class;
+@using Umbraco.Web.Security
+@using System.Web
+@using System.Web.Security
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@{
+    Layout = "MasterNoIndex.cshtml";
+
+    IMember member = null;
+
+    if (Request.QueryString["memberkey"] != null)
+    {
+        member = ApplicationContext.Current.Services.MemberService.GetByKey(new Guid(Request.QueryString["memberkey"]));
+    }
+
+    if (member != null)
+    {
+        UpodiWrapperService UpodiWrapperService = new StartupCentral.Code.Class.UpodiWrapperService();
+        UpodiWrapperService.CreateNewCustomer(member.Id, member);
+        string PromoKode = Request.QueryString["promokode"];
+    }
+
+    <script>
+        var userToken = ''
+        @if (member != null)
+        {
+            @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(member), "';"))
+        }
+    </script>
+}
+
+<main id="sc-payment">
+    <section>
+        <div class="row-container">
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered" style="height:auto">
+                        <h2 class="headline-2">@Model.Value("title")</h2>
+                        <h3>@Model.Value("subtitle")</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered" style="height:auto">
+                        <div class="price-card-container">
+                            <div></div>
+                            <div class="price-card">
+                                <h3 class="price-card__title">
+                                    Fedt at have dig med ombord!
+                                </h3>
+                                <p class="price-card__description">
+                                    Vi glæder os til at tilbyde vores medlemmer din service. Vi er sikre på, at der er en masse, som vil nyde godt af den.
+                                </p>
+
+                                <button id="btnPay" class="button button--full-width button--cta">
+                                    Indtast kort oplysninger
+                                </button>
+                            </div>
+
+                        </div>
+                        <p>@Model.Value("paymentRegularTextBellowCards")</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column-container column-7">
+                    <div class="column">
+                        <p><strong>@Model.Value("paymentRegularSectionTitle")</strong></p>
+                        @Model.Value("paymentRegularSectionDescription")
+                    </div>
+                </div>
+                <div class="column-container">
+                    <div class="column">
+                        <img class="content-image" src="/media/2409/payment.svg" alt="Payment">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</main>
+
+@*<script src="https://sdk.paylike.io/6.js"></script>*@
+<script src="https://sdk.paylike.io/10.js"></script>
+<script src="~/scripts/startupcental.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#btnPay").on('click', function () {
+            var paylike = Paylike({ key: '@System.Configuration.ConfigurationManager.AppSettings["StartupCentral.Paylike.PublicKey"]'});
+            paylike.pay(
+                {
+                    test: true,
+                    unplanned: { merchant: true },
+                },
+                (err, result) => {
+                    if (err) return console.log(err)
+                    $.ajax({
+                        type: "POST",
+                        url: location.origin + "/umbraco/api/upodiapi/savepaymentmethod",
+                        data: {
+                            UserId: '@Request.QueryString["memberkey"]',
+                            Token: result.transaction.id,
+                            PromoKode: '@Request.QueryString["promokode"]',
+                            SubscriptionType: 18
+                        },
+                        success: function (data) {
+                            console.log(data.status);
+                            window.location.href = "https://www.startupcentral.dk/";
+                        }
+                    }); // Closing parenthesis and curly brace were missing here
+                }
+            );
+
+        });
+
+        $("#btnPay").click();
+    });
+</script>
+
+
+@*<script>
+            $("#btnPay").on('click', function () {
+                function pay() {
+                //const paylike = Paylike({ key: '86594f94-baee-4f36-84e7-dec6ed9e4189' });
+                var paylike = Paylike('@System.Configuration.ConfigurationManager.AppSettings["StartupCentral.Paylike.PublicKey"]', { style: false });
+                paylike.pay(
+                    {
+                        test: true,
+                        unplanned: { merchant: true },
+                    },
+                    (err, result) => {
+                        if (err) return console.log(err)
+                        $.ajax({
+                            type: "POST",
+                            url: location.origin + "/umbraco/api/upodiapi/savepaymentmethod",
+                            data: {
+                                UserId: '@Request.QueryString["memberkey"]',
+                                Token: r.card.id,
+                                PromoKode: '@Request.QueryString["promokode"]',
+                                SubscriptionType: 18
+                            },
+                            success: function (data) {
+                                console.log(data.status);
+                                window.location.href = "https://www.startupcentral.dk/";
+                            }
+                        }
+                        });
+                //console.log(result.transaction.id);
+            }
+                        }
+                    )
+                }
+    </script>*@
+
+<style>
+    #sc-navbar-logged, #sc-navbar-main, #sc-newsletter, #main-footer {
+        display: none;
+    }
+</style>

@@ -1,0 +1,125 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@{ 
+    //Layout = "BlogMaster.cshtml";
+    //Layout = "SC_WebBase.cshtml";
+    Layout = "Master.cshtml";
+    var currentCategoryName = @Model.Value("categoryName");
+    var postCount = 1;
+}
+
+@{ 
+    //var blogItems = Model.Site().FirstChild("blog").Children("blogItem").Where(x => x.IsVisible()).OrderByDescending(x => x.CreateDate);
+    var blogItems = Umbraco.Content(24024).Children().Where(x => x.IsVisible()).OrderByDescending(x => x.CreateDate);//.Skip(1);
+    //var categories = Model.Site().FirstChild("blogCategoriesMain").Children().Where(x => x.IsVisible()); 
+    var categories = Umbraco.Content(24200).Children.Where(x => x.IsVisible());
+}
+
+
+    <div class="blog-category-header">
+        <h1>@Model.Value("categoryName")</h1>
+        <img src="/media/2375/header400px.svg" alt="StartupCentral Blog Header">
+    </div>
+
+@*<section class="header-big blog-header" style="background-image: url(/assets/images/plumeria.jpg);
+    background-image: radial-gradient(rgba(24, 40, 72, .75), #182848);">
+    <div class="container">
+        <div class="title-box">
+            <h2 class="headline-2">@Model.Value("categoryName") - blog kategori</h2>
+        </div>
+    </div>
+</section>*@
+
+
+<div id="sc-blog-category" class="sc-blog-container">
+    <section class="blog-cards-container">
+
+        @foreach (var item in blogItems)
+        {
+            var typedMediaPickerSingle = item.Value<IPublishedContent>("bImage");
+            var date = (item.Value<DateTime>("datePublished").ToString("dd-MM-yyyy"));
+            var cardColor = item.Value("cardColorPicker");
+            var blogTitle = item.Value("blogTitle");
+            var blogExcerpt = item.Value("excerpt");
+            var blogAuthorName = item.Value("authorName");
+            IPublishedContent categoryContentPicker = item.Value<IPublishedContent>("blogCategory");
+            var altText = blogTitle + " | Startup Central";
+
+                        if (categoryContentPicker.Name.Equals(currentCategoryName))
+                        {
+                <article class="blog-card">
+                    <div class="blog-card__content">
+                        <figure class="blog-card__image">
+                            <a href=@item.Url>
+                                <img src=@typedMediaPickerSingle.Url() alt="@altText">
+                            </a>
+                        </figure>
+                        <div class="blog-card__body">
+                            <p class="blog-card__author">
+                                <a>@blogAuthorName</a>
+                            </p>
+                            <h3 class="blog-card__title">
+                                <a href=@item.Url>@blogTitle</a></h3>
+                            <p class="blog-card__description">
+                                <a href=@item.Url>
+                                    @blogExcerpt
+                                </a>
+                            </p>
+                            <div class="blog-card__meta">
+                                <div class="blog-card__tag">
+                                    <a>@categoryContentPicker.Name</a>
+                                </div>
+                                <time class="blog-card__date">@date</time>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            }
+        }
+
+    </section>
+
+    @Html.Partial("BlogCategories")
+</div>
+
+
+@*<main id="sc-blogcategory">
+    <section class="blog-cards card container">
+
+        @foreach (var item in blogItems)
+        {
+            var typedMediaPickerSingle = item.Value<Image>("bImage");
+            var date = (item.Value<DateTime>("datePublished").ToString("dd-MM-yyyy"));
+            var cardColor = item.Value("cardColorPicker");
+            var blogTitle = item.Value("blogTitle");
+            var blogExcerpt = item.Value("excerpt");
+            var blogAuthorName = item.Value("authorName");
+            IPublishedContent categoryContentPicker = item.Value<IPublishedContent>("blogCategory");
+
+            if (categoryContentPicker.Name.Equals(currentCategoryName))
+            {
+                <div class="blog-card">
+                    <div class="blog-image">
+                        <a href="@item.Url">
+                            <img src="@typedMediaPickerSingle.Url" alt="">
+                        </a>
+                    </div>
+                    <div class="blog-body">
+                        <div class="author-name-area">
+                            <a class="author-name">@blogAuthorName</a>
+                            <span class="author-position">CEO</span>
+                        </div>
+                        <div class="blog-content">
+                            <a href="@item.Url">
+                                <h2>@blogTitle</h2>
+                                <p>@blogExcerpt</p>
+                                <a class="tag">@categoryContentPicker.Name</a>
+                                <span class="date">@date</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </section>
+</main>*@

@@ -1,0 +1,129 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Services;
+@using System.Web
+@using Umbraco.Web.Security
+@using System.Web.Security
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Net.Mail;
+@using StartupCentral.Extensions
+
+@{
+    Layout = "Master.cshtml";
+    var currentUser = Members.GetCurrentMember();
+
+    MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+    IMember currentMember = null;
+    if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+    {
+        currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+    }
+
+    if (currentMember != null)
+    {
+
+        StartupCentral.Code.Model.ApiResponse formValidation = null;
+
+        if (IsPost)
+        {
+            formValidation = ValidateAndForm();
+            if (formValidation.Success)
+            {
+                Umbraco.Core.Models.IContent videoTemplateRootFolder = ApplicationContext.Current.Services.ContentService.GetById(Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["StartupCentral.VideoTemplate.RootFolder.Id"]));
+                if (videoTemplateRootFolder != null)
+                {
+                    string wwytid = Request.Form["wwytid"];
+                    string wwoverskrift = Request.Form["wwoverskrift"];
+                    string wwshorttxt = Request.Form["wwshorttxt"];
+
+                    Umbraco.Core.Models.IContent videoTemplate = ApplicationContext.Current.Services.ContentService.CreateContentWithIdentity("Video", videoTemplateRootFolder, "video");
+                    videoTemplate.SetValue("wwytid", wwytid);
+                    videoTemplate.SetValue("wwoverskrift", wwoverskrift);
+                    videoTemplate.SetValue("wwshorttxt", wwshorttxt);
+
+                    // Video templates er default aktiveret. Hvis dette ikke ønskes, så benyt denne linie i stedet for:
+                    //   ApplicationContext.Current.Services.ContentService.Save(videoTemplate);
+                    ApplicationContext.Current.Services.ContentService.SaveAndPublishWithStatus(videoTemplate);
+
+                }
+            }
+        }
+
+
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="bigheadline uppercase f80 f50mob mb40 fw700 dark">
+                            @Page.wwoverskrift
+                        </div>
+                        <div class="txt dark f18 fw600 lh24 mb60">
+                            @Page.bodyText
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="shadowbox shadowlight pt49 pb49 pr39 pl39">
+                        <form action="" method="post" class="fleft w100" enctype="multipart/form-data">
+                            <div class="form-group w100">
+                                <label for="ytid">YouTube ID <small>(eks: 17iU7p-b_jc)</small></label>
+                                <input type="text" name="wwytid" id="ytid" class=" inputfield">
+                            </div>
+                            <div class="form-group w100">
+                                <label for="headline">Overskrift</label>
+                                <input type="text" name="wwoverskrift" id="headline" class=" inputfield">
+                            </div>
+                            <div class="form-group w100">
+                                <label for="shorttxt">Kort tekst (max <span id="charNum2" class="fw700 f15"></span> tegn)</label>
+                                <textarea name="wwshorttxt" id="shorttxt" rows="6" maxlength="300" class="form-control inputfield"></textarea>
+                            </div>
+                            <div class="f14 lh26 fleft pull-left mt5"><a href="/login/templates">Annullére</a></div>
+                            <input class="btnlightbg white pull-right" style="margin-top:0px;" value="Opret" type="submit">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="upload" class="pt0">
+            <img src="@Page.wwbgimg.Url" id="cloudbg" />
+        </section>
+    }
+}
+@functions {
+
+    public StartupCentral.Code.Model.ApiResponse ValidateAndForm()
+    {
+
+        MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+        IMember currentMember = null;
+        if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+        {
+            currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+        }
+
+        if (currentMember != null)
+        {
+            string wwytid = Request.Form["wwytid"];
+            string wwoverskrift = Request.Form["wwoverskrift"];
+            string wwshorttxt = Request.Form["wwshorttxt"];
+
+            if (string.IsNullOrEmpty(wwytid))
+            {
+                return new StartupCentral.Code.Model.ApiResponse(false, "Du skal angive et YouTube Id");
+            }
+
+            if (string.IsNullOrEmpty(wwoverskrift))
+            {
+                return new StartupCentral.Code.Model.ApiResponse(false, "Overskrift skal udfyldes.");
+            }
+
+            return new StartupCentral.Code.Model.ApiResponse(true, "Ændringer er hermed gemt.");
+        }
+
+        return new StartupCentral.Code.Model.ApiResponse(false, "Brugeren kunne ikke findes?!");
+
+    }
+
+}

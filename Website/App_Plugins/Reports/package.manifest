@@ -1,0 +1,16 @@
+﻿{
+  "$schema": "https://json.schemastore.org/package.manifest",
+  "sections": [
+    {
+      "alias": "Reports",
+      "name": "Reports"
+    }
+  ],
+  "dashboards": [
+    {
+      "alias": "Reports",
+      "view": "/App_Plugins/Reports/dashboard.html",
+      "sections": [ "Reports" ]
+    }
+  ]
+}

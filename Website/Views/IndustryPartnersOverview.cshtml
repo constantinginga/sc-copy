@@ -1,0 +1,65 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+	Layout = "Master.cshtml";
+}
+
+    <div class="content-header">
+        <div class="row-container centered">
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered">
+                        <h1 class="headline-1">
+                            @Model.Value("title")
+                        </h1>
+                        <p class="lead">
+                            @Model.Value("subtitle")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img class="content-header__image" src="/media/2375/header400px.svg" alt="StartupCentralHeader">
+    </div>
+
+    <main id="sc-industry-page" class="sc-guest sc-bgb10">
+        <div class="rail-grid rail-grid--2-column">
+            <div class="lg-rail">
+                <div class="industry-partners-container">
+
+                    @foreach (var indPartner in Umbraco.Content(26341).Children().Where(x=>x.IsVisible()))
+                    {
+                        var typedMedia = indPartner.Value<Image>("industryPartnerLogo");
+                        var title = indPartner.Value<string>("industryPartnerTitle");
+                        var desc = indPartner.Value("industryPartnerDescription");
+                        var link = indPartner.Value<string>("industryPartnerButtonLink");
+
+                        <div class="industry-partner">
+                            <div class="industry-partner__image">
+                                <img class="entity-image-squared" src="@typedMedia.Url" alt="">
+                                <a href="@link" class="button button--full-width">Læs mere</a>
+                            </div>
+                            <div class="industry-partner__content">
+                                <h2>@title</h2>
+                                <p>
+                                    @desc
+                                </p>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+            <aside class="md-rail">
+                <div class="industry-partner-card">
+                    <h3>@Model.Value("industryPartnerMediaTitle")</h3>
+                    <p>
+                        @Model.Value("industryPartnerMediaDescription")
+                    </p>
+                    <a href="@Model.Value("industryPartnerMediaLink")" class="button button--full-width">                        
+                        @Umbraco.GetDictionaryValue("ContactUs")
+                    </a>
+                </div>
+            </aside>
+        </div>
+    </main>
+   

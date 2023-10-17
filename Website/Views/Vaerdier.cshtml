@@ -1,0 +1,348 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "Master.cshtml";
+
+    // Ny instans af ForretningsplanController
+    StartupCentral.Code.Controllers.ForretningsplanController fc = new StartupCentral.Code.Controllers.ForretningsplanController();
+
+    // Paring af form felter med felterne i Umbraco.
+    fc.Add("firmimportant", "wwfirmimportant");
+    fc.Add("firmbehov", "wwfirmbehov");
+    fc.Add("firmreach", "wwfirmreach");
+    fc.Add("firmissues", "wwfirmissues");
+    fc.Add("firmvalues", "wwfirmvalues");
+
+    var url = HttpContext.Current.Request.RawUrl.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+    if (IsPost)
+    {
+        // Save gemmer i Umbraco på noden af pågældende 'documenttypename'.
+        fc.Save(HttpContext.Current.Request, "forretningsplan");
+
+        // Henter url'en til næste side i guiden.
+        string nextUrl = fc.GetNextPageUrl(Model.Content.Id);
+        if (!string.IsNullOrEmpty(nextUrl))
+        {
+            HttpContext.Current.Response.Redirect(nextUrl);
+        }
+    }
+    else
+    {
+        if (url.Length > 3 && url[3].Contains("?id="))
+        {
+            // Loading the 'draft' ('kladde') business plan.
+            fc.Load("forretningsplan");
+        }
+    }
+
+    @Html.Raw(fc.BuildAutoSaveScript(Request.QueryString["id"]))
+
+    <main id="sc-businessplan" class="sc-businessplan">
+        <div class="container">
+            <section class="businessplan">
+                <div class="businessplan-container">
+
+                    <div class="businessplan-navigation-container">
+                        <button class="button dropButton">Steps</button>
+                        @Umbraco.RenderMacro("BlueNavMenu")
+                    </div>
+
+                    <div class="businessplan-form-container">
+                        @Umbraco.RenderMacro("FormTop")
+
+                        <form action="" method="post" class="businessplan-form" name="vaerdier" id="introduktion">
+                            <h2 class="headline-2">
+                                @if (CurrentPage.wwoverskrift != "")
+                                {
+                                    @Page.wwoverskrift
+                                }
+                                else
+                                {
+                                    @Page.Name
+                                }
+                            </h2>
+                            <p>@Page.wwmanchet</p>
+
+                            <div class="form-container">
+                                <label for="firmimportant">
+                                    <span>Beskriv hvorfor firmaet er vigtigt</span>
+                                </label>
+                                <textarea name="firmimportant" id="firmimportant" class="form-control" placeholder="Skriv..." rows="6">@fc.GetValue("firmimportant")</textarea>
+
+                                @if (CurrentPage.wwinspi1 != "")
+                                {
+                                    <div class="inspo">
+                                        <a href="javascript:void(0);" class="inspiration" data-toggle="modal" data-target="inspi_1">Brug for inspiration<i class="fas fa-angle-right"></i></a>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="form-container">
+                                <label for="firmbehov">
+                                    <span>Hvilke behov opfylder firmaet og for hvilke kunder</span>
+                                </label>
+                                <textarea name="firmbehov" id="firmbehov" class="form-control" placeholder="Skriv..." rows="6">@fc.GetValue("firmbehov")</textarea>
+
+                                @if (CurrentPage.wwinspi2 != "")
+                                {
+                                    <div class="inspo">
+                                        <a href="javascript:void(0);" class="inspiration" data-toggle="modal" data-target="inspi_2">Brug for inspiration<i class="fas fa-angle-right"></i></a>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="form-container">
+                                <label for="firmreach">
+                                    <span>Hvad vil du opnå om 1 mdr., 1 år og 3 år.</span>
+                                </label>
+                                <textarea name="firmreach" id="firmreach" class="form-control" placeholder="Skriv..." rows="6">@fc.GetValue("firmreach")</textarea>
+
+                                @if (CurrentPage.wwinspi3 != "")
+                                {
+                                    <div class="inspo">
+                                        <a href="javascript:void(0);" class="inspiration" data-toggle="modal" data-target="inspi_3">Brug for inspiration<i class="fas fa-angle-right"></i></a>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="form-container">
+                                <label for="firmissues">
+                                    <span>Hvad er de største problemer, og hvordan vil du løse dem?</span>
+                                </label>
+                                <textarea name="firmissues" id="firmissues" class="form-control" placeholder="Skriv..." rows="6">@fc.GetValue("firmissues")</textarea>
+
+                                @if (CurrentPage.wwinspi4 != "")
+                                {
+                                    <div class="inspo">
+                                        <a href="javascript:void(0);" class="inspiration" data-toggle="modal" data-target="inspi_4">Brug for inspiration<i class="fas fa-angle-right"></i></a>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="form-container">
+                                <label for="firmvalues">
+                                    <span>Hvordan er dine værdier?</span>
+                                </label>
+                                <textarea name="firmvalues" id="firmvalues" class="form-control" placeholder="Skriv..." rows="6">@fc.GetValue("firmvalues")</textarea>
+
+                                @if (CurrentPage.wwinspi5 != "")
+                                {
+                                    <div class="inspo">
+                                        <a href="javascript:void(0);" class="inspiration" data-toggle="modal" data-target="inspi_5">Brug for inspiration<i class="fas fa-angle-right"></i></a>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="form-footer" id="formbottom">
+
+                                @*<div class="footer-buttons" onclick="javascript:saveCurrentPage()" id="autosave">
+                                        <span>Gem Kladde</span>
+                                    </div>
+                                    <div class="footer-buttons">
+                                        <input type="submit" class="button" value="Videre">
+                                    </div>*@
+
+                                <input type="submit" class="button startButton" value="Videre" id="submitbsp" onclick="submitBPS()">
+                                <a id='sendingBlock' style='display: none;'>Gemmer din forretningsplan ...</a>
+
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </main>
+}
+
+@for (int i = 1; i <= 5; i++)
+{
+    <div class="modal-container" id="inspi_@i" role="dialog">
+        <div class="modal">
+            <div class="sc-popup inspo-popup">
+                <div class="popup-header primary">
+                    @if (i == 1)
+                    {
+                        @Page.wwoverskrift1
+                    }
+                    @if (i == 2)
+                    {
+                        @Page.wwoverskrift2
+                    }
+                    @if (i == 3)
+                    {
+                        @Page.wwoverskrift3
+                    }
+                    @if (i == 4)
+                    {
+                        @Page.woverskrift4
+                    }
+                    @if (i == 5)
+                    {
+                        @Page.wwoverskrift5
+                    }
+                </div>
+                <div class="popup-text">
+                    @if (i == 1)
+                    {
+                        @Page.wwinspi1
+                    }
+                    @if (i == 2)
+                    {
+                        @Page.wwinspi2
+                    }
+                    @if (i == 3)
+                    {
+                        @Page.wwinspi3
+                    }
+                    @if (i == 4)
+                    {
+                        @Page.wwinspi4
+                    }
+                    @if (i == 5)
+                    {
+                        @Page.wwinspi5
+                    }
+                </div>
+                <div class="popup-buttons centered">
+                    <button class="button-primary" id="closeinsp" onclick="closeInspir()" aria-label="Close">Tak for din Inspiration!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        $('.inspiration').click(function () {
+            var i = $(this).attr('data-target');
+
+            $('#' + i).addClass('active');
+        });
+    });
+
+    function closeInspir() {
+        $('.modal-container').removeClass('active');
+    }
+
+    function submitBPS() {
+        $('#submitbsp').hide();
+        $('a#sendingBlock').show();
+    }
+</script>
+
+@*<section class="startupcentralbackground">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="javascript:void(0);" class="visible-xs wizradbtn">Wizard menu</a>
+                    <div class="wizardmenumobile fleft w100" style="display:none;">@Umbraco.RenderMacro("BlueNavMenu")</div>
+                    <div class="formwrapper shadowlight mt80">
+                        <div class="leftnavi bluebg col-md-3 col-xs-12 hidden-xs">
+                            @Umbraco.RenderMacro("BlueNavMenu")
+                        </div>
+                        <div class="rightformother col-md-8 col-xs-12">
+                            @Umbraco.RenderMacro("FormTop")
+                            <form action="" method="post" class="wizardform" name="introduktion" id="introduktion">
+                                @Umbraco.RenderMacro("CurrentFormHeadManchet")
+                                <div class="form-group">
+                                    <label for="firmimportant">Beskriv hvorfor firmaet er vigtigt</label>
+                                    @if (CurrentPage.wwinspi1 != "")
+                                    {
+                                        <span class="f14 pull-right "><a href="javascript:void(0);" class="inspicolor" data-toggle="modal" data-target="#inspi_1">Brug for inspiration <i class="fa fa-angle-right" aria-hidden="true"></i></a></span>
+                                    }
+                                    <textarea name="firmimportant" class="form-control" id="firmimportant" placeholder="Skriv..." rows="6">@fc.GetValue("firmimportant")</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="firmbehov">Hvilke behov opfylder firmaet og for hvilke kunder</label>
+                                    @if (CurrentPage.wwinspi2 != "")
+                                    {
+                                        <span class="f14 pull-right "><a href="javascript:void(0);" class="inspicolor" data-toggle="modal" data-target="#inspi_2">Brug for inspiration <i class="fa fa-angle-right" aria-hidden="true"></i></a></span>
+                                    }
+                                    <textarea name="firmbehov" class="form-control" id="firmbehov" placeholder="Skriv..." rows="6">@fc.GetValue("firmbehov")</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="firmreach">Hvad vil du opnå om 1 mdr., 1 år og 3 år.</label>
+                                    @if (CurrentPage.wwinspi3 != "")
+                                    {
+                                        <span class="f14 pull-right "><a href="javascript:void(0);" class="inspicolor" data-toggle="modal" data-target="#inspi_3">Brug for inspiration <i class="fa fa-angle-right" aria-hidden="true"></i></a></span>
+                                    }
+                                    <textarea name="firmreach" class="form-control" id="firmreach" placeholder="Skriv..." rows="6">@fc.GetValue("firmreach")</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="firmissues">Hvad er de største problemer, og hvordan vil du løse dem?</label>
+                                    @if (CurrentPage.wwinspi4 != "")
+                                    {
+                                        <span class="f14 pull-right "><a href="javascript:void(0);" class="inspicolor" data-toggle="modal" data-target="#inspi_4">Brug for inspiration <i class="fa fa-angle-right" aria-hidden="true"></i></a></span>
+                                    }
+                                    <textarea name="firmissues" class="form-control" id="firmissues" placeholder="Skriv..." rows="6">@fc.GetValue("firmissues")</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="firmvalues">Hvordan er dine værdier?</label>
+                                    @if (CurrentPage.wwinspi5 != "")
+                                    {
+                                        <span class="f14 pull-right "><a href="javascript:void(0);" class="inspicolor" data-toggle="modal" data-target="#inspi_5">Brug for inspiration <i class="fa fa-angle-right" aria-hidden="true"></i></a></span>
+                                    }
+                                    <textarea name="firmvalues" class="form-control" id="firmvalues" placeholder="Skriv..." rows="6">@fc.GetValue("firmvalues")</textarea>
+                                </div>
+                                <div class="form-bottom">
+                                    <div id="autosave" class"pull-left">Gem kladde</div>
+                                    <input type="submit" class="btnlightbg white pull-right" value="Videre">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>*@
+
+
+@*@for (int i = 1; i <= 5; i++){
+    <div class="modal fade" id="inspi_@i" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="inspimodalcontent">
+            <button type="button" class="closeinspi" data-dismiss="modal" aria-label="Close"><img src="/images/close.gif"></button>
+          <div class="modal-header">
+            <h4 class="modal-title f25 mb25 fw700 lh26" id="myModalLabel">
+               @if(i == 1){
+                @Page.wwoverskrift1
+            }
+                    @if(i == 2){
+                @Page.wwoverskrift2
+            }
+                    @if(i == 3){
+                @Page.wwoverskrift3
+            }
+                    @if(i == 4){
+                @Page.wwoverskrift4
+            }
+             @if(i == 5){
+                @Page.wwoverskrift5
+            }
+            </h4>
+          </div>
+          <div class="f18 lh26 fw400">
+            @if(i == 1){
+                @Page.wwinspi1
+            }
+                    @if(i == 2){
+                @Page.wwinspi2
+            }
+                    @if(i == 3){
+                @Page.wwinspi3
+            }
+                    @if(i == 4){
+                @Page.wwinspi4
+            }
+             @if(i == 5){
+                @Page.wwinspi5
+            }
+          </div>
+         <div class="mt40 mb40"><a href="#" class="btn  fw600 light btnlightblue normalbtn col-md-12 f18 lh22" data-dismiss="modal">Tak for inspiration</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="popup__overlay popup__overlay--full" style="display:none;"></div>
+    }*@

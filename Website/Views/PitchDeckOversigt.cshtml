@@ -1,0 +1,556 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedModels;
+@using System.Web
+@using Umbraco.Core.Models;
+@using Umbraco.Web.Security
+
+
+@{
+    Layout = "Master.cshtml";
+
+
+    var id = HttpContext.Current.Request.QueryString["id"];
+
+
+    var currentUser = Members.GetCurrentMember();
+
+    StartupCentral.Code.Controllers.PitchController pd = new StartupCentral.Code.Controllers.PitchController();
+
+    //MembershipHelper membershipHelper = new MembershipHelper(UmbracoContext.Current);
+    MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+    IMember currentMember = null;
+    if (!string.IsNullOrEmpty(membershipHelper.CurrentUserName))
+    {
+        currentMember = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+    }
+
+    if (currentMember != null)
+    {
+        <main id="BusinessPlanOverview" class="sc-logged sc-bgb10">
+            <div class="row-container businessplan-container">
+                <div class="bp-header">
+                    <span class="bp-header__subheader">Min Pitch</span>
+                    <h3 class="bp-header__title" id="pitchName"></h3>
+                </div>
+
+                <div class="bp-content-wrapper">
+                    <aside class="bp-side-container">
+                        <button id="dropButton"
+                                class="bp__dropButton button--icon button--icon-right button--full-width button ">
+                            Menu
+                            <svg id="ChevronDown" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                                 viewBox="0 0 32 32">
+                                <path id="Path_86" data-name="Path 86" d="M32,32H0V0H32Z" fill="none" opacity="0.87" />
+                                <path id="Path_87" data-name="Path 87"
+                                      d="M19.034,9.388l-5.173,5.173L8.688,9.388a1.329,1.329,0,1,0-1.88,1.88l6.12,6.12a1.328,1.328,0,0,0,1.88,0l6.12-6.12a1.328,1.328,0,0,0,0-1.88,1.356,1.356,0,0,0-1.893,0Z"
+                                      transform="translate(2.139 2.999)" fill="#fff" />
+                            </svg>
+                        </button>
+                        <ul class="bp-categories-list">
+                            <li class="bp-categories-list__category is-active">
+                                <div class="bp-category-listitem">
+
+                                    <a class="bp-category-listitem__link tablinks is-active"
+                                       onclick="openTab(event, 'Introduktion')" id="introduktiontab">Introduktion</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'HvorforDuPitcher')"
+                                       id="HvorforDuPitchertab">Hvorfor Du Pitcher</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'DinVirksomhed')"
+                                       id="DinVirksomhedtab">Din virksomhed</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Proof')"
+                                       id="Prooftab">Proof of</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Okonomi')"
+                                       id="Okonomitab">Økonomisk overblik</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Risiko')"
+                                       id="Risikotab">Risikoprofilen </a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Søger')"
+                                       id="Søgertab">Hvad søger du </a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Opfølgning')"
+                                       id="Opfølgningtab">Opfølgning</a>
+                                </div>
+                            </li>
+
+                        </ul>
+
+                        @*Download Button PDF*@
+                        <!--
+    <div class="bp-actions-container download-pdf" style="display: none;">
+        <div class="bp-actions">
+            <button class="bp-actions__button button button--icon button--icon-left button--full-width pdf-download-link" data-id="">
+            <svg class="material" id="Download-2" xmlns="http://www.w3.org/2000/svg" width="24"
+                height="24" viewBox="0 0 24 24">
+                <g id="Group_32">
+                    <rect id="Rectangle_13" width="24" height="24" fill="none" />
+                </g>
+                <g id="Group_33">
+                    <path id="Path_96"
+                        d="M16.6,9H15V4a.945.945,0,0,0-1-1H10A.945.945,0,0,0,9,4V9H7.4a.945.945,0,0,0-1,1,.908.908,0,0,0,.3.7l4.6,4.6a.967.967,0,0,0,1.4,0l4.6-4.6a.967.967,0,0,0,0-1.4A.908.908,0,0,0,16.6,9ZM5,19a.945.945,0,0,0,1,1H18a1,1,0,0,0,0-2H6A.945.945,0,0,0,5,19Z"
+                        fill="#fff" />
+                </g>
+            </svg>
+                Download PDF
+            </button>
+        </div>
+    </div>
+    -->
+                        @* View in One Page *@
+                        <div class="bp-actions-container download-pdf" style="display: none;">
+                            <div class="bp-actions">
+                                    <a class="bp-actions__button button button--icon button--icon-left button--full-width" style="font-size: 14px;" href="/login/pitch-deck-one-page/?id=@id">
+                                        Gennemgå og download
+                                    </a>
+                                
+                            </div>
+                        </div>
+
+                    </aside>
+
+                    <div class="bp-main-container">
+
+                        <!-- Introduction -->
+                        <div class="bp-main tabcontent is-active" id="Introduktion">
+                            <div class="bp-main__content">
+                                <h1 class="headline-1" id="pitchName"></h1>
+                                <h2>Introduktion</h2>
+
+                                <p id="eng"></p>
+
+                                <h3>Forside</h3>
+                                <p id="filename"></p>
+                                <button type="button" id="showbtn">Vis billede</button>
+                                <button type="button" id="hidebtn">Skjul billede</button>
+                                <div id="imagePre">
+                                    <img id="imagePrev" src="#" alt="display image" class="img-responsive img-thumbnail" />
+                                </div>
+
+
+                                <h3>Agenda Beskrivelse</h3>
+                                <p id="agenda"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button" style="display:none;">
+                                    Forrige
+                                </button>
+
+                                <button class="button nexttab" onclick="document.getElementById('HvorforDuPitchertab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!--Hvorfor Du Pitcher -->
+                        <div class="bp-main tabcontent" id="HvorforDuPitcher">
+                            <div class="bp-main__content">
+                                <h2>Hvorfor Du Pitcher</h2>
+
+                                <h3>Hvad søger du? (værdisætning, ejerfordeling)</h3>
+                                <p id="lookFor"></p>
+
+                                <h3>Hvad skal pengene bruges til? </h3>
+                                <p id="moneyUsage"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('introduktiontab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('DinVirksomhedtab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Din Virksomhed -->
+                        <div class="bp-main tabcontent" id="DinVirksomhed">
+                            <div class="bp-main__content">
+                                <h2>Din Virksomhed</h2>
+                                <h3>Kort men præcis beskrivelse af din virksomhed og dens produkt (vision, mission, impact) </h3>
+                                <p id="companyDesc"></p>
+
+                                <h3>Teamet bag virksomheden (team nu og i fremtiden)</h3>
+                                <p id="teamDesc"></p>
+
+                                <h3>Beskriv det behov du løser</h3>
+                                <p id="satisfyDesc"></p>
+
+                                <h3>Beskriv markedet (målgruppe – deres behov, markedsanalyse) </h3>
+                                <p id="marketDesc"></p>
+
+                                <h3>Traction (red or blue ocean?)  </h3>
+                                <p id="traction"></p>
+
+                                <h3>Eventuelle relevante samarbejder, som skaber værdi for produktet</h3>
+                                <p id="collaborations"></p>
+
+                                <h3>Mulig udvikling</h3>
+                                <p id="developmentDesc"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('HvorforDuPitchertab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('Prooftab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Proof Of -->
+                        <div class="bp-main tabcontent" id="Proof">
+                            <div class="bp-main__content">
+                                <h2>Proof of</h2>
+                                <h3>Proof of business </h3>
+                                <p id="proofBusiness"></p>
+
+                                <h3>Proof of market fit</h3>
+                                <p id="proofMarket"></p>
+
+
+                                <h3>Proof of scale</h3>
+                                <p id="proofScale"></p>
+
+                                <h3>Proof of sales</h3>
+                                <p id="proofSales"></p>
+
+                                <h3>Concept payment</h3>
+                                <p id="proofConceptPayment"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('DinVirksomhedtab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('Okonomitab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <!--Økonomi-->
+                        <div class="bp-main tabcontent" id="Okonomi">
+                            <div class="bp-main__content">
+                                <h2>Økonomisk Overblik</h2>
+                                <h3>Dit budget (Indtægter og udgifter)</h3>
+                                <p id="finBudget"></p>
+
+                                <h3>Diversiteten</h3>
+                                <p id="finVariety"></p>
+
+
+                                <h3>Vækstpotentiale (Genkøbseffekten, ITV’en)</h3>
+                                <p id="finGrowth"></p>
+
+                                <h3>Hurtige facts</h3>
+                                <p id="finFacts"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('Prooftab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('Risikotab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Risiko profile -->
+                        <div class="bp-main tabcontent" id="Risiko">
+                            <div class="bp-main__content">
+                                <h2>Risikoprofilen</h2>
+                                <h3>Risikoen ved at investere i virksomheden</h3>
+                                <p id="riskInvest"></p>
+
+                                <h3> Hvad kan spille ind, for at du ikke når dine mål</h3>
+                                <p id="riskGoal"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('Prooftab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('Søgertab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Hvad søger du -->
+                        <div class="bp-main tabcontent" id="Søger">
+                            <div class="bp-main__content">
+                                <h2>Hvad søger du/dét vil du have ud af dit pitch:</h2>
+
+                                <h3>Hvad søger du (Værdisætning, ejerfordeling)</h3>
+                                <p id="lookFor2"></p>
+
+                                <h3>Din nuværende ejerkreds og deres procentsats</h3>
+                                <p id="owners"></p>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('Risikotab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " value="Videre"
+                                        onclick="document.getElementById('Opfølgningtab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+
+
+
+
+
+
+                        <!-- Opfølgningtab -->
+                        <div class="bp-main tabcontent" id="Opfølgning">
+                            <div class="bp-main__content">
+
+                                <h2>Opfølgning :</h2>
+                                <h3>Opsummering</h3>
+                                <p id="summery"></p>
+
+
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button class="button " value="Forrige"
+                                        onclick="document.getElementById('Søgertab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="button " style="display:none;">
+                                    Videre
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    }
+}
+<style>
+    #main-footer {
+        display: none;
+    }
+    #imagePre {
+        display: none;
+    }
+
+    #showbtn {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 5px 15px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 13px;
+    }
+    #hidebtn {
+        background-color: #f44336;
+        border: none;
+        color: white;
+        padding: 5px 15px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 13px;
+    }
+
+
+</style>
+
+
+<script src="~/scripts/jQuery.datalink.js"></script>
+<script src="~/scripts/startupcental.js"></script>
+
+<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+<script type="text/javascript">
+
+    var pid = {}
+
+    $(document).ready(Bind());
+    //Display image if exists
+    if (pid.Picture) {
+
+        $('#imagePrev').attr('src', pid.Picture)
+        $(document).ready(function () {
+            $('#showbtn').click(function () {
+                $('#imagePre').show();
+            });
+            $('#hidebtn').click(function () {
+                $('#imagePre').hide();
+            });
+        });
+    }
+
+    function Bind() {
+        if ($(location).attr('search')) {
+
+            var x = $(location).attr('search');
+            x = x.substr(4, 36);
+
+            $('.pdf-download-link').attr('data-id', x);
+            $('.download-pdf').css('display', 'block');
+
+            startupCentral.requestData('/umbraco/api/PitchApi/getPitchById?sBusId=' + x,
+                function (response) {
+
+                    if (!response.Success) {
+                        alert("Du har ikke tilladelse til at se denne pitch.");//("You don't have permision for this pitch.")
+                    }
+                    else {
+                        $(pid).attr(response.Data);
+
+                        if (pid.Picture != null) {
+                            //$('#filename').text(pid.BudgetFile);
+                            $('#filename').append("<a href='" + pid.Picture + "'>Et forsidebillede var vedhæftet, klik for at downloade</a>");
+                        }
+                        else {
+                            $('#filename').text("Ingen billede er vedhæftet");
+                        }
+                        if (pid.English)
+                        {
+                            $('#eng').text("Note: The pitch deck is written in English");
+                        }
+                        //Display image if exists
+                        var picture = pid.Picture;
+                        $(document).ready(function () {
+                            if (!!picture) {
+                                $('#showbtn').click(function () {
+                                    $('#imagePrev').attr('src', pid.Picture);
+                                    $('#imagePre').show();
+                                });
+                                $('#hidebtn').click(function () {
+                                    $('#imagePre').hide();
+                                });
+                            }
+                            else {
+                                $('#showbtn').hide();
+                                $('#hidebtn').hide();
+                            }
+                        });
+
+                        $(pid)
+                            .linkBoth("PitchName", "#pitchName", "text")
+                            //.linkBoth("English", "#eng", "text")
+                            .linkBoth("Agenda", "#agenda", "text")
+
+                            .linkBoth("LookFor", "#lookFor", "text")
+                            .linkBoth("MoneyUsage", "#moneyUsage", "text")
+                            .linkBoth("CompanyDesc", "#companyDesc", "text")
+                            .linkBoth("TeamDesc", "#teamDesc", "text")
+                            .linkBoth("SatisfyDesc", "#satisfyDesc", "text")
+
+                            .linkBoth("MarketDesc", "#marketDesc", "text")
+                            .linkBoth("Traction", "#traction", "text")
+                            .linkBoth("Collaborations", "#collaborations", "text")
+
+                            .linkBoth("DevelopmentDesc", "#developmentDesc", "text")
+                            .linkBoth("proofBusiness", "#proofBusiness", "text")
+                            .linkBoth("proofMarket", "#proofMarket", "text")
+                            .linkBoth("proofSales", "#proofSales", "text")
+                            .linkBoth("ProofScale", "#proofScale", "text")
+                            .linkBoth("proofConceptPayment", "#proofConceptPayment", "text")
+                            .linkBoth("finBudget", "#finBudget", "text")
+
+                            .linkBoth("finVariety", "#finVariety", "text")
+                            .linkBoth("finGrowth", "#finGrowth", "text")
+                            .linkBoth("finFacts", "#finFacts", "text")
+                            .linkBoth("riskInvest", "#riskInvest", "text")
+                            .linkBoth("riskGoal", "#riskGoal", "text")
+                            .linkBoth("LookFor2", "#lookFor2", "text")
+                            .linkBoth("Owners", "#owners", "text")
+                            .linkBoth("Summary", "#summery", "text");
+                    }
+                });
+        }
+    }
+
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+        }
+        document.getElementById(tabName).style.display = "flex";
+        evt.currentTarget.className += " is-active";
+    }
+</script>
+
+<script>
+    var acc = document.getElementsByClassName("bp__dropButton");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function () {
+            this.classList.toggle("open");
+            var panel = this.nextElementSibling;
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+            }
+        });
+    }
+</script>
+

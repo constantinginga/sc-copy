@@ -1,0 +1,94 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{ Layout = "Master.cshtml"; }
+
+<div class="content-header">
+    <div class="row-container centered">
+        <div class="row">
+            <div class="column-container">
+                <div class="column centered">
+                    <h1 class="headline-1">
+                        @Umbraco.AssignedContentItem.Value("title")
+                    </h1>
+                    <p class="lead">
+                        @Umbraco.AssignedContentItem.Value("subTitle")
+                    </p>
+                    <!-- TrustBox widget - Starter -->
+                    @*<div class="tp-widget-container">
+                        <div class="trustpilot-widget" data-locale="da-DK"
+                             data-template-id="5613c9cde69ddc09340c6beb"
+                             data-businessunit-id="5bf6a8c5f13cca00015104ed" data-style-height="100%"
+                             data-style-width="100%" data-theme="dark">
+                            <a href="https://dk.trustpilot.com/review/startupcentral.dk" target="_blank"
+                               rel="noopener">Trustpilot</a>
+                        </div>
+                    </div>*@
+                    <!-- End TrustBox widget -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <img class="content-header__image" src="/media/2375/header400px.svg" alt="StartupCentralHeader">
+</div>
+
+<main id="sc-cases" class="sc-guest sc-bgb10">
+    <section>
+        <div class="row-container">
+            <div class="row">
+                <div class="case-card-container">
+
+                    @foreach (var sCase in Umbraco.Content(25745).Children().Where(x=>x.IsVisible()).OrderByDescending(x=>x.CreateDate))
+                    {
+                        var membersPicture = sCase.Value<Image>("membersPicture");
+                        var membersName = sCase.Value("membersName");
+                        var membersQuote = sCase.Value("membersQuote");
+                        var companyName = sCase.Value<string>("memberCompanyName");
+                        var caseTitle = sCase.Value("successTitle");
+
+
+                        <a href="@sCase.Url" class="case-card">
+
+                            @if (membersPicture != null)
+                            {
+                                // remove "- " from the company names
+                                int index = companyName.IndexOf("- ");
+                                string cleanCompanyName = (index < 0)
+                                    ? companyName
+                                    : companyName.Remove(index, "- ".Length);
+
+                                var altText = membersName + " - " + cleanCompanyName + " | Startup Central";
+                                <div class="case-card__image">
+                                    <img loading="lazy" src="@(membersPicture.Url + "?width=300")" alt="@altText">
+                                </div>
+                            }
+
+                            <div class="case-card__body">
+                                <h3 class="case-card__title">@caseTitle</h3>
+                                <p class="case-card__quote">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                        <g id="Quotation" transform="translate(32 32) rotate(180)">
+                                            <path id="Path_82" data-name="Path 82" d="M0,0H32V32H0Z" fill="none" />
+                                            <path id="Path_83" data-name="Path 83"
+                                                  d="M8.227,20.333a1.784,1.784,0,0,0,1.6-.987L11.72,15.56A2.632,2.632,0,0,0,12,14.373V8.333A1.337,1.337,0,0,0,10.667,7H5.333A1.337,1.337,0,0,0,4,8.333v5.333A1.337,1.337,0,0,0,5.333,15H8L6.627,17.747A1.785,1.785,0,0,0,8.227,20.333Zm13.333,0a1.784,1.784,0,0,0,1.6-.987l1.893-3.787a2.632,2.632,0,0,0,.28-1.187V8.333A1.337,1.337,0,0,0,24,7H18.667a1.337,1.337,0,0,0-1.333,1.333v5.333A1.337,1.337,0,0,0,18.667,15h2.667L19.96,17.747A1.785,1.785,0,0,0,21.56,20.333Z"
+                                                  transform="translate(1.333 2.333)" fill="rgba(24,40,72,0.25)" />
+                                        </g>
+                                    </svg>
+                                    @membersQuote
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                        <g id="Quotation" transform="translate(32 32) rotate(180)">
+                                            <path id="Path_82" data-name="Path 82" d="M0,0H32V32H0Z" fill="none" />
+                                            <path id="Path_83" data-name="Path 83"
+                                                  d="M8.227,20.333a1.784,1.784,0,0,0,1.6-.987L11.72,15.56A2.632,2.632,0,0,0,12,14.373V8.333A1.337,1.337,0,0,0,10.667,7H5.333A1.337,1.337,0,0,0,4,8.333v5.333A1.337,1.337,0,0,0,5.333,15H8L6.627,17.747A1.785,1.785,0,0,0,8.227,20.333Zm13.333,0a1.784,1.784,0,0,0,1.6-.987l1.893-3.787a2.632,2.632,0,0,0,.28-1.187V8.333A1.337,1.337,0,0,0,24,7H18.667a1.337,1.337,0,0,0-1.333,1.333v5.333A1.337,1.337,0,0,0,18.667,15h2.667L19.96,17.747A1.785,1.785,0,0,0,21.56,20.333Z"
+                                                  transform="translate(1.333 2.333)" fill="rgba(24,40,72,0.25)" />
+                                        </g>
+                                    </svg>
+                                </p>
+                                <p class="case-card__name">@membersName</p>
+                            </div>
+                        </a>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

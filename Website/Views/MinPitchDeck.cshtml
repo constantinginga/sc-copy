@@ -1,0 +1,1319 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@using Umbraco.Web.Security
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+    Layout = "Master.cshtml";
+    bool n = true;
+
+    var url = HttpContext.Current.Request.RawUrl.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+
+    if (url.Length > 1)
+    {
+        n = false;
+    }
+
+    MembershipHelper membershipHelper = Umbraco.MembershipHelper;
+    IMember member = ApplicationContext.Current.Services.MemberService.GetByUsername(membershipHelper.CurrentUserName);
+<script>
+    @if (member != null) {
+        @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(
+            member), "';"))
+    }
+</script>
+
+    }
+
+    <div id="BusinessPlan" class="sc-logged sc-bgb10">
+        <div class="row-container businessplan-container">
+            <div class="bp-header">
+                <span class="bp-header__subheader">Pitch deck</span>
+                <h3 class="bp-header__title"></h3>
+            </div>
+
+            <div class="bp-content-wrapper">
+
+                @if (!n)
+                {
+                    <aside class="bp-side-container">
+                        <button id="dropButton"
+                                class="bp__dropButton button button--full-width button--icon button--icon-right">
+                            Menu
+
+                            <svg id="ChevronDown" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                <path id="Path_86" data-name="Path 86" d="M32,32H0V0H32Z" fill="none" opacity="0.87" />
+                                <path id="Path_87" data-name="Path 87"
+                                      d="M19.034,9.388l-5.173,5.173L8.688,9.388a1.329,1.329,0,1,0-1.88,1.88l6.12,6.12a1.328,1.328,0,0,0,1.88,0l6.12-6.12a1.328,1.328,0,0,0,0-1.88,1.356,1.356,0,0,0-1.893,0Z"
+                                      transform="translate(2.139 2.999)" fill="#fff" />
+                            </svg>
+                        </button>
+
+                        <ul class="bp-categories-list">
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <div class="bp-category-listitem__progress-indicator" id="Introduktionindicator">
+                                    </div>
+                                    <a class="bp-category-listitem__link tablinks is-active"
+                                       onclick="openTab(event, 'Introduktion')" id="introduktiontab">Introduktion</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <div class="bp-category-listitem__progress-indicator" id="HvorforDuPitcherindicator">
+                                    </div>
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'HvorforDuPitcher')"
+                                       id="HvorforDuPitchertab">Hvorfor du pitcher</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <div class="bp-category-listitem__progress-indicator" id="DinVirksomhedindicator">
+                                    </div>
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'DinVirksomhed')"
+                                       id="DinVirksomhedtab">Din virksomhed</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <div class="bp-category-listitem__progress-indicator" id="Proofindicator">
+                                    </div>
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Proof')"
+                                       id="Prooftab">Proof of</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <div class="bp-category-listitem__progress-indicator" id="Okonomiindicator">
+                                    </div>
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Okonomi')"
+                                       id="Okonomitab">Økonomisk overblik</a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <div class="bp-category-listitem__progress-indicator" id="Risikoindicator">
+                                    </div>
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Risiko')"
+                                       id="Risikotab">Risikoprofilen </a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <div class="bp-category-listitem__progress-indicator" id="søgerindicator">
+                                    </div>
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'søger')"
+                                       id="søgertab">Hvad søger du </a>
+                                </div>
+                            </li>
+                            <li class="bp-categories-list__category">
+                                <div class="bp-category-listitem">
+                                    <div class="bp-category-listitem__progress-indicator" id="Opfølgningindicator">
+                                    </div>
+                                    <a class="bp-category-listitem__link tablinks" onclick="openTab(event, 'Opfølgning')"
+                                       id="Opfølgningtab">Opfølgning</a>
+                                </div>
+                            </li>
+
+                        </ul>
+
+                        <div class="bp-actions-container">
+                            <div class="bp-actions">
+                                <span id="progressProcents"></span>
+                                <button class="bp-actions__button button button--full-width" id="save-draft" value="False"
+                                        onclick="UpdateorAddData(false,true)">
+                                    Gem som kladde
+                                </button>
+                                <button class="bp-actions__button button button--full-width button--cta" id="complete"
+                                        value="True" onclick="UpdateorAddData(true,false)">
+                                    Markere som afsluttet
+                                </button>
+                                <time class="bp-actions__timestamp" id="lastupdateddate">Sidst opdateret: </time>
+                            </div>
+                        </div>
+
+                    </aside>
+                }
+
+
+
+                <!--if(!String.IsNullOrEmpty(.ToString())){}else{}-->
+
+                <div class="bp-main-container">
+                    @* Introduktion starts *@
+                    <form class="bp-main tabcontent is-active" id="Introduktion">
+                        <div class="bp-main__content">
+                            <div class="bp-main__intro">
+                                @if (!String.IsNullOrEmpty(Model.Value("introHeader").ToString()))
+                                {
+                                    <h2> @Model.Value("introHeader")</h2>
+
+                                }
+                                else
+                                {
+                                    <h2>Introduktion</h2>
+                                }
+                            </div>
+                            <div class="bp-main__form-container">
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchNameLabel").ToString()))
+                                {
+                                    <label for="pitchName" class="bp-main__label-name">
+                                        @Model.Value("pitchNameLabel")
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label for="pitchName" class="bp-main__label-name">
+                                        Navn på din pitch
+                                    </label>
+                                }
+                                <div class="bp-main__input-container">
+                                    <input type="text" id="pitchName" name="pitchName" maxlength="100"
+                                           onChange="checkProgress()" required>
+                                </div>
+                                @if (!String.IsNullOrEmpty(@Model.Value("pitchNameNoteParagraph").ToString()))
+                                {
+                                    <p class="bp-main__input-ps">
+                                        @Model.Value("pitchNameNoteParagraph")
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="bp-main__input-ps">
+                                        (Vi har på forhånd indtastet et standard navn for din
+                                        pitch, men du kan til enhver tid ændre det.)
+                                    </p>
+                                }
+
+                            </div>
+
+                            <div class="bp-main__form-container">
+                                <label class="checkbox">
+                                    <span>I'm writing this in english</span>
+                                    <input type="checkbox" id="eng" name="eng" class="checkbox">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            @if (!n)
+                            {
+                        <div class="bp-main__form-container">
+                            @if (!String.IsNullOrEmpty(Model.Value("pitchForsideLabel").ToString()))
+                            {
+                                <label for="picture" class="bp-main__label-name">
+                                    @Model.Value("pitchForsideLabel")
+                                </label>
+                            }
+                            else
+                            {
+                                <label for="picture" class="bp-main__label-name">
+                                    Forside
+                                </label>
+                            }
+
+                            <div class="filename" id="filename" style="display:none;"></div>
+                            <input type="file" class="uploadBtn" name="imgFile" id="imgFile" accept="image/*" onChange="checkProgress()">
+
+                            <button type="button" id="showbtn">Show Image</button>
+                            <button type="button" id="hidebtn">Hide Image</button>
+                            <div id="imagePre">
+                                <img id="imagePrev" src="#" alt="display image" class="img-responsive img-thumbnail" />
+                            </div>
+
+                            @*<div class="holder">
+            <img id="imgPreview" src="#" alt="pic" />
+        </div>*@
+                            <label for="uploadPic" id="uploadPicResult" style="display:none;"></label>
+                            @*<input type="button" class="button" name="uploadPic" id="uploadPic"
+        onclick="uploadAttachment()" value="Add attachment" style="display:none;" />*@
+                        </div>
+                            }
+                        <div class="bp-main__form-container">
+                            @if (!String.IsNullOrEmpty(Model.Value("pitchAgendaLabel").ToString()))
+                            {
+                                <label for="agenda" class="bp-main__label-name">
+                                    @Model.Value("pitchAgendaLabel")
+                                </label>
+                            }
+                            else
+                            {
+                                <label for="agenda" class="bp-main__label-name">
+                                    Agenda for pitchen
+                                </label>
+                            }
+
+                            <textarea class="count" name="agenda" id="agenda"
+                                      placeholder="Skriv..." onChange="checkProgress()"></textarea>
+                        </div>
+
+                        </div>
+
+                        @if (n)
+                        {
+                            <div class="bp-main__actions">
+                                <input type="button" class="button button--cta" name="uploadbudget"
+                                       value="Start med at lave din pitch deck" onclick="UpdateorAddData(false,false)" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="bp-main__actions">
+                                <button type="button" class="button" style="display:none;">
+                                    Forrige
+                                </button>
+
+                                <button type="button" class="button" value="Videre"
+                                        onclick="document.getElementById('HvorforDuPitchertab').click(); uploadAttachment();">
+                                    Videre
+                                </button>
+                            </div>
+                        }
+                    </form>
+                    @* Introduktion ends *@
+
+                    @if (!n)
+                    {
+                        @* Hvorfor Du Pitcher starts *@
+                        <form class="bp-main tabcontent" id="HvorforDuPitcher">
+                            <div class="bp-main__content">
+                                @if(!String.IsNullOrEmpty(Model.Value("tabLabel").ToString())){
+                                <h2>@Model.Value("tabLabel")</h2>
+                                }
+                                else{
+                                <h2>Hvorfor du pitcher</h2>
+                                }
+                                
+                            <div class="bp-main__form-container">
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchHvadSogerDuLabel").ToString()))
+                                {
+                                    <label for="lookFor" class="bp-main__label-name">
+                                        @Model.Value("pitchHvadSogerDuLabel")
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label for="lookFor" class="bp-main__label-name">
+                                        Hvad søger du? (værdisætning, ejerfordeling)
+                                    </label>
+                                }
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="lookFor" id="lookFor" placeholder="Skriv..." rows="6" maxlength="5000"></textarea>
+                            </div>
+                            <div class="bp-main__form-container">
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchPengeneBrugesLabel").ToString()))
+                                {
+                                    <label for="moneyUsage" class="bp-main__label-name">
+                                       @Model.Value("pitchPengeneBrugesLabel")
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label for="moneyUsage" class="bp-main__label-name">
+                                        Hvad skal pengene bruges til?
+                                    </label>
+                                }
+
+
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="moneyUsage" id="moneyUsage" placeholder="Skriv..." rows="6" maxlength="5000"></textarea>
+                            </div>
+                            </div>
+                            <div class="bp-main__actions">
+                                <button type="button" class="button" value="Forrige"
+                                        onclick="document.getElementById('introduktiontab').click()">
+                                    Forrige
+                                </button>
+
+                                <button type="button" class="button" value="Videre"
+                                        onclick="document.getElementById('DinVirksomhedtab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </form>
+                        @* HvorforDuPitcher ends *@
+
+                        @* Din virksomhed  starts *@
+                        <form class="bp-main tabcontent" id="DinVirksomhed">
+                            <div class="bp-main__content">
+
+                                @if (!String.IsNullOrEmpty(Model.Value("dinVirksomhedLabel").ToString()))
+                                {
+                                <h2>@Model.Value("dinVirksomhedLabel")</h2>
+                                }
+                                else
+                                {
+                                <h2>Din Virksomhed</h2>
+
+                                }
+                            <div class="bp-main__form-container">
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchVirksomhedBeskrivelse").ToString()))
+                                {
+                                    
+                                <label for="companyDesc" class="bp-main__label-name">
+                                    @Model.Value("pitchVirksomhedBeskrivelse")
+                                </label>
+                                }
+                                else
+                                {
+                                    <label for="companyDesc" class="bp-main__label-name">
+                                        Kort men præcis beskrivelse af din virksomhed og dens produkt (vision, mission, impact)
+                                    </label>
+
+                                }
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="companyDesc" id="companyDesc" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchTeamBeskrivelse").ToString()))
+                                {
+
+                                    <label for="teamDesc" class="bp-main__label-name">
+                                        @Model.Value("pitchTeamBeskrivelse")
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label for="teamDesc" class="bp-main__label-name">
+                                        Teamet bag virksomheden (team nu og i fremtiden)
+                                    </label>
+
+                                }
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="teamDesc" id="teamDesc" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchBehovBeskrivelse").ToString()))
+                                {
+
+                                    <label for="satisfyDesc" class="bp-main__label-name">
+                                        @Model.Value("pitchBehovBeskrivelse")
+                                    </label>
+
+                                }
+                                else
+                                {
+                                    <label for="satisfyDesc" class="bp-main__label-name">
+                                        Beskriv det behov du løser
+                                    </label>
+
+                                }
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="satisfyDesc" id="satisfyDesc" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchMarketBeskrivelse").ToString()))
+                                {
+
+                                    <label for="marketDesc" class="bp-main__label-name">
+                                        @Model.Value("pitchMarketBeskrivelse")
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label for="marketDesc" class="bp-main__label-name">
+                                        Beskriv markedet (målgruppe – deres behov, markedsanalyse)
+                                    </label>
+
+                                }
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="marketDesc" id="marketDesc" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchTraction").ToString()))
+                                {
+
+                                    <label for="traction" class="bp-main__label-name">
+                                        @Model.Value("pitchTraction")
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label for="traction" class="bp-main__label-name">
+                                        Traction (red or blue ocean?)
+                                    </label>
+
+                                }
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="traction" id="traction" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchSamearbejderBeskrivelse").ToString()))
+                                {
+
+                                    <label for="collaborations" class="bp-main__label-name">
+                                        @Model.Value("pitchSamearbejderBeskrivelse")
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label for="collaborations" class="bp-main__label-name">
+                                        Eventuelle relevante samarbejder, som skaber værdi for produktet
+                                    </label>
+
+                                }
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="collaborations" id="collaborations" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchMuligUdvikling").ToString()))
+                                {
+
+                                    <label for="developmentDesc" class="bp-main__label-name">
+                                        @Model.Value("pitchMuligUdvikling")
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label for="developmentDesc" class="bp-main__label-name">
+                                        Mulig udvikling
+                                    </label>
+
+                                }
+
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="developmentDesc" id="developmentDesc" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+                            </div>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button type="button" class="button" value="Forrige"
+                                        onclick="document.getElementById('HvorforDuPitchertab').click()">
+                                    Forrige
+                                </button>
+
+                                <button type="button" class="button" value="Videre"
+                                        onclick="document.getElementById('Prooftab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </form>
+                        @* Din virksomhed ends *@
+
+                        @* Proof  starts *@
+                        <form class="bp-main tabcontent" id="Proof">
+                            <div class="bp-main__content">
+                                @if (!String.IsNullOrEmpty(Model.Value("proofOfLabel").ToString()))
+                                {
+                                   <h2>@Model.Value("proofOfLabel")</h2> 
+                                }
+                                else
+                                {
+                                <h2>Proof Of:</h2>
+                                   
+                                }
+                            <div class="bp-main__form-container" id="Proof-content">
+
+                                @if (!String.IsNullOrEmpty(Model.Value("business").ToString()))
+                                {
+                                    <label for="proofBusiness" class="bp-main__label-name">
+                                        @Model.Value("business")
+                                    </label>
+                                }
+                                else
+                                {
+
+                                    <label for="proofBusiness" class="bp-main__label-name">
+                                        Proof of business
+                                    </label>
+
+                                }
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="proofBusiness" id="proofBusiness" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchMarketFit").ToString()))
+                                {
+                                    <label for="proofMarket" class="bp-main__label-name">
+                                       @Model.Value("pitchMarketFit")
+                                    </label>
+                                }
+                                else
+                                {
+
+                                    <label for="proofMarket" class="bp-main__label-name">
+                                        Proof of market fit
+                                    </label>
+
+                                }
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="proofMarket" id="proofMarket" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchScale").ToString()))
+                                {
+                                    <label for="proofScale" class="bp-main__label-name">
+                                        @Model.Value("pitchScale")
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label for="proofScale" class="bp-main__label-name">
+                                        Proof of scale
+                                    </label>
+                                }
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="proofScale" id="proofScale" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchSales").ToString()))
+                                {
+                                    <label for="proofSales" class="bp-main__label-name">
+                                        @Model.Value("pitchSales")
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label for="proofSales" class="bp-main__label-name">
+                                        Proof of sales
+                                    </label>
+                                }
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="proofSales" id="proofSales" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchConceptPayment").ToString()))
+                                {
+                                <label for="proofConceptPayment" class="bp-main__label-name">
+                                    @Model.Value("pitchConceptPayment")
+                                </label>
+                                }
+                                else
+                                {
+                                <label for="proofConceptPayment" class="bp-main__label-name">
+                                    Concept payment
+                                </label>
+                                }
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="proofConceptPayment" id="proofConceptPayment" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+
+                            </div>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button type="button" class="button" value="Forrige"
+                                        onclick="document.getElementById('DinVirksomhedtab').click()">
+                                    Forrige
+                                </button>
+
+                                <button type="button" class="button" value="Videre"
+                                        onclick="document.getElementById('Okonomitab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </form>
+                        @* Proof ends *@
+
+
+                        @* Økonomisk   starts *@
+                        <form class="bp-main tabcontent" id="Okonomi">
+                            <div class="bp-main__content">
+                                @if (!String.IsNullOrEmpty(Model.Value("okonomiskPitchOverblikLabel").ToString()))
+                                {
+                                <h2>@Model.Value("okonomiskPitchOverblikLabel")</h2>
+                                }
+                                else
+                                {
+                                <h2>Økonomisk overblik:</h2>
+
+                                }
+                                
+                            <div class="bp-main__form-container">
+
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchBudget").ToString()))
+                                {
+                                    <label for="finBudget" class="bp-main__label-name">
+                                        @Model.Value("pitchBudget")
+                                    </label>
+                                }
+                                else
+                                {
+
+                                    <label for="finBudget" class="bp-main__label-name">
+                                        Dit budget (Indtægter og udgifter)
+                                    </label>
+
+                                }
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="finBudget" id="finBudget" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchDiversiteten").ToString()))
+                                {
+                                    <label for="finVariety" class="bp-main__label-name">
+                                        @Model.Value("pitchDiversiteten")
+                                    </label>
+                                }
+                                else
+                                {
+
+                                    <label for="finVariety" class="bp-main__label-name">
+                                        Diversiteten
+                                    </label>
+
+                                }
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="finVariety" id="finVariety" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchVaekstpotentiale").ToString()))
+                                {
+                                    <label for="finGrowth" class="bp-main__label-name">
+                                        @Model.Value("pitchVaekstpotentiale")
+                                    </label>
+                                }
+                                else
+                                {
+
+                                    <label for="finGrowth" class="bp-main__label-name">
+                                        Vækstpotentiale (Genkøbseffekten, ITV’en)
+                                    </label>
+
+                                }
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="finGrowth" id="finGrowth" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchFacts").ToString()))
+                                {
+                                    <label for="finFacts" class="bp-main__label-name">
+                                        @Model.Value("pitchFacts")
+                                    </label>
+                                }
+                                else
+                                {
+
+                                    <label for="finFacts" class="bp-main__label-name">
+                                        Hurtige facts
+                                    </label>
+
+                                }
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="finFacts" id="finFacts" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+
+                            </div>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button type="button" class="button" value="Forrige"
+                                        onclick="document.getElementById('Prooftab').click()">
+                                    Forrige
+                                </button>
+
+                                <button type="button" class="button" value="Videre"
+                                        onclick="document.getElementById('Risikotab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </form>
+                        @* Okonomi ends *@
+
+
+                        @* Risikoprofilen    starts *@
+                        <form class="bp-main tabcontent" id="Risiko">
+                            <div class="bp-main__content">
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchRisikoprofilenLabel").ToString()))
+                                {
+                                    <h2>@Model.Value("pitchRisikoprofilenLabel")</h2>
+
+                                }
+                                else
+                                {
+
+                                    <h2>Risikoprofilen:</h2>
+
+                                }
+                            <div class="bp-main__form-container">
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchRisiko").ToString()))
+                                {
+                                    <label for="riskInvest" class="bp-main__label-name">
+                                        @Model.Value("pitchRisiko")
+
+                                    </label>
+                                }
+                                else
+                                {
+
+                                    <label for="riskInvest" class="bp-main__label-name">
+                                        Risikoen ved at investere i virksomheden
+                                    </label>
+
+                                }
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="riskInvest" id="riskInvest" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchMalRisiko").ToString()))
+                                {
+                                    <label for="riskGoal" class="bp-main__label-name">
+                                        @Model.Value("pitchMalRisiko")
+                                    </label>
+                                }
+                                else
+                                {
+
+                                    <label for="riskGoal" class="bp-main__label-name">
+                                        Hvad kan spille ind, for at du ikke når dine mål
+                                    </label>
+
+                                }
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="riskGoal" id="riskGoal" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+
+                            </div>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button type="button" class="button" value="Forrige"
+                                        onclick="document.getElementById('Okonomitab').click()">
+                                    Forrige
+                                </button>
+
+                                <button type="button" class="button" value="Videre"
+                                        onclick="document.getElementById('søgertab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </form>
+                        @* Risikoprofilen  ends *@
+
+                        @* Hvad søger du    starts *@
+                        <form class="bp-main tabcontent" id="søger">
+                            <div class="bp-main__content">
+                                @if (!String.IsNullOrEmpty(Model.Value("hvadSogerDuTabLabel").ToString()))
+                                {
+                                    <h2>@Model.Value("hvadSogerDuTabLabel")</h2>
+
+                                }
+                                else
+                                {
+
+                                    <h2>Hvad søger du/dét vil du have ud af dit pitch:</h2>
+
+                                }
+                            <div class="bp-main__form-container">
+
+
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchSogerFo").ToString()))
+                                {
+                                    <label for="lookFor2" class="bp-main__label-name">
+                                        @Model.Value("pitchSogerFo")
+                                    </label>
+                                }
+                                else
+                                {
+
+                                    <label for="lookFor2" class="bp-main__label-name">
+                                        Hvad søger du (Værdisætning, ejerfordeling)
+                                    </label>
+
+                                }
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="lookFor2" id="lookFor2" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchEjerkreds").ToString()))
+                                {
+                                    <label for="owners" class="bp-main__label-name">
+                                        @Model.Value("pitchEjerkreds")
+                                    </label>
+                                }
+                                else
+                                {
+
+                                    <label for="owners" class="bp-main__label-name">
+                                        Din nuværende ejerkreds og deres procentsats
+                                    </label>
+
+                                }
+
+
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="owners" id="owners" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+
+                            </div>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button type="button" class="button" value="Forrige"
+                                        onclick="document.getElementById('Risikotab').click()">
+                                    Forrige
+                                </button>
+
+                                <button type="button" class="button" value="Videre"
+                                        onclick="document.getElementById('Opfølgningtab').click()">
+                                    Videre
+                                </button>
+                            </div>
+                        </form>
+                        @* Hvad søger du  ends *@
+
+                        @* Summery starts *@
+                        <form class="bp-main tabcontent" id="Opfølgning">
+                            <div class="bp-main__content">
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchOpfolgningLabel").ToString()))
+                                {
+                                    <h2>@Model.Value("pitchOpfolgningLabel")</h2>
+                                }
+                                else
+                                {
+
+                                    <h2>Opfølgning :</h2>
+
+                                }
+                            <div class="bp-main__form-container" id="Opfølgning-content">
+
+                                @if (!String.IsNullOrEmpty(Model.Value("pitchOpsummering").ToString()))
+                                {
+                                    <label for="summery" class="bp-main__label-name">
+                                        @Model.Value("pitchOpsummering")
+                                    </label>
+                                }
+                                else
+                                {
+
+                                    <label for="summery" class="bp-main__label-name">
+                                        Opsummering
+                                    </label>
+
+                                }
+                                <textarea class="bp-main__text-input-container count" onChange="checkProgress()"
+                                          name="summary" id="summary" placeholder="Skriv..." rows="4"
+                                          maxlength="5000"></textarea>
+
+
+                            </div>
+                            </div>
+
+                            <div class="bp-main__actions">
+                                <button type="button" class="button" value="Forrige"
+                                        onclick="document.getElementById('søgertab').click()">
+                                    Forrige
+                                </button>
+
+                                <button class="bp-actions__button button button--cta" id="complete"
+                                        value="True" onclick="UpdateorAddData(true,false)">
+                                    Indsend
+                                </button>
+                            </div>
+                        </form>
+                        @* Summery ends *@
+
+
+
+                    }
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <style>
+        #main-footer {
+            display: none;
+        }
+        h2{
+            text-align:center;
+        }
+        #imagePre{
+            display: none;
+        }
+        #imagePrev {
+            max-width: 500px;
+            max-height: 300px;
+            min-width: 300px;
+            min-height: 300px;
+        }
+        #showbtn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 5px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 13px;
+        }
+
+        #hidebtn {
+            background-color: #f44336;
+            border: none;
+            color: white;
+            padding: 5px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 13px;
+        }
+
+    </style>
+
+    <script>
+        var acc = document.getElementsByClassName("bp__dropButton");
+        var i;
+
+        for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function () {
+                this.classList.toggle("open");
+                var panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        }
+    </script>
+
+    <script src="~/scripts/jQuery.datalink.js"></script>
+    <script src="~/scripts/startupcental.js"></script>
+
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+    <script type="text/javascript">
+        var text_max = 200;
+        $('#charNum').html(text_max + '');
+
+        var d = new Date();
+        var x = "";
+
+
+        var pid = {
+            PitchName: 'Din pitch ' + d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear(),
+            English: false,
+            Agenda: 'Skriv...'
+        };
+
+        $(document).ready(Bind());
+
+
+        
+             //Display image while uploading
+            //$(document).ready(() => {
+            //    $('#imgFile').change(function () {
+            //        const file = this.files[0];
+            //        console.log(file);
+            //        if (file) {
+            //            let reader = new FileReader();
+            //            reader.onload = function (event) {
+            //                console.log(event.target.result);
+            //                $('#imgPreview').attr('src', event.target.result);
+            //            }
+            //            reader.readAsDataURL(file);
+            //        }
+            //    });
+            //});
+        
+        function Bind() {
+            $(pid)
+                .linkBoth("PitchName", "#pitchName", "val")
+                .linkBoth("Agenda", "#agenda", "val")
+                //.linkBoth("Picture", "#imgFile", "val")
+                .linkBoth("LookFor", "#lookFor", "val")
+
+                .linkBoth("MoneyUsage", "#moneyUsage", "val")
+                .linkBoth("CompanyDesc", "#companyDesc", "val")
+                .linkBoth("TeamDesc", "#teamDesc", "val")
+                .linkBoth("SatisfyDesc", "#satisfyDesc", "val")
+
+                .linkBoth("MarketDesc", "#marketDesc", "val")
+                .linkBoth("Traction", "#traction", "val")
+                .linkBoth("Collaborations", "#collaborations", "val")
+
+                .linkBoth("DevelopmentDesc", "#developmentDesc", "val")
+                .linkBoth("proofBusiness", "#proofBusiness", "val")
+                .linkBoth("proofMarket", "#proofMarket", "val")
+                .linkBoth("proofSales", "#proofSales", "val")
+                .linkBoth("ProofScale", "#proofScale", "val")
+                .linkBoth("proofConceptPayment", "#proofConceptPayment", "val")
+                .linkBoth("finBudget", "#finBudget", "val")
+
+                .linkBoth("finVariety", "#finVariety", "val")
+                .linkBoth("finGrowth", "#finGrowth", "val")
+                .linkBoth("finFacts", "#finFacts", "val")
+                .linkBoth("riskInvest", "#riskInvest", "val")
+                .linkBoth("riskGoal", "#riskGoal", "val")
+                .linkBoth("LookFor2", "#lookFor2", "val")
+                .linkBoth("Owners", "#owners", "val")
+                .linkBoth("Summary", "#summary", "val");
+
+            if ($(location).attr('search')) {
+                x = $(location).attr('search');
+                x = x.substr(4, 36);
+
+                PreLoad(x);
+            }
+        }
+
+        function PreLoad(x) {
+            startupCentral.requestData('/umbraco/api/PitchApi/getPitchById?sBusId=' + x,
+                function (response) {
+                    $(pid).attr(response.Data);
+
+                    $('#agenda').keyup();
+                   
+                    if (pid.English) {
+                        $("#eng").prop("checked", true);
+                    }
+
+                    if (pid.Picture != null) {
+                        // showing only image file name without the path
+                        var url = pid.Picture;
+                        var picName = url.substring(url.lastIndexOf('/') + 1);
+                        $('#imgFile').replaceWith("<p>" + picName + "</p>");
+
+                    }
+                    //Display image if exists
+                    var picture = pid.Picture;
+                    $(document).ready(function () {
+                        if (!!picture) {
+                            $('#showbtn').click(function () {
+                                $('#imagePrev').attr('src', pid.Picture);
+                                $('#imagePre').show();
+                            });
+                            $('#hidebtn').click(function () {
+                                $('#imagePre').hide();
+                            });
+                        }
+                        else {
+                            $('#showbtn').hide();
+                            $('#hidebtn').hide();
+                        }
+                    });
+                    //if (pid.Picture) {
+                    //    $('#filename').text(pid.Picture);
+                    //    $('#filename').css('display', 'block');
+                    //}
+                    var uptime = document.getElementById("lastupdateddate");
+                    var date = document.createTextNode(pid.UpdateDate);
+                    uptime.appendChild(date);
+
+                    window.setInterval(function () {
+                        UpdateorAddData(pid.Completed, true);
+                    }, (1000 * 60 * 2));
+
+                    checkProgress();
+                });
+        }
+
+
+        function UpdateorAddData(y, autosave) {
+
+
+            startupCentral.postRequestData('/umbraco/api/PitchApi/CreateOrUpdatePitch', {
+                Id: pid.Id,
+                CreateDate: pid.CreateDate,
+                PitchName: pid.PitchName,
+                English: pid.English,
+                Picture: pid.Picture,
+                Agenda: pid.Agenda,
+                LookFor: pid.LookFor,
+                MoneyUsage: pid.MoneyUsage,
+                CompanyDesc: pid.CompanyDesc,
+                TeamDesc: pid.TeamDesc,
+                SatisfyDesc: pid.SatisfyDesc,
+                MarketDesc: pid.MarketDesc,
+                Traction: pid.Traction,
+                Collaborations: pid.Collaborations,
+                DevelopmentDesc: pid.DevelopmentDesc,
+                proofBusiness: pid.proofBusiness,
+                proofMarket: pid.proofMarket,
+                proofSales: pid.proofSales,
+                proofConceptPayment: pid.proofConceptPayment,
+                finBudget: pid.finBudget,
+                finVariety: pid.finVariety,
+                finGrowth: pid.finGrowth,
+                finFacts: pid.finFacts,
+                riskInvest: pid.riskInvest,
+                riskGoal: pid.riskGoal,
+                LookFor2: pid.LookFor2,
+                ProofScale: pid.ProofScale,
+                Owners: pid.Owners,
+                Summary: pid.Summary,
+                Completed: y
+            },
+                function (data) {
+                    if (data) {
+                        if (data.Success && x === "" && y == false && autosave == false) //create
+                        {
+                            window.location.href = '/login/min-pitch-deck/?id=' + data.Data;
+                        } else if (data.Success && x != "") //no refresh + completed
+                        {
+                            if ((autosave == true)) //no redirect cases
+                            {
+                                var current = new Date();
+                                current.toLocaleTimeString();
+                                document.getElementById("lastupdateddate").innerHTML = "Sidst opdateret: " + current;
+
+                                console.log('pitch saved. ' + current);
+
+                                return false;
+                            } else if (autosave == false && y == true) //completed
+                            {
+                                window.location.href = '/login/min-profil-projekter/';
+                            }
+                        }
+                    }
+                });
+            
+        }
+
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+            }
+            document.getElementById(tabName).style.display = "flex";
+            evt.currentTarget.className += " is-active";
+        }
+
+
+
+        function uploadAttachment()
+        {
+
+            var formData = new FormData();
+            formData.append('file', $('#imgFile')[0].files[0]);
+
+            $('#uploadPic').css('display', 'none');
+            $("#uploadPicResult").css('display', 'block');
+            $("#uploadPicResult").html(
+                "Uploader billede til din pitch, vent venligst..."
+            );
+
+            $.ajax({
+                url: "/umbraco/api/PitchApi/UploadPicture",
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function (result) {
+                    //display approved picture
+                    $("#uploadPicResult").html("Forside billede er vedhæftet!");
+                    //alert(result.Data);
+                    pid.Picture = result.Data;
+                    console.log('Pid image attached');
+
+                },
+                error: function (err) {
+                    //display error picture
+                    $("#uploadPicResult").html(err.statusText);
+                },
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + userToken);
+                }
+            });
+        }
+ 
+
+
+        function checkProgress() {
+            var $tabs = $('.tabcontent');
+
+            var $fields = $('.count');
+            var count = $fields.length;
+            var progress = 0;
+
+            $tabs.each(function (elem, ind) {
+                var $inputs = $('#' + ind.id + ' .count');
+
+                var inputscount = $inputs.length;
+                var inputsprogress = 0;
+
+                $inputs.each(function (elm, ind) {
+                    if ($(ind).val() !== '') {
+                        progress++;
+                        inputsprogress++;
+                    }
+                });
+
+                var elemind = document.getElementById(ind.id + 'indicator');
+
+                if (inputsprogress == inputscount) {
+                    cleanIndicatorClass(elemind);
+                    elemind.className += " is-finished";
+                } else if (inputsprogress > 0) {
+                    cleanIndicatorClass(elemind);
+                    elemind.className += " is-inprogress";
+                } else {
+                    cleanIndicatorClass(elemind);
+                }
+            });
+
+            var procent = (progress / count * 100).toFixed(0);
+            $('#progressProcents').css("color", "black");
+            $('#progressProcents').html(procent + "%");
+
+            if (procent == 100) {
+                $('#progressProcents').css("color", "#ff6f59");
+                
+            }
+        }
+
+        function cleanIndicatorClass(elem) {
+            $(elem).attr('class', 'bp-category-listitem__progress-indicator');
+        }
+
+ 
+
+
+
+        $("#eng").change(function () {
+            if (this.checked)
+                pid.English = true;
+            else
+                pid.English = false;
+        });
+
+
+
+
+
+
+        $("#imgFile").change(function () {
+            $("#uploadPicResult").css('display', 'none');
+            $('#uploadPic').css('display', 'block');
+        });
+
+        $("#agenda").keyup(function () {
+            var text_length = $('#agenda').val().length;
+            var text_remaining = text_max - text_length;
+            $('#charNum').html(text_remaining + '');
+        });
+
+
+
+    </script>

@@ -1,0 +1,35 @@
+#sc-podcast {
+    section.podcast {
+        margin-top: -$nav-sm;
+
+        .podcast-container {
+            .podcast-text {
+                text-align: left;
+
+                .headline-2 {
+                    @include sc-title-text-side;
+                }
+
+                margin-bottom: 3rem;
+            }
+
+            .podcast-player {
+                height: 600px;
+            }
+        }
+    }
+}
+
+@include media-lg {
+    #sc-podcast {
+        section.podcast {
+            margin-top: -$nav-lg;
+
+            .podcast-container {
+                display: grid;
+                grid: 1fr/1fr 1fr;
+                grid-gap: 2.5rem;
+            }
+        }
+    }
+}

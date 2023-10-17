@@ -1,0 +1,99 @@
+html {
+    height: 100vh;
+    width: 100%;
+    color: #222;
+    font-family: 'Poppins'sans-serif;
+}
+
+body {
+    background-image: url("../media/1643/bg.png");
+
+}
+
+.fa-facebook-f {
+    color: #3b5998;
+}
+
+.fa-linkedin-in {
+    color: #1985bc;
+}
+
+
+.fa-instagram {
+    color: purple;
+}
+
+
+.sc-register button {
+    background-color: rgb(26, 75, 92);
+    border-radius: 25px;
+    text-transform: uppercase;
+
+}
+
+.sc-register button:hover {
+    background-color: rgb(52, 170, 209);
+}
+
+
+.sc-register__social li {
+    border-radius: 50%;
+    border-color: rgb(6, 75, 99) 1px solid;
+    padding: 4px;
+
+    background-color: #fff;
+    box-shadow: 0 5px 20px 0px rgb(0, 0, 0, 0.1);
+}
+
+
+.sc-register button:hover {
+    background-color: rgb(52, 170, 209);
+    background-image: url("../img/background.png");
+}
+
+.sc-register span {
+    font-size: 1.3rem;
+    padding: .5rem;
+    color: rgb(95, 95, 95);
+}
+
+.sc-register__card-text .card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  
+}
+
+.sc-register__card-text h2 {
+    font-size: 2rem;
+}
+
+.sc-register__card-text p {
+    font-size: 1rem;
+}
+
+
+.sc-register button {
+    text-transform: uppercase;
+    color: white;
+    font-size: 1rem;
+}
+
+a:link {
+    text-decoration: none;
+
+}
+
+.modal-body button {
+    margin-top: 2rem;
+}
+
+.close {
+    background-color: transparent !important;
+    border: none;
+}
+
+h1 {
+    color: white;
+    font-size: 2rem;
+}

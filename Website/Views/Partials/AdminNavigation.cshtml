@@ -1,0 +1,120 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+@using StartupCentral.Extensions
+
+@{
+    var loginStatusModel = Members.GetCurrentLoginStatus();
+    var currentUser = Members.GetCurrentMember();
+    var _memberService = ApplicationContext.Current.Services.MemberService;
+    var member = _memberService.GetById(currentUser.Id);
+
+    string wwavatarImageUrl = "";
+    var myAvatarImageUrl = 0;
+
+    if (member.GetValue("wwavatar") != null)
+    {
+        if (member.GetValue<string>("wwavatar").IsNumeric())
+        {
+            myAvatarImageUrl = Convert.ToInt32(member.GetValue<string>("wwavatar"));
+        }
+        else if (!string.IsNullOrEmpty(member.GetValue<string>("wwavatar")))
+        {
+            myAvatarImageUrl = member.GetValue<string>("wwavatar").GetIdByUdi();
+        }
+
+        if (myAvatarImageUrl > 0)
+        {
+            wwavatarImageUrl = Umbraco.Media(myAvatarImageUrl).Url();
+        }
+    }
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+    Html.RequiresJs("/umbraco_client/ui/jquery.js");
+    Html.RequiresJs("/umbraco_client/Application/JQuery/jquery.validate.min.js");
+    Html.RequiresJs("/umbraco_client/Application/JQuery/jquery.validate.unobtrusive.min.js");
+
+    var logoutModel = new PostRedirectModel();
+    logoutModel.RedirectUrl = "https://www.startupcentral.dk";
+}
+
+<div id="sc-navbar-admin">
+    <div id="profile-container">
+        <div class="profile-container__image-container">
+            <img src="@(!string.IsNullOrEmpty(wwavatarImageUrl) ? wwavatarImageUrl : "/media/1195/startup-central-bruger.jpg")" alt="Profile picture" class="profile-container__image">
+        </div>
+        <p class="profile-container__name">@member.Name</p>
+    </div>
+    <div class="nav-bar">
+        <nav class="nav-admin" id="nav-admin">
+            <ul class="nav-admin__menu">
+                @*<li class="nav-admin__item"><a href="LoggedAdminOverview.html" class="nav-admin__link">Oversigt</a></li>
+                    <li class="nav-admin__item"><a href="LoggedAdminBrugere.html" class="nav-admin__link">Brugere</a></li>
+                    <li class="nav-admin__item"><a href="#" class="nav-admin__link">Betalinger</a></li>*@
+                @*<li class="nav-admin__item"><a href="https://www.startupcentral.dk/" class="nav-admin__link">Hjemmesiden</a></li>*@
+                @*<li class="nav-admin__item"><a href="#" class="nav-admin__link">Changelog</a></li>*@
+                <li class="nav-admin__item"><a href="#" class="nav-admin__link" id="sc-navbar-admin-opgaver">Opgaver</a></li>
+                @*<li class="nav-admin__item"><a href="#" class="nav-admin__link">Indstillinger</a></li>*@
+            </ul>
+        </nav>
+        <div class="logout-container">
+            @if (loginStatusModel.IsLoggedIn)
+            {
+                using (Html.BeginUmbracoForm<UmbLoginStatusController>("HandleLogout"))
+                {
+                    <div class="logout-container">
+                        <p class="logout-btn">
+                            <button class="logout-btn__link"> 
+                                <a class="logout-btn__link">Log ud</a> 
+                            </button>
+                        </p>
+                        @Html.HiddenFor(m => logoutModel.RedirectUrl)
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        window.setInterval(function () {
+            updateUnreadFormulars();
+        }, 10000);
+    });
+
+    function updateUnreadFormulars() {
+        console.log('Checkin to see if there are unread formulars.');
+        getUnreadFormulars();
+    }
+
+    function getUnreadFormulars() {
+        //if (userToken) {
+        $.ajax({
+            url: '/umbraco/api/FormularLogger/GetNumberNewFormulars',
+            type: 'get',
+            success: function (response) {
+                if (response) {
+                    if (response.Success && response.Data > 0) {
+                        $('#sc-navbar-admin-opgaver').css('color', 'rgb(255, 0, 0)');
+
+                        if ($('#formulart').length && $("#times-used").text() != response.Data) {
+                            PreLoad();
+                        }
+
+                    } else if (response.Success && response.Data == 0) {
+                        $('#sc-navbar-admin-opgaver').css('color', '#dadada');
+                    }
+                }
+            }
+        });
+
+
+    }
+</script>
+

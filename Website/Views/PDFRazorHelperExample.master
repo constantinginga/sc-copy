@@ -1,0 +1,44 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/masterpages/PDFMaster.master" AutoEventWireup="true" %>
+
+<asp:content ContentPlaceHolderId="PdfContentPlaceHolder" runat="server">
+   <umbraco:Macro  runat="server" language="cshtml">
+  @inherits umbraco.MacroEngines.DynamicNodeContext
+     
+  @{
+    Response.ContentType = "text/xsl";
+    Response.AppendHeader("X-Pdf-Render","true");
+  
+    // -- Uncomment this to force the browser to download the PDF.
+    // Response.AppendHeader("X-Pdf-Force-Download","darren.pdf");
+  }
+  
+  @PdfHelper.Start()
+  
+    @PdfHelper.MetaData(@Model.Name, "Darren Ferguson")
+    @PdfHelper.LayoutTwoColumnA4()
+    
+     @* For ecnryption and password protection there is a:
+       PdfHelper.Secure() and PdfHelper.Secure("userPass", "ownerPass") helper *@ 
+     
+    @PdfHelper.StartBody()
+    
+       @PdfHelper.StartArea("header")
+          @PdfHelper.Block(@Model.Name, "Arial", "23pt", "#3399ff")
+       @PdfHelper.EndArea()
+            
+       @PdfHelper.Footer(@Model.Name + " written by " + @Model.WriterName + " - " + @DateTime.Now)
+
+       @PdfHelper.StartArea("body")
+
+          @Pdf.RenderRichText(@Model.BodyText)
+        
+          @PdfHelper.PagerBlock()
+            
+       @PdfHelper.EndArea()
+          
+    @PdfHelper.EndBody()
+  
+   @PdfHelper.End()
+   
+  </umbraco:Macro>
+</asp:content>

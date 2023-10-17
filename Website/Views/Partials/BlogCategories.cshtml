@@ -1,0 +1,35 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+
+@{    
+    var categoriesParent = Umbraco.Content(24200);
+    var categories = categoriesParent.Children().Where(x => x.IsVisible());
+}
+
+<section class="blog-categories">
+
+    <div class="blog-categories__title">
+        <h2>@categoriesParent.Value("chooseCategory")</h2>
+    </div>
+
+    <div class="blog-categories__buttons">
+        @foreach (var category in categories)
+        {
+            var categoryColor = category.Value("categoryColor");
+
+            <a href="@category.Url" class="blog-categories__button" style="border-left: @categoryColor 5px solid;">
+                <span>@category.Value("categoryName")</span>
+                    <svg id="Right_Arrow" data-name="Right Arrow" xmlns="http://www.w3.org/2000/svg" width="32"
+                        height="32" viewBox="0 0 32 32">
+                        <path id="Path_76" data-name="Path 76" d="M0,0H32V32H0Z" fill="none" />
+                        <path id="Path_77" data-name="Path 77"
+                            d="M12.28,17.583l3.453-3.453a1.328,1.328,0,0,0,0-1.88L12.28,8.8A1.34,1.34,0,0,0,10,9.743v6.893A1.334,1.334,0,0,0,12.28,17.583Z"
+                            transform="translate(3.333 2.803)" fill="#182848" />
+                    </svg>
+            </a>
+        }
+    </div>
+
+</section>
+
+

@@ -1,0 +1,109 @@
+section.sc-team-staff {
+    margin-top: -$nav-sm;
+
+    .staff-body {
+        display: flex;
+        margin-top: 10rem;
+
+        &:first-child {
+            margin-top: 0rem;
+        }
+
+        .staff {
+            @include flex(column);
+
+            &-image {
+                width: 15rem;
+                height: 15rem;
+                margin: -9rem auto 2rem;
+
+                img {
+                    border-radius: 50%;
+                }
+            }
+
+            &-text {
+                margin-bottom: 1.5rem;
+
+                .position {
+                    color: $sc-dark;
+                    font-size: 2rem;
+                    font-weight: 500;
+                }
+            }
+
+            &-social {
+                margin-top: auto;
+                margin-bottom: 0;
+
+                .email {
+                    font-size: 1.4rem;
+                    color: $sc-gray;
+                }
+            }
+        }
+    }
+}
+
+section.sc-team-join {
+    .headline-2 {
+        @include sc-title-text;
+    }
+
+    .button {
+        margin-top: 2.5rem;
+        width: fit-content;
+    }
+
+    background-color: #f5f9fe;
+}
+
+@include media-md {
+    section.sc-team-staff {
+        .container {
+            @include flex(row);
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+
+            .staff-body {
+                padding: 0 1.5rem;
+                flex: 0 0 50%;
+
+                &:first-child {
+                    margin-left: auto;
+                    margin-right: auto;
+                    flex: 0 0 60%;
+                }
+            }
+        }
+    }
+
+}
+
+@include media-lg {
+    section.sc-team-staff {
+        .container {
+            .staff-body {
+                flex: 0 0 33.33%;
+                order: 4;
+                padding-top: 3rem;
+
+                &:first-child {
+                    flex: 0 0 33.33%;
+                    order: 1;
+                    padding-top: 0;
+                }
+
+                &:nth-child(2) {
+                    order: 0;
+                    margin-top: 0;
+                }
+
+                &:nth-child(3) {
+                    order: 2;
+                    margin-top: 0;
+                }
+            }
+        }
+    }
+}

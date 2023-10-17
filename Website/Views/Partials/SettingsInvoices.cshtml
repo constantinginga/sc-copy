@@ -1,0 +1,87 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Umbraco.Core.Models.Member>
+
+@{
+    var upodiWrapperService = new StartupCentral.Code.Class.UpodiWrapperService();
+
+    var custID = HttpContext.Current.Items["cust.ID"] as Guid?;
+    var nextPaymentDate = HttpContext.Current.Items["nextPaymentDate"] as DateTime?;
+    if (nextPaymentDate.HasValue)
+    {
+        nextPaymentDate = new DateTimeOffset(DateTime.SpecifyKind(nextPaymentDate.Value, DateTimeKind.Utc)).LocalDateTime;
+    }
+
+    var cardExpiryDate = HttpContext.Current.Items["cardExpiryDate"] as DateTime?;
+    var expiresBeforePayment = nextPaymentDate.HasValue && cardExpiryDate.HasValue && nextPaymentDate.Value > cardExpiryDate.Value;
+}
+
+<div id="invoices-tab" class="settings-tab">
+    <h3>Se din fakturahistorik efter valgte abonnement løsning og download dem her til din bogføring.</h3>
+    <p>Vær opmærksom på, at nedenstående fakturaer sendes dagen før medlemskabet fornyes.</p>
+    <div class="sub-plan" style="display:none;">
+        Du har et månedlig/kvartal/årlig abonnement
+    </div>
+
+    <div class="billing-history">
+        <h3>Fakturaer</h3>
+
+        <ul class="billing-history__menu">
+                
+                <li class="billing-history__item">
+                    <div class="billing-history__date">
+                        
+                        <span>@Umbraco.GetDictionaryValue("NextPaymentDate", "Næste betalingsdato") : 
+                        @(nextPaymentDate.HasValue ? nextPaymentDate.Value.ToString("dd/MM/yyyy") : Umbraco.GetDictionaryValue("Unknown", "Ukendt"))</span>                        
+                        @if (expiresBeforePayment)
+                        {
+                            <span style="color:red"> - @Umbraco.GetDictionaryValue("PaymentCardExpiry", "Betalingskort udløb") : 
+                            @(cardExpiryDate.HasValue ? cardExpiryDate.Value.ToString("dd/MM/yyyy") : Umbraco.GetDictionaryValue("Unknown", "Ukendt"))
+                            <br/>@Umbraco.GetDictionaryValue("PleaseRenewPaymentCard", "Venligst forny betalingskortet")
+                            under
+                            @Umbraco.GetDictionaryValue("SubscriptionSettings", "Abonnementsindstillinger")
+                            </span>
+                        }
+                    </div>
+                </li>
+                @{ 
+                    var invoices = custID == null ? new Upodi.SDK.Objects.Invoice[0] : System.Threading.Tasks.Task.Run(() => upodiWrapperService.GetListOfInvoices(custID.Value)).GetAwaiter().GetResult();
+                }
+
+                @foreach (var inv in invoices.OrderByDescending(itm => itm.InvoiceDate))
+                {
+                    inv.InvoiceDate = new DateTimeOffset(DateTime.SpecifyKind(inv.InvoiceDate, DateTimeKind.Utc)).LocalDateTime;
+                    string aDate = inv.InvoiceDate.ToString("dd/MM/yyyy");
+                    string aNumber = inv.InvoiceNumber;
+                    string aPrice = inv.TotalAmount.ToString("F");
+
+                    <li class="billing-history__item">
+                        <div class="billing-history__date">
+                            <span>@aDate</span>
+                        </div>
+                        <div class="billing-history__order">
+                            <span>@aNumber</span>
+                        </div>
+                        <div class="billing-history__amount">
+                            <span>@aPrice</span>
+                        </div>
+                        <div class="billing-history__action">
+                            <button class="button button--icon-right downloadBtnInvoice" href="javascript:void(0);" data-id="@inv.ID">
+                                Hent <svg id="DownloadInvoice"
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24">
+                                            <g id="Group_30" data-name="Group 30">
+                                                <path id="Path_92" data-name="Path 92" d="M0,0H24V24H0Z" fill="none" />
+                                            </g>
+                                            <g id="Group_31" data-name="Group 31">
+                                                <path id="Path_93" data-name="Path 93"
+                                                    d="M18,2H10.83a2.006,2.006,0,0,0-1.42.59L4.59,7.41A2.006,2.006,0,0,0,4,8.83V20a2.006,2.006,0,0,0,2,2H18a2.006,2.006,0,0,0,2-2V4A2.006,2.006,0,0,0,18,2ZM11.65,16.65,8.86,13.86A.5.5,0,0,1,9.21,13H11V10.01a1,1,0,0,1,.99-1h0a.993.993,0,0,1,1.01,1V13h1.79a.5.5,0,0,1,.35.85l-2.79,2.79A.492.492,0,0,1,11.65,16.65Z"
+                                                    fill="#fff" />
+                                            </g>
+                                        </svg>
+                            </button>
+                        </div>
+                    </li>
+                }
+
+        </ul>
+    </div>
+</div>

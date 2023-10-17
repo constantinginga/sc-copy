@@ -1,0 +1,52 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+@{
+
+    // Ny instans af ForretningsplanController
+    StartupCentral.Code.Controllers.ForretningsplanController fc =
+    new StartupCentral.Code.Controllers.ForretningsplanController();
+
+    fc.Add("projektnavn", "wwprojektnavn");
+    fc.Add("kategori", "wwkategori");
+
+    fc.Load("forretningsplan");
+
+    //int completionPercent = fc.GetCompletionPercent();
+
+    @*<div id="formtop">
+        <div class="col-md-3 nopad">
+            <div class="prodheadline">Projektnavn</div>
+        </div>
+        <div class="col-md-6">
+            <div class="prodname">@fc.GetValue("projektnavn")</div>
+            <div class="prodtag lh26">@fc.GetValue("kategori")</div>
+        </div>
+        <div class="col-md-1 nopad">
+            <div class="c100 p@(completionPercent) small green">
+                <span></span>
+                <div class="slice">
+                    <div class="bar"></div>
+                    <div class="fill"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 f12 lh14 mt8 nopad">
+            Din forretningsplan er<br />
+            @string.Concat(completionPercent, "% udfyldt")
+        </div>
+    </div>*@
+
+    <div class="form-header" id="formtop">
+        <div class="form-header-text">
+            <div class="text-name">
+                <h3>Project Name</h3>
+                <span>@fc.GetValue("projektnavn")</span>
+            </div>
+            <div class="text-type">
+                <h3>Project Category</h3>
+                <span>@fc.GetValue("kategori")</span>
+            </div>
+        </div>
+    </div>
+
+}

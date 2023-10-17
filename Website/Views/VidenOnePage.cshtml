@@ -1,0 +1,62 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.VidenOnePage>
+@using ContentModels = Umbraco.Web.PublishedModels;
+    @{
+        Layout = "Master.cshtml";
+    }
+
+    <div class="tools_page_section">
+        <div class="tools_header">
+            <div class="tools_header_container">
+                <h1 class="tools_page_title">@Umbraco.AssignedContentItem.Value("videnTitle")</h1>
+                <p class="tools_page_paragraph">@Umbraco.AssignedContentItem.Value("videnParagraph1")</p>
+                <p class="tools_page_paragraph">@Umbraco.AssignedContentItem.Value("videnParagraph2")</p>
+            </div>
+        </div>
+        <div class="tools_cards_section">
+            <div class="tools_cards_container">
+
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("videnCardTitle1")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("videnCardDescription1")</p>
+                    <div>
+                        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("SeeMore", "Se mere")</a>
+                    </div>
+                </div>
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("videnCardTitle2")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("videnCardDescription2")</p>
+                    <div>
+                        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("SeeMore", "Se mere")</a>
+                    </div>
+                </div>
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("videnCardTitle3")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("videnCardDescription3")</p>
+                    <div>
+                        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("SeeMore", "Se mere")</a>
+                    </div>
+                </div>
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("videnCardTitle4")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("videnCardDescription4")</p>
+                    <div>
+                        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("SeeMore", "Se mere")</a>
+                    </div>
+                </div>
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("videnCardTitle5")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("videnCardDescription5")</p>
+                    <div>
+                        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("SeeMore", "Se mere")</a>
+                    </div>
+                </div>
+                <div class="tools_card">
+                    <h2>@Umbraco.AssignedContentItem.Value("videnCardTitle6")</h2>
+                    <p>@Umbraco.AssignedContentItem.Value("videnCardDescription6")</p>
+                    <div>
+                        <a href="@Umbraco.Content(29767).Url" class="main-btn">@Umbraco.GetDictionaryValue("SeeMore", "Se mere")</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

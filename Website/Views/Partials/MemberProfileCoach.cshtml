@@ -1,0 +1,361 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Umbraco.Core.Models.Member>
+
+@using StartupCentral.Extensions
+@using Umbraco.Core.Models
+@using Umbraco.Web.Security
+
+@{
+    var currentUser = Members.GetCurrentMember();
+    IMember member = null;
+    string[] roles = null;
+    if (currentUser != null)
+    {
+        member = ApplicationContext.Current.Services.MemberService.GetById(currentUser.Id);
+        roles = Roles.GetRolesForUser(member.Username);
+    }
+
+    var noNavFooter = Request.Params["noNavFooter"];
+    #region Variables
+    int mediaItemId = 0;
+    int mediaItemId1 = 0;
+    int mediaItemId2 = 0;
+
+    string introduction = string.Empty;
+    string description = string.Empty;
+    string wwshorttxt = string.Empty;
+
+    var culture = "da-DK";
+    var en = Request.Path.Split('/')[1].ToLowerInvariant() == "en";
+    if (en) // Manual handling of /en/coaches/Name
+    {
+        culture = "en-US";
+        System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(culture);
+        System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(culture);
+    }
+
+    var coachesContent = Umbraco.Content(10840);
+
+    var coachDetailsList = coachesContent.Children(culture);
+    try
+    {
+        IPublishedContent coachDetail = coachDetailsList.FirstOrDefault(x => x.Value<IPublishedContent>("coachPicker")?.Id == Model.Id);
+
+        if (coachDetail == null)
+        {
+            var newCoachInfo = ApplicationContext.Current.ContentService.Create(Model.Name, Umbraco.Content(10840).Key, "CoachInfo");
+            newCoachInfo.SetCultureName(Model.Name, "da-DK");
+            newCoachInfo.SetCultureName(Model.Name, "en-US");
+            newCoachInfo.SetValue("coachPicker", Model.GetUdi()); // https://our.umbraco.com/forum/using-umbraco-and-getting-started/99496-programmatically-setting-member-picker-property
+            newCoachInfo.SetValue("wwtitleSEO", Model.GetValue("wwtitleSEO"), "da-DK");
+            newCoachInfo.SetValue("bodyText", Model.GetValue("bodyText"), "da-DK");
+            newCoachInfo.SetValue("wwshorttxt", Model.GetValue("wwshorttxt"), "da-DK");
+            newCoachInfo.SetValue("wwshorttxt", Model.GetValue("wwshorttxt"), "en-US");
+            newCoachInfo.SetValue("introduction", Model.GetValue("introduction"), "da-DK");
+            newCoachInfo.SetValue("introduction", Model.GetValue("introduction"), "en-US");
+            newCoachInfo.SetValue("description", Model.GetValue("description"), "da-DK");
+            ApplicationContext.Current.ContentService.SaveAndPublish(newCoachInfo, "*", raiseEvents: false);
+
+            coachDetailsList = coachesContent.Children(culture);
+            coachDetail = coachDetailsList.FirstOrDefault(x => x.Value<IPublishedContent>("coachPicker")?.Id == Model.Id);
+        }
+
+        introduction = coachDetail.Value<string>("introduction", culture);
+        description = coachDetail.Value<string>("description", culture);
+        wwshorttxt = coachDetail.Value<string>("wwshorttxt", culture);
+    }
+    catch (Exception ex)
+    {
+        ex.ToString();
+        introduction = string.Empty;
+        description = string.Empty;
+    }
+    #endregion
+
+    #region Convert Images
+    if (Model.GetValue<string>("wwavatar").IsNumeric())
+    {
+        mediaItemId = Convert.ToInt32(Model.GetValue<string>("wwavatar"));
+    }
+    else if (!string.IsNullOrEmpty(Model.GetValue<string>("wwavatar")))
+    {
+        mediaItemId = Model.GetValue<string>("wwavatar").GetIdByUdi();
+    }
+
+    //if (Model.GetValue<string>("introductionPicture").IsNumeric())
+    //{
+    //    mediaItemId1 = Convert.ToInt32(Model.GetValue<string>("introductionPicture"));
+    //}
+    //else if (!string.IsNullOrEmpty(Model.GetValue<string>("introductionPicture")))
+    //{
+    //    mediaItemId1 = Model.GetValue<string>("introductionPicture").GetIdByUdi();
+    //}
+
+    //if (Model.GetValue<string>("descriptionPicture").IsNumeric())
+    //{
+    //    mediaItemId2 = Convert.ToInt32(Model.GetValue<string>("descriptionPicture"));
+    //}
+    //else if (!string.IsNullOrEmpty(Model.GetValue<string>("descriptionPicture")))
+    //{
+    //    mediaItemId2 = Model.GetValue<string>("descriptionPicture").GetIdByUdi();
+    //}
+    #endregion
+
+}
+
+<main id="sc-guest-coach" class="sc-guest sc-bgb10">
+    <div class="rail-grid rail-grid--3-column">
+        <!-- Profile Container -->
+        <aside class=" sm-rail">
+            <div class="coach-card">
+                <div class="coach-card__image">
+                    @if (mediaItemId > 0)
+                    {
+                        var altText = Model.Name.ToString() + " | Startup Central";
+                        <img class="entity-image-circle" src=@Umbraco.Media(mediaItemId).Url() alt="@altText" style="aspect-ratio: 1/1">
+                    }
+
+                </div>
+                <div class="coach-card__info">
+                    <h1 class="coach-card__name" data-name="@Model.Name.ToString()" style="font-size: 18px">
+                        @Model.Name.ToString()
+                    </h1>
+                    <p class="coach-card__description">
+                        @wwshorttxt
+                    </p>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        if (Umbraco.Member(currentUser.Id).IsDocumentType("student") && System.Web.Security.Roles.IsUserInRole(currentUser.Value("Email").ToString(), "student") || (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains)))
+                        {
+                            <button type="button"
+                                    class="button button--outline"
+                                    id="opensend"
+                                    @*data-id="@Model.Id"
+                                    data-image="@Umbraco.Media(mediaItemId).Url()"
+                                    data-coach-name="@Model.Name.ToString()"*@>
+                                @Umbraco.GetDictionaryValue("SendMessage", "Send besked")
+                            </button>
+                        }
+                        else if (Umbraco.Member(currentUser.Id).IsDocumentType("student") && System.Web.Security.Roles.IsUserInRole(currentUser.Value("Email").ToString(), "student paused"))
+                        {
+                            <button type="button" class="button button--cta opensend">@Umbraco.GetDictionaryValue("Reactivate", "Genaktiver")</button>
+                        }
+                    }
+                    else
+                    {
+                        if (noNavFooter == null)
+                        {
+                            <div class="auth-links">
+                                <a href="@Umbraco.Content(29767).Url" class="button button--cta">@Umbraco.GetDictionaryValue("Get access", "Få adgang")</a>
+                                <a href="@(Umbraco.Content(11655).Url + "?return2Url=" + System.Web.HttpUtility.UrlEncode(this.Request.Url.ToString()))" class="button outlined-btn">@Umbraco.GetDictionaryValue("Login", "Log ind")</a>
+                            </div>
+                        }
+                    }
+
+                </div>
+            </div>
+        </aside>
+
+        <div id="main-feed" class="feed-rail">
+            <!-- General Introduction -->
+            <div class="feed-rail-container">
+                <div class="feed-section">
+
+                    <h2>@Umbraco.GetDictionaryValue("WhatCanIHelpWith", "Hvad kan jeg hjælpe dig med?")</h2>
+                    <p>@Html.Raw(introduction)</p>
+
+                    @if (!string.IsNullOrEmpty(description))
+                    {
+                        <br />
+                        <h3>@Umbraco.GetDictionaryValue("MyProfile", "Min profil")</h3>
+                        <p>@Html.Raw(description)</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <aside class="md-rail">
+        </aside>
+    </div>
+
+    <div class="row-container">
+        <div class="row">
+            <!-- <h2>More Coaches in this field</h2> -->
+        </div>
+        <div class="row">
+            <h2>@Umbraco.GetDictionaryValue("MaybeYouCanUseSparringFromOtherCoaches", "Måske kan du bruge sparring fra andre coaches")</h2>
+            <ul id="coach-list" class="discover-entity-list">
+
+                @{
+                    Random rnd = new Random();
+                    IEnumerable<IMember> coachesList = ApplicationContext.Current.Services.MemberService.GetMembersByMemberType("coach1").Where(x => x.Name != Model.Name && x.GetValue<bool>("wwunavailable") == false).OrderBy(x => rnd.Next()).Take(5);
+
+                    foreach (var coach in coachesList)
+                    {
+                        if (coach.GetValue<string>("wwavatar").IsNumeric())
+                        {
+                            mediaItemId1 = Convert.ToInt32(coach.GetValue<string>("wwavatar"));
+                        }
+                        else if (!string.IsNullOrEmpty(coach.GetValue<string>("wwavatar")))
+                        {
+                            mediaItemId1 = coach.GetValue<string>("wwavatar").GetIdByUdi();
+                        }
+
+                        var urlprofile = coach.GetValue<string>("urlProfile") + '/';
+
+                        <li class="discover-entity-card">
+                            <div class="discover-entity-type-card">
+                                @{ 
+                                    var coachUrl = (en ? "/en" : "") + coachesContent.Url + urlprofile;
+                                    if (noNavFooter != null)
+                                    {
+                                        coachUrl += "?noNavFooter=1";
+                                    }
+                                }
+                                <a href="@coachUrl" class="discover-entity-type-card__info-container">
+
+                                    @if (mediaItemId1 > 0)
+                                    {
+                                        var altText = coach.Name.ToString() + " | Startup Central";
+                                        <img class="discover-entity-type-card__image-circle "
+                                             src=@Umbraco.Media(mediaItemId1).GetCropUrl("coach") alt="@altText">
+                                    }
+
+                                    <h3 class="discover-entity-type-card__name">
+                                        <span>
+                                            @coach.Name.ToString()
+                                        </span>
+                                    </h3>
+
+                                    <span class="discover-entity-type-card__description">
+                                        @* @coach.GetValue("wwshorttxt") *@
+                                        @{
+                                            // var nullCoachPicker = coachDetailsList.FirstOrDefault(x => x.Value<IPublishedContent>("coachPicker") == null);
+                                            // if (nullCoachPicker != null) { throw new Exception("To fix - delete: " + nullCoachPicker?.Name); }
+                                            var coachDetail = coachDetailsList.FirstOrDefault(x => x.HasValue("coachPicker") && x.Value<IPublishedContent>("coachPicker")?.Id == coach.Id);
+                                            var coach_wwshorttxt = coachDetail != null ? coachDetail.Value("wwshorttxt", culture) : "";
+                                        }
+                                        @coach_wwshorttxt
+                                    </span>
+                                </a>
+                            </div>
+                        </li>
+                    }
+
+                }
+
+            </ul>
+        </div>
+    </div>
+</main>
+
+@if (User.Identity.IsAuthenticated)
+{
+    if ((Umbraco.Member(currentUser.Id).IsDocumentType("student") && System.Web.Security.Roles.IsUserInRole(currentUser.Value("Email").ToString(), "student")) || (member.ContentTypeAlias == "coach1" && roles.Any("student".Contains)))
+    {
+        <div class="modal" id="sendview">
+            <div class="modal-popup modal-popup--coach">
+                <form action="" method="post">
+                    <div class="modal-popup__header">
+                        <div class="modal-popup__image">
+                            <img class="entity-image-circle entity-image-104"
+                                 src=@Umbraco.Media(mediaItemId).Url() alt="">
+                        </div>
+                        <h2 class="modal-popup__header-text">
+                            @Umbraco.GetDictionaryValue("YouAreAboutToSendAMessageTo", "Du er ved at sende en besked til") <span class="coach_name">@Model.Name.ToString()</span>.
+                        </h2>
+                    </div>
+                    <div class="modal-popup__body">
+                        <div class="form-container">
+                            <label for="kategori">@Umbraco.GetDictionaryValue("ChooseYourBusinessplan", "Vælg din forretningsplan")</label>
+                            <select name="bussinessplans" id="bussinessplansDisplay" class="form-control valid">
+                                <option value="">@Umbraco.GetDictionaryValue("Choose", "Vælg")</option>
+
+                                <script id="bussinessPlansTemplate" type="text/html">
+                                <option value="${Id}">${ProjektNavn}</option>
+                                </script>
+                            </select>
+                        </div>
+                        <div class="form-container">
+                            <label for="kategori">@Umbraco.GetDictionaryValue("ChooseYourPitchDeck", "Vælg dit pitch deck")</label>
+                            <select name="pitches" id="pitchDisplay" class="form-control valid">
+                                <option value="">@Umbraco.GetDictionaryValue("Choose", "Vælg")</option>
+
+                                <script id="pitchTemplate" type="text/html">
+                                <option value="${Id}">${PitchName}</option>
+                                </script>
+
+                            </select>
+                            <p>@Umbraco.GetDictionaryValue("NoticeItIsNotNecessaryToAttachAnythingToContactACoach", "NB! Det er ikke nødvendigt at vedhæfte noget for at kontakte en coach.")</p>
+                        </div>
+                        <div class="form-container">
+                            <label for="">@Umbraco.GetDictionaryValue("AddAMessage", "Tilføj en besked")</label>
+                            <textarea name="coachmessage" id="coachmessage" rows="5" placeholder="@Umbraco.GetDictionaryValue("WriteYourMessage", "Skriv din besked")."></textarea>
+                        </div>
+                        <button type="button" class="button button--danger" id="getRidOf" data-dismiss="modal-container">@Umbraco.GetDictionaryValue("Close", "Luk")</button>
+                        <button type="button" class="button" id="sendplantoinvestor" data-id="@Model.Id">Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+        <script>
+            $(document).ready(function () {
+                var bsp = {};
+
+                startupCentral.requestData('/umbraco/api/forretningsplanApi/getCompleted',
+                    function (response) {
+                        var data = response.Data;
+                        bsp = data;
+                        $("#bussinessPlansTemplate").tmpl(data).appendTo("#bussinessplansDisplay");
+                    });
+
+                startupCentral.requestData('/umbraco/api/pitchApi/getCompleted',
+                    function (response) {
+                        var data = response.Data;
+                        $("#pitchTemplate").tmpl(data).appendTo("#pitchDisplay");
+                    });
+
+                $('#opensend').click(function () {
+                    var modal = $('#sendview');
+
+                    modal.addClass('is-displayed');
+                    $('body').addClass('scroll-lock');
+                });
+
+                $('#getRidOf').click(function () {
+                    var modal = $('#sendview');
+
+                    modal.removeClass('is-displayed');
+                    $('body').removeClass('scroll-lock');
+                });
+            });
+        </script>
+    }
+    else if (Umbraco.Member(currentUser.Id).IsDocumentType("student") && System.Web.Security.Roles.IsUserInRole(currentUser.Value("Email").ToString(), "student paused"))
+    {
+        <div class="modal" id="sendview">
+            <div class="modal-popup modal-popup--coach">
+                <form>
+                    <div class="modal-popup__header">
+                        <h2 class="modal-popup__header-text">
+                            @Umbraco.GetDictionaryValue("WelcomeBackTo", "Velkommen tilbage til") Startup Central
+                            <br />
+                            @Umbraco.GetDictionaryValue("ToGetThisOfferYouHaveToJoinAgain", "For at få tilbuddet skal du være medlem igen")
+                        </h2>
+                    </div>
+                    <div class="modal-popup__body">
+                        <div class="form-container" id="resumLeb" style="display:none;">
+                            <label id="resumLab">@Umbraco.GetDictionaryValue("YourRequestIsBeingProcessedPleaseWait", "Din handling bliver behandlet, vent venligst.")</label>
+                        </div>
+
+                        <button type="button" class="button button--danger" id="getRidOf" data-dismiss="modal-container">@Umbraco.GetDictionaryValue("Cancel", "Annuller")</button>
+                        <button type="button" class="button actsub">@Umbraco.GetDictionaryValue("Activate", "Aktiver")</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+}
+

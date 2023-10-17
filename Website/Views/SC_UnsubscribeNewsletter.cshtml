@@ -1,0 +1,35 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Code.Class
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="/css/fontawesome-all.min.css">
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <!-- Styling -->
+    <link rel="stylesheet" href="/css/signup.css">
+    <title>Startupcentral</title>
+</head>
+@{ 
+    var mail = Request.QueryString["mail"];
+    if(! string.IsNullOrEmpty(mail))
+    {
+        new NewsLetterSubscriptionsService().Unsubscribe(mail);
+    }
+}
+
+<body>
+    <h5>@Umbraco.AssignedContentItem.Value("titel")</h5>
+</body>
+
+</html>

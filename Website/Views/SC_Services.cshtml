@@ -1,0 +1,11 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+	Layout = "SC_WebBase.cshtml";
+}
+
+@* the fun starts here *@
+
+@{ Html.RenderAction("RenderServicesHeader", "Services");}
+@{ Html.RenderAction("RenderServicesOffers", "Services");}
+@{ Html.RenderAction("RenderServicesServices", "Services");}
+@Html.Partial("~/Views/Partials/Sitelayout/_SpinWheel.cshtml")

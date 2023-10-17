@@ -1,0 +1,155 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using StartupCentral.Code.Class
+
+@{
+	Layout = null;
+}
+
+@{
+    IMember currentMember = null;
+    
+    string errorMessage = string.Empty;
+    
+    string companyName = "";
+    string email = "";
+    string cvr = "";
+    string mobilenumber = "";
+    string partnerkode = "";
+    
+    UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+        
+    if (IsPost)
+    { 
+        if (!string.IsNullOrEmpty(Request.Form["email"]))
+        {
+            email = Request.Form["email"];
+            StartupCentral.Code.Model.ValidationResponse response = StartupCentral.Code.Class.Emailing.ValidateEmail(email);
+            
+            if (!response.IsValid)
+            {
+                errorMessage = response.Message;
+            }
+    
+            if (!string.IsNullOrEmpty(Request.Form["companyName"]))
+            {
+                companyName = Request.Form["companyName"];
+            }
+    
+            if (!string.IsNullOrEmpty(Request.Form["cvr"]))
+            {
+                cvr = Request.Form["cvr"];
+            } 
+    
+            if (!string.IsNullOrEmpty(Request.Form["mobilenumber"]))
+            {
+                mobilenumber = Request.Form["mobilenumber"];
+            }
+    
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                IMember member = ApplicationContext.Current.Services.MemberService.CreateMemberWithIdentity(email, email, companyName, "partner");
+                
+                if (member != null)
+                {
+        
+                    member.SetValue("wwname", companyName);
+                    member.SetValue("wwemail", email);
+                    member.SetValue("wwcvr", cvr);
+                    member.SetValue("wwmobile", mobilenumber);
+                    
+                    member.IsApproved = false;
+       
+                    ApplicationContext.Current.Services.MemberService.Save(member);
+                    ApplicationContext.Current.Services.MemberService.AssignRole(email, "partner");
+    
+                    currentMember = member;
+                  @*  Response.Redirect(string.Concat("https://www.startupcentral.dk/betaling/","?memberkey=", member.Key), true);*@
+                    return;
+                }
+            }
+            
+        }
+    }
+}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/PartnerSignup.css">
+    <title>Signup</title>
+</head>
+<style>
+
+</style>
+
+<body id="signup-page" class="signup-page">
+    <div class="signup-page-header">
+        <a href="#" class="signup-page-header__logo"><img src="/media/1648/suc-blue-logo.svg" alt="SC"></a>
+        <a href="#" class="signup-page-header__button">Log pa</a>
+    </div>
+
+    <main class="signup-page-form">
+        <form method="post" id="becomePartner">
+        <div id="PageMainForm" class="signup-content">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut recusandae, ex dolor possimus accusamus
+                dicta harum esse asperiores?</p>
+                
+            <!-- Display the error -->
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="text-center">
+                     <font color="red" >@errorMessage</font>          
+                </div>
+            }
+            
+            <div class="input-form">
+                <input required name="companyName" type="text" />
+                <label class="label-name">
+                    <span class="content-name">Company Name</span>
+                </label>
+            </div>
+
+            <div class="input-form">
+                <input required name="email" type="email" />
+                <label class="label-name">
+                    <span class="content-name">Email</span>
+                </label>
+            </div>
+
+            <div class="input-form">
+                <input required name="cvr" type="text" maxlength="8" />
+                <label class="label-name">
+                    <span class="content-name">CVR</span>
+                </label>
+            </div>
+
+            <div class="input-form">
+                <input required name="mobilenumber" type="text" maxlength="8" />
+                <label class="label-name phone-container">
+                    <span class="content-name">Mobilenumber</span>
+                </label>
+            </div>
+            
+         @*   <div class="input-form">
+                <input type="text" name="partnerkode"/>
+                <label class="label-name">
+                    <span class="content-name">Partnerkode</span>
+                </label>
+            </div> *@
+
+            <button type="submit" class="btn btn-outline-secondary btn-lg btn-block">BECOME A PARTNER</button>
+        </div>
+
+        </form>
+    </main>
+
+    <div class="signup-page-footer">
+        <span class="signup-page-footer__cvr">© 2020 Startup Central A/S Alle rettigheder forbeholdes.</span>
+        <div class="signup-page-footer__links">
+            <a href="#">Kontakt os</a>
+            <a href="#">Brugerbetingelser</a>
+            <a href="#">Privatlivspolitik</a>
+        </div>
+    </div>
+
+</body>

@@ -1,0 +1,93 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Core.Models;
+@using System.Linq;
+@using System.IO;
+@using System.Web
+
+@{
+	Layout = null;
+	
+	    var currentUser = Members.GetCurrentMember();
+	    
+	    var exist = false;
+	    
+	    var memberid = 0;
+	    
+	    var _mediaService = ApplicationContext.Current.Services.MediaService;
+
+
+}
+@{
+foreach(var item in Umbraco.Media(1101).Children()){
+if(item.Name == currentUser.GetProperty("wwemail").DataValue.ToString()){
+exist = true;
+memberid = item.Id;
+break;
+}
+}
+
+if(exist != true){
+var media = _mediaService.CreateMedia(currentUser.GetProperty("wwemail").DataValue.ToString(), 1101, "Folder");
+
+_mediaService.Save(media);
+
+var forretningsplanmappe = _mediaService.CreateMedia("Forretningsplan", media.Id, "Folder");
+var budgetmappe = _mediaService.CreateMedia("Budget", media.Id, "Folder");
+
+_mediaService.Save(forretningsplanmappe);
+_mediaService.Save(budgetmappe);
+
+System.Web.HttpFileCollectionBase files = Request.Files;
+string[] fieldNames = files.AllKeys;
+for (int i = 0; i < fieldNames.Length; ++i)
+{
+    string field = fieldNames[i];
+    
+    if(field == "budget" && Request.Files[i].ContentLength > 0){
+        var budget = _mediaService.CreateMedia(Request.Files[i].FileName, budgetmappe.Id, "File");
+        Stream s = Request.Files[i].InputStream;
+        budget.SetValue("umbracoFile", Request.Files[i].FileName, s);
+        s.Close();
+        _mediaService.Save(budget);
+    }
+    
+    if(field == "forretningsplan" && Request.Files[i].ContentLength > 0){
+        var forretningsplan = _mediaService.CreateMedia(Request.Files[i].FileName, forretningsplanmappe.Id, "File");
+        Stream s = Request.Files[i].InputStream;
+        forretningsplan.SetValue("umbracoFile", Request.Files[i].FileName, s);
+        s.Close();
+        _mediaService.Save(forretningsplan);
+    }
+}
+}else{
+
+
+var budgetmappe2 = Umbraco.Media(memberid).Children().Where("Name == \"Budget\"").First();
+
+var forretningsplanmappe2 = Umbraco.Media(memberid).Children().Where("Name == \"Forretningsplan\"").First();
+
+System.Web.HttpFileCollectionBase files = Request.Files;
+string[] fieldNames = files.AllKeys;
+for (int i = 0; i < fieldNames.Length; ++i)
+{
+    string field = fieldNames[i];
+    
+    if(field == "budget" && Request.Files[i].ContentLength > 0){
+        var budget = _mediaService.CreateMedia(Request.Files[i].FileName, budgetmappe2.Id, "File");
+        Stream s = Request.Files[i].InputStream;
+        budget.SetValue("umbracoFile", Request.Files[i].FileName, s);
+        s.Close();
+        _mediaService.Save(budget);
+    }
+    
+    if(field == "forretningsplan" && Request.Files[i].ContentLength > 0){
+        var forretningsplan = _mediaService.CreateMedia(Request.Files[i].FileName, forretningsplanmappe2.Id, "File");
+        Stream s = Request.Files[i].InputStream;
+        forretningsplan.SetValue("umbracoFile", Request.Files[i].FileName, s);
+        s.Close();
+        _mediaService.Save(forretningsplan);
+    }
+}
+}
+
+}

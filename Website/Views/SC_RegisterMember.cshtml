@@ -1,0 +1,321 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Code.Class
+@using StartupCentral.Extensions
+
+
+
+@{
+    
+
+    if (User.Identity.IsAuthenticated)
+    {
+        HttpContext.Current.Response.Redirect("/");
+    }
+
+    Layout = "Master.cshtml";
+    //Layout = null;
+    var currentDate = DateTime.Now.Year;
+
+    int award = 0;
+    string d = string.Empty;
+    string state = Request.QueryString["state"];
+    var rightcontainertitle = Umbraco.AssignedContentItem.Value("rightContainerTitle");
+    var rightcontainertext = Umbraco.AssignedContentItem.Value("rightContainerText");
+
+    switch (state)
+    {
+        case "1":
+            d = Umbraco.AssignedContentItem.Value<string>("promocode1");
+            rightcontainertitle = Umbraco.AssignedContentItem.Value("leftInformationContainerTitleDiscount1");
+            rightcontainertext = Umbraco.AssignedContentItem.Value("rightInformationContainerTextDiscount1");
+            break;
+        case "2":
+            d = Umbraco.AssignedContentItem.Value<string>("promocode2");
+            rightcontainertitle = Umbraco.AssignedContentItem.Value("rightInformationContainerTitleDiscount2");
+            rightcontainertext = Umbraco.AssignedContentItem.Value("rightInformationContainerTextDiscount2");
+            break;
+        case "3":
+            d = Umbraco.AssignedContentItem.Value<string>("promocode3");
+            rightcontainertitle = Umbraco.AssignedContentItem.Value("rightInformationContainerTitleDiscount3");
+            rightcontainertext = Umbraco.AssignedContentItem.Value("rightInformationContainerTextDiscount3");
+            break;
+        default:
+            d = Umbraco.AssignedContentItem.Value<string>("promocode");
+            break;
+    }
+
+    IMember currentMember = null;
+    string errorMessage = string.Empty;
+    string username = "";
+    string email = "";
+    string password = "";
+    string mobilenumber = "";
+    //string promocode = "";
+    string concent = "false";
+
+    UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+
+    int mediaItemId = 0;
+    IEnumerable<IMember> pList = ApplicationContext.Current.Services.MemberService.GetMembersByMemberType("partner");
+
+
+    if (IsPost)
+    {
+        
+
+        if (!string.IsNullOrEmpty(Request.Form["email"]))
+        {
+            if (!string.IsNullOrEmpty(Request.Form["promocode"]))
+            {
+                //promocode = Request.Form["promocode"];
+                var isValidPromocode = System.Threading.Tasks.Task.Run(() => upodiWrapperService.ValidateDiscountCode(d)).GetAwaiter().GetResult();
+                if (!isValidPromocode) //
+                {
+                    errorMessage = "Promokoden er forkert eller ikke længere tilgængelig";
+                }
+            }
+
+            email = Request.Form["email"];
+            StartupCentral.Code.Model.ValidationResponse response = StartupCentral.Code.Class.Emailing.ValidateEmail(email);
+
+            if (!response.IsValid)
+            {
+                errorMessage = response.Message;
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["username"]))
+            {
+                username = Request.Form["username"];
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["password"]))
+            {
+                password = Request.Form["password"];
+            }
+
+            if (!string.IsNullOrEmpty(Request.Form["mobilenumber"]))
+            {
+                mobilenumber = Request.Form["mobilenumber"];
+            }
+
+            if (Request.Form["conc"] != null)
+            {
+                var res = Request.Form["conc"];
+                if (res == "on")
+                {
+                    concent = "true";
+                }
+            }
+
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+
+                IMember member = ApplicationContext.Current.Services.MemberService.CreateMemberWithIdentity(email, email, username, "student");
+
+                if (member != null)
+                {
+
+
+
+
+                    member.SetValue("wwmobile", mobilenumber);
+                    member.SetValue("wwMobilePayAbonnementsDato", null);
+
+                    member.SetValue("wwname", username);
+                    member.SetValue("wwemail", email);
+                    member.IsApproved = false;
+
+                    member.SetValue("umbracoNewsletterSubscriber", bool.Parse(concent));
+
+                    ApplicationContext.Current.Services.MemberService.Save(member);
+                    ApplicationContext.Current.Services.MemberService.AssignRole(email, "student");
+                    ApplicationContext.Current.Services.MemberService.SavePassword(member, password);
+
+
+                    //Emailing.SendApprovvalEmail(member,password,true);
+                    //Emailing.SendCreationEmail(member, password);
+
+                    currentMember = member;
+
+                    Response.Redirect(string.Concat("/betaling/", "?memberkey=", member.Key, "&promokode=", d, "&concentletters=", concent), true);
+
+                    return;
+                }
+            }
+
+        }
+    }
+}
+
+
+
+
+<main id="sc-register-page" class="user-input-page">
+
+
+    <div class="input-page-floating">
+
+        @if (pList.Count() > 0)
+        {
+            foreach (var partner in pList.Where(itm => itm.GetValue<bool>("wwunavailable") == false).OrderBy(itm => itm.Name).OrderBy(itm => itm.Name))
+            {
+                if (partner.GetValue<string>("wwpartnerAvatar").IsNumeric())
+                {
+                    mediaItemId = Convert.ToInt32(partner.GetValue<string>("wwpartnerAvatar"));
+                }
+                else if (!string.IsNullOrEmpty(partner.GetValue<string>("wwpartnerAvatar")))
+                {
+                    mediaItemId = partner.GetValue<string>("wwpartnerAvatar").GetIdByUdi();
+                }
+
+                <img loading="lazy" class="input-page-floating__image" src=@Umbraco.Media(mediaItemId).Url() alt="">
+            }
+        }
+    </div>
+
+
+    <div class="sc-register-container">
+
+        <div class="sc-register-header">
+            <img src="/media/2401/suc-blue-logo.svg" alt="StartupCentral Blue">
+            <p>
+                <strong @Model.Value("RegisterPageText")></strong>
+            </p>
+            <p>@Umbraco.AssignedContentItem.Value("createAccountText")</p>
+        </div>
+
+        <form method="post" id="registrationForm">
+            <input hidden name="formaction" value="registration" />
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <p class="text-center">
+                    <font color="red">@errorMessage</font>
+                </p>
+                <br />
+            }
+
+            <div class="sc-register-content">
+                <div class="register-extra register-extra--left">
+                    <h3 class="register-extra__title">@Umbraco.AssignedContentItem.Value("leftContainerTitle")</h3>
+                    <div class="register-extra__content">@Umbraco.AssignedContentItem.Value("leftContainerText")</div>
+                </div>
+
+                <div class="register-extra register-extra--right">
+                    <h3 class="register-extra__title">@Umbraco.AssignedContentItem.Value("rightContainerTitle")</h3>
+                    <div class="register-extra__content">@Umbraco.AssignedContentItem.Value("rightContainerText")</div>
+                </div>
+
+                <div class="form-container">
+                    <label for="firstname">Navn / Virksomhedsnavn</label>
+                    <input type="text" name="username" autocomplete="on" required>
+                </div>
+
+                <div class="form-container">
+                    <label for="email">E-mail</label>
+                    <input type="email" name="email" autocomplete="on" required>
+                </div>
+
+                <div class="form-container">
+                    <label for="password">Password</label>
+                    <input type="password" id="pass" name="password" minlength="6" autocomplete="on" required>
+                </div>
+
+                <div class="form-container">
+                    <label for="telephone">Telefonnummer</label>
+                    <div class="input-container">
+                        <span>+45</span>
+                        <input type="tel" id="telephone" name="mobilenumber" minlength="6" autocomplete="on"
+                               maxlength="8" required>
+                    </div>
+                </div>
+
+                <div class="form-container" style="display:none;">
+                    <label for="promocode">Promocode</label>
+                    <input type="text" name="promocode" autocomplete="off" value="@Umbraco.AssignedContentItem.Value("promocode")">
+                </div>
+
+                <div class="form-container">
+                    <label class="checkbox">
+                        <span>Jeg har læst, og accepterer Startup Centrals <a class="link" href="/brugerbetingelser/" target="_blank">brugerbetingelser</a>.</span>
+                        <input type="checkbox" id="brug" name="brug" class="checkbox" required>
+                        <span class="checkmark"></span>
+                    </label>
+
+                    <label class="checkbox">
+                        <span>Ja tak, jeg vil gerne modtage relevante informationer om mit medlemskab, mine fordele og iværksætterviden.</span>
+                        <input type="checkbox" id="conc" name="conc" class="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+
+                <button class="button button--full-width button--lg" type="submit" id="subbtn">@Umbraco.AssignedContentItem.Value("createAccountButton")</button>
+
+
+                <p>Har du allerede en bruger? <a href="/log-in/">Klik her</a> </p>
+            </div>
+        </form>
+
+        <!-- TrustBox widget - Starter -->
+        <div class="tp-widget-container">
+            <div class="trustpilot-widget" data-locale="da-DK" data-template-id="5613c9cde69ddc09340c6beb"
+                 data-businessunit-id="5bf6a8c5f13cca00015104ed" data-style-height="100%" data-style-width="100%"
+                 data-theme="light">
+                <a href="https://dk.trustpilot.com/review/startupcentral.dk" target="_blank"
+                   rel="noopener">Trustpilot</a>
+            </div>
+        </div>
+        <!-- End TrustBox widget -->
+        <div class="sc-register-footer">
+            <ul class="sc-register-footer__links">
+                <li>
+                    <a href="/brugerbetingelser/">Brugerbetingselser</a>
+                </li>
+                <li>
+                    <a href="/faq/">FAQ</a>
+                </li>
+                <li>
+                    <a href="/privatlivspolitik/">Privatlivspolitik</a>
+                </li>
+            </ul>
+            <span class="sc-register-footer__copyrgiht">
+                © 2018-@currentDate Startup Central | CVR - 39319942
+            </span>
+        </div>
+    </div>
+</main>
+
+
+
+<style>
+    #sc-navbar-main {
+        display: none;
+    }
+
+    #sc-newsletter {
+        display: none;
+    }
+
+    #main-footer {
+        display: none;
+    }
+</style>
+
+<script src="~/scripts/jQuery.datalink.js"></script>
+<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+<script>
+
+    $(document).ready(function () {
+
+        $("#registrationForm").submit(function () {
+
+
+
+            //disable the submit button
+            $("#subbtn").attr("disabled", true);
+            $("#subbtn").css('background-color', 'red');
+            return true;
+
+        });
+    });
+</script>

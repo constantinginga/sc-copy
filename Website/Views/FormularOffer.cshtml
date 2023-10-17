@@ -1,0 +1,150 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "Master.cshtml";
+    var email = "";
+
+    if (User.Identity.IsAuthenticated)
+    {
+        var currentUser = Members.GetCurrentMember();
+        email = Umbraco.Member(currentUser.Id).Email;
+    }
+}
+
+<div class="formular-container">
+    <div class="formular">
+        <section class="info">
+            <h2>Er du i tvivl om hvad du skal bruge for at <span class="highlight">starte</span>/<span class="highlight">drive</span> din virksomhed?</h2>
+            <p class="info-p">Starter du selvstændigt som håndværker, frisør, fotograf, arketingkonsulent eller noget helt andet?</p>
+            <p class="info-p">Er du i tvivl om, hvad du skal bruge for at komme i gang, eller kunne du godt tænke dig at finde ud af, hvad du kan spare af penge inden for din branche?</p>
+            <p class="info-p">Udfyld skemaet og få en enkeltstående mail om, hvad du har brug for og hvor du kan spare.</p>
+            <p class="info-p">Du får inden for en arbejdsdage.</p>
+            <button id="back-btn">Tilbage</button>
+        </section>
+        <section class="main">
+            <div class="steps-container">
+                <div class="step active-step">
+                    <p>Din virksomhed</p>
+                    <div class="step-dot">
+                        <span></span>
+                    </div>
+                </div>
+                <div class="step">
+                    <p>Kontaktinfo</p>
+                    <div class="step-dot">
+                        <span></span>
+                    </div>
+                </div>
+                <div class="step">
+                    <p>Send</p>
+                    <div class="step-dot">
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <form action="mailto:random@email.com" method="post">
+                <div class="tab">
+                    <h1>Din virksomhed</h1>
+                    <p id="cvr-p">*Har du et CVR-nummer?</p>
+                    <div class="radio-container">
+                        <div class="radio-group">
+                            <label for="ja" id="ja-label">Ja</label>
+                            <input type="radio" name="yes-no" id="ja" required>
+                            <div class="check"></div>
+                        </div>
+                        <div class="radio-group">
+                            <label for="nej" id="nej-label">Nej</label>
+                            <input type="radio" name="yes-no" id="nej">
+                            <div class="check"></div>
+                        </div>
+                    </div>
+                    <div class="cvr-container is-hidden">
+                        <label for="cvr">*Indtast dit CVR nr.:</label>
+                        <input type="text" name="cvr" id="cvr" max="8" required>
+                        <p>Vi bruger dit CVR-nummer til at finde ud af hvilke tilbud, der passer til din branchekode.</p>
+                    </div>
+                    <div class="dd-container is-disabled">
+                        <label for="select">Jeg starter selvstændig som:</label>
+                        <select name="select" id="select" required>
+                            <option value="" selected disabled></option>
+                            <option value="Internet virksomhed">Internet virksomhed</option>
+                            <option value="Håndværker">Håndværker</option>
+                            <option value="Tekstile producenter">Tekstile producenter</option>
+                            <option value="Online markedsføring">Online markedsføring</option>
+                            <option value="Tech relateret">Tech relateret</option>
+                            <option value="Hardware">Hardware</option>
+                            <option value="Butik/detail">Butik/detail</option>
+                            <option value="Beauty branchen">Beauty branchen</option>
+                            <option value="Tekstforfatter">Tekstforfatter</option>
+                            <option value="Grafisk design">Grafisk design</option>
+                            <option value="Fotograf/video">Fotograf/video</option>
+                            <option value="Elektronik">Elektronik</option>
+                            <option value="Rengøring">Rengøring</option>
+                            <option value="Bogføring">Bogføring</option>
+                            <option value="Fødevare">Fødevare</option>
+                            <option value="Telefoni">Telefoni</option>
+                            <option value="Sport">Sport</option>
+                            <option value="Ejendom">Ejendom</option>
+                            <option value="Kunst">Kunst</option>
+                            <option value="Planter">Planter</option>
+                            <option value="Investeringsvirksomheder">Investeringsvirksomheder</option>
+                            <option value="Fragt">Fragt</option>
+                            <option value="Terapi/coaching">Terapi/coaching</option>
+                            <option value="Event">Event</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="tab is-disabled">
+                    <h1>Dine kontaktinformationer</h1>
+                    <div class="contact-info-container">
+                        <input type="text" name="fornavn" id="fornavn" placeholder="*Indtast fornavn" required>
+                        <input type="text" name="efternavn" id="efternavn" placeholder="*Indtast efternavn" required>
+                        <input type="tel" name="phone-number" id="phone-number" placeholder="*Indtast tlf. nummer" max="8" required>            
+                        <input type="email" name="email" id="email" placeholder="*Indtast e-mail" value="@email" @Umbraco.If(User.Identity.IsAuthenticated, "disabled", "") required>
+                    </div>
+                    <div class="additional-info-container">
+                        <p>Hvorfor spørger vi om dine kontaktoplysninger?</p>
+                        <p>Vi bruger oplysningerne til at sikre, at vi har fået de korrekte informationer, for at kunne give dig de bedste oplysninger om, hvad du skal bruge for at starte/drive din virksomhed, samt hvad du kan spare. Hertil vil du få et uforpligtende tilbud.</p>
+                        <textarea name="additional-info" id="additional-info" cols="30" rows="5" placeholder="Evt. vedlæg kommentar..."></textarea>
+                    </div>
+                </div>
+                <div class="tab is-disabled">
+                    <h1>Indsend</h1>
+                    <div class="confirmation-container">
+                        <p>Hej <span class="highlight" id="name-span"></span>,</p>
+                        <p>Du har anmodet om at få tilbud og informationer om, hvad du skal bruge inden for branchen registeret til dit CVR-nummer: <span class="highlight" id="cvr-span"></span></p>
+                        <p>Du vil inden for en arbejdsdag modtage en email på <span class="highlight" id="email-span"></span>, hvis vi har brug for flere informationer vil vi kontakte dig på tlf. <span class="highlight" id="phone-number-span"></span>.</p>
+                        <p>Er de fremhævede informationer forkerte?</p>
+                        <p>Gå tilbage for at rette dem.</p>
+                    </div>
+                    <div class="permissions">
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="accept-data" id="accept-data" required>
+                            <label for="accept-data" id="accept-data-label">Jeg giver sammenstykke til at I må bruge, og behandle, mine data.</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="accept-terms" id="accept-terms" required>
+                            <label for="accept-terms" id="accept-terms-label">Jeg accepterer, at I vil kontakte mig på de oplyste kontaktinformationer.</label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="continue">
+                <button class="btn">Næste</button>
+                <p id="data-info">*Dine persondata behandles fortroligt.</p>
+                <p id="read-more" class="is-disabled">Læs om vores behandling af <a href="/privatlivspolitik/">data</a>.</p>
+            </div>
+        </section>
+        <div class="end-page is-disabled">
+            <h1>Formularen er nu sendt!</h1>
+            <p>Du har nu indsendt formularen.</p>
+            <p>Vi bearbejder dine svar, og melder tilbage med vores bud på relevante tilbud, for din branche, inden for en arbejdsdag.</p> 
+            <div id="img-container">
+                <img src="/media/2930/mail-icon-form.svg" alt="Mail icon">
+            </div>
+            <button class="btn">Til forsiden</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/scripts/Formular.js"></script>

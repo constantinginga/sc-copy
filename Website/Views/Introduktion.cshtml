@@ -1,0 +1,235 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@{
+    Layout = "Master.cshtml";
+
+
+    // New instance of Business PlanController
+    StartupCentral.Code.Controllers.ForretningsplanController fc = new StartupCentral.Code.Controllers.ForretningsplanController();
+
+    // Pairing form fields with the fields in Umbraco.
+    fc.Add("projektnavn", "wwprojektnavn");
+    fc.Add("kategori", "wwkategori");
+    fc.Add("eng", "wweng");
+    fc.Add("idedesc", "wwidedesc");
+
+    var url = HttpContext.Current.Request.RawUrl.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+    if (IsPost)
+    {
+        // Saves in Umbraco new node of that 'documenttypename'.
+        fc.Save(HttpContext.Current.Request, "forretningsplan");
+
+        // Retrieves the url to the next page of the wizard
+        string nextUrl = fc.GetNextPageUrl(Model.Content.Id);
+
+        if (!string.IsNullOrEmpty(nextUrl))
+        {
+            HttpContext.Current.Response.Redirect(nextUrl);
+        }
+
+    }
+    else
+    {
+        if (url.Length > 3 && url[3].Contains("?id="))
+        {
+            // Loading the 'draft' ('kladde') business plan.
+            fc.Load("forretningsplan");
+        }
+    }
+
+    @Html.Raw(fc.BuildAutoSaveScript(Request.QueryString["id"]))
+
+    <main id="sc-businessplan" class="sc-businessplan">
+        <div class="container">
+            <section class="businessplan">
+                <div class="businessplan-container">
+
+                    <div class="businessplan-navigation-container">
+                        <button class="button dropButton">Steps</button>
+                        @Umbraco.RenderMacro("BlueNavMenu")
+                    </div>
+
+                    <div class="businessplan-form-container">
+                        <form action="" method="post" class="businessplan-form" name="introduktion" id="introduktion">
+                            <h2 class="headline-2">
+                                @if (CurrentPage.wwoverskrift != "")
+                                {
+                                    @Page.wwoverskrift
+                                }
+                                else
+                                {
+                                    @Page.Name
+                                }
+                            </h2>
+                            <p>@Page.wwmanchet</p>
+
+                            <div class="form-container">
+                                <label for="projektnavn" class="label-name">
+                                    <span class="content-name">Projektnavn</span>
+                                </label>
+                                <div class="input-container">
+                                    <input type="text" id="projektnavn" name="projektnavn" @Umbraco.If(!string.IsNullOrEmpty(fc.GetValue("projektnavn")), string.Concat("value=\"", fc.GetValue("projektnavn"), "\"")) placeholder="Skriv projektnavn" />
+                                </div>
+                            </div>
+
+                            <div class="form-container">
+                                <label for="kategori" class="label-name">
+                                    <span class="content-name">Vælg den kategori, som passer på din forretningsidé</span>
+                                </label>
+                                <div class="input-container">
+                                    <select name="kategori" id="kategori" class="form-control valid">
+                                        <option>Vælg</option>
+                                        @foreach (var opt in Umbraco.Content(1651).Children())
+                                        {
+                                            <option @Umbraco.If(!string.IsNullOrEmpty(fc.GetValue("kategori")) && opt.Name == fc.GetValue("kategori"), "selected") value="@opt.Name">@opt.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            @{
+                                bool bStatus = false;
+                                string filter = fc.GetValue("eng");
+
+                                if(filter.ToString() == "True" || filter.ToString() == "1")
+                                {
+                                    bStatus = true;
+                                }
+
+                            }
+
+                            <div class="form-container">
+                                <label class="checkbox" for="eng">
+                                    <span> I am writing this in English.</span>
+                                    <input type="checkbox" name="eng" value="1" id="eng" class="checkbox" checked=@bStatus>
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+
+                            <div class="form-container">
+                                <label for="idedesc">Beskriv med få ord din ide (max <span id="charNum"></span> tegn)</label>
+                                <textarea name="idedesc" class="form-control" id="idedesc" placeholder="Skriv..." rows="6" maxlength="200">@fc.GetValue("idedesc")</textarea>
+                            </div>
+
+                            <input type="submit" class="button startButton" value="Start med at lave din forretningsplan" id="submitbsp" onclick="submitBPS()">
+                            <a id='sendingBlock' style='display: none;'>Gemmer din forretningsplan ...</a>
+
+                        </form>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        var acc = document.getElementsByClassName("dropButton");
+        var i;
+
+        for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function () {
+                this.classList.toggle("open");
+                var panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        }
+    </script>
+
+
+    <script>
+        function submitBPS() {
+            $('#submitbsp').hide();
+            $('a#sendingBlock').show();
+        }
+    </script>
+}
+
+@*<section class="startupcentralbackground">
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="javascript:void(0);" class="visible-xs wizradbtn">Wizard menu</a>
+                        <div class="wizardmenumobile fleft w100" style="display:none;">@Umbraco.RenderMacro("BlueNavMenu")</div>
+                        <div class="formwrapper shadowlight mt80">
+                            <div class="leftnavi bluebg col-md-3 col-xs-12 hidden-xs">
+                                @Umbraco.RenderMacro("BlueNavMenu")
+                            </div>
+
+                            <div class="rightform col-md-8 col-xs-12">
+                                <form action="" method="post" class="wizardform" name="introduktion" id="introduktion">
+                                    @Umbraco.RenderMacro("CurrentFormHeadManchet")
+                                    <div class="form-group">
+                                        <label for="projektnavn">Projektnavn</label>
+                                        <input type="text" class="form-control" id="projektnavn" name="projektnavn" @Umbraco.If(!string.IsNullOrEmpty(fc.GetValue("projektnavn")), string.Concat("value=\"", fc.GetValue("projektnavn"), "\"")) placeholder="Skriv projektnavn">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="kategori">Vælg den kategori, som passer på din forretningsidé</label>
+                                        <select name="kategori" id="kategori" class="form-control">
+                                            <option>Vælg</option>
+                                            @foreach (var opt in Umbraco.Content(1651).Children())
+                                            {
+                                                <option @Umbraco.If(!string.IsNullOrEmpty(fc.GetValue("kategori")) && opt.Name == fc.GetValue("kategori"), "selected") value="@opt.Name">@opt.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="checkbox mb30">
+                                        <label for="eng"><input type="checkbox" name="eng" value="1" id="eng" />I'm writing this in english<span></span></label>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label for="idedesc">Beskriv med få ord din ide (max <span id="charNum" class="fw700 f15"></span> tegn)</label>
+                                        @if (CurrentPage.wwinspriration != "")
+                                        {
+                                            <span class="f14 pull-right "><a href="javascript:void(0);" class="inspicolor" data-toggle="modal" data-target="#inspi1">Brug for inspiration <i class="fa fa-angle-right" aria-hidden="true"></i></a></span>
+                                        }
+                                        <textarea name="idedesc" class="form-control" id="idedesc" placeholder="Skriv..." rows="6" maxlength="200">@fc.GetValue("idedesc")</textarea>
+                                    </div>
+                                    <input type="submit" class="btnlightbg white" value="Start med at lave din forretningsplan">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>*@
+
+@*@Html.Raw(fc.BuildAutoSaveScript(Request.QueryString["id"]))
+
+    <script>
+
+        $(window).bind('beforeunload', function () {
+            saveCurrentPage();
+        });
+
+    </script>*@
+
+
+}
+
+
+@*<div class="modal fade" id="inspi1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="inspimodalcontent">
+                <button type="button" class="closeinspi" data-dismiss="modal" aria-label="Close"><img src="/images/close.gif"></button>
+                <div class="modal-header">
+                    <h4 class="modal-title f25 mb25 fw700 lh26" id="myModalLabel">
+                        Tekst eksemple
+                    </h4>
+                </div>
+                <div class="f18 lh26 fw400">
+                    @Page.wwinspriration
+                </div>
+                <div class="mt40 mb40"><a href="#" class="btn  fw600 light btnlightblue normalbtn col-md-12 f18 lh22" data-dismiss="modal">Tak for inspiration</a></div>
+            </div>
+        </div>
+    </div>
+    <div class="popup__overlay popup__overlay--full" style="display:none;"></div>*@

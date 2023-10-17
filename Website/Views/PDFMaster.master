@@ -1,0 +1,8 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/umbraco/masterpages/default.master" AutoEventWireup="true" %>
+<asp:Content ContentPlaceHolderID="ContentPlaceHolderDefault" runat="server"><?xml version="1.0" encoding="UTF-8" ?>
+ <!-- Keep Xml Declaration on the first line -->
+<asp:ContentPlaceHolder Id="PdfContentPlaceHolder" runat="server">
+  
+</asp:ContentPlaceHolder>
+
+</asp:Content>

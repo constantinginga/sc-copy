@@ -1,0 +1,56 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using umbraco.cms.businesslogic.member
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+@using System.Web
+
+@{
+    var currentUser = Members.GetCurrentMember();
+    var memberid = HttpContext.Current.Response.Cookies["memberid"].ToString();
+
+    
+
+    <div class="modal fade editfagomraadeview" id="editfagomraadeview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><img src="/images/close.gif"></button>
+                <div class="modal-header text-center">
+                    <img src="/media/1148/raket_dialogbox.svg" class="img-responsive center-block mb25 mt40" />
+                    <h4 class="modal-title f25 mb25  uppercase fw700 lh26" id="myModalLabel">
+                        Du er ved at redigere fagområdet:<br />
+                        <span class="lblEditingName"></span>
+                    </h4>
+                </div>
+                <div class="modal-body text-center">
+                    <form action="" method="post" name="editfagomraade" id="editfagomraade" formnovalidate="formnovalidate">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-sm-12">
+                                <input type="text" id="editfagomraade"  class="inputfield" name="name" value=""/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 text-right">
+                                <input type="button" id="btnSaveFagomraade" name="submit" class="btn dark" value="Opdater" data-invoke="editfagomraade"/>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="saveusersuccesstxt f18 lh26" style="display:none;">
+                        Fagområdet blev opdateret.<br /><br />
+                    </div>
+                    <div class="saveusererrortxt f18 lh26" style="display:none;">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popup__overlay popup__overlay--full" style="display:none;"></div>
+    <script src="~/scripts/startupcentral.admin.js?v=3"></script>
+    
+
+    
+}

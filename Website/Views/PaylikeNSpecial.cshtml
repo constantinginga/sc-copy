@@ -1,0 +1,219 @@
+﻿@using StartupCentral.Code.Class;
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@{
+    Layout = "MasterNoIndex.cshtml";
+
+    string titleSize = String.Concat(Umbraco.AssignedContentItem.Value<double>("titleSize").ToString("0.00",System.Globalization.CultureInfo.InvariantCulture),"rem;");
+    string subTitleSize = String.Concat(Umbraco.AssignedContentItem.Value<double>("subTitleSize").ToString("0.00",System.Globalization.CultureInfo.InvariantCulture),"rem;");
+    string sectionTitleSize = String.Concat(Umbraco.AssignedContentItem.Value<double>("sectionTitleSize").ToString("0.00",System.Globalization.CultureInfo.InvariantCulture),"rem;");
+
+    IMember member = null;
+
+    if (Request.QueryString["memberkey"] != null)
+    {
+        member = ApplicationContext.Current.Services.MemberService.GetByKey(new Guid(Request.QueryString["memberkey"]));
+    }
+
+    if (member != null)
+    {
+        UpodiWrapperService UpodiWrapperService = new StartupCentral.Code.Class.UpodiWrapperService();
+        Guid Guid = UpodiWrapperService.CreateNewCustomers(member.Id, member);
+        string PromoKode = Request.QueryString["promokode"];
+    }
+    
+    <script>
+    var userToken = ''
+    @if (member != null)
+    {
+        @Html.Raw(string.Concat("userToken = '", StartupCentral.Code.Controllers.UserController.IssueTokenIfEmpty(member), "';"))
+    }
+    </script>
+}
+
+<main id="sc-payment">
+    <section>
+        <div class="row-container">
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered" style="height:auto">
+                        <h2 class="headline-2" style="font-size:@titleSize">@Model.Value("title")</h2>
+                        <h3 style="font-size:@subTitleSize">@Model.Value("subtitle")</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column-container">
+                    <div class="column centered" style="height:auto">
+                        <div class="price-card-container">
+                            @{
+                                foreach (var card in Umbraco.Content(26278).Children().Where(x=>x.IsVisible()))
+                                {
+                                    bool highlighted = card.Value<bool>("pricingCardHighlighted");
+                                
+                                    var cardTitle = card.Name;
+                                    int cardPrice = card.Value<int>("pricingCardPrice");
+                                    var cardDescription = card.Value<string>("pricingCardDescription");
+                                    var cardBindingInfo = card.Value<string>("pricingCardBindingInfo");
+                                    
+                                    var v = card.Value<string>("pricingCardV");
+                                
+                                    
+                                    <div class="price-card disabled">
+                                        <h3 class="price-card__title">@cardTitle</h3>
+                                        <h2 class="price-card__price">@cardPrice</h2>
+                                        <p class="price-card__description">@cardDescription</p>
+            
+                                        <span class="price-card__subtext">@cardBindingInfo</span>
+                                    </div>
+                                }
+                            
+                                var sCard = Umbraco.Content(28591);
+                                
+                                var cardSTitle = sCard.Name;
+                                var cardSPrice = sCard.Value<string>("pricingCardPrice");
+                                var cardSDescription = sCard.Value<string>("pricingCardDescription");
+                                var cardSBindingInfo = sCard.Value<string>("pricingCardBindingInfo");
+                                
+                                var sv = sCard.Value<string>("pricingCardV");
+                                
+                                <div class="price-card price-card--promo">
+                                    <div class="price-card__banner">
+                                        <p>Mest populære</p>
+                                    </div>
+                                    <div class="price-card__icon"></div>
+                                    <h3 class="price-card__title">@cardSTitle</h3>
+                                    <h2 class="price-card__price">@cardSPrice</h2>
+                                    <p class="price-card__description">@cardSDescription</p>
+    
+                                    <span class="price-card__subtext">@cardSBindingInfo</span>
+                                    
+                                    <button onclick="GFG_click(this.value, @cardSPrice)" class="button button--full-width button--cta" value="@sv">
+                                        Vælg abonnement
+                                    </button>
+                                </div>
+                            }
+                            
+                            
+                        </div>
+                        <p>@Model.Value("paymentRegularTextBellowCards")</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column-container column-7">
+                    <div class="column">
+                        <p style="font-size:@sectionTitleSize"><strong>@Model.Value("paymentRegularSectionTitle")</strong></p>
+                        @Model.Value("paymentRegularSectionDescription")
+                    </div>
+                </div>
+                <div class="column-container">
+                    <div class="column">
+                        <img class="content-image" src="/media/2409/payment.svg" alt="Payment">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</main>
+
+
+<script src="https://sdk.paylike.io/6.js"></script>
+<script src="~/scripts/startupcental.js"></script>
+<script>
+    var con = @Request.QueryString["concentletters"];
+    $(document).ready(ContactSyncSaertilbud());
+
+    function GFG_click(clicked, valueSub) {
+        var con = @Request.QueryString["concentletters"];
+        var paylike = Paylike('@System.Configuration.ConfigurationManager.AppSettings["StartupCentral.Paylike.PublicKey"]', { style: false });
+        paylike.popup({
+            title: 'Add card',
+            description: 'Please enter your card details',
+        }, function (err, r) {
+            $.ajax({
+                type: "POST",
+                url: location.origin + "/umbraco/api/upodiapi/savepaymentmethod",
+                data: {
+                    UserId: '@Request.QueryString["memberkey"]',
+                    Token: r.card.id,
+                    PromoKode: '@Request.QueryString["promokode"]',
+                    SubscriptionType: clicked
+                },
+                success: function (data) {
+                    fbq('track', 'Purchase', {
+                       value: valueSub,
+                       currency: 'DKK',
+                    });
+                    console.log('fbq');
+                    
+                    if (con == true) {
+                        startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_sync', {},
+                        function (data) {
+                            if (data) {
+                                if (data.Success) {
+                                    console.log('Contact Sync');  
+                                }
+                            }
+                        });
+                    } else {
+                        startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_sync_nomarketingmember', {},
+                        function (data) {
+                            if (data) {
+                                if (data.Success) {
+                                    console.log('Contact Synced');
+                                }
+                            }
+                        });
+                    }
+
+                    window.location.href = "/betaling/gennemfort/";
+                }
+            });
+        });
+    }
+    
+    function ContactSyncSaertilbud() {
+        if (con == true) {
+            startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_fejletsignup_special', {},
+            function (data) {
+                if (data) {
+                    if (data.Success) {
+                        console.log('Contact Synced.');
+                    }
+                }
+            });
+        } else {
+            startupCentral.postRequestData('/umbraco/api/ActivecampaignApi/Contact_fejletsignup_nomarketing_special', {},
+            function (data) {
+                if (data) {
+                    if (data.Success) {
+                        console.log('Contact Synced.');
+                    }
+                }
+            });
+        }      
+    }
+</script>
+
+
+<style>
+    #sc-navbar-logged, #sc-navbar-main, #sc-newsletter, #main-footer {
+        display: none;
+    }
+
+
+    .price-card-container {
+    -ms-grid-columns: (1fr)[4] !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+    grid-gap: 28px !important;
+    }
+
+    select {
+        text-align-last: center;
+    }
+    
+</style>

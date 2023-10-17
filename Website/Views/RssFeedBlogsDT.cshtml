@@ -1,0 +1,40 @@
+﻿@using System.Xml.Linq
+@using Skybrud.Umbraco.RssUtils
+
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "Master.cshtml";
+
+    //var rssContentPage = Umbraco.Content(32411);
+    var blogs = Umbraco.Content(24024);
+
+    // Initialize a new feed and add the blog posts
+    RssFeed feed = new RssFeed
+    {
+        Title = "Blogs Rss",
+        Link = blogs.Url,
+        Description = "You can now get blogs as an RSS feed",
+        Language = "en-US",
+        IncludeAtomLink = true
+    };
+
+    foreach(var blog in blogs.Children())
+    {
+        var blogImage = blog.Value<IPublishedContent>("bImage");
+        feed.Add(new RssItem
+        {
+            Title = blog.Value("blogTitle").ToString(),
+            Link =  blog.Url,
+            PubDate = blog.Value<DateTime>("datePublished"),
+            Guid = blog.Value("authorName").ToString(),
+            Description = $"<img src=\"https://startupcentral.dk{blogImage.Url}\" />" + blog.Value("excerpt").ToString(),
+            Content = blog.Value("bodyText").ToString(),
+        });
+    }
+
+
+
+    // Write the RSS feed to the response stream
+    feed.Write(SaveOptions.None);
+
+} 

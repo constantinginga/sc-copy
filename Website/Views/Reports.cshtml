@@ -1,0 +1,191 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedModels;
+@using Umbraco.Core;
+@using Umbraco.Core.Models;
+@using Umbraco.Core.Services;
+@{
+    Layout = null;
+
+    //it's a page for the backoffice only members with admin accounts will have access to it
+    //iframe of this page was used in the Reports Section
+
+
+    var currentUser = Members.GetCurrentMember();
+
+    var _memberService = ApplicationContext.Current.Services.MemberService;
+
+    var member = _memberService.GetById(currentUser.Id);
+
+    string memberEmail = member.Email;
+
+    var userService = Services.UserService;
+    var admin = userService.GetByEmail(memberEmail);
+}
+@if (admin != null)
+{
+
+
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <title>Reports</title>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+            <script src="~/scripts/excelexportjs.js"></script>
+
+        </head>
+        <body>
+            <div class="container">
+                <h2>Statistics Reports</h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <td>Report Name</td>
+                                <td>Download</td>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>All Members Report</td>
+                                <td><button type="button" class="btn btn-success" onclick="getData(MembersDataUrl)">Download</button></td>
+                            </tr>
+                            <tr>
+                                <td>All Coaches Report</td>
+                                <td><button type="button" class="btn btn-success" onclick="getData(CoachesDataUrl)">Download</button></td>
+                            </tr>
+                            <tr>
+                                <td>All Partners Report</td>
+                                <td><button type="button" class="btn btn-success" onclick="getData(PartnerDataUrl)">Download</button></td>
+                            </tr>
+                            <tr>
+                                <td>Coach to Students Last Month Messages Report</td>
+                                <td><button type="button" class="btn btn-success" onclick="getData(CoachToStudentMsgsUrl)">Download</button></td>
+                            </tr>
+                            <tr>
+                                <td>Weekly Active</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-primary" onclick="getData(WeeklyActiveStudentsUrl)">Students</button>
+                                    <button type="button" class="btn btn-outline-warning" onclick="getData(WeeklyActiveCoachesUrl)">Coaches</button>
+                                    <button type="button" class="btn btn-outline-danger" onclick="getData(WeeklyActivePartnersUrl)">Partners</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="getData(WeeklyActiveFreeUsers)">Free Users</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Monthly Active</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-primary" onclick="getData(MonthlyActiveStudentsUrl)">Students</button>
+                                    <button type="button" class="btn btn-outline-warning" onclick="getData(MonthlyActiveCoachesUrl)">Coaches</button>
+                                    <button type="button" class="btn btn-outline-danger" onclick="getData(MonthlyActivePartnersUrl)">Partners</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="getData(MonthlyActiveFreeUsers)">Free Users</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Yearly Active</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-primary" onclick="getData(YearlyActiveStudentsUrl)">Students</button>
+                                    <button type="button" class="btn btn-outline-warning" onclick="getData(YearlyActiveCoachesUrl)">Coaches</button>
+                                    <button type="button" class="btn btn-outline-danger" onclick="getData(YearlyActivePartnersUrl)">Partners</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="getData(YearlyActiveFreeUsers)">Free Users</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>NPS Data</td>
+                                <td>
+                                    <button type="button" class="btn btn-success" onclick="getData(NpsDataURL)">Download</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Lounge Free Users</td>
+                                <td>
+                                    <button type="button" class="btn btn-success" onclick="getData(LoungeFreeUsers )">Download</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Basic Membership users (NOT lounge)</td>
+                                <td>
+                                    <button type="button" class="btn btn-success" onclick="getData(BasicMembershipUsers)">Download</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Member CVR Info</td>
+                                <td>
+                                    <button type="button" class="btn btn-success" onclick="getData(CvrMemberInfo)">Download</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Business plans per month</td>
+                                <td>
+                                    <button type="button" class="btn btn-success" onclick="getData(BusinessPlans)">Download</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div id="dvjson"></div>
+                </div>
+            </div>
+        </body>
+
+    </html>
+
+
+
+
+    <script type="text/javascript">
+
+        const MembersDataUrl = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/MembersReport';
+        const CoachesDataUrl = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/CoachesReport';
+        const PartnerDataUrl = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/PartnersReport';
+        const CoachToStudentMsgsUrl = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/CoachToStudMsgs';
+        const WeeklyActiveStudentsUrl = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/GetWeeklyActiveStudents';
+        const MonthlyActiveStudentsUrl = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/GetMonthlyActiveStudents';
+        const YearlyActiveStudentsUrl = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/GetYearlyActiveStudents';
+        const WeeklyActiveCoachesUrl = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/GetWeeklyActiveCoaches';
+        const MonthlyActiveCoachesUrl = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/GetMonthlyActiveCoaches';
+        const YearlyActiveCoachesUrl = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/GetYearlyActiveCoaches';
+        const WeeklyActivePartnersUrl = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/GetWeeklyActivePartners';
+        const MonthlyActivePartnersUrl = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/GetMonthlyActivePartners';
+        const YearlyActivePartnersUrl = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/GetYearlyActivePartners';
+        const NpsDataURL = 'https://api.startupcentral.dk/Nps/NpsData';
+        const WeeklyActiveFreeUsers = 'https://api.startupcentral.dk/members/WeeklyActiveLoungeFreeMembers';
+        const MonthlyActiveFreeUsers = 'https://api.startupcentral.dk/members/MonthlyActiveLoungeFreeMembers';
+        const YearlyActiveFreeUsers = 'https://api.startupcentral.dk/members/YearlyActiveLoungeFreeMembers';
+        const LoungeFreeUsers = 'https://www.startupcentral.dk/umbraco/api/MemberApi/LoungeFreeUsers';
+        const BasicMembershipUsers = 'https://www.startupcentral.dk/umbraco/api/MemberApi/BasicMembershipUsers';
+        const CvrMemberInfo = 'https://www.startupcentral.dk/umbraco/api/memberapi/GetMemberCVRData';
+        const BusinessPlans = 'https://www.startupcentral.dk/umbraco/api/ReportsApi/GetBusinessPlans';
+
+        function getData(url) {
+            
+            $('.btn').prop('disabled', true);
+            $.getJSON(url, function (data) {
+                        $("#dvjson").excelexportjs({
+                            containerid: "dvjson",
+                            datatype: 'json',
+                            dataset: data,
+                            columns: getColumns(data)
+                        });
+                $('.btn').prop('disabled', false);
+
+            }).fail(function () {
+                alert('Your Request is denied please ask IT department for permission!');
+            });
+
+        }
+
+
+
+    </script>
+ }
+ else
+ {
+    <div>
+        <h1>Sorry, you don't have permission to access this page</h1>
+        <p>Ask IT departmet for access</p>
+    </div>
+ }

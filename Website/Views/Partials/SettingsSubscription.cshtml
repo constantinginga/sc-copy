@@ -1,0 +1,145 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Umbraco.Core.Models.Member>
+
+@{
+    var memberKey = Model.Key;
+
+    var upodiWrapperService = new StartupCentral.Code.Class.UpodiWrapperService();
+
+    var custID = HttpContext.Current.Items["cust.ID"] as Guid?;
+    var nextPaymentDate = HttpContext.Current.Items["nextPaymentDate"] as DateTime?;
+    var cardExpiryDate = HttpContext.Current.Items["cardExpiryDate"] as DateTime?;
+    var expiresBeforePayment = nextPaymentDate.HasValue && cardExpiryDate.HasValue && nextPaymentDate.Value > cardExpiryDate.Value;
+}
+
+<div class="settings-main subscription-settings settings-tab" id="subscription-settings">
+    <div class="form-container">
+        <a class="button settings-button" id="AddChangeCreditCard">
+            <span>Betalingskort</span>
+        </a>
+    </div>
+
+    @if (System.Web.Security.Roles.IsUserInRole(Model.Email, "student paused"))
+    {
+        <div class="form-container">
+            <a class="button settings-button opensend">
+                <span>Genaktiver</span>
+            </a>
+        </div>
+
+        <div class="modal settingsmodalconfirm" id="sendview">
+            <div class="modal-popup modal-popup--coach">
+                <form>
+                    <div class="modal-popup__header">
+                        <h2 class="modal-popup__header-text">
+                            Velkommen tilbage til Startup Central
+                            <br />
+                            For at få tilbuddet fra denne partner skal du være medlem igen
+                        </h2>
+                    </div>
+                    <div class="modal-popup__body">
+                        <div class="form-container" id="resumLeb" style="display:none;">
+                            <label id="resumLab">Din handling bliver behandlet, vent venligst.</label>
+                        </div>
+
+                        <button type="button" class="button button--danger" id="getRidOf" data-dismiss="modal-container">Annuller</button>
+                        <button type="button" class="button actsub">Aktiver</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <br /><br />
+        @*<div>Betalingskort: @upodiWrapperService.GetPaymentCardNumber(custID.Value)</div>*@
+        <div>Betalingskort: @System.Threading.Tasks.Task.Run(() => upodiWrapperService.GetPaymentCardNumber(custID.Value)).GetAwaiter().GetResult()</div>
+        if (expiresBeforePayment)
+        {
+            <br /><br />
+            <div style="color:red">
+                @Umbraco.GetDictionaryValue("PaymentCardExpiry", "Betalingskort udløb")
+                :
+                @(cardExpiryDate.HasValue ? cardExpiryDate.Value.ToString("dd/MM/yyyy") : Umbraco.GetDictionaryValue("Unknown", "Ukendt"))
+                -
+                @Umbraco.GetDictionaryValue("PleaseRenewPaymentCard", "Venligst forny betalingskortet")
+            </div>
+        }
+        <br /><br />
+        <div>
+            @Umbraco.GetDictionaryValue("NextPaymentDate", "Næste betalingsdato")
+            :
+            @((nextPaymentDate.HasValue) ? nextPaymentDate.Value.ToString("dd/MM/yyyy") : Umbraco.GetDictionaryValue("Unknown", "Ukendt"))
+        </div>
+    }
+    <br /><br />
+    <div><b>Produkt plan: @System.Threading.Tasks.Task.Run(() => upodiWrapperService.GetPlanType(custID.Value)).GetAwaiter().GetResult()</b></div>
+    <br /><br />
+    <div>
+        Ønsker du at opsige eller ændre dit medlemskab, skal du sende en mail til <a class="link" href="mailto:kontakt@startupcentral.dk?subject=Ændring af medlem @Model.Id">kontakt@startupcentral.dk</a>
+    </div>
+    <div>
+        </br>
+    </div>
+    <div>
+        Læs vores <a href="@Umbraco.Content(27563).Url" class="sc-footer__item-link">Brugerbetingelser</a>, <a href="@Umbraco.Content(27559).Url" class="sc-footer__item-link">Privatlivspolitik</a> og <a href="@Umbraco.Content(30626).Url" class="sc-footer__item-link">Cookiepolitik</a>.
+    </div>
+
+    <script src="https://sdk.paylike.io/10.js"></script>
+
+    <script>
+    function loadCreditCard() {
+        $.get(
+            location.origin + "/umbraco/api/upodiapi/getpaymentmethod",
+            {
+                memberKey: '@memberKey'
+            },
+            function (data) {
+                if (data == null) {
+                    $("#CreditCard").html("<div></div>");
+                } else {
+                    if (data.Issuer == "VISA") {
+                        cl = "CreditCardIcon-Visa"
+                    }
+                    else {
+                        cl = "CreditCardIcon-Master"
+                    }
+
+                    html = '<div class="CreditCardInfoBox">'
+                           +'<div class="CreditCardIcon '+ cl +'" ></div >'
+                        + '<div>' + data.FullName + ' ' + data.ExpiryDate + '</div>'
+                        + '</div>'
+                    $("#CreditCard").html(html);
+                }
+            })
+    }
+
+    $(function () {
+        $("#AddChangeCreditCard").click(function ()
+        {
+            var paylike = Paylike({ key: '@System.Configuration.ConfigurationManager.AppSettings["StartupCentral.Paylike.PublicKey"]' });
+            //const paylike = Paylike({ key: '18284b56-b984-403c-abe5-863d6bcb97e1' });
+            paylike.pay(
+                {
+                    //test: true,
+                    unplanned: { merchant: true },
+            },
+            (err, result) => {
+                        if (err) return console.log(err)
+                $.ajax({
+                type: "POST",
+                url: location.origin + "/umbraco/api/upodiapi/resavepaymentmethod",
+                data: {
+                        UserId: '@memberKey',
+                        Token: result.transaction.id,
+                    },
+                    success: function (data) {
+                        loadCreditCard()
+                    },
+                    })
+                });
+        })
+
+        loadCreditCard();
+    })
+    </script>
+

@@ -1,0 +1,315 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using StartupCentral.Code.Class
+@{
+    Layout = null;
+}
+
+@* the fun starts here *@
+<!--
+
+ ______   ______   ______   ______   ______  ______   _____
+/\  ___\ /\  == \ /\  ___\ /\  __ \ /\__  _\/\  ___\ /\  __-.
+\ \ \____\ \  __< \ \  __\ \ \  __ \\/_/\ \/\ \  __\ \ \ \/\ \
+ \ \_____\\ \_\ \_\\ \_____\\ \_\ \_\  \ \_\ \ \_____\\ \____-
+  \/_____/ \/_/ /_/ \/_____/ \/_/\/_/   \/_/  \/_____/ \/____/
+
+ ______   __  __
+/\  == \ /\ \_\ \
+\ \  __< \ \____ \
+ \ \_____\\/\_____\
+  \/_____/ \/_____/
+ ______   ______   ______   ______   __
+/\  ___\ /\___  \ /\  __ \ /\  == \ /\ \
+\ \___  \\/_/  /__\ \  __ \\ \  __< \ \ \
+ \/\_____\ /\_____\\ \_\ \_\\ \_____\\ \_\
+  \/_____/ \/_____/ \/_/\/_/ \/_____/ \/_/
+
+
+    -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="/css/fontawesome-all.min.css">
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <!-- Styling 
+    <link rel="stylesheet" href="/css/sc2/signup.css">-->
+    <link rel="stylesheet" type="text/css" href="/css/sc2/login-mobile.css" media="screen and (max-width: 576px)">
+    <link rel="stylesheet" type="text/css" href="/css/sc2/login-desktop.css" media="screen and (min-width: 577px)">
+    <title>Signup Page</title>
+</head>
+
+@{
+    IMember currentMember = null;
+    string errorMessage = string.Empty;
+    string loginErrorMessage = string.Empty;
+    string containerClass = "su-container";
+    string username = "";
+    string email = "";
+    string password = "";
+    string mobilenumber = "";
+    string promocode = "";
+    string messageTextNewPassword = string.Empty;
+    string signupContainerStyle = string.Empty;
+    UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+    if (IsPost)
+    {
+        if (Request.Form["formaction"] == "loginForm")
+        {
+            string loginemail = Request["loginemail"];
+            string loginpassword = Request["loginpassword"];
+            string requestedUrl = "/login/min-side/";
+            if (Membership.ValidateUser(loginemail, loginpassword))
+            {
+                FormsAuthentication.SetAuthCookie(loginemail, true);
+                // Redirect to / refresh the requested page
+                Response.Redirect(requestedUrl);
+            }
+            else
+            {
+                loginErrorMessage = string.Format("Login fejlede, tjek brugernavn eller kodeord for bruger: {0}", loginemail);
+            }
+        }
+        else if (Request.Form["formaction"] == "SendNewPassword")
+        {
+            string newPasswordMail = Request["newPasswordMail"];
+            newPasswordMail = Convert.ToString(newPasswordMail);
+            IMember member = StartupCentral.Code.Controllers.UserController.GetByEmail(newPasswordMail);
+            if (member != null)
+            {
+                // StartupCentral.Code.Controllers.UserController.SendNewPassword(newPasswordMail);
+                System.Threading.Tasks.Task.Run(() => StartupCentral.Code.Controllers.UserController.SendNewPassword(newPasswordMail)).GetAwaiter().GetResult();
+                messageTextNewPassword = "Der blevet sendt en e-mail til din indbakke.";
+            }
+            else
+            {
+                messageTextNewPassword = "E-mailen kunne ikke findes, prøv igen.";
+            }
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(Request.Form["email"]))
+            {
+                if (!string.IsNullOrEmpty(Request.Form["promocode"]))
+                {
+                    promocode = Request.Form["promocode"];
+                    var isValidPromocode = System.Threading.Tasks.Task.Run(() => upodiWrapperService.ValidateDiscountCode(promocode)).GetAwaiter().GetResult();
+                    if (!isValidPromocode) //
+                    {
+                        errorMessage = "Promo-koden er ikke korrekt";
+                    }
+                }
+
+                email = Request.Form["email"];
+                StartupCentral.Code.Model.ValidationResponse response = StartupCentral.Code.Class.Emailing.ValidateEmail(email);
+                if (!response.IsValid)
+                {
+                    errorMessage = response.Message;
+                }
+
+                if (!string.IsNullOrEmpty(Request.Form["username"]))
+                {
+                    username = Request.Form["username"];
+                }
+
+                if (!string.IsNullOrEmpty(Request.Form["password"]))
+                {
+                    password = Request.Form["password"];
+                }
+
+                if (!string.IsNullOrEmpty(Request.Form["mobilenumber"]))
+                {
+                    mobilenumber = Request.Form["mobilenumber"];
+                }
+
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    IMember member = ApplicationContext.Current.Services.MemberService.CreateMemberWithIdentity(email, email, username, "student");
+                    if (member != null)
+                    {
+
+                        member.SetValue("wwmobile", mobilenumber);
+                        member.SetValue("wwMobilePayAbonnementsDato", null);
+
+                        member.SetValue("wwname", username);
+                        member.SetValue("wwemail", email);
+                        member.IsApproved = false;
+
+                        ApplicationContext.Current.Services.MemberService.Save(member);
+                        ApplicationContext.Current.Services.MemberService.AssignRole(email, "student");
+
+                        ApplicationContext.Current.Services.MemberService.SavePassword(member, password);
+                        //Emailing.SendCreationEmail(member, password);
+
+                        currentMember = member;
+
+                        Response.Redirect(string.Concat(
+                        Umbraco.NiceUrl(Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["StartupCentral.MobilePay.Id"])),
+                        "?memberkey=", member.Key, "&promokode=", promocode), true);
+                        return;
+                    }
+                }
+            }
+        }
+
+    }
+}
+
+<body>
+
+    <h2>@Umbraco.AssignedContentItem.Value("signupPageText")</h2>
+    @if (!string.IsNullOrEmpty(loginErrorMessage) || !string.IsNullOrEmpty(messageTextNewPassword))
+    {
+        containerClass = "su-container right-panel-active";
+        signupContainerStyle = "display: none;";
+    }
+    <div class="@containerClass" id="su-container">
+        <div class="form-container sign-up-container">
+            <form method="post" id="registrationForm">
+                <input hidden name="formaction" value="registration" />
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="">
+                        @errorMessage
+                    </div>
+                }
+                <h1>@Umbraco.AssignedContentItem.Value("createAccountText")</h1>
+                <input required name="username" type="text" placeholder="Name / Company Name" />
+                <input required name="email" type="email" placeholder="Email" />
+                <input required name="password" type="password" placeholder="Password" />
+                <div class="telephone-container">
+                    <span class="areacode">+45</span>
+                    <input required name="mobilenumber" type="text" placeholder="Mobile Number" class="mobileno" maxlength="8" />
+                </div>
+                <input name="promocode" type="text" placeholder="Promo Code" value="StartupCentral-2020"/>
+                <button type="submit">@Umbraco.AssignedContentItem.Value("createAccountButton")</button>
+            </form>
+        </div>
+
+
+        <div class="form-container sign-in-container">
+            @{
+                string style = !string.IsNullOrEmpty(messageTextNewPassword) ? "display: none;" : "";
+            }
+            <form method="post" id="loginForm" style="@style">
+                <input hidden name="formaction" value="loginForm" />
+                @if (!string.IsNullOrEmpty(loginErrorMessage))
+                {
+                    <div class="">
+                        @loginErrorMessage
+                    </div>
+                }
+                <h1>@Umbraco.AssignedContentItem.Value("signinText")</h1>
+                <div class="social-container">
+                    <a href="https://www.facebook.com/StartupCentral.dk/" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.linkedin.com/company/startupcentral-dk/" class="social"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.instagram.com/startupcentral.dk/" class="social"><i class="fab fa-instagram"></i></a>
+                </div>
+                <span>or use your account</span>
+                <input type="email" name="loginemail" placeholder="Email" />
+                <input type="password" name="loginpassword" placeholder="Kodeord" />
+                <a href="javascript:void(0);" onclick="toggleLoginAndForgot()">@Umbraco.AssignedContentItem.Value("forgotPasswordText")</a>
+                <button type="submit">@Umbraco.AssignedContentItem.Value("signInButton")</button>
+            </form>
+            @{
+                style = string.IsNullOrEmpty(messageTextNewPassword) ? "display: none;" : "";
+            }
+            <form method="post" id="newPasswordForm" style="@style">
+                <input hidden name="formaction" value="SendNewPassword" />
+                @if (!string.IsNullOrEmpty(messageTextNewPassword))
+                {
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 col-sm-12">
+                            <p>@messageTextNewPassword</p>
+                        </div>
+                    </div>
+                }
+
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-sm-12">
+                        <p>@Umbraco.AssignedContentItem.Value("sendNewPasswordText")</p>
+                        <input type="email" required name="newPaswordMail" placeholder="E-mail" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 text-right">
+                        <button type="submit" id="submitEmail" name="submitEmail" style="margin-bottom: 20px;">@Umbraco.AssignedContentItem.Value("sendNewPasswordButtonText")</button>
+                        <button type="button" id="cancel" name="cancel" onclick="toggleLoginAndForgot();">Annuller</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+        <!-- Left Panel -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left overlay-bottom">
+                    <h1>@Umbraco.AssignedContentItem.Value("welcomeText")</h1>
+                    <h5>@Umbraco.AssignedContentItem.Value("welcomeSubText")</h5>
+                    <button class="ghost" id="signIn">@Umbraco.AssignedContentItem.Value("welcomeButton")</button>
+                </div>
+
+
+                <!-- Right Panel -->
+                <div class="overlay-panel overlay-right overlay-top">
+                    <h1>@Umbraco.AssignedContentItem.Value("offerText")</h1>
+                    <p>@Umbraco.AssignedContentItem.Value("offerSubText")</p>
+                    <button class="ghost" id="signUp">@Umbraco.AssignedContentItem.Value("offerButton")</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleLoginAndForgot() {
+            if ($('#loginForm').is(':visible')) {
+                $('#loginForm').slideUp();
+                $('#newPasswordForm').slideDown();
+            }
+            else {
+                $('#newPasswordForm').slideUp();
+                $('#loginForm').slideDown();
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('su-container');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add("top-panel-active");
+        });
+        signInButton.addEventListener('click', () => {
+            container.classList.remove("top-panel-active");
+        });
+    </script>
+
+
+
+    <!-- Scripts 
+    <script src="/scripts/sc2/signup.js"></script>-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117081036-1"></script>
+    
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'UA-117081036-1');
+    </script>
+    
+
+</body>
+
+</html>

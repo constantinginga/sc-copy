@@ -1,0 +1,80 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+<section class="sc-home-statistics">
+    <div class="container">
+        <div class="title-box">
+            <h2 class="headline-2">Nøgle tal i Startup Central</h2>
+            @*<h2>Uanset hvilket stadie du er i, kan Startup Central hjælpe dig til at få, og drive, en mere succesfuld forretning.</h2>
+            <p class="lead">Nøgle tal i Startup Central</p>*@
+        </div>
+@*
+        <div class="info-container">
+            <div class="info column-container">
+                <div class="info-icon">
+                    <span class="icon"><i class="fab fa-github-alt"></i></span>
+                </div>
+                <div class="info-text">
+                    <h3>Try any product risk free</h3>
+                    <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus, vel.</p>
+                </div>
+            </div>
+
+            <div class="info column-container">
+                <div class="info-icon">
+                    <span class="icon"><i class="fab fa-github-alt"></i></span>
+                </div>
+                <div class="info-text">
+                    <h3>Try any product risk free</h3>
+                    <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus, vel.</p>
+                </div>
+            </div>
+
+            <div class="info column-container">
+                <div class="info-icon">
+                    <span class="icon"><i class="fab fa-github-alt"></i></span>
+                </div>
+                <div class="info-text">
+                    <h3>Try any product risk free</h3>
+                    <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus, vel.</p>
+                </div>
+            </div>
+
+        </div>
+*@
+        <div class="statistics-container">
+            @*
+            <div class="statistic column-container centered">
+                <div class="icon-container">
+                    <span class="icon">@Umbraco.AssignedContentItem.Value("firstStatisticIcon")</span>
+                </div>
+                <span class="numbers">@Umbraco.AssignedContentItem.Value("firstStatisticNumber")</span>
+                <h3>@Umbraco.AssignedContentItem.Value("firstStatistic")</h3>
+            </div>
+            *@
+
+            <div class="statistic column-container centered">
+                <div class="icon-container">
+                    <span class="icon">@Umbraco.AssignedContentItem.Value("secondStatisticIcon")</span>
+                </div>
+                <span class="numbers">@Umbraco.AssignedContentItem.Value("secondStatisticNumber")</span>
+                <h3>@Umbraco.AssignedContentItem.Value("secondStatistic")</h3>
+            </div>
+
+            <div class="statistic column-container centered">
+                <div class="icon-container">
+                    <span class="icon">@Umbraco.AssignedContentItem.Value("thirdStatisticIcon")</span>
+                </div>
+                <span class="numbers">@Umbraco.AssignedContentItem.Value("thirdStatisticNumber")</span>
+                <h3>@Umbraco.AssignedContentItem.Value("thirdStatistic")</h3>
+            </div>
+
+            <div class="statistic column-container centered">
+                <div class="icon-container">
+                    <span class="icon"> @Umbraco.AssignedContentItem.Value("fourthStatisticIcon")</span>
+                </div>
+                <span class="numbers">@Umbraco.AssignedContentItem.Value("fourthStatisticNumber")</span>
+                <h3>@Umbraco.AssignedContentItem.Value("fourthStatistic")</h3>
+            </div>
+        </div>
+    </div>
+</section>

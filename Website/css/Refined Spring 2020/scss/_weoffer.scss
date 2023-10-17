@@ -1,0 +1,144 @@
+section.sc-weoffer-help {
+    margin-top: -$nav-sm;
+
+    .help-container {
+
+        .help {
+            @include flex(column);
+        }
+    }
+}
+
+section.sc-weoffer-conditions {
+    background-color: $sc-primary;
+    color: $sc-white;
+
+    .headline-2 {
+        @include sc-title-text;
+    }
+
+    .container {
+        .text-container {
+            @include flex(column);
+            text-align: center;
+        }
+    }
+}
+
+section.sc-weoffer-cost {
+    .headline-2 {
+        @include sc-title-text;
+    }
+
+    .container {
+        .text-container {
+            @include flex(column);
+            text-align: center;
+        }
+    }
+
+    .price-box {
+        .headline-2 {
+            border-bottom: none;
+        }
+
+        margin-top: 5rem;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+
+        hr {
+            width: 5rem;
+        }
+
+        @include link;
+    }
+}
+
+@include media-md {
+    section.sc-weoffer-help {
+        margin-top: -$nav-sm;
+
+        .help-container {
+            @include flex(row);
+            flex-wrap: wrap;
+
+            .column-container {
+                flex: 0 0 50%;
+            }
+        }
+    }
+
+    section.sc-weoffer-conditions {
+        .container {
+            .text-container {
+                @include flex(row);
+                text-align: center;
+                justify-content: space-around;
+                flex-wrap: wrap;
+
+                .text-box {
+                    flex: 0 0 50%;
+
+                    .lead {
+                        margin-left: 2.5rem;
+                        margin-right: 2.5rem;
+                    }
+                }
+
+            }
+        }
+    }
+
+    section.sc-weoffer-cost {
+        .container {
+            .text-container {
+                @include flex(row);
+                flex-wrap: wrap;
+                justify-content: space-around;
+
+                .text-box {
+                    flex: 0 0 50%;
+
+                    .lead {
+                        margin-left: 2.5rem;
+                        margin-right: 2.5rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-lg {
+    section.sc-weoffer-help {
+        margin-top: -$nav-lg;
+
+        .help-container {
+            .column-container {
+                flex: 0 0 25%;
+
+                .help {
+                    h3 {
+                        font-size: 1.8rem;
+                    }
+                }
+            }
+        }
+    }
+
+    section.sc-weoffer-cost {
+        .container {
+            .text-container {
+                @include flex(row);
+                flex-wrap: wrap;
+                justify-content: space-around;
+
+                .text-box {
+                    flex: 0 0 33.33%;
+                }
+            }
+        }
+    }
+}
