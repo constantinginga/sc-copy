@@ -62,6 +62,8 @@
                     {
                         ApplicationContext.Current.Services.MemberService.Save(member);
                     }
+                    StartupCentral.Code.ApiControllers.MemberApiController memberApiController = new StartupCentral.Code.ApiControllers.MemberApiController();
+                    memberApiController.UpdateUserOnLounge(member);
                 }
 
                 if (HttpContext.Current.Request.Files != null && HttpContext.Current.Request.Files.Count > 0)

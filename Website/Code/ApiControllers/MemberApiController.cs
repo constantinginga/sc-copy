@@ -21,6 +21,7 @@ using static StartupCentral.Code.Model.CvrOpslag;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
+using Microsoft.AspNet.SignalR.Json;
 
 namespace StartupCentral.Code.ApiControllers
 {
@@ -493,6 +494,73 @@ namespace StartupCentral.Code.ApiControllers
 
             return member.Key;
 
+        }
+
+        [HttpPost]
+        public IMember UpdateUserFromLounge(){
+            int memberId = int.Parse(HttpContext.Current.Request.Form["memberId"]);
+            string name = HttpContext.Current.Request.Form["name"];
+            string phoneNumber = HttpContext.Current.Request.Form["phoneNumber"];
+
+            IMember member = Services.MemberService.GetById(memberId);
+
+            if (member != null)
+            {
+                member.Name = name;
+                member.SetValue("wwname", name);
+                member.SetValue("wwmobile", phoneNumber);
+            }
+
+            if (member.IsDirty())
+            {
+                UpodiWrapperService upodiWrapperService = new UpodiWrapperService();
+                upodiWrapperService.updateCustomerPrivateInfo(member);
+
+                ApplicationContext.Current.Services.MemberService.Save(member);
+            }
+            return member; 
+        }
+
+        [HttpPost]
+        public async Task UpdateUserOnLounge(IMember member)
+        {
+            string endPoint = $"https://localhost:7297/Profiles/SyncUserFromUmbraco";
+
+            using (HttpClient httClient = new HttpClient())
+            {
+                try
+                {
+                    var ContactsSection = new
+                    {
+                        MemberId = member.Id,
+                        PhoneNumber = member.GetValue<string>("wwmobile"),
+                    };
+                    var data = new
+                    {
+                        MemberId = member.Id,
+                        Name = member.Name.ToString(),
+                        ContactsSection = ContactsSection,
+                    };
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(data), System.Text.Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response = await httClient.PostAsync(endPoint, content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("Request was successful.");
+                        string responseContent = await response.Content.ReadAsStringAsync();
+                        Console.WriteLine("Response Content: " + responseContent);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Request failed with status code: " + response.StatusCode);
+                    }
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("Update user on Lounge failed with exception: " + e.Message);
+                }
+            }
         }
 
         [HttpGet]
